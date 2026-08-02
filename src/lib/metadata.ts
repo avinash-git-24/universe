@@ -108,13 +108,6 @@ export const rootMetadata: Metadata = {
     apple: [{ url: "/icons/apple-touch-icon.png", sizes: "180x180" }],
     shortcut: "/favicon.ico",
   },
-  themeColor: "#10B981",
-  viewport: {
-    width: "device-width",
-    initialScale: 1,
-    maximumScale: 1,
-    userScalable: false,
-  },
   formatDetection: {
     telephone: false,
     date: false,

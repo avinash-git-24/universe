@@ -11,6 +11,10 @@ export const ROUTES = {
   REGISTER: "/register",
   VERIFY_STUDENT: "/verify",
   FORGOT_PASSWORD: "/forgot-password",
+  VERIFY_EMAIL: "/verify-email",
+  COMPLETE_PROFILE: "/complete-profile",
+  RESET_PASSWORD: "/reset-password",
+
 
   // ── Core App ──
   HOME: "/",
