@@ -93,7 +93,9 @@ function LoginContent() {
             className="rounded-[var(--radius-md)] px-4 py-3 text-sm bg-[var(--color-error-subtle)] text-[var(--color-error-foreground)] border border-[var(--color-error)]/30"
             style={{ fontFamily: "var(--font-inter)" }}
           >
-            Authentication failed. Please try again.
+            {callbackError === "auth_callback_failed" 
+              ? "Authentication failed. Please try again." 
+              : decodeURIComponent(callbackError)}
           </div>
         )}
 
