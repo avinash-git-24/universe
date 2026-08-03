@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
-import { getAllPlatformRequests } from "@/lib/database/admin";
+import { getAllPlatformRequests, getAllUsers } from "@/lib/database/admin";
 import { DeliveriesTable } from "@/components/admin/DeliveriesTable";
 import type { Metadata } from "next";
 
@@ -10,7 +10,12 @@ export const metadata: Metadata = {
 
 export default async function AdminDeliveriesPage() {
   const supabase = await createClient();
-  const requests = await getAllPlatformRequests(supabase);
+  const [requests, users] = await Promise.all([
+    getAllPlatformRequests(supabase),
+    getAllUsers(supabase),
+  ]);
+
+  const runners = users.filter((u) => u.role === "runner" && u.account_status === "active");
 
   return (
     <div className="space-y-6">
@@ -19,7 +24,7 @@ export default async function AdminDeliveriesPage() {
         <p className="text-muted-foreground mt-1">Track every delivery request happening across the campus.</p>
       </div>
 
-      <DeliveriesTable requests={requests} />
+      <DeliveriesTable requests={requests} availableRunners={runners} />
     </div>
   );
 }

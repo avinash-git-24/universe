@@ -89,18 +89,33 @@ export async function getPlatformStats(supabase: SupabaseClient<Database>) {
   const runners = users.filter(u => u.role === "runner").length;
   const totalRequests = requests.length;
   
-  const completedRequests = requests.filter(r => r.status === "delivered");
-  const activeRequests = requests.filter(r => !["delivered", "cancelled"].includes(r.status));
+  const pendingRequests = requests.filter(r => r.status === "pending").length;
+  const acceptedRequests = requests.filter(r => r.status === "accepted").length;
+  const pickedUpRequests = requests.filter(r => r.status === "picked_up").length;
+  const inTransitRequests = requests.filter(r => r.status === "in_transit").length;
+  const deliveredRequests = requests.filter(r => r.status === "delivered").length;
+  const cancelledRequests = requests.filter(r => r.status === "cancelled").length;
   
-  const totalRevenue = completedRequests.reduce((sum, req) => sum + Number(req.delivery_fee), 0);
+  const completedRequests = deliveredRequests;
+  const activeRequests = pendingRequests + acceptedRequests + pickedUpRequests + inTransitRequests;
+  
+  const totalRevenue = requests
+    .filter(r => r.status === "delivered")
+    .reduce((sum, req) => sum + Number(req.delivery_fee), 0);
 
   return {
     totalUsers: users.length,
     students,
     runners,
     totalRequests,
-    activeRequests: activeRequests.length,
-    completedRequests: completedRequests.length,
+    pendingRequests,
+    acceptedRequests,
+    pickedUpRequests,
+    inTransitRequests,
+    deliveredRequests,
+    cancelledRequests,
+    activeRequests,
+    completedRequests,
     totalRevenue
   };
 }
