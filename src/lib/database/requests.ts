@@ -94,3 +94,130 @@ export async function createDeliveryRequest(
 
   return { ...request, items: items ?? [] };
 }
+
+/**
+ * Retrieves pending requests with their items for the runner dashboard.
+ */
+export async function getPendingRequestsWithItems(
+  supabase: SupabaseClient<Database>
+): Promise<RequestWithItems[]> {
+  const { data, error } = await supabase
+    .from("delivery_requests")
+    .select(`
+      *,
+      items:request_items(*)
+    `)
+    .eq("status", "pending")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("Error fetching pending requests:", error);
+    return [];
+  }
+
+  return data as unknown as RequestWithItems[];
+}
+
+export type AssignmentWithRequest = Database["public"]["Tables"]["delivery_assignments"]["Row"] & {
+  request: RequestWithItems;
+};
+
+/**
+ * Retrieves the currently active assignment for a runner.
+ */
+export async function getActiveRunnerAssignment(
+  supabase: SupabaseClient<Database>,
+  runnerId: string
+): Promise<AssignmentWithRequest | null> {
+  const { data, error } = await supabase
+    .from("delivery_assignments")
+    .select(`
+      *,
+      request:delivery_requests(
+        *,
+        items:request_items(*)
+      )
+    `)
+    .eq("runner_id", runnerId)
+    .eq("status", "active")
+    .single();
+
+  if (error && error.code !== "PGRST116") { // Ignore no rows found
+    console.error("Error fetching active assignment:", error);
+    return null;
+  }
+
+  return data as unknown as AssignmentWithRequest | null;
+}
+
+/**
+ * Accepts a delivery request, assigning it to the runner.
+ */
+export async function acceptRequest(
+  supabase: SupabaseClient<Database>,
+  requestId: string,
+  runnerId: string
+): Promise<boolean> {
+  // 1. Update request status
+  const { error: reqError } = await supabase
+    .from("delivery_requests")
+    .update({ status: "accepted" })
+    .eq("id", requestId)
+    .eq("status", "pending"); // Concurrency check
+
+  if (reqError) {
+    console.error("Error accepting request:", reqError);
+    return false;
+  }
+
+  // 2. Create assignment
+  const { error: assignError } = await supabase
+    .from("delivery_assignments")
+    .insert({
+      request_id: requestId,
+      runner_id: runnerId,
+      status: "active",
+    });
+
+  if (assignError) {
+    console.error("Error creating assignment:", assignError);
+    return false;
+  }
+
+  return true;
+}
+
+/**
+ * Updates the status of an active request and optionally its assignment.
+ */
+export async function updateRequestStatus(
+  supabase: SupabaseClient<Database>,
+  requestId: string,
+  newStatus: Database["public"]["Enums"]["request_status"]
+): Promise<boolean> {
+  const { error: reqError } = await supabase
+    .from("delivery_requests")
+    .update({ status: newStatus })
+    .eq("id", requestId);
+
+  if (reqError) {
+    console.error("Error updating request status:", reqError);
+    return false;
+  }
+
+  // If delivered or cancelled, mark assignment as completed/cancelled
+  if (newStatus === "delivered" || newStatus === "cancelled") {
+    const assignmentStatus: Database["public"]["Enums"]["assignment_status"] = newStatus === "delivered" ? "completed" : "cancelled";
+    
+    await supabase
+      .from("delivery_assignments")
+      .update({ 
+        status: assignmentStatus,
+        completed_at: new Date().toISOString()
+      })
+      .eq("request_id", requestId)
+      .eq("status", "active");
+  }
+
+  return true;
+}
