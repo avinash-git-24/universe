@@ -1,5 +1,6 @@
 "use client";
 
+import { memo } from "react";
 import { Check, CheckCheck } from "lucide-react";
 import { Message } from "@/lib/database/chat";
 import { format } from "date-fns";
@@ -9,7 +10,7 @@ interface MessageBubbleProps {
   isMe: boolean;
 }
 
-export function MessageBubble({ message, isMe }: MessageBubbleProps) {
+export const MessageBubble = memo(function MessageBubble({ message, isMe }: MessageBubbleProps) {
   return (
     <div className={`flex flex-col w-full ${isMe ? "items-end" : "items-start"} mb-4`}>
       <div 
@@ -34,4 +35,4 @@ export function MessageBubble({ message, isMe }: MessageBubbleProps) {
       </div>
     </div>
   );
-}
+});

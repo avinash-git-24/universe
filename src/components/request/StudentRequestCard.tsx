@@ -1,5 +1,6 @@
 "use client";
 
+import { memo } from "react";
 import { formatDistanceToNow, format } from "date-fns";
 import { Package, MapPin, IndianRupee, User, Eye } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
@@ -14,7 +15,7 @@ interface StudentRequestCardProps {
   className?: string;
 }
 
-export function StudentRequestCard({ request, onClick, className }: StudentRequestCardProps) {
+export const StudentRequestCard = memo(function StudentRequestCard({ request, onClick, className }: StudentRequestCardProps) {
   // Find the active assignment (if any) to display the runner
   const activeAssignment = request.assignments?.find(a => a.status === "active" || a.status === "completed");
   const runner = activeAssignment?.runner;
@@ -102,4 +103,4 @@ export function StudentRequestCard({ request, onClick, className }: StudentReque
       </CardFooter>
     </Card>
   );
-}
+});

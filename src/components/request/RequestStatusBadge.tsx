@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Database } from "@/types/database";
 
@@ -8,6 +9,6 @@ interface RequestStatusBadgeProps {
   className?: string;
 }
 
-export function RequestStatusBadge({ status, className }: RequestStatusBadgeProps) {
+export const RequestStatusBadge = memo(function RequestStatusBadge({ status, className }: RequestStatusBadgeProps) {
   return <StatusBadge status={status} showIcon={false} className={className} />;
-}
+});

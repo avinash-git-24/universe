@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { LucideIcon } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 
@@ -9,7 +10,7 @@ interface StatsCardProps {
   color?: string;
 }
 
-export function StatsCard({ label, value, icon: Icon, color = "text-primary" }: StatsCardProps) {
+export const StatsCard = memo(function StatsCard({ label, value, icon: Icon, color = "text-primary" }: StatsCardProps) {
   return (
     <Card>
       <CardContent className="p-6 flex items-center justify-between">
@@ -23,4 +24,4 @@ export function StatsCard({ label, value, icon: Icon, color = "text-primary" }: 
       </CardContent>
     </Card>
   );
-}
+});
