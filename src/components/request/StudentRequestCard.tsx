@@ -20,12 +20,22 @@ export const StudentRequestCard = memo(function StudentRequestCard({ request, on
   const activeAssignment = request.assignments?.find(a => a.status === "active" || a.status === "completed");
   const runner = activeAssignment?.runner;
   const itemCount = request.items.reduce((acc, item) => acc + item.quantity, 0);
+  const itemNames = request.items.map(i => i.name).join(", ");
 
   return (
     <Card 
       onClick={onClick}
+      role={onClick ? "button" : undefined}
+      tabIndex={onClick ? 0 : undefined}
+      aria-label={onClick ? `View details for request: ${itemNames}` : undefined}
+      onKeyDown={(e) => {
+        if (onClick && (e.key === "Enter" || e.key === " ")) {
+          e.preventDefault();
+          onClick();
+        }
+      }}
       className={cn(
-        "w-full flex flex-col overflow-hidden transition-all duration-200",
+        "w-full flex flex-col overflow-hidden transition-all duration-200 focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none",
         onClick && "cursor-pointer hover:border-primary/50 hover:shadow-md",
         className
       )}
