@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Users, Package, Settings, CreditCard } from "lucide-react";
+import { LayoutDashboard, Users, Package, Settings, CreditCard, BarChart3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const navItems = [
@@ -10,6 +10,7 @@ const navItems = [
   { label: "Users", href: "/admin/users", icon: Users },
   { label: "Deliveries", href: "/admin/deliveries", icon: Package },
   { label: "Payments", href: "/admin/payments", icon: CreditCard },
+  { label: "Analytics", href: "/admin/analytics", icon: BarChart3 },
 ];
 
 export function AdminSidebar() {
