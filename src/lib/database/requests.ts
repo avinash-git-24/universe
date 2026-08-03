@@ -259,3 +259,34 @@ export async function getStudentRequests(
 
   return data as unknown as StudentRequestWithDetails[];
 }
+
+/**
+ * Retrieves full details of a specific request for a student.
+ */
+export async function getStudentRequestDetails(
+  supabase: SupabaseClient<Database>,
+  requestId: string,
+  studentId: string
+): Promise<StudentRequestWithDetails | null> {
+  const { data, error } = await supabase
+    .from("delivery_requests")
+    .select(`
+      *,
+      items:request_items(*),
+      assignments:delivery_assignments(
+        *,
+        runner:profiles(*)
+      )
+    `)
+    .eq("id", requestId)
+    .eq("requester_id", studentId) // Ensure ownership
+    .single();
+
+  if (error) {
+    console.error("Error fetching request details:", error);
+    return null;
+  }
+
+  return data as unknown as StudentRequestWithDetails;
+}
+

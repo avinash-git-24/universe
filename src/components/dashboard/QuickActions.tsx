@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Plus, Bike, User } from "lucide-react";
+import { Plus, Bike, User, Package } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
@@ -13,6 +13,11 @@ export function QuickActions() {
         <Link href="/request/new" className="block">
           <Button className="w-full justify-start h-11">
             <Plus className="w-4 h-4 mr-3" /> Create Request
+          </Button>
+        </Link>
+        <Link href="/dashboard/requests" className="block">
+          <Button variant="secondary" className="w-full justify-start h-11">
+            <Package className="w-4 h-4 mr-3" /> My Requests
           </Button>
         </Link>
         <Link href="/dashboard/runner" className="block">
