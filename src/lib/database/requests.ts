@@ -221,3 +221,41 @@ export async function updateRequestStatus(
 
   return true;
 }
+
+export type Profile = Database["public"]["Tables"]["profiles"]["Row"];
+
+export type AssignmentWithRunner = Database["public"]["Tables"]["delivery_assignments"]["Row"] & {
+  runner: Profile | null;
+};
+
+export type StudentRequestWithDetails = RequestWithItems & {
+  assignments: AssignmentWithRunner[];
+};
+
+/**
+ * Retrieves all requests made by a specific student, including items and runner assignments.
+ */
+export async function getStudentRequests(
+  supabase: SupabaseClient<Database>,
+  studentId: string
+): Promise<StudentRequestWithDetails[]> {
+  const { data, error } = await supabase
+    .from("delivery_requests")
+    .select(`
+      *,
+      items:request_items(*),
+      assignments:delivery_assignments(
+        *,
+        runner:profiles(*)
+      )
+    `)
+    .eq("requester_id", studentId)
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("Error fetching student requests:", error);
+    return [];
+  }
+
+  return data as unknown as StudentRequestWithDetails[];
+}

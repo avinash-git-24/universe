@@ -1,16 +1,11 @@
-/**
- * UniVerse — Dashboard Page
- *
- * Protected route. Requires authentication.
- * Middleware redirects unauthenticated users to /login.
- *
- * This is a placeholder for Phase 4.
- * It reads the current user from Supabase server-side for SSR safety.
- */
-
 import { redirect } from "next/navigation";
+import Link from "next/link";
+import { Plus } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
+import { getStudentRequests } from "@/lib/database/requests";
 import { ROUTES } from "@/constants/routes";
+import { Button } from "@/components/ui/button";
+import { StudentRequestCard } from "@/components/request/StudentRequestCard";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -20,13 +15,9 @@ export const metadata: Metadata = {
 
 export default async function DashboardPage() {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
 
-  // Belt-and-suspenders: middleware already handles this,
-  // but we guard here too in case of direct server render.
-  if (!user) {
+  if (authError || !user) {
     redirect(ROUTES.LOGIN);
   }
 
@@ -35,73 +26,65 @@ export default async function DashboardPage() {
     user.email?.split("@")[0] ??
     "Student";
 
+  const requests = await getStudentRequests(supabase, user.id);
+  
+  // Sort requests: Active (pending, accepted, picked_up) first, then completed/cancelled
+  const activeRequests = requests.filter(r => !["delivered", "cancelled"].includes(r.status));
+  const pastRequests = requests.filter(r => ["delivered", "cancelled"].includes(r.status));
+
   return (
-    <main className="min-h-dvh bg-[var(--color-bg)] flex flex-col items-center justify-center px-4">
-      <div
-        className="w-full max-w-lg rounded-[var(--radius-xl)] border border-[var(--color-border)] shadow-[var(--shadow-xl)] overflow-hidden text-center"
-        style={{ background: "rgba(255,255,255,0.88)", backdropFilter: "blur(20px)" }}
-      >
-        {/* Gradient top bar */}
-        <div
-          className="h-1 w-full"
-          style={{ background: "linear-gradient(90deg, #10B981, #059669, #F59E0B)" }}
-          aria-hidden="true"
-        />
-
-        <div className="px-8 py-10 flex flex-col items-center gap-4">
-          {/* Avatar initials */}
-          <div
-            className="w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold text-white"
-            style={{ background: "linear-gradient(135deg, #10B981 0%, #059669 100%)" }}
-            aria-hidden="true"
-          >
-            {displayName.charAt(0).toUpperCase()}
+    <div className="min-h-screen bg-secondary/30 pt-24 pb-12 px-4">
+      <div className="max-w-5xl mx-auto space-y-8">
+        
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div>
+            <h1 className="text-3xl font-extrabold tracking-tight">Welcome, {displayName}!</h1>
+            <p className="text-muted-foreground mt-1">Track your requests or create a new one.</p>
           </div>
-
-          <div className="flex flex-col gap-1">
-            <h1
-              className="text-2xl font-bold text-[var(--color-text)]"
-              style={{ fontFamily: "var(--font-plus-jakarta-sans)" }}
-            >
-              Welcome, {displayName}! 🎉
-            </h1>
-            <p
-              className="text-sm text-[var(--color-text-muted)]"
-              style={{ fontFamily: "var(--font-inter)" }}
-            >
-              You&apos;re signed in as{" "}
-              <span className="font-medium text-[var(--color-text)]">{user.email}</span>
-            </p>
+          
+          <div className="flex gap-2">
+            <Link href="/dashboard/runner">
+              <Button variant="secondary">Runner Mode</Button>
+            </Link>
+            <Link href="/request/new">
+              <Button>
+                <Plus className="w-4 h-4 mr-2" />
+                New Request
+              </Button>
+            </Link>
           </div>
-
-          <div
-            className="w-full rounded-[var(--radius-md)] px-4 py-3 text-left mt-2"
-            style={{
-              background: "var(--color-primary-subtle)",
-              border: "1px solid rgba(16,185,129,0.2)",
-            }}
-          >
-            <p
-              className="text-sm text-[var(--color-text-secondary)]"
-              style={{ fontFamily: "var(--font-inter)" }}
-            >
-              🚧 <span className="font-semibold">Phase 4</span> — The full dashboard is coming soon.
-              Your account is active and ready.
-            </p>
-          </div>
-
-          {/* Sign out form — uses a server action approach via a simple link to API route */}
-          <form action="/auth/signout" method="POST" className="w-full mt-2">
-            <button
-              type="submit"
-              className="w-full h-10 rounded-[var(--radius-md)] border border-[var(--color-border)] text-sm font-medium text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-subtle)] hover:text-[var(--color-text)] transition-all duration-150"
-              style={{ fontFamily: "var(--font-inter)" }}
-            >
-              Sign Out
-            </button>
-          </form>
         </div>
+
+        {/* Active Requests */}
+        <section className="space-y-4">
+          <h2 className="text-xl font-bold border-b pb-2">Active Requests</h2>
+          {activeRequests.length === 0 ? (
+            <div className="bg-background rounded-lg border border-dashed p-8 text-center text-muted-foreground">
+              You have no active requests.
+            </div>
+          ) : (
+            <div className="grid gap-4 md:grid-cols-2">
+              {activeRequests.map(req => (
+                <StudentRequestCard key={req.id} request={req} />
+              ))}
+            </div>
+          )}
+        </section>
+
+        {/* Past Requests */}
+        {pastRequests.length > 0 && (
+          <section className="space-y-4 pt-4">
+            <h2 className="text-xl font-bold border-b pb-2">Past Requests</h2>
+            <div className="grid gap-4 md:grid-cols-2">
+              {pastRequests.map(req => (
+                <StudentRequestCard key={req.id} request={req} />
+              ))}
+            </div>
+          </section>
+        )}
+
       </div>
-    </main>
+    </div>
   );
 }
