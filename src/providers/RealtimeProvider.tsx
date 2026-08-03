@@ -9,6 +9,7 @@ interface RealtimeContextType {
   unreadCount: number;
   markAsRead: (id: string) => void;
   markAllAsRead: () => void;
+  deleteNotification: (id: string) => void;
 }
 
 const RealtimeContext = createContext<RealtimeContextType | undefined>(undefined);
@@ -42,9 +43,6 @@ export function RealtimeProvider({ children, userId }: { children: ReactNode; us
         (payload) => {
           const newNotification = payload.new as Notification;
           setNotifications((prev) => [newNotification, ...prev]);
-          
-          // Optional: You could trigger a toast notification here
-          // toast(newNotification.title, { description: newNotification.message })
         }
       )
       .subscribe();
@@ -66,8 +64,14 @@ export function RealtimeProvider({ children, userId }: { children: ReactNode; us
     await supabase.from("notifications").update({ is_read: true }).eq("user_id", userId).eq("is_read", false);
   };
 
+  const deleteNotification = async (id: string) => {
+    setNotifications(prev => prev.filter(n => n.id !== id));
+    const supabase = createClient();
+    await supabase.from("notifications").delete().eq("id", id);
+  };
+
   return (
-    <RealtimeContext.Provider value={{ notifications, unreadCount, markAsRead, markAllAsRead }}>
+    <RealtimeContext.Provider value={{ notifications, unreadCount, markAsRead, markAllAsRead, deleteNotification }}>
       {children}
     </RealtimeContext.Provider>
   );

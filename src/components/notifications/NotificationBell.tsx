@@ -17,10 +17,13 @@ export function NotificationBell() {
         size="icon" 
         className="relative"
         onClick={() => setIsOpen(!isOpen)}
+        aria-label="Notifications"
       >
-        <Bell className="w-5 h-5 text-muted-foreground" />
+        <Bell className="w-5 h-5 text-foreground" />
         {unreadCount > 0 && (
-          <span className="absolute top-1.5 right-2 w-2 h-2 rounded-full bg-destructive ring-2 ring-background animate-pulse" />
+          <span className="absolute -top-1 -right-1 px-1.5 py-0.5 text-[10px] font-bold rounded-full bg-primary text-primary-foreground min-w-[18px] h-[18px] flex items-center justify-center border-2 border-background animate-pulse">
+            {unreadCount > 99 ? "99+" : unreadCount}
+          </span>
         )}
       </Button>
 

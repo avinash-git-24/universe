@@ -66,3 +66,23 @@ export async function markAllNotificationsAsRead(
 
   return true;
 }
+
+/**
+ * Deletes a specific notification.
+ */
+export async function deleteNotification(
+  supabase: SupabaseClient<Database>,
+  notificationId: string
+): Promise<boolean> {
+  const { error } = await supabase
+    .from("notifications")
+    .delete()
+    .eq("id", notificationId);
+
+  if (error) {
+    console.error("Error deleting notification:", error);
+    return false;
+  }
+
+  return true;
+}
