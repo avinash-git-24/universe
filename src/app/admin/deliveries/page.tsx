@@ -1,0 +1,25 @@
+import { createClient } from "@/lib/supabase/server";
+import { getAllPlatformRequests } from "@/lib/database/admin";
+import { DeliveriesTable } from "@/components/admin/DeliveriesTable";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Platform Deliveries · UniVerse Admin",
+  description: "Oversight of all active and past deliveries.",
+};
+
+export default async function AdminDeliveriesPage() {
+  const supabase = await createClient();
+  const requests = await getAllPlatformRequests(supabase);
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-3xl font-extrabold tracking-tight">Platform Deliveries</h1>
+        <p className="text-muted-foreground mt-1">Track every delivery request happening across the campus.</p>
+      </div>
+
+      <DeliveriesTable requests={requests} />
+    </div>
+  );
+}

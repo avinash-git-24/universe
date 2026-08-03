@@ -14,7 +14,8 @@ export type Database = {
           id: string;
           full_name: string | null;
           enrollment_number: string | null;
-          role: "student" | "runner";
+          role: "student" | "runner" | "admin";
+          account_status: "active" | "suspended";
           avatar_url: string | null;
           created_at: string;
           updated_at: string;
@@ -23,7 +24,8 @@ export type Database = {
           id: string;
           full_name?: string | null;
           enrollment_number?: string | null;
-          role?: "student" | "runner";
+          role?: "student" | "runner" | "admin";
+          account_status?: "active" | "suspended";
           avatar_url?: string | null;
           created_at?: string;
           updated_at?: string;
@@ -32,7 +34,8 @@ export type Database = {
           id?: string;
           full_name?: string | null;
           enrollment_number?: string | null;
-          role?: "student" | "runner";
+          role?: "student" | "runner" | "admin";
+          account_status?: "active" | "suspended";
           avatar_url?: string | null;
           created_at?: string;
           updated_at?: string;
