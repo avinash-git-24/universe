@@ -3,7 +3,7 @@ import { User, Mail, MapPin, Hash, Phone } from "lucide-react";
 import type { Profile } from "@/lib/database/requests";
 
 interface ProfileSummaryProps {
-  profile: Profile;
+  profile?: Profile | null;
   email: string;
 }
 
@@ -21,7 +21,7 @@ export function ProfileSummary({ profile, email }: ProfileSummaryProps) {
           <User className="w-4 h-4 mr-3 mt-0.5 text-muted-foreground" />
           <div>
             <p className="text-sm font-medium leading-none">Name</p>
-            <p className="text-sm text-muted-foreground mt-1">{profile.full_name || "Not set"}</p>
+            <p className="text-sm text-muted-foreground mt-1">{profile?.full_name || "Not set"}</p>
           </div>
         </div>
         
@@ -37,7 +37,7 @@ export function ProfileSummary({ profile, email }: ProfileSummaryProps) {
           <Hash className="w-4 h-4 mr-3 mt-0.5 text-muted-foreground" />
           <div>
             <p className="text-sm font-medium leading-none">Enrollment Number</p>
-            <p className="text-sm text-muted-foreground mt-1">{profile.enrollment_number || "Not set"}</p>
+            <p className="text-sm text-muted-foreground mt-1">{profile?.enrollment_number || "Not set"}</p>
           </div>
         </div>
 

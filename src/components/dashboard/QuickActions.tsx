@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Plus, Bike, User, Package, Wallet, MessageSquare, BarChart3 } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { LogoutButton } from "@/components/auth/LogoutButton";
 
 export function QuickActions() {
   return (
@@ -45,6 +46,12 @@ export function QuickActions() {
             <User className="w-4 h-4 mr-3" /> Edit Profile
           </Button>
         </Link>
+        <div className="pt-2">
+          <LogoutButton 
+            variant="destructive" 
+            className="w-full justify-start h-11 bg-[var(--color-error)]/10 text-[var(--color-error)] hover:bg-[var(--color-error)]/20 hover:text-[var(--color-error)]" 
+          />
+        </div>
       </CardContent>
     </Card>
   );

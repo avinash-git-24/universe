@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LayoutDashboard, Users, Package, Settings, CreditCard, BarChart3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { LogoutButton } from "@/components/auth/LogoutButton";
 
 const navItems = [
   { label: "Overview", href: "/admin", icon: LayoutDashboard },
@@ -42,6 +43,19 @@ export function AdminSidebar() {
             );
           })}
         </nav>
+
+        <div className="mt-8 pt-4 border-t hidden md:block">
+          <LogoutButton 
+            variant="ghost" 
+            className="w-full justify-start text-muted-foreground hover:text-foreground" 
+          />
+        </div>
+        <div className="md:hidden mt-2 border-t pt-2 border-border/50 min-w-fit pr-4">
+          <LogoutButton 
+            variant="ghost" 
+            className="w-full justify-start text-muted-foreground hover:text-foreground" 
+          />
+        </div>
       </div>
     </aside>
   );

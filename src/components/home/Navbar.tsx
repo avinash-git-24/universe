@@ -13,6 +13,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, Zap } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ROUTES } from "@/constants/routes";
+import { createClient } from "@/lib/supabase/client";
+import { LogoutButton } from "@/components/auth/LogoutButton";
 
 const NAV_LINKS = [
   { label: "Home",         href: "/" },
@@ -85,7 +87,39 @@ function NavLinks({ scrolled }: { scrolled: boolean }) {
 
 // ─── CTA Buttons ──────────────────────────────────────────────────────────────
 
-function NavCTAs({ scrolled }: { scrolled: boolean }) {
+function NavCTAs({ scrolled, hasUser }: { scrolled: boolean; hasUser: boolean }) {
+  if (hasUser) {
+    return (
+      <div className="hidden md:flex items-center gap-3">
+        <Link
+          href={ROUTES.DASHBOARD}
+          className={cn(
+            "px-4 py-2 text-sm font-semibold rounded-[var(--radius-md)]",
+            "font-[family-name:var(--font-inter)]",
+            "transition-all duration-200",
+            scrolled
+              ? "text-[var(--color-text-secondary)] hover:text-[var(--color-text)] hover:bg-[var(--color-bg-subtle)]"
+              : "text-white/80 hover:text-white hover:bg-white/10"
+          )}
+        >
+          Dashboard
+        </Link>
+        <LogoutButton 
+          variant="ghost" 
+          showIcon={false}
+          className={cn(
+            "px-4 py-2 text-sm font-semibold h-auto rounded-[var(--radius-md)]",
+            "font-[family-name:var(--font-inter)]",
+            "transition-all duration-200",
+            scrolled 
+              ? "bg-transparent border-[var(--color-border)] text-[var(--color-text-secondary)] hover:text-[var(--color-text)] hover:bg-[var(--color-bg-subtle)]"
+              : "bg-transparent border-white/20 text-white/80 hover:text-white hover:bg-white/10"
+          )} 
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="hidden md:flex items-center gap-3">
       {/* Login — ghost */}
@@ -130,9 +164,11 @@ function NavCTAs({ scrolled }: { scrolled: boolean }) {
 function MobileMenu({
   open,
   onClose,
+  hasUser,
 }: {
   open: boolean;
   onClose: () => void;
+  hasUser: boolean;
 }) {
   return (
     <AnimatePresence>
@@ -180,32 +216,56 @@ function MobileMenu({
 
             {/* Auth */}
             <div className="flex flex-col gap-2 p-1">
-              <Link
-                href={ROUTES.LOGIN}
-                onClick={onClose}
-                className={cn(
-                  "block px-4 py-3 text-sm font-semibold text-center",
-                  "text-[var(--color-text-secondary)] rounded-[var(--radius-md)]",
-                  "hover:bg-[var(--color-bg-subtle)]",
-                  "font-[family-name:var(--font-inter)]",
-                  "transition-colors duration-150"
-                )}
-              >
-                Login
-              </Link>
-              <Link
-                href={ROUTES.REGISTER}
-                onClick={onClose}
-                className={cn(
-                  "block px-4 py-3 text-sm font-semibold text-center",
-                  "bg-[var(--color-primary)] text-white rounded-[var(--radius-md)]",
-                  "hover:bg-[var(--color-primary-hover)]",
-                  "font-[family-name:var(--font-inter)]",
-                  "transition-colors duration-150"
-                )}
-              >
-                Get Started — It&apos;s Free
-              </Link>
+              {hasUser ? (
+                <>
+                  <Link
+                    href={ROUTES.DASHBOARD}
+                    onClick={onClose}
+                    className={cn(
+                      "block px-4 py-3 text-sm font-semibold text-center",
+                      "text-[var(--color-text-secondary)] rounded-[var(--radius-md)]",
+                      "hover:bg-[var(--color-bg-subtle)]",
+                      "font-[family-name:var(--font-inter)]",
+                      "transition-colors duration-150"
+                    )}
+                  >
+                    Dashboard
+                  </Link>
+                  <LogoutButton 
+                    variant="ghost"
+                    className="w-full justify-center px-4 py-3 h-auto text-sm font-semibold text-[var(--color-text-secondary)] rounded-[var(--radius-md)] hover:bg-[var(--color-bg-subtle)] transition-colors duration-150"
+                  />
+                </>
+              ) : (
+                <>
+                  <Link
+                    href={ROUTES.LOGIN}
+                    onClick={onClose}
+                    className={cn(
+                      "block px-4 py-3 text-sm font-semibold text-center",
+                      "text-[var(--color-text-secondary)] rounded-[var(--radius-md)]",
+                      "hover:bg-[var(--color-bg-subtle)]",
+                      "font-[family-name:var(--font-inter)]",
+                      "transition-colors duration-150"
+                    )}
+                  >
+                    Login
+                  </Link>
+                  <Link
+                    href={ROUTES.REGISTER}
+                    onClick={onClose}
+                    className={cn(
+                      "block px-4 py-3 text-sm font-semibold text-center",
+                      "bg-[var(--color-primary)] text-white rounded-[var(--radius-md)]",
+                      "hover:bg-[var(--color-primary-hover)]",
+                      "font-[family-name:var(--font-inter)]",
+                      "transition-colors duration-150"
+                    )}
+                  >
+                    Get Started — It&apos;s Free
+                  </Link>
+                </>
+              )}
             </div>
           </nav>
         </motion.div>
@@ -219,6 +279,20 @@ function MobileMenu({
 export function Navbar() {
   const [scrolled, setScrolled]   = useState(false);
   const [menuOpen, setMenuOpen]   = useState(false);
+  const [hasUser, setHasUser]     = useState(false);
+  const supabase = createClient();
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      setHasUser(!!user);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setHasUser(!!session?.user);
+    });
+
+    return () => subscription.unsubscribe();
+  }, [supabase]);
 
   const handleScroll = useCallback(() => {
     setScrolled(window.scrollY > 20);
@@ -265,7 +339,7 @@ export function Navbar() {
         <div className="relative flex items-center justify-between px-5 py-3">
           <Logo scrolled={scrolled} />
           <NavLinks scrolled={scrolled} />
-          <NavCTAs scrolled={scrolled} />
+          <NavCTAs scrolled={scrolled} hasUser={hasUser} />
 
           {/* Hamburger */}
           <motion.button
@@ -295,7 +369,7 @@ export function Navbar() {
       </motion.div>
 
       {/* Mobile menu */}
-      <MobileMenu open={menuOpen} onClose={() => setMenuOpen(false)} />
+      <MobileMenu open={menuOpen} onClose={() => setMenuOpen(false)} hasUser={hasUser} />
     </motion.header>
   );
 }
