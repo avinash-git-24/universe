@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { formatDistanceToNow } from "date-fns";
+import { MessageSquare } from "lucide-react";
 import { ConversationWithDetails } from "@/lib/database/chat";
 import { createClient } from "@/lib/supabase/client";
 import { Avatar } from "@/components/ui/avatar";
@@ -83,8 +84,10 @@ export function ChatList({ userId, initialConversations, activeConversationId, o
       </div>
       <div className="flex-1 overflow-y-auto">
         {conversations.length === 0 ? (
-          <div className="p-8 text-center text-muted-foreground">
-            No conversations yet.
+          <div className="p-8 text-center text-muted-foreground space-y-2">
+            <MessageSquare className="w-10 h-10 mx-auto text-muted-foreground/30" />
+            <p className="font-semibold text-foreground">No Conversations Yet</p>
+            <p className="text-xs">Start a chat from a delivery request or user profile.</p>
           </div>
         ) : (
           conversations.map((conv) => {

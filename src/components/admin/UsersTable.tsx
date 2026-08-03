@@ -91,8 +91,10 @@ export function UsersTable({ users }: UsersTableProps) {
           <tbody className="divide-y">
             {filteredUsers.length === 0 ? (
               <tr>
-                <td colSpan={5} className="px-6 py-8 text-center text-muted-foreground">
-                  No users found.
+                <td colSpan={5} className="px-6 py-12 text-center text-muted-foreground">
+                  <Search className="w-10 h-10 mx-auto mb-3 text-muted-foreground/30" />
+                  <p className="font-semibold text-base text-foreground">No users found</p>
+                  <p className="text-xs mt-1">Try adjusting your search query or role filter.</p>
                 </td>
               </tr>
             ) : (

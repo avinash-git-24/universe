@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { Send, Loader2 } from "lucide-react";
+import { Send } from "lucide-react";
+import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
 import { createClient } from "@/lib/supabase/client";
 import { Message, ConversationWithDetails, getMessages, sendMessage, markConversationAsRead } from "@/lib/database/chat";
 import { MessageBubble } from "@/components/chat/MessageBubble";
@@ -138,7 +139,7 @@ export function ChatWindow({ userId, conversation }: ChatWindowProps) {
       <div className="flex-1 overflow-y-auto p-4 flex flex-col relative z-0">
         {loading ? (
           <div className="flex-1 flex items-center justify-center">
-            <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
+            <LoadingSpinner size="lg" label="Loading conversation..." />
           </div>
         ) : (
           <>
