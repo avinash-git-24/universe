@@ -2,13 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Users, Package, Settings } from "lucide-react";
+import { LayoutDashboard, Users, Package, Settings, CreditCard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const navItems = [
   { label: "Overview", href: "/admin", icon: LayoutDashboard },
   { label: "Users", href: "/admin/users", icon: Users },
   { label: "Deliveries", href: "/admin/deliveries", icon: Package },
+  { label: "Payments", href: "/admin/payments", icon: CreditCard },
 ];
 
 export function AdminSidebar() {

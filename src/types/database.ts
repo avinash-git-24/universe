@@ -294,18 +294,111 @@ export type Database = {
           }
         ];
       };
+      transactions: {
+        Row: {
+          id: string;
+          wallet_id: string;
+          amount: number;
+          type: "deposit" | "withdrawal" | "payment" | "earning" | "refund";
+          status: "pending" | "completed" | "failed";
+          reference_id: string | null;
+          description: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          wallet_id: string;
+          amount: number;
+          type: "deposit" | "withdrawal" | "payment" | "earning" | "refund";
+          status?: "pending" | "completed" | "failed";
+          reference_id?: string | null;
+          description?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          wallet_id?: string;
+          amount?: number;
+          type?: "deposit" | "withdrawal" | "payment" | "earning" | "refund";
+          status?: "pending" | "completed" | "failed";
+          reference_id?: string | null;
+          description?: string | null;
+          created_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "transactions_wallet_id_fkey";
+            columns: ["wallet_id"];
+            isOneToOne: false;
+            referencedRelation: "wallets";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
+      wallets: {
+        Row: {
+          id: string;
+          profile_id: string;
+          balance: number;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          profile_id: string;
+          balance?: number;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          profile_id?: string;
+          balance?: number;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "wallets_profile_id_fkey";
+            columns: ["profile_id"];
+            isOneToOne: true;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
     };
     Views: {
       [_ in never]: never;
     };
     Functions: {
-      [_ in never]: never;
+      is_admin: {
+        Args: { user_id: string };
+        Returns: boolean;
+      };
+      is_conversation_participant: {
+        Args: { conv_id: string; usr_id: string };
+        Returns: boolean;
+      };
+      mock_deposit: {
+        Args: { user_id: string; deposit_amount: number };
+        Returns: {
+          id: string;
+          profile_id: string;
+          balance: number;
+          created_at: string;
+          updated_at: string;
+        };
+      };
     };
     Enums: {
-      user_role: "student" | "runner";
+      user_role: "student" | "runner" | "admin";
       request_status: "pending" | "accepted" | "picked_up" | "delivered" | "cancelled";
       assignment_status: "active" | "completed" | "cancelled";
       message_status: "sent" | "delivered" | "read";
+      account_status: "active" | "suspended" | "pending";
+      transaction_type: "deposit" | "withdrawal" | "payment" | "earning" | "refund";
+      transaction_status: "pending" | "completed" | "failed";
     };
     CompositeTypes: {
       [_ in never]: never;
