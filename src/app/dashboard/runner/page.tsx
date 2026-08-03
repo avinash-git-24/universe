@@ -1,6 +1,10 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { getPendingRequestsWithItems, getActiveRunnerAssignment } from "@/lib/database/requests";
+import { 
+  getPendingRequestsWithItems, 
+  getRunnerActiveDeliveries,
+  getRunnerDeliveryHistory 
+} from "@/lib/database/requests";
 import { RunnerDashboardClient } from "@/components/runner/RunnerDashboardClient";
 
 export default async function RunnerDashboardPage() {
@@ -11,11 +15,14 @@ export default async function RunnerDashboardPage() {
     redirect("/login?redirectTo=/dashboard/runner");
   }
 
-  // Fetch active assignment to prevent accepting multiple
-  const activeAssignment = await getActiveRunnerAssignment(supabase, user.id);
-  
-  // Fetch pending requests
+  // Fetch pending available requests
   const pendingRequests = await getPendingRequestsWithItems(supabase);
+
+  // Fetch active deliveries for current runner (accepted, picked_up, in_transit)
+  const activeDeliveries = await getRunnerActiveDeliveries(supabase, user.id);
+
+  // Fetch delivery history for current runner (delivered, cancelled)
+  const deliveryHistory = await getRunnerDeliveryHistory(supabase, user.id);
 
   return (
     <div className="min-h-screen bg-secondary/30 pt-24 pb-12 px-4">
@@ -28,7 +35,8 @@ export default async function RunnerDashboardPage() {
         <RunnerDashboardClient 
           runnerId={user.id} 
           initialPending={pendingRequests} 
-          activeAssignment={activeAssignment} 
+          initialActive={activeDeliveries}
+          initialHistory={deliveryHistory}
         />
       </div>
     </div>

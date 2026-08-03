@@ -151,6 +151,62 @@ export async function getActiveRunnerAssignment(
 }
 
 /**
+ * Retrieves all active delivery assignments for a runner.
+ */
+export async function getRunnerActiveDeliveries(
+  supabase: SupabaseClient<Database>,
+  runnerId: string
+): Promise<AssignmentWithRequest[]> {
+  const { data, error } = await supabase
+    .from("delivery_assignments")
+    .select(`
+      *,
+      request:delivery_requests(
+        *,
+        items:request_items(*)
+      )
+    `)
+    .eq("runner_id", runnerId)
+    .eq("status", "active")
+    .order("assigned_at", { ascending: false });
+
+  if (error) {
+    console.error("Error fetching runner active deliveries:", error);
+    return [];
+  }
+
+  return (data as unknown as AssignmentWithRequest[]) || [];
+}
+
+/**
+ * Retrieves past delivery assignments for a runner (completed or cancelled).
+ */
+export async function getRunnerDeliveryHistory(
+  supabase: SupabaseClient<Database>,
+  runnerId: string
+): Promise<AssignmentWithRequest[]> {
+  const { data, error } = await supabase
+    .from("delivery_assignments")
+    .select(`
+      *,
+      request:delivery_requests(
+        *,
+        items:request_items(*)
+      )
+    `)
+    .eq("runner_id", runnerId)
+    .in("status", ["completed", "cancelled"])
+    .order("assigned_at", { ascending: false });
+
+  if (error) {
+    console.error("Error fetching runner delivery history:", error);
+    return [];
+  }
+
+  return (data as unknown as AssignmentWithRequest[]) || [];
+}
+
+/**
  * Accepts a delivery request, assigning it to the runner.
  */
 export async function acceptRequest(
