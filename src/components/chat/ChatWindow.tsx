@@ -37,7 +37,6 @@ export function ChatWindow({ userId, conversation }: ChatWindowProps) {
         // Mark read
         await markConversationAsRead(supabase, conversation.id, userId);
       }
-      // eslint-disable-next-line react-hooks/exhaustive-deps
     }
     
     load();
@@ -83,9 +82,8 @@ export function ChatWindow({ userId, conversation }: ChatWindowProps) {
     return () => {
       supabase.removeChannel(msgChannel);
       supabase.removeChannel(typingChannel);
-      // eslint-disable-next-line react-hooks/exhaustive-deps
     };
-  }, [conversation.id, userId]);
+  }, [conversation.id, userId, supabase]);
 
   // Auto-scroll
   useEffect(() => {
