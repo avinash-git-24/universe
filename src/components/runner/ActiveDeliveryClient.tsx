@@ -67,6 +67,16 @@ export function ActiveDeliveryClient({ initialAssignment }: ActiveDeliveryClient
         return (
           <Button 
             className="w-full h-14 text-lg font-bold" 
+            onClick={() => handleUpdateStatus("in_transit")}
+            disabled={isUpdating}
+          >
+            Start Transit
+          </Button>
+        );
+      case "in_transit":
+        return (
+          <Button 
+            className="w-full h-14 text-lg font-bold" 
             onClick={() => handleUpdateStatus("delivered")}
             disabled={isUpdating}
           >
@@ -78,12 +88,21 @@ export function ActiveDeliveryClient({ initialAssignment }: ActiveDeliveryClient
     }
   };
 
+  const getStatusBadgeLabel = () => {
+    switch (status) {
+      case "accepted": return "Heading to Pickup";
+      case "picked_up": return "Items Picked Up";
+      case "in_transit": return "In Transit to Dropoff";
+      default: return "Active";
+    }
+  };
+
   return (
     <div className="space-y-6 max-w-lg mx-auto w-full">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold tracking-tight">Active Delivery</h2>
-        <Badge variant={status === "picked_up" ? "primary" : "neutral"} className="text-sm px-3 py-1">
-          {status === "accepted" ? "Heading to Pickup" : "Heading to Dropoff"}
+        <Badge variant={status === "in_transit" || status === "picked_up" ? "primary" : "neutral"} className="text-sm px-3 py-1">
+          {getStatusBadgeLabel()}
         </Badge>
       </div>
 

@@ -53,6 +53,7 @@ export function DeliveriesTable({ requests }: DeliveriesTableProps) {
           <option value="pending">Pending</option>
           <option value="accepted">Accepted</option>
           <option value="picked_up">Picked Up</option>
+          <option value="in_transit">In Transit</option>
           <option value="delivered">Delivered</option>
           <option value="cancelled">Cancelled</option>
         </select>

@@ -1,5 +1,5 @@
 import { Database } from "@/types/database";
-import { CheckCircle2, Clock, Package, MapPin } from "lucide-react";
+import { CheckCircle2, Clock, Package, Truck, MapPin } from "lucide-react";
 
 type RequestStatus = Database["public"]["Enums"]["request_status"];
 
@@ -11,6 +11,7 @@ const STAGES = [
   { id: "pending", label: "Requested", icon: Clock },
   { id: "accepted", label: "Accepted", icon: CheckCircle2 },
   { id: "picked_up", label: "Picked Up", icon: Package },
+  { id: "in_transit", label: "In Transit", icon: Truck },
   { id: "delivered", label: "Delivered", icon: MapPin },
 ] as const;
 

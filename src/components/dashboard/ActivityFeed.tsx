@@ -1,5 +1,5 @@
 import { formatDistanceToNow } from "date-fns";
-import { Clock, CheckCircle2, Package, MapPin, AlertCircle } from "lucide-react";
+import { Clock, CheckCircle2, Package, Truck, MapPin, AlertCircle } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import type { StudentRequestWithDetails } from "@/lib/database/requests";
 
@@ -26,6 +26,10 @@ export function ActivityFeed({ requests }: ActivityFeedProps) {
         icon = Package;
         action = "was picked up";
         color = "text-accent";
+      } else if (req.status === "in_transit") {
+        icon = Truck;
+        action = "is in transit";
+        color = "text-indigo-500";
       } else if (req.status === "delivered") {
         icon = MapPin;
         action = "was delivered successfully";

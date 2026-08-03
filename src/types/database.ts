@@ -46,7 +46,7 @@ export type Database = {
         Row: {
           id: string;
           requester_id: string;
-          status: "pending" | "accepted" | "picked_up" | "delivered" | "cancelled";
+          status: "pending" | "accepted" | "picked_up" | "in_transit" | "delivered" | "cancelled";
           pickup_location: string;
           dropoff_location: string;
           instructions: string | null;
@@ -58,7 +58,7 @@ export type Database = {
         Insert: {
           id?: string;
           requester_id: string;
-          status?: "pending" | "accepted" | "picked_up" | "delivered" | "cancelled";
+          status?: "pending" | "accepted" | "picked_up" | "in_transit" | "delivered" | "cancelled";
           pickup_location: string;
           dropoff_location: string;
           instructions?: string | null;
@@ -70,7 +70,7 @@ export type Database = {
         Update: {
           id?: string;
           requester_id?: string;
-          status?: "pending" | "accepted" | "picked_up" | "delivered" | "cancelled";
+          status?: "pending" | "accepted" | "picked_up" | "in_transit" | "delivered" | "cancelled";
           pickup_location?: string;
           dropoff_location?: string;
           instructions?: string | null;
@@ -393,7 +393,7 @@ export type Database = {
     };
     Enums: {
       user_role: "student" | "runner" | "admin";
-      request_status: "pending" | "accepted" | "picked_up" | "delivered" | "cancelled";
+      request_status: "pending" | "accepted" | "picked_up" | "in_transit" | "delivered" | "cancelled";
       assignment_status: "active" | "completed" | "cancelled";
       message_status: "sent" | "delivered" | "read";
       account_status: "active" | "suspended" | "pending";

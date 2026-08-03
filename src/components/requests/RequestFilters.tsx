@@ -12,6 +12,7 @@ const FILTERS: { label: string; value: RequestStatus | "all" }[] = [
   { label: "Pending", value: "pending" },
   { label: "Accepted", value: "accepted" },
   { label: "Picked Up", value: "picked_up" },
+  { label: "In Transit", value: "in_transit" },
   { label: "Delivered", value: "delivered" },
   { label: "Cancelled", value: "cancelled" },
 ];
