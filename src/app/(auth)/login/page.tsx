@@ -95,7 +95,7 @@ function LoginContent() {
           >
             {callbackError === "auth_callback_failed" 
               ? "Authentication failed. Please try again." 
-              : decodeURIComponent(callbackError)}
+              : callbackError}
           </div>
         )}
 
