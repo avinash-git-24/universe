@@ -41,10 +41,25 @@ In Vercel, you must configure the following environment variables under **Settin
 ## 5. Production Readiness Checklist
 
 Before announcing the launch, verify the following:
+
+### Core Functionality
 - [ ] **Routing:** Ensure dynamic routes (e.g., `/dashboard/requests/[id]`) resolve correctly.
 - [ ] **Middleware:** Ensure trying to access `/dashboard` without being logged in correctly redirects to `/login`.
-- [ ] **Realtime:** Verify that Supabase realtime connections (WebSockets) function properly behind Vercel's edge network (used in Chat & Notifications).
-- [ ] **Performance:** Monitor Vercel's Speed Insights or Lighthouse scores. Image domains must be whitelisted in `next.config.ts`. (Currently `*.universe.app` is whitelisted).
+- [ ] **Realtime:** Verify that Supabase realtime connections (WebSockets) function properly.
+
+### Security
+- [ ] **Content Security Policy:** Verify the strict CSP in `next.config.ts` allows necessary external scripts/styles (Supabase, Vercel) while blocking others.
+- [ ] **Environment Variables:** Double-check that no sensitive service-role keys are exposed to the browser.
+- [ ] **Row Level Security (RLS):** Test that authenticated users cannot access data belonging to other users.
+
+### Performance
+- [ ] **Image Optimization:** Ensure external images (e.g., avatars) are correctly optimized by `next/image` and external domains are listed in `next.config.ts`.
+- [ ] **Caching:** Leverage Next.js App Router caching. Verify aggressive cache control hasn't broken dynamic pages.
+
+### SEO & Accessibility
+- [ ] **Metadata:** Verify `rootMetadata` properly injects titles and descriptions across all pages.
+- [ ] **Sitemap & Robots:** Ensure `sitemap.xml` and `robots.txt` are reachable and accurate.
+- [ ] **ARIA Labels:** Verify interactive elements have correct `aria-label` tags for screen readers.
 
 ## 6. Common Issues
 
