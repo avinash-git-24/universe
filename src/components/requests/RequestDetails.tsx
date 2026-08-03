@@ -112,6 +112,12 @@ export function RequestDetails({ request }: RequestDetailsProps) {
                   <div>
                     <p className="font-semibold">{runner.full_name || "Runner " + runner.id.substring(0,4)}</p>
                     <p className="text-sm text-muted-foreground">Assigned to this delivery</p>
+                    
+                    <div className="mt-3">
+                      <a href={`/dashboard/chat?startWithUserId=${runner.id}`} className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-9 px-4 py-2">
+                        Message {runner.full_name?.split(" ")[0] || "Runner"}
+                      </a>
+                    </div>
                   </div>
                 </div>
               ) : (

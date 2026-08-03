@@ -201,6 +201,99 @@ export type Database = {
         };
         Relationships: [];
       };
+      conversations: {
+        Row: {
+          id: string;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      conversation_participants: {
+        Row: {
+          conversation_id: string;
+          profile_id: string;
+          last_read_at: string | null;
+        };
+        Insert: {
+          conversation_id: string;
+          profile_id: string;
+          last_read_at?: string | null;
+        };
+        Update: {
+          conversation_id?: string;
+          profile_id?: string;
+          last_read_at?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "conversation_participants_conversation_id_fkey";
+            columns: ["conversation_id"];
+            isOneToOne: false;
+            referencedRelation: "conversations";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "conversation_participants_profile_id_fkey";
+            columns: ["profile_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
+      messages: {
+        Row: {
+          id: string;
+          conversation_id: string;
+          sender_id: string;
+          content: string;
+          status: "sent" | "delivered" | "read";
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          conversation_id: string;
+          sender_id: string;
+          content: string;
+          status?: "sent" | "delivered" | "read";
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          conversation_id?: string;
+          sender_id?: string;
+          content?: string;
+          status?: "sent" | "delivered" | "read";
+          created_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "messages_conversation_id_fkey";
+            columns: ["conversation_id"];
+            isOneToOne: false;
+            referencedRelation: "conversations";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "messages_sender_id_fkey";
+            columns: ["sender_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
     };
     Views: {
       [_ in never]: never;
@@ -212,6 +305,7 @@ export type Database = {
       user_role: "student" | "runner";
       request_status: "pending" | "accepted" | "picked_up" | "delivered" | "cancelled";
       assignment_status: "active" | "completed" | "cancelled";
+      message_status: "sent" | "delivered" | "read";
     };
     CompositeTypes: {
       [_ in never]: never;
