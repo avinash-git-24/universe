@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { formatDistanceToNow } from "date-fns";
 import { MapPin, Package, Clock, IndianRupee } from "lucide-react";
@@ -24,6 +24,41 @@ export function RunnerDashboardClient({
   const router = useRouter();
   const [pendingRequests, setPendingRequests] = useState(initialPending);
   const [isAccepting, setIsAccepting] = useState<string | null>(null);
+
+  useEffect(() => {
+    const supabase = createClient();
+    
+    // Subscribe to new pending requests
+    const channel = supabase
+      .channel("realtime:runner_requests")
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "delivery_requests",
+          filter: "status=eq.pending",
+        },
+        async (payload) => {
+          // Since the payload only contains the base request (without items),
+          // we need to fetch the newly created request with its items.
+          const { data, error } = await supabase
+            .from("delivery_requests")
+            .select("*, items:request_items(*)")
+            .eq("id", payload.new.id)
+            .single();
+
+          if (!error && data) {
+            setPendingRequests((prev) => [data as unknown as RequestWithItems, ...prev]);
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
 
   const handleAccept = async (requestId: string) => {
     setIsAccepting(requestId);

@@ -6,6 +6,7 @@ import { getStudentRequests } from "@/lib/database/requests";
 import { ROUTES } from "@/constants/routes";
 import { Button } from "@/components/ui/button";
 import { RequestList } from "@/components/requests/RequestList";
+import { NotificationBell } from "@/components/notifications/NotificationBell";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -34,7 +35,8 @@ export default async function MyRequestsPage() {
             <p className="text-muted-foreground mt-1">View, track, and manage your delivery history.</p>
           </div>
           
-          <div className="flex gap-2">
+          <div className="flex gap-2 items-center">
+            <NotificationBell />
             <Link href="/dashboard/requests">
               <Button variant="secondary" size="icon">
                 <RefreshCw className="w-4 h-4" />
