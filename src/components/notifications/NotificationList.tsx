@@ -20,6 +20,7 @@ import { useRealtime } from "@/providers/RealtimeProvider";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Notification } from "@/lib/database/notifications";
+import { EmptyState } from "@/components/shared/EmptyState";
 
 interface NotificationListProps {
   onClose: () => void;
@@ -155,15 +156,16 @@ export function NotificationList({ onClose }: NotificationListProps) {
       {/* List Content */}
       <CardContent className="p-0 max-h-[380px] overflow-y-auto">
         {filteredNotifications.length === 0 ? (
-          <div className="p-8 text-center text-sm text-muted-foreground space-y-2">
-            <BellOff className="w-10 h-10 mx-auto text-muted-foreground/30" />
-            <p className="font-semibold text-foreground">No Notifications</p>
-            <p className="text-xs">
-              {selectedCategory === "all"
+          <EmptyState
+            icon={BellOff}
+            title="No Notifications"
+            description={
+              selectedCategory === "all"
                 ? "You're all caught up! New notifications will appear here."
-                : `No ${selectedCategory} notifications found.`}
-            </p>
-          </div>
+                : `No ${selectedCategory} notifications found.`
+            }
+            className="border-none bg-transparent my-4"
+          />
         ) : (
           <div className="divide-y">
             {filteredNotifications.map((notif) => (
