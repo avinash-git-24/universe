@@ -1,10 +1,10 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { ROUTES } from "@/constants/routes";
-import { getAdminAnalytics, aggregateDailyVolume } from "@/lib/database/analytics";
+import { getAdminAnalytics, getComprehensiveAdminAnalytics, aggregateDailyVolume } from "@/lib/database/analytics";
 import { StatCard } from "@/components/analytics/StatCard";
 import { VolumeChart } from "@/components/analytics/VolumeChart";
-import { ExportReportButton } from "@/components/analytics/ExportReportButton";
+import { AnalyticsExportButtons } from "@/components/analytics/AnalyticsExportButtons";
 import { Users, Activity, Banknote } from "lucide-react";
 import type { Metadata } from "next";
 
@@ -18,7 +18,11 @@ export default async function AdminAnalyticsPage() {
 
   if (!user) redirect(ROUTES.LOGIN);
 
-  const analytics = await getAdminAnalytics(supabase);
+  const [analytics, comprehensiveAnalytics] = await Promise.all([
+    getAdminAnalytics(supabase),
+    getComprehensiveAdminAnalytics(supabase),
+  ]);
+
   const chartData = aggregateDailyVolume(analytics.transactionsData);
 
   return (
@@ -29,10 +33,7 @@ export default async function AdminAnalyticsPage() {
           <p className="text-muted-foreground mt-1">Platform-wide statistics for the last 30 days.</p>
         </div>
         
-        <div className="flex gap-2">
-          <ExportReportButton data={analytics.requestsData as Record<string, unknown>[]} filename="admin_requests_report" />
-          <ExportReportButton data={analytics.transactionsData as Record<string, unknown>[]} filename="admin_transactions_report" />
-        </div>
+        <AnalyticsExportButtons analytics={comprehensiveAnalytics} filenamePrefix="analytics" />
       </div>
 
       <div className="grid gap-4 md:grid-cols-3">

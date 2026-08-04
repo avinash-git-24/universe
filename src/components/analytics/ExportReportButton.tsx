@@ -2,7 +2,9 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Download, Loader2 } from "lucide-react";
+import { Download } from "lucide-react";
+import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
+import { convertObjectsToCSV, triggerFileDownload, getExportFilename } from "@/lib/utils/export";
 
 interface ExportReportButtonProps {
   data: Record<string, unknown>[];
@@ -21,35 +23,9 @@ export function ExportReportButton({ data, filename }: ExportReportButtonProps) 
         return;
       }
 
-      // Extract headers from the first object
-      const headers = Object.keys(data[0]);
-      
-      // Convert to CSV
-      const csvContent = [
-        headers.join(","),
-        ...data.map(row => 
-          headers.map(header => {
-            const val = row[header] === null || row[header] === undefined ? "" : String(row[header]);
-            // Escape quotes and wrap in quotes if contains comma
-            const escaped = val.replace(/"/g, '""');
-            return escaped.includes(",") || escaped.includes("\n") || escaped.includes('"') 
-              ? `"${escaped}"` 
-              : escaped;
-          }).join(",")
-        )
-      ].join("\n");
-
-      // Create blob and download
-      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.setAttribute("href", url);
-      link.setAttribute("download", `${filename}_${new Date().toISOString().split('T')[0]}.csv`);
-      link.style.visibility = "hidden";
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      
+      const csvContent = convertObjectsToCSV(data);
+      const outputFilename = getExportFilename(filename, "csv");
+      triggerFileDownload(csvContent, outputFilename, "text/csv");
     } catch (err) {
       console.error("Export failed", err);
       alert("Failed to export data");
@@ -59,9 +35,20 @@ export function ExportReportButton({ data, filename }: ExportReportButtonProps) 
   };
 
   return (
-    <Button variant="secondary" onClick={handleExport} disabled={isExporting || !data.length}>
-      {isExporting ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Download className="w-4 h-4 mr-2" />}
-      Export CSV
+    <Button 
+      variant="secondary" 
+      size="sm"
+      onClick={handleExport} 
+      disabled={isExporting || !data.length}
+      className="gap-1.5 text-xs font-semibold"
+      aria-label={`Export ${filename} as CSV`}
+    >
+      {isExporting ? (
+        <LoadingSpinner size="xs" label="Exporting CSV…" />
+      ) : (
+        <Download className="w-3.5 h-3.5" />
+      )}
+      <span>Export CSV</span>
     </Button>
   );
 }
