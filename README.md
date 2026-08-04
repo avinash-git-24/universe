@@ -1,5 +1,7 @@
 # 🌌 UniVerse — On-Campus Peer-to-Peer Delivery Platform
 
+[![CI / CD Pipeline](https://github.com/avinash-git-24/universe/actions/workflows/ci.yml/badge.svg)](https://github.com/avinash-git-24/universe/actions/workflows/ci.yml)
+[![Node.js](https://img.shields.io/badge/Node.js-20.x%20%7C%2022.x-green?style=flat-square&logo=node.js)](https://nodejs.org/)
 [![Next.js](https://img.shields.io/badge/Next.js-16.2.12-black?style=flat-square&logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-06B6D4?style=flat-square&logo=tailwindcss)](https://tailwindcss.com/)
