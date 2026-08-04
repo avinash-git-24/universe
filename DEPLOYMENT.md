@@ -36,7 +36,43 @@ Configure the following environment variables in Vercel Project Settings:
 
 ---
 
-## 3. Post-Deployment Verification Checklist
+## 3. Docker Containerization Setup
+
+UniVerse supports multi-stage Docker production deployment out of the box using Node 20 LTS Alpine.
+
+### Environment Variables
+Ensure `.env.local` contains valid Supabase keys before running Docker:
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
+- `NEXT_PUBLIC_APP_URL`
+
+### Docker Commands
+
+#### Build Docker Image
+```bash
+docker build -t universe-app .
+```
+
+#### Run Container Manually
+```bash
+docker run -d -p 3000:3000 --env-file .env.local --name universe_app universe-app
+```
+
+#### Run with Docker Compose
+```bash
+# Start container in detached mode
+docker compose up -d
+
+# Stop container
+docker compose down
+
+# View logs
+docker compose logs -f
+```
+
+---
+
+## 4. Post-Deployment Verification Checklist
 
 - [ ] **Auth Verification**: Register a new student account, verify email redirection, and test sign in / sign out.
 - [ ] **Request Workflow**: Create a new delivery request, log in as a runner, accept the request, and advance status to `Delivered`.

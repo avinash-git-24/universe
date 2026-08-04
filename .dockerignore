@@ -1,0 +1,13 @@
+node_modules
+.next
+.git
+.github
+logs
+coverage
+*.log
+.env*.local
+.env.local
+TESTING.md
+ARCHITECTURE.md
+DEPLOYMENT.md
+RELEASE_CHECKLIST.md
