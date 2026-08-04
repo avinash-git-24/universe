@@ -7,3 +7,5 @@ export * from "./AnimatedWrapper";
 export * from "./ErrorState";
 export * from "./EmptyState";
 export * from "./SkeletonLoaders";
+export * from "./ErrorBoundary";
+export * from "./OfflineBanner";
