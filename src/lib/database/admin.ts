@@ -2,6 +2,8 @@ import { SupabaseClient } from "@supabase/supabase-js";
 import { Database } from "@/types/database";
 import { Profile, StudentRequestWithDetails } from "./requests";
 
+export * from "./analytics";
+
 export interface AdminProfile extends Omit<Profile, 'role'> {
   role: "student" | "runner" | "admin";
   account_status: "active" | "suspended";
