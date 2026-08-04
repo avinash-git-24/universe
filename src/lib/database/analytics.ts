@@ -1,6 +1,7 @@
 import { SupabaseClient } from "@supabase/supabase-js";
 import { Database } from "@/types/database";
-import { startOfDay, subDays, format } from "date-fns";
+import { startOfDay, endOfDay, startOfMonth, endOfMonth, subDays, subMonths, format } from "date-fns";
+import { AnalyticsFilterState } from "@/types/analytics";
 
 export type ProfileRow = Database["public"]["Tables"]["profiles"]["Row"];
 export type DeliveryRequestRow = Database["public"]["Tables"]["delivery_requests"]["Row"];
@@ -72,6 +73,55 @@ export interface FullAdminAnalytics {
   trends: AnalyticsTrendData;
   runnerMetrics: RunnerMetricsSummary;
   studentMetrics: StudentMetricsSummary;
+}
+
+// ─── Phase 9B.2 Date Filter Bounds Helper ────────────────────────────────────
+
+export function getDateRangeBounds(filter: AnalyticsFilterState): { start: Date | null; end: Date | null } {
+  const now = new Date();
+  switch (filter.quickRange) {
+    case "today":
+      return { start: startOfDay(now), end: endOfDay(now) };
+    case "7d":
+      return { start: startOfDay(subDays(now, 7)), end: endOfDay(now) };
+    case "30d":
+      return { start: startOfDay(subDays(now, 30)), end: endOfDay(now) };
+    case "this_month":
+      return { start: startOfMonth(now), end: endOfMonth(now) };
+    case "last_month": {
+      const prevMonth = subMonths(now, 1);
+      return { start: startOfMonth(prevMonth), end: endOfMonth(prevMonth) };
+    }
+    case "custom": {
+      const start = filter.startDate ? startOfDay(new Date(filter.startDate)) : null;
+      const end = filter.endDate ? endOfDay(new Date(filter.endDate)) : null;
+      return { start, end };
+    }
+    case "all_time":
+    default:
+      return { start: null, end: null };
+  }
+}
+
+export function filterDatasetByDate<T>(
+  items: T[],
+  bounds: { start: Date | null; end: Date | null },
+  dateExtractor: (item: T) => string = (item: unknown) => {
+    const obj = item as Record<string, unknown>;
+    return String(obj.created_at || obj.assigned_at || "");
+  }
+): T[] {
+  const { start, end } = bounds;
+  if (!start && !end) return items;
+
+  return items.filter((item) => {
+    const rawDate = dateExtractor(item);
+    if (!rawDate) return true;
+    const itemDate = new Date(rawDate);
+    if (start && itemDate < start) return false;
+    if (end && itemDate > end) return false;
+    return true;
+  });
 }
 
 // ─── Existing Helper Functions (Preserved for Backwards Compatibility) ─────────
@@ -382,10 +432,48 @@ export function calculateStudentMetrics(
 }
 
 /**
+ * Computes full admin analytics from datasets, optional date filtering.
+ */
+export function computeAdminAnalyticsFromData(
+  allProfiles: ProfileRow[],
+  allRequests: DeliveryRequestRow[],
+  allAssignments: DeliveryAssignmentRow[],
+  filterState?: AnalyticsFilterState
+): FullAdminAnalytics {
+  let profiles = allProfiles;
+  let requests = allRequests;
+  let assignments = allAssignments;
+
+  if (filterState) {
+    const bounds = getDateRangeBounds(filterState);
+    requests = filterDatasetByDate(requests, bounds, (r) => r.created_at);
+    assignments = filterDatasetByDate(assignments, bounds, (a) => a.assigned_at);
+    if (filterState.quickRange !== "all_time") {
+      profiles = filterDatasetByDate(profiles, bounds, (p) => p.created_at);
+    }
+  }
+
+  const summary = calculateDashboardSummary(allProfiles, requests);
+  const kpis = calculateDeliveryKPIs(summary);
+  const trends = calculateAnalyticsTrends(profiles, requests);
+  const runnerMetrics = calculateRunnerMetrics(allProfiles, assignments);
+  const studentMetrics = calculateStudentMetrics(allProfiles, requests);
+
+  return {
+    summary,
+    kpis,
+    trends,
+    runnerMetrics,
+    studentMetrics,
+  };
+}
+
+/**
  * Master server-side query function to fetch and compute full admin analytics.
  */
 export async function getComprehensiveAdminAnalytics(
-  supabase: SupabaseClient<Database>
+  supabase: SupabaseClient<Database>,
+  filterState?: AnalyticsFilterState
 ): Promise<FullAdminAnalytics> {
   const [profilesRes, requestsRes, assignmentsRes] = await Promise.all([
     supabase.from("profiles").select("*"),
@@ -397,17 +485,5 @@ export async function getComprehensiveAdminAnalytics(
   const requests: DeliveryRequestRow[] = requestsRes.data || [];
   const assignments: DeliveryAssignmentRow[] = assignmentsRes.data || [];
 
-  const summary = calculateDashboardSummary(profiles, requests);
-  const kpis = calculateDeliveryKPIs(summary);
-  const trends = calculateAnalyticsTrends(profiles, requests);
-  const runnerMetrics = calculateRunnerMetrics(profiles, assignments);
-  const studentMetrics = calculateStudentMetrics(profiles, requests);
-
-  return {
-    summary,
-    kpis,
-    trends,
-    runnerMetrics,
-    studentMetrics,
-  };
+  return computeAdminAnalyticsFromData(profiles, requests, assignments, filterState);
 }

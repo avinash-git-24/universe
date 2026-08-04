@@ -1,11 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { ROUTES } from "@/constants/routes";
-import { getAdminAnalytics, getComprehensiveAdminAnalytics, aggregateDailyVolume } from "@/lib/database/analytics";
-import { StatCard } from "@/components/analytics/StatCard";
-import { VolumeChart } from "@/components/analytics/VolumeChart";
-import { AnalyticsExportButtons } from "@/components/analytics/AnalyticsExportButtons";
-import { Users, Activity, Banknote } from "lucide-react";
+import { AdminAnalyticsClient } from "@/components/analytics/AdminAnalyticsClient";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -18,54 +14,19 @@ export default async function AdminAnalyticsPage() {
 
   if (!user) redirect(ROUTES.LOGIN);
 
-  const [analytics, comprehensiveAnalytics] = await Promise.all([
-    getAdminAnalytics(supabase),
-    getComprehensiveAdminAnalytics(supabase),
+  const [profilesRes, requestsRes, assignmentsRes, transactionsRes] = await Promise.all([
+    supabase.from("profiles").select("*"),
+    supabase.from("delivery_requests").select("*"),
+    supabase.from("delivery_assignments").select("*"),
+    supabase.from("transactions").select("*").eq("type", "payment"),
   ]);
 
-  const chartData = aggregateDailyVolume(analytics.transactionsData);
-
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h1 className="text-3xl font-extrabold tracking-tight">Platform Analytics</h1>
-          <p className="text-muted-foreground mt-1">Platform-wide statistics for the last 30 days.</p>
-        </div>
-        
-        <AnalyticsExportButtons analytics={comprehensiveAnalytics} filenamePrefix="analytics" />
-      </div>
-
-      <div className="grid gap-4 md:grid-cols-3">
-        <StatCard 
-          title="Total Active Users" 
-          value={analytics.userCount} 
-          icon={<Users className="w-4 h-4" />} 
-          description="Total registered users"
-        />
-        <StatCard 
-          title="Platform Volume (30d)" 
-          value={`₹${analytics.totalVolume.toFixed(2)}`} 
-          icon={<Banknote className="w-4 h-4" />} 
-          description="Total funds moved through platform"
-        />
-        <StatCard 
-          title="Total Requests (30d)" 
-          value={analytics.totalRequests} 
-          icon={<Activity className="w-4 h-4" />} 
-          description="Total delivery requests created"
-        />
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <VolumeChart 
-          data={chartData} 
-          title="Transaction Volume" 
-          description="Daily transaction volume (30d)"
-          type="line"
-          color="hsl(var(--primary))"
-        />
-      </div>
-    </div>
+    <AdminAnalyticsClient
+      initialProfiles={profilesRes.data || []}
+      initialRequests={requestsRes.data || []}
+      initialAssignments={assignmentsRes.data || []}
+      initialTransactions={transactionsRes.data || []}
+    />
   );
 }
