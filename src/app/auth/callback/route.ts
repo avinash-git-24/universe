@@ -54,10 +54,19 @@ export async function GET(request: NextRequest) {
     }
   } else if (code) {
     console.log("[Auth Callback] Attempting exchangeCodeForSession");
-    const { error } = await supabase.auth.exchangeCodeForSession(code);
+    const { error, data } = await supabase.auth.exchangeCodeForSession(code);
 
     if (!error) {
       console.log("[Auth Callback] exchangeCodeForSession SUCCESS");
+      
+      // Enforce marwadiuniversity.ac.in domain for OAuth
+      const email = data?.user?.email || "";
+      if (!email.endsWith("@marwadiuniversity.ac.in")) {
+        console.warn("[Auth Callback] Unauthorized domain blocked:", email);
+        await supabase.auth.signOut();
+        return NextResponse.redirect(`${origin}/login?error=${encodeURIComponent("Only @marwadiuniversity.ac.in emails are allowed.")}`);
+      }
+
       // Password reset flow
       if (type === "recovery") {
         return NextResponse.redirect(`${origin}/reset-password`);

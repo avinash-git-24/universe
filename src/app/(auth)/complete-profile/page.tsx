@@ -10,12 +10,14 @@
 import { useState, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { Camera, Hash, MessageSquare, Globe, ArrowLeft, CheckCircle2 } from "lucide-react";
 import { AuthBackground } from "@/components/auth/AuthBackground";
 import { AuthLogo } from "@/components/auth/AuthLogo";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ROUTES } from "@/constants/routes";
+import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -139,6 +141,7 @@ function SuccessScreen() {
 // ─── Page ────────────────────────────────────────────────────────────────────
 
 export default function CompleteProfilePage() {
+  const router = useRouter();
   const [photo, setPhoto] = useState<string | null>(null);
   const [hostel, setHostel] = useState<Hostel | "">("");
   const [room, setRoom] = useState("");
@@ -162,10 +165,31 @@ export default function CompleteProfilePage() {
     if (Object.keys(errs).length) { setErrors(errs); return; }
     setErrors({});
     setLoading(true);
-    // TODO: Save profile to Supabase users table in Phase 3
-    await new Promise((r) => setTimeout(r, 1200));
+    
+    // Save profile and wallet to Supabase
+    const supabase = createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (user) {
+      await supabase.from("profiles").upsert({
+        id: user.id,
+        avatar_url: photo || null,
+        // In the future, we could expand the schema to include hostel, room, etc.
+      }, { onConflict: "id" });
+      
+      await supabase.from("wallets").upsert({
+        profile_id: user.id,
+        balance: 0
+      }, { onConflict: "profile_id" });
+    }
+
     setLoading(false);
     setDone(true);
+    
+    // Actually redirect the user after a short delay so they can see the success message
+    setTimeout(() => {
+      window.location.href = ROUTES.DASHBOARD;
+    }, 1500);
   }
 
   return (

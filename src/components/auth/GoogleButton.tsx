@@ -21,6 +21,10 @@ export function GoogleButton({ label = "Continue with Google" }: { label?: strin
       provider: "google",
       options: {
         redirectTo: `${window.location.origin}/auth/callback`,
+        queryParams: {
+          prompt: 'select_account',
+          hd: 'marwadiuniversity.ac.in',
+        },
       },
     });
     // Note: setLoading(false) intentionally omitted —

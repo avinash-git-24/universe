@@ -95,6 +95,10 @@ export function CreateRequestForm({ requesterId }: { requesterId: string }) {
     try {
       const supabase = createClient();
       
+      // Ensure profile and wallet exist (Fallback for users who skipped onboarding)
+      await supabase.from("profiles").upsert({ id: requesterId }, { onConflict: "id" });
+      await supabase.from("wallets").upsert({ profile_id: requesterId }, { onConflict: "profile_id" });
+      
       const requestData: Omit<InsertRequest, "requester_id"> = {
         pickup_location: pickupLocation,
         dropoff_location: `${dropoffHostel}, Room ${dropoffRoom.trim()}`,

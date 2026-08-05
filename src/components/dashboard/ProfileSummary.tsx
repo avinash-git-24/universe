@@ -1,6 +1,9 @@
+"use client";
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { User, Mail, MapPin, Hash, Phone } from "lucide-react";
 import type { Profile } from "@/lib/database/requests";
+import { DeleteAccountButton } from "@/components/auth/DeleteAccountButton";
 
 interface ProfileSummaryProps {
   profile?: Profile | null;
@@ -56,6 +59,10 @@ export function ProfileSummary({ profile, email }: ProfileSummaryProps) {
             <p className="text-sm font-medium leading-none">Phone</p>
             <p className="text-sm text-muted-foreground mt-1">Not provided</p>
           </div>
+        </div>
+
+        <div className="pt-3 border-t">
+          <DeleteAccountButton className="w-full justify-center h-10 bg-red-600 hover:bg-red-700 text-white font-semibold shadow-sm" />
         </div>
       </CardContent>
     </Card>
