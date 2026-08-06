@@ -208,25 +208,15 @@ export async function getRunnerDeliveryHistory(
 
 /**
  * Accepts a delivery request, assigning it to the runner.
+ * Order: create assignment first → then update request status.
+ * This ensures the RLS policy ("runner can update assigned requests") is satisfied.
  */
 export async function acceptRequest(
   supabase: SupabaseClient<Database>,
   requestId: string,
   runnerId: string
 ): Promise<boolean> {
-  // 1. Update request status
-  const { error: reqError } = await supabase
-    .from("delivery_requests")
-    .update({ status: "accepted" })
-    .eq("id", requestId)
-    .eq("status", "pending"); // Concurrency check
-
-  if (reqError) {
-    console.error("Error accepting request:", reqError);
-    return false;
-  }
-
-  // 2. Create assignment
+  // 1. Create the assignment row first (so RLS policy is satisfied for status update)
   const { error: assignError } = await supabase
     .from("delivery_assignments")
     .insert({
@@ -236,12 +226,52 @@ export async function acceptRequest(
     });
 
   if (assignError) {
-    console.error("Error creating assignment:", assignError);
+    console.error("acceptRequest – assignment insert failed:", {
+      code: assignError.code,
+      message: assignError.message,
+      details: assignError.details,
+      hint: assignError.hint,
+    });
+    return false;
+  }
+
+  // 2. Now update the request status to "accepted"
+  const { error: reqError, count } = await supabase
+    .from("delivery_requests")
+    .update({ status: "accepted" })
+    .eq("id", requestId)
+    .eq("status", "pending"); // Concurrency guard: only accept if still pending
+
+  if (reqError) {
+    console.error("acceptRequest – status update failed:", {
+      code: reqError.code,
+      message: reqError.message,
+      details: reqError.details,
+      hint: reqError.hint,
+    });
+    // Rollback: remove the assignment we just created
+    await supabase
+      .from("delivery_assignments")
+      .delete()
+      .eq("request_id", requestId)
+      .eq("runner_id", runnerId);
+    return false;
+  }
+
+  // If count is 0, the request was already accepted by another runner → rollback
+  if (count === 0) {
+    console.warn("acceptRequest – request already taken, rolling back assignment");
+    await supabase
+      .from("delivery_assignments")
+      .delete()
+      .eq("request_id", requestId)
+      .eq("runner_id", runnerId);
     return false;
   }
 
   return true;
 }
+
 
 /**
  * Updates the status of an active request and optionally its assignment.

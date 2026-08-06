@@ -52,7 +52,7 @@ export function CreateRequestForm({ requesterId }: { requesterId: string }) {
 
   const calculateSuggestedReward = () => {
     if (items.length === 0) return 0;
-    
+
     // Check if there are any meals
     const hasMeal = items.some((item) => item.category === "Meal");
     if (hasMeal) return 25; // Default meal reward
@@ -68,7 +68,7 @@ export function CreateRequestForm({ requesterId }: { requesterId: string }) {
 
   const handleAddItem = () => {
     if (!currentItemName.trim()) return;
-    
+
     setItems((prev) => [
       ...prev,
       {
@@ -78,7 +78,7 @@ export function CreateRequestForm({ requesterId }: { requesterId: string }) {
         quantity: currentItemQty,
       },
     ]);
-    
+
     setCurrentItemName("");
     setCurrentItemQty(1);
   };
@@ -89,22 +89,26 @@ export function CreateRequestForm({ requesterId }: { requesterId: string }) {
 
   const handleSubmit = async () => {
     if (items.length === 0 || !dropoffRoom.trim()) return;
-    
+
     setIsSubmitting(true);
-    
+
     try {
       const supabase = createClient();
-      
-      // Ensure profile and wallet exist (Fallback for users who skipped onboarding)
-      await supabase.from("profiles").upsert({ id: requesterId }, { onConflict: "id" });
-      await supabase.from("wallets").upsert({ profile_id: requesterId }, { onConflict: "profile_id" });
-      
+
+      // Verify the user is still authenticated
+      const { data: { user }, error: authError } = await supabase.auth.getUser();
+      if (authError || !user) {
+        alert("Session expired. Please log in again.");
+        setIsSubmitting(false);
+        return;
+      }
+
       const requestData: Omit<InsertRequest, "requester_id"> = {
         pickup_location: pickupLocation,
         dropoff_location: `${dropoffHostel}, Room ${dropoffRoom.trim()}`,
         instructions: instructions.trim() || null,
         delivery_fee: currentReward,
-        total_estimated_amount: 0, // In a real app, this would be calculated from item prices
+        total_estimated_amount: 0,
         status: "pending",
       };
 
@@ -115,17 +119,48 @@ export function CreateRequestForm({ requesterId }: { requesterId: string }) {
         estimated_price: 0,
       }));
 
-      const result = await createDeliveryRequest(supabase, requesterId, requestData, itemsData);
-      
-      if (result) {
-        router.push("/dashboard"); // Or wherever the success page is
-        router.refresh();
-      } else {
-        alert("Failed to create request. Please try again.");
+      // Direct insert with detailed error capture
+      const { data: request, error: requestError } = await supabase
+        .from("delivery_requests")
+        .insert({ ...requestData, requester_id: user.id })
+        .select()
+        .single();
+
+      if (requestError || !request) {
+        console.error("Request insert failed:", {
+          code: requestError?.code,
+          message: requestError?.message,
+          details: requestError?.details,
+          hint: requestError?.hint,
+        });
+        alert(
+          `Failed to create request.\n\nError: ${requestError?.message || "Unknown error"}\nCode: ${requestError?.code || "N/A"}\nHint: ${requestError?.hint || "Check Supabase RLS policies"}`
+        );
+        setIsSubmitting(false);
+        return;
       }
+
+      // Insert items
+      if (itemsData.length > 0) {
+        const { error: itemsError } = await supabase
+          .from("request_items")
+          .insert(itemsData.map((item) => ({ ...item, request_id: request.id })));
+
+        if (itemsError) {
+          console.error("Items insert failed:", {
+            code: itemsError.code,
+            message: itemsError.message,
+            details: itemsError.details,
+          });
+          // Request was created, just items failed — still navigate
+        }
+      }
+
+      router.push("/dashboard");
+      router.refresh();
     } catch (error) {
-      console.error(error);
-      alert("An unexpected error occurred.");
+      console.error("Unexpected error:", error);
+      alert(`Unexpected error: ${error instanceof Error ? error.message : String(error)}`);
     } finally {
       setIsSubmitting(false);
     }
@@ -136,17 +171,16 @@ export function CreateRequestForm({ requesterId }: { requesterId: string }) {
       {/* Progress Bar */}
       <div className="flex items-center justify-between mb-8 relative">
         <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 bg-secondary -z-10 rounded-full" />
-        <div 
+        <div
           className="absolute left-0 top-1/2 -translate-y-1/2 h-1 bg-primary -z-10 rounded-full transition-all duration-300"
           style={{ width: `${((step - 1) / 2) * 100}%` }}
         />
-        
+
         {[1, 2, 3].map((s) => (
-          <div 
-            key={s} 
-            className={`w-8 h-8 rounded-full flex items-center justify-center font-bold transition-all duration-300 ${
-              s <= step ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"
-            }`}
+          <div
+            key={s}
+            className={`w-8 h-8 rounded-full flex items-center justify-center font-bold transition-all duration-300 ${s <= step ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"
+              }`}
           >
             {s < step ? <CheckCircle2 className="w-5 h-5" /> : s}
           </div>
@@ -161,7 +195,7 @@ export function CreateRequestForm({ requesterId }: { requesterId: string }) {
           </CardHeader>
           <CardContent className="space-y-6">
             <CategorySelector selectedCategory={currentCategory} onSelect={setCurrentCategory} />
-            
+
             <div className="flex gap-2">
               <Input
                 placeholder={`e.g. ${currentCategory === 'Snack' ? 'Lays Chips' : 'Item name'}...`}
@@ -207,10 +241,10 @@ export function CreateRequestForm({ requesterId }: { requesterId: string }) {
                 ))}
               </div>
             )}
-            
-            <Button 
-              className="w-full mt-6" 
-              onClick={() => setStep(2)} 
+
+            <Button
+              className="w-full mt-6"
+              onClick={() => setStep(2)}
               disabled={items.length === 0}
             >
               Continue <ArrowRight className="w-4 h-4 ml-2" />
@@ -284,14 +318,14 @@ export function CreateRequestForm({ requesterId }: { requesterId: string }) {
                 />
               </div>
             </div>
-            
+
             <div className="flex gap-3 pt-4">
               <Button variant="secondary" onClick={() => setStep(1)} className="w-12 p-0">
                 <ArrowLeft className="w-4 h-4" />
               </Button>
-              <Button 
-                className="flex-1" 
-                onClick={() => setStep(3)} 
+              <Button
+                className="flex-1"
+                onClick={() => setStep(3)}
                 disabled={!dropoffRoom.trim()}
               >
                 Continue <ArrowRight className="w-4 h-4 ml-2" />
@@ -352,9 +386,9 @@ export function CreateRequestForm({ requesterId }: { requesterId: string }) {
               <Button variant="secondary" onClick={() => setStep(2)} className="w-12 p-0" disabled={isSubmitting}>
                 <ArrowLeft className="w-4 h-4" />
               </Button>
-              <Button 
-                className="flex-1 h-12 text-lg" 
-                onClick={handleSubmit} 
+              <Button
+                className="flex-1 h-12 text-lg"
+                onClick={handleSubmit}
                 disabled={isSubmitting}
               >
                 {isSubmitting ? "Creating..." : "Confirm Request"}

@@ -152,7 +152,7 @@ function NavCTAs({ scrolled, hasUser }: { scrolled: boolean; hasUser: boolean })
             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2"
           )}
         >
-          Get Started
+          Sign Up
         </Link>
       </motion.div>
     </div>
@@ -262,7 +262,7 @@ function MobileMenu({
                       "transition-colors duration-150"
                     )}
                   >
-                    Get Started — It&apos;s Free
+                    Sign Up — It&apos;s Free
                   </Link>
                 </>
               )}
