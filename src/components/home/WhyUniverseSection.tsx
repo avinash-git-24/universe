@@ -62,7 +62,7 @@ const ADVANTAGES = [
 // ─── Bento Card ───────────────────────────────────────────────────────────────
 
 const cardVariants = {
-  hidden:  { opacity: 0, y: 24, scale: 0.98 },
+  hidden:  { opacity: 0, y: 30, scale: 0.95 },
   visible: { opacity: 1, y: 0,  scale: 1    },
 };
 
@@ -85,57 +85,61 @@ function AdvantageCard({
   return (
     <motion.div
       variants={cardVariants}
-      transition={{ duration: 0.5, delay: index * 0.1, ease: [0.4, 0, 0.2, 1] }}
-      whileHover={{ y: -4, transition: { duration: 0.22, ease: "easeOut" } }}
+      transition={{ duration: 0.6, delay: index * 0.12, ease: [0.16, 1, 0.3, 1] }}
+      whileHover={{ y: -6, scale: 1.02, transition: { duration: 0.3, ease: "easeOut" } }}
       className={cn(
-        "group relative flex flex-col gap-4 p-7 rounded-[var(--radius-xl)]",
+        "group relative flex flex-col gap-4 p-8 rounded-[1.5rem] overflow-hidden",
         "cursor-default transition-all duration-300",
         highlight
-          ? "md:col-span-2 md:row-span-2"
-          : ""
+          ? "md:col-span-2 md:row-span-2 shadow-[0_8px_30px_rgba(16,185,129,0.1)]"
+          : "shadow-xl"
       )}
       style={{
         background: highlight
-          ? `linear-gradient(135deg, rgba(16,185,129,0.12) 0%, rgba(16,185,129,0.04) 100%)`
-          : "rgba(255,255,255,0.04)",
-        border: `1px solid`,
-        borderColor: highlight ? "rgba(16,185,129,0.25)" : "rgba(255,255,255,0.1)",
+          ? `linear-gradient(145deg, rgba(16,185,129,0.15) 0%, rgba(16,185,129,0.02) 100%)`
+          : "rgba(255, 255, 255, 0.03)",
+        backdropFilter: "blur(20px)",
+        WebkitBackdropFilter: "blur(20px)",
+        border: `1px solid ${highlight ? "rgba(16,185,129,0.3)" : "rgba(255,255,255,0.08)"}`,
       }}
       onMouseEnter={(e) => {
         const el = e.currentTarget as HTMLDivElement;
-        el.style.borderColor = `${accentColor}40`;
-        el.style.background = highlight
-          ? `linear-gradient(135deg, rgba(16,185,129,0.18) 0%, rgba(16,185,129,0.08) 100%)`
-          : "rgba(255,255,255,0.07)";
+        el.style.borderColor = `${accentColor}60`;
+        el.style.boxShadow = `0 12px 40px ${accentColor}20`;
       }}
       onMouseLeave={(e) => {
         const el = e.currentTarget as HTMLDivElement;
-        el.style.borderColor = highlight ? "rgba(16,185,129,0.25)" : "rgba(255,255,255,0.1)";
-        el.style.background = highlight
-          ? `linear-gradient(135deg, rgba(16,185,129,0.12) 0%, rgba(16,185,129,0.04) 100%)`
-          : "rgba(255,255,255,0.04)";
+        el.style.borderColor = highlight ? "rgba(16,185,129,0.3)" : "rgba(255,255,255,0.08)";
+        el.style.boxShadow = highlight ? "0 8px 30px rgba(16,185,129,0.1)" : "none";
       }}
     >
+      {/* Background Glow Effect on Hover */}
+      <div 
+        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+        style={{ background: `radial-gradient(circle at top right, ${accentColor}15, transparent 60%)` }}
+      />
+
       {/* Icon container */}
       <div
         className={cn(
-          "w-12 h-12 rounded-[var(--radius-md)] flex items-center justify-center flex-shrink-0",
-          "transition-transform duration-300 group-hover:scale-110"
+          "w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0 z-10",
+          "transition-all duration-300 group-hover:scale-110 group-hover:-rotate-6"
         )}
         style={{
-          background: `${accentColor}20`,
-          border: `1px solid ${accentColor}30`,
+          background: `linear-gradient(135deg, ${accentColor}30 0%, ${accentColor}10 100%)`,
+          border: `1px solid ${accentColor}40`,
+          boxShadow: `0 0 20px ${accentColor}20`,
         }}
       >
-        <Icon size={22} style={{ color: accentColor }} strokeWidth={1.8} />
+        <Icon size={26} style={{ color: accentColor }} strokeWidth={2} />
       </div>
 
       {/* Text */}
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-3 z-10 mt-2">
         <h3
           className={cn(
-            "font-bold text-white leading-snug",
-            highlight ? "text-2xl" : "text-lg"
+            "font-extrabold text-white leading-snug tracking-tight",
+            highlight ? "text-3xl" : "text-xl"
           )}
           style={{ fontFamily: "var(--font-plus-jakarta-sans)" }}
         >
@@ -143,8 +147,8 @@ function AdvantageCard({
         </h3>
         <p
           className={cn(
-            "text-white/55 leading-relaxed",
-            highlight ? "text-base max-w-xs" : "text-sm"
+            "text-white/60 leading-relaxed font-medium",
+            highlight ? "text-lg max-w-sm" : "text-sm"
           )}
           style={{ fontFamily: "var(--font-inter)" }}
         >
@@ -152,12 +156,13 @@ function AdvantageCard({
         </p>
       </div>
 
-      {/* Accent glow corner — on highlight card */}
+      {/* Highlight card large decorative element */}
       {highlight && (
         <div
-          className="absolute top-0 right-0 w-40 h-40 rounded-[var(--radius-xl)] pointer-events-none"
+          className="absolute -bottom-10 -right-10 w-64 h-64 opacity-10 pointer-events-none group-hover:opacity-20 transition-opacity duration-500"
           style={{
-            background: "radial-gradient(circle at top right, rgba(16,185,129,0.15) 0%, transparent 70%)",
+            background: `radial-gradient(circle, ${accentColor} 0%, transparent 70%)`,
+            filter: "blur(40px)",
           }}
           aria-hidden="true"
         />
@@ -165,8 +170,8 @@ function AdvantageCard({
 
       {/* Bottom accent line on hover */}
       <div
-        className="absolute bottom-0 left-6 right-6 h-0.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-        style={{ background: `linear-gradient(90deg, ${accentColor}80, transparent)` }}
+        className="absolute bottom-0 left-0 right-0 h-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+        style={{ background: `linear-gradient(90deg, transparent, ${accentColor}, transparent)` }}
         aria-hidden="true"
       />
     </motion.div>
@@ -180,28 +185,32 @@ export function WhyUniverseSection() {
     <section
       id="why"
       aria-label="Why UniVerse"
-      className="relative py-24 md:py-32 overflow-hidden"
-      style={{ background: "#0A0F0D" }}
+      className="relative py-32 md:py-40 overflow-hidden"
+      style={{ background: "#050907" }}
     >
-      {/* Background texture */}
+      {/* Background texture & Animated Orbs */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
         {/* Subtle emerald glow top-left */}
-        <div
-          className="absolute -top-60 -left-60 w-[600px] h-[600px] rounded-full"
-          style={{ background: "radial-gradient(circle, rgba(16,185,129,0.08) 0%, transparent 65%)" }}
+        <motion.div
+          animate={{ scale: [1, 1.1, 1], opacity: [0.3, 0.5, 0.3] }}
+          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute -top-[20%] -left-[10%] w-[800px] h-[800px] rounded-full blur-[120px]"
+          style={{ background: "radial-gradient(circle, rgba(16,185,129,0.15) 0%, transparent 70%)" }}
         />
         {/* Amber glow bottom-right */}
-        <div
-          className="absolute -bottom-60 -right-60 w-[500px] h-[500px] rounded-full"
-          style={{ background: "radial-gradient(circle, rgba(245,158,11,0.06) 0%, transparent 65%)" }}
+        <motion.div
+          animate={{ scale: [1, 1.2, 1], opacity: [0.2, 0.4, 0.2] }}
+          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+          className="absolute -bottom-[20%] -right-[10%] w-[700px] h-[700px] rounded-full blur-[100px]"
+          style={{ background: "radial-gradient(circle, rgba(245,158,11,0.12) 0%, transparent 70%)" }}
         />
         {/* Grid pattern overlay */}
         <div
-          className="absolute inset-0 opacity-[0.025]"
+          className="absolute inset-0 opacity-[0.03]"
           style={{
-            backgroundImage: `linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
-                              linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)`,
-            backgroundSize: "60px 60px",
+            backgroundImage: `linear-gradient(rgba(255,255,255,0.2) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(255,255,255,0.2) 1px, transparent 1px)`,
+            backgroundSize: "80px 80px",
           }}
         />
       </div>
@@ -210,43 +219,48 @@ export function WhyUniverseSection() {
 
         {/* Header */}
         <motion.div
-          className="text-center mb-16"
-          initial={{ opacity: 0, y: 20 }}
+          className="text-center mb-20"
+          initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.4 }}
-          transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
+          transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
         >
-          <span
-            className="inline-flex items-center gap-2 mb-4 px-3.5 py-1 rounded-full text-xs font-semibold uppercase tracking-widest"
+          <motion.span
+            whileHover={{ scale: 1.05 }}
+            className="inline-flex items-center gap-2 mb-6 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest cursor-default"
             style={{
-              background: "rgba(16,185,129,0.12)",
-              border: "1px solid rgba(16,185,129,0.25)",
-              color: "#10B981",
+              background: "linear-gradient(135deg, rgba(16,185,129,0.15), rgba(16,185,129,0.05))",
+              border: "1px solid rgba(16,185,129,0.3)",
+              color: "#34D399",
               fontFamily: "var(--font-inter)",
+              boxShadow: "0 0 20px rgba(16,185,129,0.1)",
             }}
           >
             Built for students, by students
-          </span>
+          </motion.span>
 
           <h2
-            className="text-4xl md:text-5xl font-extrabold text-white leading-tight"
+            className="text-5xl md:text-6xl font-extrabold text-white leading-tight tracking-tight drop-shadow-lg"
             style={{ fontFamily: "var(--font-plus-jakarta-sans)" }}
           >
             Why{" "}
             <span
-              style={{
-                background: "linear-gradient(90deg, #10B981, #F59E0B)",
+              className="relative inline-block"
+            >
+              <span className="relative z-10" style={{
+                background: "linear-gradient(90deg, #34D399, #FBBF24)",
                 WebkitBackgroundClip: "text",
                 WebkitTextFillColor: "transparent",
                 backgroundClip: "text",
-              }}
-            >
-              UniVerse
+              }}>
+                UniVerse
+              </span>
+              <span className="absolute inset-x-0 bottom-2 h-3 bg-emerald-500/20 blur-md -z-10" />
             </span>
           </h2>
 
           <p
-            className="mt-4 text-lg text-white/45 max-w-lg mx-auto"
+            className="mt-6 text-xl text-white/50 max-w-2xl mx-auto font-medium"
             style={{ fontFamily: "var(--font-inter)" }}
           >
             Not just a delivery app. A smarter campus experience.
@@ -255,7 +269,7 @@ export function WhyUniverseSection() {
 
         {/* Bento grid */}
         <motion.div
-          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4"
+          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.15 }}
@@ -267,27 +281,36 @@ export function WhyUniverseSection() {
 
         {/* Bottom CTA bar */}
         <motion.div
-          className="mt-16 flex flex-col sm:flex-row items-center justify-center gap-4"
-          initial={{ opacity: 0, y: 16 }}
+          className="mt-24 flex flex-col sm:flex-row items-center justify-center gap-6"
+          initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.5 }}
-          transition={{ duration: 0.5, delay: 0.3 }}
+          transition={{ duration: 0.6, delay: 0.3 }}
         >
-          <p className="text-white/40 text-sm font-medium" style={{ fontFamily: "var(--font-inter)" }}>
+          <p className="text-white/50 text-base font-semibold tracking-wide" style={{ fontFamily: "var(--font-inter)" }}>
             Ready to join?
           </p>
           <motion.a
             href="/register"
-            whileHover={{ scale: 1.04 }}
-            whileTap={{ scale: 0.97 }}
-            className="inline-flex items-center gap-2 px-6 py-3 text-sm font-semibold text-white rounded-[var(--radius-md)]"
+            whileHover={{ scale: 1.05, boxShadow: "0 0 30px rgba(16,185,129,0.4)" }}
+            whileTap={{ scale: 0.95 }}
+            className="relative overflow-hidden inline-flex items-center justify-center gap-2 px-8 py-4 text-base font-bold text-white rounded-full transition-shadow duration-300 group"
             style={{
               background: "linear-gradient(135deg, #10B981, #059669)",
-              boxShadow: "0 0 0 1px rgba(16,185,129,0.4), 0 4px 20px rgba(16,185,129,0.3)",
               fontFamily: "var(--font-inter)",
             }}
           >
-            Join UniVerse — It&apos;s Free
+            <span className="relative z-10 flex items-center gap-2">
+              Join UniVerse — It&apos;s Free
+              <motion.span
+                className="inline-block"
+                initial={{ x: 0 }}
+                whileHover={{ x: 5 }}
+              >
+                →
+              </motion.span>
+            </span>
+            <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-in-out" />
           </motion.a>
         </motion.div>
       </div>
