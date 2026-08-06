@@ -2,99 +2,107 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Plus, Bike, User, Package, Wallet, MessageSquare, BarChart3, Trash2 } from "lucide-react";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Plus, Bike, User, Package, Wallet, MessageSquare, BarChart3, LogOut, Trash2 } from "lucide-react";
 import { LogoutButton } from "@/components/auth/LogoutButton";
 import { createClient } from "@/lib/supabase/client";
+
+const actions = [
+  { href: "/request/new", label: "Create Request", icon: Plus, primary: true },
+  { href: "/dashboard/requests", label: "My Requests", icon: Package },
+  { href: "/dashboard/runner", label: "Runner Mode", icon: Bike },
+  { href: "/dashboard/wallet", label: "Wallet", icon: Wallet },
+  { href: "/dashboard/chat", label: "Chat", icon: MessageSquare },
+  { href: "/dashboard/analytics", label: "Analytics", icon: BarChart3 },
+  { href: "/complete-profile", label: "Edit Profile", icon: User },
+];
 
 export function QuickActions() {
   const [isDeleting, setIsDeleting] = useState(false);
 
   const handleDeleteAccount = async () => {
-    const isConfirmed = window.confirm(
-      "Are you absolutely sure you want to delete your account? This action cannot be undone and will permanently erase all your requests, messages, and wallet balance."
-    );
-
-    if (!isConfirmed) return;
-
+    const ok = window.confirm("Delete your account permanently? This cannot be undone.");
+    if (!ok) return;
     setIsDeleting(true);
     try {
       const supabase = createClient();
       const { error } = await supabase.rpc("delete_own_account");
-      if (error) {
-        alert("Failed to delete account: " + error.message);
-        setIsDeleting(false);
-        return;
-      }
+      if (error) { alert("Failed: " + error.message); setIsDeleting(false); return; }
       await supabase.auth.signOut();
       window.location.href = "/login";
-    } catch (err) {
-      console.error(err);
-      alert("An error occurred while deleting your account.");
-      setIsDeleting(false);
-    }
+    } catch { setIsDeleting(false); }
   };
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="text-lg">Quick Actions</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-3">
-        <Link href="/request/new" className="block">
-          <Button className="w-full justify-start h-11">
-            <Plus className="w-4 h-4 mr-3" /> Create Request
-          </Button>
-        </Link>
-        <Link href="/dashboard/requests" className="block">
-          <Button variant="secondary" className="w-full justify-start h-11">
-            <Package className="w-4 h-4 mr-3" /> My Requests
-          </Button>
-        </Link>
-        <Link href="/dashboard/runner" className="block">
-          <Button variant="secondary" className="w-full justify-start h-11">
-            <Bike className="w-4 h-4 mr-3" /> Runner Mode
-          </Button>
-        </Link>
-        <Link href="/dashboard/wallet" className="block">
-          <Button variant="secondary" className="w-full justify-start h-11">
-            <Wallet className="w-4 h-4 mr-3" /> Wallet
-          </Button>
-        </Link>
-        <Link href="/dashboard/chat" className="block">
-          <Button variant="secondary" className="w-full justify-start h-11">
-            <MessageSquare className="w-4 h-4 mr-3" /> Chat
-          </Button>
-        </Link>
-        <Link href="/dashboard/analytics" className="block">
-          <Button variant="secondary" className="w-full justify-start h-11">
-            <BarChart3 className="w-4 h-4 mr-3" /> Analytics
-          </Button>
-        </Link>
-        <Link href="/complete-profile" className="block">
-          <Button variant="secondary" className="w-full justify-start h-11">
-            <User className="w-4 h-4 mr-3" /> Edit Profile
-          </Button>
-        </Link>
-        <div className="pt-2 space-y-2 border-t mt-4">
-          <LogoutButton 
-            variant="destructive" 
-            className="w-full justify-start h-11 bg-[var(--color-error)]/10 text-[var(--color-error)] hover:bg-[var(--color-error)]/20 hover:text-[var(--color-error)]" 
+    <div style={{
+      background: "rgba(255,255,255,0.03)",
+      border: "1px solid rgba(255,255,255,0.08)",
+      borderRadius: "24px",
+      padding: "1.5rem",
+      backdropFilter: "blur(20px)",
+    }}>
+      <h3 style={{ color: "var(--color-foreground)", fontWeight: 700, fontSize: "1rem", marginBottom: "1rem", display: "flex", alignItems: "center", gap: "0.5rem" }}>
+        <span style={{ width: "8px", height: "8px", borderRadius: "50%", background: "linear-gradient(135deg, #10b981, #059669)", display: "inline-block" }} />
+        Quick Actions
+      </h3>
+
+      <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+        {actions.map(({ href, label, icon: Icon, primary }) => (
+          <Link key={href} href={href}>
+            <div style={{
+              display: "flex", alignItems: "center", gap: "0.75rem",
+              padding: "0.75rem 1rem",
+              borderRadius: "14px",
+              background: primary
+                ? "linear-gradient(135deg, #10b981 0%, #059669 100%)"
+                : "rgba(255,255,255,0.04)",
+              border: primary ? "none" : "1px solid rgba(255,255,255,0.07)",
+              cursor: "pointer",
+              transition: "all 0.2s ease",
+              color: primary ? "#fff" : "var(--color-foreground)",
+            }}
+              className={primary ? "hover:opacity-90" : "hover:bg-white/10 hover:border-emerald-500/30"}
+            >
+              <div style={{
+                width: "32px", height: "32px", borderRadius: "10px",
+                background: primary ? "rgba(255,255,255,0.2)" : "rgba(16,185,129,0.15)",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                flexShrink: 0,
+              }}>
+                <Icon size={16} color={primary ? "#fff" : "#10b981"} />
+              </div>
+              <span style={{ fontWeight: 600, fontSize: "0.875rem" }}>{label}</span>
+            </div>
+          </Link>
+        ))}
+
+        {/* Logout */}
+        <div style={{ marginTop: "0.5rem", paddingTop: "0.75rem", borderTop: "1px solid rgba(255,255,255,0.07)" }}>
+          <LogoutButton
+            variant="ghost"
+            className="w-full justify-start h-11 text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-[14px] font-semibold"
           />
-          <Button
-            type="button"
-            variant="destructive"
-            className="w-full justify-start h-11 bg-red-600 hover:bg-red-700 text-white font-semibold"
+          <button
             onClick={handleDeleteAccount}
-            isLoading={isDeleting}
-            loadingText="Deleting Account..."
+            disabled={isDeleting}
+            style={{
+              width: "100%", marginTop: "0.4rem",
+              display: "flex", alignItems: "center", gap: "0.6rem",
+              padding: "0.65rem 1rem",
+              borderRadius: "14px",
+              background: "rgba(239,68,68,0.08)",
+              border: "1px solid rgba(239,68,68,0.2)",
+              color: "#f87171",
+              fontWeight: 600, fontSize: "0.875rem",
+              cursor: isDeleting ? "not-allowed" : "pointer",
+              opacity: isDeleting ? 0.6 : 1,
+              transition: "all 0.2s",
+            }}
           >
-            {!isDeleting && <Trash2 className="w-4 h-4 mr-2" />}
-            Delete Account
-          </Button>
+            <Trash2 size={15} />
+            {isDeleting ? "Deleting..." : "Delete Account"}
+          </button>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }

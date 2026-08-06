@@ -1,89 +1,98 @@
 import { formatDistanceToNow } from "date-fns";
 import { Clock, CheckCircle2, Package, Truck, MapPin, AlertCircle } from "lucide-react";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import type { StudentRequestWithDetails } from "@/lib/database/requests";
 
 interface ActivityFeedProps {
   requests: StudentRequestWithDetails[];
 }
 
+const statusConfig = {
+  pending:    { icon: Clock,         color: "#6b7280", bg: "rgba(107,114,128,0.15)", label: "created a request" },
+  accepted:   { icon: CheckCircle2,  color: "#10b981", bg: "rgba(16,185,129,0.15)",  label: "was accepted by a runner" },
+  picked_up:  { icon: Package,       color: "#f59e0b", bg: "rgba(245,158,11,0.15)",  label: "was picked up" },
+  in_transit: { icon: Truck,         color: "#6366f1", bg: "rgba(99,102,241,0.15)",  label: "is in transit" },
+  delivered:  { icon: MapPin,        color: "#10b981", bg: "rgba(16,185,129,0.15)",  label: "was delivered successfully" },
+  cancelled:  { icon: AlertCircle,   color: "#ef4444", bg: "rgba(239,68,68,0.15)",   label: "was cancelled" },
+};
+
 export function ActivityFeed({ requests }: ActivityFeedProps) {
-  // Derive a simple activity feed based on the latest updated requests
-  // In a real app with an audit_log table, this would be cleaner.
   const activities = requests
     .sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime())
-    .slice(0, 5) // Last 5 activities
+    .slice(0, 6)
     .map((req) => {
-      let icon = Clock;
-      let action = "created a request";
-      let color = "text-muted-foreground";
-
-      if (req.status === "accepted") {
-        icon = CheckCircle2;
-        action = "was accepted by a runner";
-        color = "text-primary";
-      } else if (req.status === "picked_up") {
-        icon = Package;
-        action = "was picked up";
-        color = "text-accent";
-      } else if (req.status === "in_transit") {
-        icon = Truck;
-        action = "is in transit";
-        color = "text-indigo-500";
-      } else if (req.status === "delivered") {
-        icon = MapPin;
-        action = "was delivered successfully";
-        color = "text-emerald-500";
-      } else if (req.status === "cancelled") {
-        icon = AlertCircle;
-        action = "was cancelled";
-        color = "text-error";
-      }
-
+      const cfg = statusConfig[req.status as keyof typeof statusConfig] ?? statusConfig.pending;
       return {
         id: `${req.id}-${req.status}`,
-        action,
-        item: req.items.map(i => i.name).join(", "),
+        label: cfg.label,
+        item: req.items.map(i => i.name).join(", ") || "item",
         time: req.updated_at,
-        icon,
-        color
+        icon: cfg.icon,
+        color: cfg.color,
+        bg: cfg.bg,
+        status: req.status,
       };
     });
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="text-lg">Recent Activity</CardTitle>
-      </CardHeader>
-      <CardContent>
-        {activities.length === 0 ? (
-          <p className="text-sm text-muted-foreground text-center py-4">No recent activity.</p>
-        ) : (
-          <div className="space-y-6">
-            {activities.map((activity, idx) => {
-              const Icon = activity.icon;
-              return (
-                <div key={activity.id} className="flex relative">
-                  {idx !== activities.length - 1 && (
-                    <div className="absolute top-8 bottom-[-24px] left-[11px] w-0.5 bg-border" />
-                  )}
-                  <div className={`relative z-10 w-6 h-6 rounded-full bg-secondary/50 flex items-center justify-center shrink-0 mt-0.5 ${activity.color}`}>
-                    <Icon className="w-3 h-3" />
-                  </div>
-                  <div className="ml-4 space-y-1">
-                    <p className="text-sm">
-                      Your request for <span className="font-medium">{activity.item}</span> {activity.action}.
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      {formatDistanceToNow(new Date(activity.time))} ago
-                    </p>
-                  </div>
+    <div style={{
+      background: "rgba(255,255,255,0.03)",
+      border: "1px solid rgba(255,255,255,0.08)",
+      borderRadius: "24px",
+      padding: "1.5rem",
+      backdropFilter: "blur(20px)",
+    }}>
+      <h3 style={{ color: "var(--color-foreground)", fontWeight: 700, fontSize: "1rem", marginBottom: "1.25rem", display: "flex", alignItems: "center", gap: "0.5rem" }}>
+        <span style={{ width: "8px", height: "8px", borderRadius: "50%", background: "linear-gradient(135deg, #6366f1, #8b5cf6)", display: "inline-block" }} />
+        Recent Activity
+      </h3>
+
+      {activities.length === 0 ? (
+        <div style={{ textAlign: "center", padding: "2rem 0", color: "rgba(255,255,255,0.3)", fontSize: "0.875rem" }}>
+          No recent activity yet.
+        </div>
+      ) : (
+        <div style={{ display: "flex", flexDirection: "column", gap: "0" }}>
+          {activities.map((act, idx) => {
+            const Icon = act.icon;
+            const isLast = idx === activities.length - 1;
+            return (
+              <div key={act.id} style={{ display: "flex", gap: "0.875rem", position: "relative" }}>
+                {/* Timeline line */}
+                {!isLast && (
+                  <div style={{
+                    position: "absolute", left: "15px", top: "32px", bottom: 0,
+                    width: "2px",
+                    background: "linear-gradient(to bottom, rgba(255,255,255,0.1), transparent)",
+                  }} />
+                )}
+
+                {/* Icon dot */}
+                <div style={{
+                  width: "32px", height: "32px", borderRadius: "50%",
+                  background: act.bg,
+                  border: `2px solid ${act.color}40`,
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  flexShrink: 0, marginTop: "2px", zIndex: 1,
+                }}>
+                  <Icon size={14} color={act.color} />
                 </div>
-              );
-            })}
-          </div>
-        )}
-      </CardContent>
-    </Card>
+
+                {/* Content */}
+                <div style={{ paddingBottom: isLast ? 0 : "1.25rem", flex: 1 }}>
+                  <p style={{ fontSize: "0.83rem", color: "var(--color-foreground)", lineHeight: 1.4 }}>
+                    Your request for{" "}
+                    <span style={{ fontWeight: 700, color: act.color }}>{act.item}</span>{" "}
+                    {act.label}.
+                  </p>
+                  <p style={{ fontSize: "0.72rem", color: "rgba(255,255,255,0.4)", marginTop: "0.25rem" }}>
+                    {formatDistanceToNow(new Date(act.time))} ago
+                  </p>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
   );
 }
