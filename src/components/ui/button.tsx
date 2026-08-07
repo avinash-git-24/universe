@@ -103,7 +103,7 @@ const buttonVariants = cva(
 
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof buttonVariants> {
+  VariantProps<typeof buttonVariants> {
   /** Show a loading spinner and disable interactions */
   isLoading?: boolean;
   /** Text to show while loading (replaces children) */

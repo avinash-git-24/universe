@@ -2,17 +2,14 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Plus, Minus, Trash2, ArrowRight, ArrowLeft, Mic, Image as ImageIcon, MapPin, CheckCircle2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { CategorySelector, Category } from "./CategorySelector";
+import { Plus, Minus, Trash2, ArrowRight, ArrowLeft, Mic, Image as ImageIcon, MapPin, Box, Pizza, Coffee, Utensils, ShoppingBag, Book, Pill } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
-import { createDeliveryRequest } from "@/lib/database/requests";
 import type { Database } from "@/types/database";
 
 type InsertRequest = Database["public"]["Tables"]["delivery_requests"]["Insert"];
 type InsertItem = Database["public"]["Tables"]["request_items"]["Insert"];
+
+type Category = "Snack" | "Beverage" | "Meal" | "Grocery" | "Stationery" | "Medicine";
 
 interface ItemForm {
   id: string;
@@ -52,11 +49,8 @@ export function CreateRequestForm({ requesterId }: { requesterId: string }) {
 
   const calculateSuggestedReward = () => {
     if (items.length === 0) return 0;
-
-    // Check if there are any meals
     const hasMeal = items.some((item) => item.category === "Meal");
-    if (hasMeal) return 25; // Default meal reward
-
+    if (hasMeal) return 25;
     const totalQty = items.reduce((sum, item) => sum + item.quantity, 0);
     if (totalQty === 1) return 5;
     if (totalQty === 2) return 10;
@@ -68,7 +62,6 @@ export function CreateRequestForm({ requesterId }: { requesterId: string }) {
 
   const handleAddItem = () => {
     if (!currentItemName.trim()) return;
-
     setItems((prev) => [
       ...prev,
       {
@@ -78,31 +71,24 @@ export function CreateRequestForm({ requesterId }: { requesterId: string }) {
         quantity: currentItemQty,
       },
     ]);
-
     setCurrentItemName("");
     setCurrentItemQty(1);
   };
 
-  const handleRemoveItem = (id: string) => {
-    setItems((prev) => prev.filter((item) => item.id !== id));
-  };
+  const handleRemoveItem = (id: string) => setItems((prev) => prev.filter((item) => item.id !== id));
+  const handleClearAll = () => setItems([]);
 
   const handleSubmit = async () => {
     if (items.length === 0 || !dropoffRoom.trim()) return;
-
     setIsSubmitting(true);
-
     try {
       const supabase = createClient();
-
-      // Verify the user is still authenticated
       const { data: { user }, error: authError } = await supabase.auth.getUser();
       if (authError || !user) {
         alert("Session expired. Please log in again.");
         setIsSubmitting(false);
         return;
       }
-
       const requestData: Omit<InsertRequest, "requester_id"> = {
         pickup_location: pickupLocation,
         dropoff_location: `${dropoffHostel}, Room ${dropoffRoom.trim()}`,
@@ -111,7 +97,6 @@ export function CreateRequestForm({ requesterId }: { requesterId: string }) {
         total_estimated_amount: 0,
         status: "pending",
       };
-
       const itemsData: Omit<InsertItem, "request_id">[] = items.map((item) => ({
         name: item.name,
         quantity: item.quantity,
@@ -119,7 +104,6 @@ export function CreateRequestForm({ requesterId }: { requesterId: string }) {
         estimated_price: 0,
       }));
 
-      // Direct insert with detailed error capture
       const { data: request, error: requestError } = await supabase
         .from("delivery_requests")
         .insert({ ...requestData, requester_id: user.id })
@@ -127,276 +111,402 @@ export function CreateRequestForm({ requesterId }: { requesterId: string }) {
         .single();
 
       if (requestError || !request) {
-        console.error("Request insert failed:", {
-          code: requestError?.code,
-          message: requestError?.message,
-          details: requestError?.details,
-          hint: requestError?.hint,
-        });
-        alert(
-          `Failed to create request.\n\nError: ${requestError?.message || "Unknown error"}\nCode: ${requestError?.code || "N/A"}\nHint: ${requestError?.hint || "Check Supabase RLS policies"}`
-        );
+        alert(`Failed to create request.\nError: ${requestError?.message}`);
         setIsSubmitting(false);
         return;
       }
 
-      // Insert items
       if (itemsData.length > 0) {
-        const { error: itemsError } = await supabase
-          .from("request_items")
-          .insert(itemsData.map((item) => ({ ...item, request_id: request.id })));
-
-        if (itemsError) {
-          console.error("Items insert failed:", {
-            code: itemsError.code,
-            message: itemsError.message,
-            details: itemsError.details,
-          });
-          // Request was created, just items failed — still navigate
-        }
+        await supabase.from("request_items").insert(itemsData.map((item) => ({ ...item, request_id: request.id })));
       }
 
       router.push("/dashboard");
       router.refresh();
     } catch (error) {
-      console.error("Unexpected error:", error);
       alert(`Unexpected error: ${error instanceof Error ? error.message : String(error)}`);
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  return (
-    <div className="max-w-xl mx-auto w-full space-y-6">
-      {/* Progress Bar */}
-      <div className="flex items-center justify-between mb-8 relative">
-        <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 bg-secondary -z-10 rounded-full" />
-        <div
-          className="absolute left-0 top-1/2 -translate-y-1/2 h-1 bg-primary -z-10 rounded-full transition-all duration-300"
-          style={{ width: `${((step - 1) / 2) * 100}%` }}
-        />
+  const categories: { label: Category; icon: React.ElementType }[] = [
+    { label: "Snack", icon: Pizza },
+    { label: "Beverage", icon: Coffee },
+    { label: "Meal", icon: Utensils },
+    { label: "Grocery", icon: ShoppingBag },
+    { label: "Stationery", icon: Book },
+    { label: "Medicine", icon: Pill },
+  ];
 
-        {[1, 2, 3].map((s) => (
-          <div
-            key={s}
-            className={`w-8 h-8 rounded-full flex items-center justify-center font-bold transition-all duration-300 ${s <= step ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"
-              }`}
-          >
-            {s < step ? <CheckCircle2 className="w-5 h-5" /> : s}
-          </div>
-        ))}
+  return (
+    <div style={{ maxWidth: "800px", margin: "0 auto", width: "100%", display: "flex", flexDirection: "column", alignItems: "center" }}>
+      
+      {/* Step Indicator */}
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem", marginBottom: "3rem", width: "100%", maxWidth: "600px", position: "relative" }}>
+        
+        {/* Step 1 */}
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "0.5rem", zIndex: 1 }}>
+          <div style={{ width: "36px", height: "36px", borderRadius: "50%", background: "#00E676", color: "#050805", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 800, fontSize: "1rem" }}>1</div>
+          <span style={{ color: "#fff", fontSize: "0.75rem", fontWeight: 700 }}>Item Details</span>
+        </div>
+        
+        {/* Line 1 -> 2 */}
+        <div style={{ flex: 1, borderTop: "2px dashed #00E676", transform: "translateY(-10px)", opacity: 0.5 }} />
+        
+        {/* Step 2 */}
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "0.5rem", zIndex: 1 }}>
+          <div style={{ width: "36px", height: "36px", borderRadius: "50%", background: "transparent", border: "1px solid rgba(255,255,255,0.2)", color: "rgba(255,255,255,0.4)", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, fontSize: "1rem" }}>2</div>
+          <span style={{ color: "rgba(255,255,255,0.4)", fontSize: "0.75rem", fontWeight: 500 }}>Delivery Details</span>
+        </div>
+
+        {/* Line 2 -> 3 */}
+        <div style={{ flex: 1, borderTop: "2px dashed rgba(255,255,255,0.2)", transform: "translateY(-10px)" }} />
+
+        {/* Step 3 */}
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "0.5rem", zIndex: 1 }}>
+          <div style={{ width: "36px", height: "36px", borderRadius: "50%", background: "transparent", border: "1px solid rgba(255,255,255,0.2)", color: "rgba(255,255,255,0.4)", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, fontSize: "1rem" }}>3</div>
+          <span style={{ color: "rgba(255,255,255,0.4)", fontSize: "0.75rem", fontWeight: 500 }}>Confirm Request</span>
+        </div>
+
       </div>
 
-      {step === 1 && (
-        <Card className="border-none shadow-lg">
-          <CardHeader>
-            <CardTitle>What do you need?</CardTitle>
-            <CardDescription>Add the items you want delivered.</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <CategorySelector selectedCategory={currentCategory} onSelect={setCurrentCategory} />
-
-            <div className="flex gap-2">
-              <Input
-                placeholder={`e.g. ${currentCategory === 'Snack' ? 'Lays Chips' : 'Item name'}...`}
-                value={currentItemName}
-                onChange={(e) => setCurrentItemName(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    e.preventDefault();
-                    handleAddItem();
-                  }
-                }}
-                className="flex-1"
-              />
-              <div className="flex items-center border rounded-md">
-                <Button variant="ghost" size="icon" onClick={() => setCurrentItemQty(Math.max(1, currentItemQty - 1))} className="rounded-r-none h-10 w-10">
-                  <Minus className="w-4 h-4" />
-                </Button>
-                <div className="w-8 text-center font-medium">{currentItemQty}</div>
-                <Button variant="ghost" size="icon" onClick={() => setCurrentItemQty(currentItemQty + 1)} className="rounded-l-none h-10 w-10">
-                  <Plus className="w-4 h-4" />
-                </Button>
+      {/* Main Card */}
+      <div style={{
+        background: "rgba(10,15,12,0.6)",
+        border: "1px solid rgba(102,255,178,0.15)",
+        borderRadius: "24px",
+        padding: "2rem",
+        width: "100%",
+        boxShadow: "0 0 40px rgba(0,230,118,0.05), inset 0 0 20px rgba(102,255,178,0.05)",
+        display: "flex", flexDirection: "column", gap: "2rem"
+      }}>
+        {step === 1 && (
+          <>
+            {/* Header */}
+            <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+              <div style={{ width: "40px", height: "40px", borderRadius: "12px", background: "rgba(0,230,118,0.1)", display: "flex", alignItems: "center", justifyContent: "center", border: "1px solid rgba(0,230,118,0.2)" }}>
+                <Box size={20} color="#00E676" />
               </div>
-              <Button onClick={handleAddItem} disabled={!currentItemName.trim()}>
-                Add
-              </Button>
+              <div>
+                <h2 style={{ color: "#fff", fontWeight: 800, fontSize: "1.2rem", margin: 0 }}>What do you need?</h2>
+                <p style={{ color: "#A7B8B0", fontSize: "0.85rem", margin: 0, marginTop: "0.2rem" }}>Add the items you want delivered.</p>
+              </div>
             </div>
 
-            {items.length > 0 && (
-              <div className="space-y-3 mt-6">
-                <h4 className="font-semibold text-sm text-muted-foreground">Added Items</h4>
-                {items.map((item) => (
-                  <div key={item.id} className="flex items-center justify-between p-3 bg-secondary/30 rounded-lg border">
-                    <div>
-                      <span className="font-medium">{item.quantity} × {item.name}</span>
-                      <span className="text-xs text-muted-foreground ml-2 px-2 py-1 bg-secondary rounded-full">
-                        {item.category}
-                      </span>
-                    </div>
-                    <Button variant="ghost" size="icon" onClick={() => handleRemoveItem(item.id)} className="text-destructive hover:text-destructive hover:bg-destructive/10">
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
-                  </div>
-                ))}
-              </div>
-            )}
+            {/* Categories */}
+            <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap", justifyContent: "center" }}>
+              {categories.map(cat => {
+                const isActive = currentCategory === cat.label;
+                return (
+                  <button
+                    key={cat.label}
+                    onClick={() => setCurrentCategory(cat.label)}
+                    style={{
+                      position: "relative",
+                      background: "rgba(255,255,255,0.02)",
+                      border: isActive ? "1px solid #00E676" : "1px solid rgba(255,255,255,0.1)",
+                      borderRadius: "16px",
+                      width: "85px", height: "85px",
+                      display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "0.5rem",
+                      cursor: "pointer",
+                      boxShadow: isActive ? "0 0 20px rgba(0,230,118,0.15)" : "none",
+                      transition: "all 0.2s"
+                    }}
+                  >
+                    <cat.icon size={24} color={isActive ? "#00E676" : "#A7B8B0"} strokeWidth={1.5} />
+                    <span style={{ color: isActive ? "#fff" : "#A7B8B0", fontSize: "0.75rem", fontWeight: isActive ? 600 : 500 }}>{cat.label}</span>
+                    
+                    {/* Active Triangle */}
+                    {isActive && (
+                      <div style={{
+                        position: "absolute", bottom: "-6px", left: "50%", transform: "translateX(-50%) rotate(45deg)",
+                        width: "10px", height: "10px", background: "#00E676",
+                        borderRight: "1px solid #00E676", borderBottom: "1px solid #00E676",
+                        boxShadow: "2px 2px 5px rgba(0,230,118,0.3)"
+                      }} />
+                    )}
+                  </button>
+                );
+              })}
+            </div>
 
-            <Button
-              className="w-full mt-6"
+            {/* Input Row */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+              <label style={{ color: "#00E676", fontSize: "0.8rem", fontWeight: 700 }}>Add item and quantity</label>
+              <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
+                <input 
+                  type="text"
+                  placeholder="e.g. Lays Chips, Doritos, KitKat..."
+                  value={currentItemName}
+                  onChange={e => setCurrentItemName(e.target.value)}
+                  style={{
+                    flex: 1,
+                    background: "rgba(0,0,0,0.3)",
+                    border: "1px solid rgba(255,255,255,0.1)",
+                    borderRadius: "12px",
+                    padding: "0.85rem 1rem",
+                    color: "#fff",
+                    fontSize: "0.9rem",
+                    outline: "none"
+                  }}
+                />
+                <div style={{ display: "flex", alignItems: "center", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "12px", overflow: "hidden" }}>
+                  <button onClick={() => setCurrentItemQty(Math.max(1, currentItemQty - 1))} style={{ background: "transparent", border: "none", color: "rgba(255,255,255,0.6)", padding: "0.85rem 1rem", cursor: "pointer" }}><Minus size={14} /></button>
+                  <span style={{ color: "#fff", fontWeight: 700, fontSize: "0.9rem", minWidth: "20px", textAlign: "center" }}>{currentItemQty}</span>
+                  <button onClick={() => setCurrentItemQty(currentItemQty + 1)} style={{ background: "transparent", border: "none", color: "rgba(255,255,255,0.6)", padding: "0.85rem 1rem", cursor: "pointer" }}><Plus size={14} /></button>
+                </div>
+                <button onClick={handleAddItem} style={{
+                  background: "rgba(0,230,118,0.15)", border: "1px solid rgba(0,230,118,0.3)",
+                  color: "#00E676", fontWeight: 700, fontSize: "0.9rem",
+                  padding: "0.85rem 1.5rem", borderRadius: "12px", cursor: "pointer"
+                }}>
+                  Add
+                </button>
+              </div>
+            </div>
+
+            {/* List / Empty State */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem", marginTop: "0.5rem" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <span style={{ color: "#A7B8B0", fontSize: "0.8rem", fontWeight: 500 }}>Added Items ({items.length})</span>
+                {items.length > 0 && (
+                  <button onClick={handleClearAll} style={{ background: "transparent", border: "none", color: "#A7B8B0", fontSize: "0.8rem", display: "flex", alignItems: "center", gap: "0.4rem", cursor: "pointer" }}>
+                    Clear all <Trash2 size={14} />
+                  </button>
+                )}
+              </div>
+
+              {items.length === 0 ? (
+                <div style={{
+                  border: "1px dashed rgba(255,255,255,0.1)",
+                  borderRadius: "16px",
+                  padding: "3rem",
+                  display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "0.5rem",
+                  background: "rgba(0,0,0,0.2)"
+                }}>
+                  <div style={{ position: "relative", marginBottom: "0.5rem" }}>
+                    <Box size={32} color="#00E676" />
+                    {/* Tiny sparkles/lines around box to match image loosely without being a particle system */}
+                    <div style={{ position: "absolute", top: "-10px", left: "50%", transform: "translateX(-50%)", width: "40px", height: "20px", borderTop: "2px dotted #00E676", borderRadius: "50%", opacity: 0.5 }} />
+                  </div>
+                  <h4 style={{ color: "#fff", fontWeight: 700, margin: 0, fontSize: "1rem" }}>No items added yet.</h4>
+                  <p style={{ color: "#A7B8B0", margin: 0, fontSize: "0.85rem" }}>Search and add items to proceed.</p>
+                </div>
+              ) : (
+                <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem", background: "rgba(0,0,0,0.2)", borderRadius: "16px", padding: "1rem", border: "1px solid rgba(255,255,255,0.05)" }}>
+                  {items.map(item => (
+                    <div key={item.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid rgba(255,255,255,0.05)", paddingBottom: "0.5rem" }}>
+                      <div>
+                        <span style={{ color: "#fff", fontWeight: 600, fontSize: "0.9rem" }}>{item.quantity} × {item.name}</span>
+                        <span style={{ color: "#00E676", fontSize: "0.7rem", marginLeft: "0.5rem", padding: "0.1rem 0.4rem", background: "rgba(0,230,118,0.1)", borderRadius: "8px" }}>{item.category}</span>
+                      </div>
+                      <button onClick={() => handleRemoveItem(item.id)} style={{ background: "transparent", border: "none", color: "#ef4444", cursor: "pointer" }}><Trash2 size={16} /></button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Continue Button */}
+            <button
               onClick={() => setStep(2)}
               disabled={items.length === 0}
+              style={{
+                width: "100%",
+                background: items.length > 0 ? "linear-gradient(135deg, #00C853 0%, #00E676 100%)" : "rgba(255,255,255,0.05)",
+                color: items.length > 0 ? "#000" : "rgba(255,255,255,0.3)",
+                fontWeight: 800,
+                fontSize: "1rem",
+                padding: "1rem",
+                borderRadius: "12px",
+                border: "none",
+                display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem",
+                cursor: items.length > 0 ? "pointer" : "not-allowed",
+                marginTop: "0.5rem",
+                boxShadow: items.length > 0 ? "0 0 20px rgba(0,230,118,0.3)" : "none"
+              }}
             >
-              Continue <ArrowRight className="w-4 h-4 ml-2" />
-            </Button>
-          </CardContent>
-        </Card>
-      )}
+              Continue <ArrowRight size={18} />
+            </button>
+          </>
+        )}
 
-      {step === 2 && (
-        <Card className="border-none shadow-lg animate-in slide-in-from-right-4">
-          <CardHeader>
-            <CardTitle>Logistics & Reward</CardTitle>
-            <CardDescription>Where should it be picked up and delivered?</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="space-y-3">
-              <label className="text-sm font-semibold flex items-center">
-                <MapPin className="w-4 h-4 mr-2 text-primary" /> Pickup Location
-              </label>
-              <div className="grid grid-cols-2 gap-2">
-                {PICKUP_LOCATIONS.map((loc) => (
-                  <Button
-                    key={loc}
-                    type="button"
-                    variant={pickupLocation === loc ? "primary" : "secondary"}
-                    className="justify-start h-auto py-3 px-4 whitespace-normal text-left"
-                    onClick={() => setPickupLocation(loc)}
-                  >
-                    {loc}
-                  </Button>
-                ))}
+        {/* Step 2 */}
+        {step === 2 && (
+          <>
+            <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+              <div style={{ width: "40px", height: "40px", borderRadius: "12px", background: "rgba(0,230,118,0.1)", display: "flex", alignItems: "center", justifyContent: "center", border: "1px solid rgba(0,230,118,0.2)" }}>
+                <MapPin size={20} color="#00E676" />
+              </div>
+              <div>
+                <h2 style={{ color: "#fff", fontWeight: 800, fontSize: "1.2rem", margin: 0 }}>Logistics & Reward</h2>
+                <p style={{ color: "#A7B8B0", fontSize: "0.85rem", margin: 0, marginTop: "0.2rem" }}>Where should it be picked up and delivered?</p>
               </div>
             </div>
 
-            <div className="space-y-3 pt-4 border-t">
-              <label className="text-sm font-semibold flex items-center">
-                <MapPin className="w-4 h-4 mr-2 text-primary" /> Delivery Details
-              </label>
-              <div className="grid grid-cols-2 gap-2 mb-3">
-                {HOSTELS.map((hostel) => (
-                  <Button
-                    key={hostel}
-                    type="button"
-                    variant={dropoffHostel === hostel ? "primary" : "secondary"}
-                    onClick={() => setDropoffHostel(hostel)}
-                  >
-                    {hostel}
-                  </Button>
-                ))}
+            <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+              {/* Pickup Location */}
+              <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+                <label style={{ color: "#00E676", fontSize: "0.8rem", fontWeight: 700, display: "flex", alignItems: "center", gap: "0.4rem" }}><MapPin size={14} /> Pickup Location</label>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.5rem" }}>
+                  {PICKUP_LOCATIONS.map((loc) => (
+                    <button
+                      key={loc}
+                      onClick={() => setPickupLocation(loc)}
+                      style={{
+                        background: pickupLocation === loc ? "rgba(0,230,118,0.15)" : "rgba(0,0,0,0.3)",
+                        border: pickupLocation === loc ? "1px solid #00E676" : "1px solid rgba(255,255,255,0.1)",
+                        color: pickupLocation === loc ? "#00E676" : "#A7B8B0",
+                        padding: "0.85rem 1rem", borderRadius: "12px", textAlign: "left", cursor: "pointer", fontSize: "0.85rem", fontWeight: pickupLocation === loc ? 700 : 500,
+                        transition: "all 0.2s"
+                      }}
+                    >
+                      {loc}
+                    </button>
+                  ))}
+                </div>
               </div>
-              <Input
-                placeholder="Room Number (e.g. 104)"
-                value={dropoffRoom}
-                onChange={(e) => setDropoffRoom(e.target.value)}
-              />
-            </div>
 
-            <div className="space-y-3 pt-4 border-t">
-              <label className="text-sm font-semibold">Delivery Reward (₹)</label>
-              <p className="text-xs text-muted-foreground mb-2">
-                Suggested reward based on your {items.length} item(s): ₹{calculateSuggestedReward()}
-              </p>
-              <div className="flex gap-2 items-center">
-                <span className="text-2xl font-bold">₹</span>
-                <Input
-                  type="number"
-                  placeholder={calculateSuggestedReward().toString()}
-                  value={customReward}
-                  onChange={(e) => setCustomReward(e.target.value)}
-                  className="text-lg font-semibold h-12"
+              {/* Delivery Details */}
+              <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem", borderTop: "1px solid rgba(255,255,255,0.05)", paddingTop: "1.5rem" }}>
+                <label style={{ color: "#00E676", fontSize: "0.8rem", fontWeight: 700, display: "flex", alignItems: "center", gap: "0.4rem" }}><MapPin size={14} /> Delivery Details</label>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.5rem", marginBottom: "0.5rem" }}>
+                  {HOSTELS.map((hostel) => (
+                    <button
+                      key={hostel}
+                      onClick={() => setDropoffHostel(hostel)}
+                      style={{
+                        background: dropoffHostel === hostel ? "rgba(0,230,118,0.15)" : "rgba(0,0,0,0.3)",
+                        border: dropoffHostel === hostel ? "1px solid #00E676" : "1px solid rgba(255,255,255,0.1)",
+                        color: dropoffHostel === hostel ? "#00E676" : "#A7B8B0",
+                        padding: "0.75rem 1rem", borderRadius: "12px", cursor: "pointer", fontSize: "0.85rem", fontWeight: dropoffHostel === hostel ? 700 : 500,
+                        transition: "all 0.2s"
+                      }}
+                    >
+                      {hostel}
+                    </button>
+                  ))}
+                </div>
+                <input
+                  type="text"
+                  placeholder="Room Number (e.g. 104)"
+                  value={dropoffRoom}
+                  onChange={(e) => setDropoffRoom(e.target.value)}
+                  style={{ background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "12px", padding: "0.85rem 1rem", color: "#fff", fontSize: "0.9rem", outline: "none" }}
                 />
               </div>
-            </div>
 
-            <div className="flex gap-3 pt-4">
-              <Button variant="secondary" onClick={() => setStep(1)} className="w-12 p-0">
-                <ArrowLeft className="w-4 h-4" />
-              </Button>
-              <Button
-                className="flex-1"
-                onClick={() => setStep(3)}
-                disabled={!dropoffRoom.trim()}
-              >
-                Continue <ArrowRight className="w-4 h-4 ml-2" />
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {step === 3 && (
-        <Card className="border-none shadow-lg animate-in slide-in-from-right-4">
-          <CardHeader>
-            <CardTitle>Almost there</CardTitle>
-            <CardDescription>Add any final instructions for the runner.</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="space-y-3">
-              <label className="text-sm font-semibold">Extra Instructions (Optional)</label>
-              <textarea
-                className="flex min-h-[100px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
-                placeholder="E.g. If Coke is not available, get Pepsi. Call me when you reach the gate."
-                value={instructions}
-                onChange={(e) => setInstructions(e.target.value)}
-              />
-            </div>
-
-            <div className="flex gap-3 border-t pt-4">
-              <Button variant="secondary" type="button" className="flex-1 h-12 text-muted-foreground" onClick={() => alert('Storage integration coming soon!')}>
-                <Mic className="w-4 h-4 mr-2" /> Voice Note
-              </Button>
-              <Button variant="secondary" type="button" className="flex-1 h-12 text-muted-foreground" onClick={() => alert('Storage integration coming soon!')}>
-                <ImageIcon className="w-4 h-4 mr-2" /> Add Image
-              </Button>
-            </div>
-
-            <div className="bg-primary/5 p-4 rounded-xl border border-primary/20 space-y-2">
-              <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Items ({items.length})</span>
-                <span className="font-semibold text-right max-w-[200px] truncate">
-                  {items.map(i => i.name).join(', ')}
-                </span>
+              {/* Reward */}
+              <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem", borderTop: "1px solid rgba(255,255,255,0.05)", paddingTop: "1.5rem" }}>
+                <label style={{ color: "#00E676", fontSize: "0.8rem", fontWeight: 700 }}>Delivery Reward (₹)</label>
+                <p style={{ color: "#A7B8B0", fontSize: "0.75rem", margin: 0, marginBottom: "0.5rem" }}>Suggested reward based on your {items.length} item(s): ₹{calculateSuggestedReward()}</p>
+                <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                  <span style={{ color: "#fff", fontSize: "1.5rem", fontWeight: 800 }}>₹</span>
+                  <input
+                    type="number"
+                    placeholder={calculateSuggestedReward().toString()}
+                    value={customReward}
+                    onChange={(e) => setCustomReward(e.target.value)}
+                    style={{ background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "12px", padding: "0.85rem 1rem", color: "#fff", fontSize: "1rem", fontWeight: 700, width: "120px", outline: "none" }}
+                  />
+                </div>
               </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Pickup</span>
-                <span className="font-medium text-right">{pickupLocation}</span>
+
+              <div style={{ display: "flex", gap: "1rem", marginTop: "1rem" }}>
+                <button onClick={() => setStep(1)} style={{ background: "rgba(255,255,255,0.05)", border: "none", color: "#fff", padding: "1rem", borderRadius: "12px", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", width: "60px" }}>
+                  <ArrowLeft size={18} />
+                </button>
+                <button
+                  onClick={() => setStep(3)}
+                  disabled={!dropoffRoom.trim()}
+                  style={{
+                    flex: 1,
+                    background: dropoffRoom.trim() ? "linear-gradient(135deg, #00C853 0%, #00E676 100%)" : "rgba(255,255,255,0.05)",
+                    color: dropoffRoom.trim() ? "#000" : "rgba(255,255,255,0.3)",
+                    fontWeight: 800, fontSize: "1rem", padding: "1rem", borderRadius: "12px", border: "none",
+                    display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem",
+                    cursor: dropoffRoom.trim() ? "pointer" : "not-allowed",
+                    boxShadow: dropoffRoom.trim() ? "0 0 20px rgba(0,230,118,0.3)" : "none"
+                  }}
+                >
+                  Continue <ArrowRight size={18} />
+                </button>
               </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Dropoff</span>
-                <span className="font-medium text-right">{dropoffHostel}, Rm {dropoffRoom}</span>
+            </div>
+          </>
+        )}
+
+        {/* Step 3 */}
+        {step === 3 && (
+          <>
+            <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+              <div style={{ width: "40px", height: "40px", borderRadius: "12px", background: "rgba(0,230,118,0.1)", display: "flex", alignItems: "center", justifyContent: "center", border: "1px solid rgba(0,230,118,0.2)" }}>
+                <Box size={20} color="#00E676" />
               </div>
-              <div className="border-t pt-2 mt-2 flex justify-between font-bold text-lg">
-                <span>Reward</span>
-                <span className="text-primary">₹{currentReward}</span>
+              <div>
+                <h2 style={{ color: "#fff", fontWeight: 800, fontSize: "1.2rem", margin: 0 }}>Almost there</h2>
+                <p style={{ color: "#A7B8B0", fontSize: "0.85rem", margin: 0, marginTop: "0.2rem" }}>Add any final instructions for the runner.</p>
               </div>
             </div>
 
-            <div className="flex gap-3 pt-4">
-              <Button variant="secondary" onClick={() => setStep(2)} className="w-12 p-0" disabled={isSubmitting}>
-                <ArrowLeft className="w-4 h-4" />
-              </Button>
-              <Button
-                className="flex-1 h-12 text-lg"
-                onClick={handleSubmit}
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? "Creating..." : "Confirm Request"}
-              </Button>
+            <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+                <label style={{ color: "#00E676", fontSize: "0.8rem", fontWeight: 700 }}>Extra Instructions (Optional)</label>
+                <textarea
+                  placeholder="E.g. If Coke is not available, get Pepsi. Call me when you reach the gate."
+                  value={instructions}
+                  onChange={(e) => setInstructions(e.target.value)}
+                  style={{
+                    background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "12px",
+                    padding: "1rem", color: "#fff", fontSize: "0.9rem", minHeight: "100px", resize: "vertical", outline: "none"
+                  }}
+                />
+              </div>
+
+              <div style={{ background: "rgba(0,230,118,0.05)", border: "1px solid rgba(0,230,118,0.15)", borderRadius: "16px", padding: "1.25rem", display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.85rem" }}>
+                  <span style={{ color: "#A7B8B0" }}>Items ({items.length})</span>
+                  <span style={{ color: "#fff", fontWeight: 600, maxWidth: "200px", textAlign: "right", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{items.map(i => i.name).join(', ')}</span>
+                </div>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.85rem" }}>
+                  <span style={{ color: "#A7B8B0" }}>Pickup</span>
+                  <span style={{ color: "#fff", fontWeight: 600 }}>{pickupLocation}</span>
+                </div>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.85rem" }}>
+                  <span style={{ color: "#A7B8B0" }}>Dropoff</span>
+                  <span style={{ color: "#fff", fontWeight: 600 }}>{dropoffHostel}, Rm {dropoffRoom}</span>
+                </div>
+                <div style={{ borderTop: "1px solid rgba(255,255,255,0.05)", paddingTop: "0.75rem", marginTop: "0.25rem", display: "flex", justifyContent: "space-between", fontSize: "1.1rem", fontWeight: 800 }}>
+                  <span style={{ color: "#fff" }}>Reward</span>
+                  <span style={{ color: "#00E676" }}>₹{currentReward}</span>
+                </div>
+              </div>
+
+              <div style={{ display: "flex", gap: "1rem", marginTop: "1rem" }}>
+                <button onClick={() => setStep(2)} disabled={isSubmitting} style={{ background: "rgba(255,255,255,0.05)", border: "none", color: "#fff", padding: "1rem", borderRadius: "12px", cursor: isSubmitting ? "not-allowed" : "pointer", display: "flex", alignItems: "center", justifyContent: "center", width: "60px", opacity: isSubmitting ? 0.5 : 1 }}>
+                  <ArrowLeft size={18} />
+                </button>
+                <button
+                  onClick={handleSubmit}
+                  disabled={isSubmitting}
+                  style={{
+                    flex: 1,
+                    background: "linear-gradient(135deg, #00C853 0%, #00E676 100%)",
+                    color: "#000",
+                    fontWeight: 800, fontSize: "1rem", padding: "1rem", borderRadius: "12px", border: "none",
+                    display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem",
+                    cursor: isSubmitting ? "not-allowed" : "pointer",
+                    boxShadow: "0 0 20px rgba(0,230,118,0.3)",
+                    opacity: isSubmitting ? 0.7 : 1
+                  }}
+                >
+                  {isSubmitting ? "Creating Request..." : "Confirm Request"}
+                </button>
+              </div>
             </div>
-          </CardContent>
-        </Card>
-      )}
+          </>
+        )}
+      </div>
     </div>
   );
 }

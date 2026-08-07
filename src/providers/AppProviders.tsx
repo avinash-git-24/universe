@@ -9,6 +9,7 @@
 
 import * as React from "react";
 import { AnimatePresence } from "framer-motion";
+import { UIStateProvider } from "@/providers/UIStateProvider";
 
 interface AppProvidersProps {
   children: React.ReactNode;
@@ -25,8 +26,10 @@ interface AppProvidersProps {
  */
 export function AppProviders({ children }: AppProvidersProps) {
   return (
-    <AnimatePresence mode="wait" initial={false}>
-      {children}
-    </AnimatePresence>
+    <UIStateProvider>
+      <AnimatePresence mode="wait" initial={false}>
+        {children}
+      </AnimatePresence>
+    </UIStateProvider>
   );
 }

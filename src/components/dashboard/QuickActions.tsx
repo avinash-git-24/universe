@@ -1,107 +1,58 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
-import { Plus, Bike, User, Package, Wallet, MessageSquare, BarChart3, LogOut, Trash2 } from "lucide-react";
-import { LogoutButton } from "@/components/auth/LogoutButton";
-import { createClient } from "@/lib/supabase/client";
-
-const actions = [
-  { href: "/request/new", label: "Create Request", icon: Plus, primary: true },
-  { href: "/dashboard/requests", label: "My Requests", icon: Package },
-  { href: "/dashboard/runner", label: "Runner Mode", icon: Bike },
-  { href: "/dashboard/wallet", label: "Wallet", icon: Wallet },
-  { href: "/dashboard/chat", label: "Chat", icon: MessageSquare },
-  { href: "/dashboard/analytics", label: "Analytics", icon: BarChart3 },
-  { href: "/complete-profile", label: "Edit Profile", icon: User },
-];
+import { Plus, ChevronRight, FileText, Bike, Wallet, MessageSquare, BarChart2 } from "lucide-react";
 
 export function QuickActions() {
-  const [isDeleting, setIsDeleting] = useState(false);
-
-  const handleDeleteAccount = async () => {
-    const ok = window.confirm("Delete your account permanently? This cannot be undone.");
-    if (!ok) return;
-    setIsDeleting(true);
-    try {
-      const supabase = createClient();
-      const { error } = await supabase.rpc("delete_own_account");
-      if (error) { alert("Failed: " + error.message); setIsDeleting(false); return; }
-      await supabase.auth.signOut();
-      window.location.href = "/login";
-    } catch { setIsDeleting(false); }
-  };
+  const actions = [
+    { label: "My Requests", icon: FileText, href: "/dashboard/requests" },
+    { label: "Runner Mode", icon: Bike, href: "/dashboard/runner" },
+    { label: "Wallet", icon: Wallet, href: "/dashboard/wallet" },
+    { label: "Chat Support", icon: MessageSquare, href: "/dashboard/chat" },
+    { label: "Analytics", icon: BarChart2, href: "/dashboard/analytics" },
+  ];
 
   return (
     <div style={{
-      background: "rgba(255,255,255,0.03)",
-      border: "1px solid rgba(255,255,255,0.08)",
+      background: "rgba(10,15,12,0.4)",
       borderRadius: "24px",
       padding: "1.5rem",
+      border: "1px solid rgba(102,255,178,0.1)",
       backdropFilter: "blur(20px)",
+      boxShadow: "0 8px 32px rgba(0,0,0,0.3)",
+      display: "flex", flexDirection: "column", gap: "1rem"
     }}>
-      <h3 style={{ color: "var(--color-foreground)", fontWeight: 700, fontSize: "1rem", marginBottom: "1rem", display: "flex", alignItems: "center", gap: "0.5rem" }}>
-        <span style={{ width: "8px", height: "8px", borderRadius: "50%", background: "linear-gradient(135deg, #10b981, #059669)", display: "inline-block" }} />
-        Quick Actions
-      </h3>
+      <h3 style={{ color: "#fff", fontWeight: 800, fontSize: "1.05rem", marginBottom: "0.5rem" }}>Quick Actions</h3>
 
-      <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-        {actions.map(({ href, label, icon: Icon, primary }) => (
-          <Link key={href} href={href}>
+      <Link href="/request/new" style={{ textDecoration: "none" }}>
+        <button style={{
+          width: "100%",
+          display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem",
+          background: "#00E676", color: "#000", fontWeight: 800, fontSize: "0.85rem",
+          border: "none", borderRadius: "12px", padding: "0.8rem", cursor: "pointer",
+          boxShadow: "0 0 15px rgba(0,230,118,0.3)"
+        }} className="hover:bg-[#00C853] transition-colors">
+          <Plus size={16} /> Create New Request
+        </button>
+      </Link>
+
+      <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem", marginTop: "0.5rem" }}>
+        {actions.map((action, i) => (
+          <Link key={i} href={action.href} style={{ textDecoration: "none" }}>
             <div style={{
-              display: "flex", alignItems: "center", gap: "0.75rem",
-              padding: "0.75rem 1rem",
-              borderRadius: "14px",
-              background: primary
-                ? "linear-gradient(135deg, #10b981 0%, #059669 100%)"
-                : "rgba(255,255,255,0.04)",
-              border: primary ? "none" : "1px solid rgba(255,255,255,0.07)",
-              cursor: "pointer",
-              transition: "all 0.2s ease",
-              color: primary ? "#fff" : "var(--color-foreground)",
-            }}
-              className={primary ? "hover:opacity-90" : "hover:bg-white/10 hover:border-emerald-500/30"}
-            >
-              <div style={{
-                width: "32px", height: "32px", borderRadius: "10px",
-                background: primary ? "rgba(255,255,255,0.2)" : "rgba(16,185,129,0.15)",
-                display: "flex", alignItems: "center", justifyContent: "center",
-                flexShrink: 0,
-              }}>
-                <Icon size={16} color={primary ? "#fff" : "#10b981"} />
+              display: "flex", justifyContent: "space-between", alignItems: "center",
+              padding: "0.85rem", borderRadius: "12px",
+              background: "rgba(255,255,255,0.02)",
+              transition: "all 0.2s"
+            }} className="hover:bg-[rgba(0,230,118,0.05)] group">
+              <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+                <action.icon size={16} color="#00E676" />
+                <span style={{ color: "#A7B8B0", fontSize: "0.85rem", fontWeight: 600 }} className="group-hover:text-[#00E676]">{action.label}</span>
               </div>
-              <span style={{ fontWeight: 600, fontSize: "0.875rem" }}>{label}</span>
+              <ChevronRight size={16} color="rgba(255,255,255,0.2)" className="group-hover:text-[#00E676]" />
             </div>
           </Link>
         ))}
-
-        {/* Logout */}
-        <div style={{ marginTop: "0.5rem", paddingTop: "0.75rem", borderTop: "1px solid rgba(255,255,255,0.07)" }}>
-          <LogoutButton
-            variant="ghost"
-            className="w-full justify-start h-11 text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-[14px] font-semibold"
-          />
-          <button
-            onClick={handleDeleteAccount}
-            disabled={isDeleting}
-            style={{
-              width: "100%", marginTop: "0.4rem",
-              display: "flex", alignItems: "center", gap: "0.6rem",
-              padding: "0.65rem 1rem",
-              borderRadius: "14px",
-              background: "rgba(239,68,68,0.08)",
-              border: "1px solid rgba(239,68,68,0.2)",
-              color: "#f87171",
-              fontWeight: 600, fontSize: "0.875rem",
-              cursor: isDeleting ? "not-allowed" : "pointer",
-              opacity: isDeleting ? 0.6 : 1,
-              transition: "all 0.2s",
-            }}
-          >
-            <Trash2 size={15} />
-            {isDeleting ? "Deleting..." : "Delete Account"}
-          </button>
-        </div>
       </div>
     </div>
   );

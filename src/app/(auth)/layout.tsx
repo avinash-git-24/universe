@@ -6,7 +6,7 @@
  */
 
 import type { Metadata } from "next";
-import { AuthBackground } from "@/components/auth/AuthBackground";
+import SpaceBackground from "@/components/auth/SpaceBackground";
 
 export const metadata: Metadata = {
   title: {
@@ -23,8 +23,8 @@ export default function AuthLayout({
 }) {
   return (
     <>
-      {/* Ambient background — fixed, behind everything */}
-      <AuthBackground />
+      {/* Ambient 3D space background — fixed, behind everything */}
+      <SpaceBackground />
 
       {/* Centered content area */}
       <div className="min-h-dvh flex flex-col items-center justify-center px-4 py-12 sm:px-6">

@@ -27,10 +27,10 @@ const inputVariants = cva(
     variants: {
       state: {
         default: [
-          "border-[var(--color-border)]",
-          "hover:border-[var(--color-border-strong)]",
-          "focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]/15",
-          "focus:shadow-[var(--shadow-glow-primary)]",
+          "border-[#00E676]/20 bg-[rgba(10,15,12,0.4)] text-white placeholder:text-[#A7B8B0]/50",
+          "hover:border-[#00E676]/50 hover:bg-[rgba(10,15,12,0.6)]",
+          "focus:border-[#66FFB2] focus:ring-1 focus:ring-[#66FFB2] focus:bg-[rgba(10,15,12,0.8)]",
+          "focus:shadow-[0_0_15px_rgba(102,255,178,0.3)]",
         ],
         error: [
           "border-[var(--color-error)]",
@@ -60,7 +60,7 @@ const inputVariants = cva(
 
 export interface InputProps
   extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "size">,
-    VariantProps<typeof inputVariants> {
+  VariantProps<typeof inputVariants> {
   /** Input label */
   label?: string;
   /** Helper text below the input */
@@ -115,7 +115,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           <label
             htmlFor={inputId}
             className={cn(
-              "text-sm font-medium text-[var(--color-text)] font-[family-name:var(--font-inter)]",
+              "text-sm font-semibold text-white font-[family-name:var(--font-inter)] tracking-wide mb-1",
               disabled && "opacity-50"
             )}
           >

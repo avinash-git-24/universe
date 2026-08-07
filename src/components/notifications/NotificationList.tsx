@@ -17,23 +17,20 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useRealtime } from "@/providers/RealtimeProvider";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Notification } from "@/lib/database/notifications";
-import { EmptyState } from "@/components/shared/EmptyState";
 
 interface NotificationListProps {
   onClose: () => void;
 }
 
-type NotificationCategory = "all" | "delivery" | "request" | "system" | "runner" | "admin";
+type NotificationCategory = "all" | "delivery" | "request" | "runner";
 
 export function NotificationList({ onClose }: NotificationListProps) {
   const { notifications, unreadCount, markAsRead, markAllAsRead, deleteNotification } = useRealtime();
   const [selectedCategory, setSelectedCategory] = useState<NotificationCategory>("all");
   const router = useRouter();
 
-  // Helper to categorize notifications based on payload type/title
+  // Helper to categorize notifications
   const getCategory = (notif: Notification): NotificationCategory => {
     const t = notif.type.toLowerCase();
     const title = notif.title.toLowerCase();
@@ -41,57 +38,42 @@ export function NotificationList({ onClose }: NotificationListProps) {
     if (t.includes("delivery") || t.includes("picked_up") || t.includes("in_transit") || t.includes("delivered")) {
       return "delivery";
     }
-    if (t.includes("request") || t.includes("accepted") || t.includes("pending")) {
-      return "request";
-    }
     if (t.includes("runner") || title.includes("runner")) {
       return "runner";
-    }
-    if (t.includes("admin") || title.includes("admin")) {
-      return "admin";
-    }
-    if (t.includes("system") || title.includes("system")) {
-      return "system";
     }
     return "request";
   };
 
-  // Icon selector based on notification category & type
   const getIcon = (notif: Notification) => {
     const category = getCategory(notif);
     const t = notif.type.toLowerCase();
 
     if (t === "status_delivered" || t.includes("delivered")) {
-      return <MapPin className="w-4 h-4 text-emerald-500" />;
+      return <MapPin size={16} color="#10B981" />;
     }
     if (t === "status_cancelled" || t.includes("cancelled")) {
-      return <AlertCircle className="w-4 h-4 text-red-500" />;
+      return <AlertCircle size={16} color="#EF4444" />;
     }
     if (t === "status_in_transit" || t.includes("transit")) {
-      return <Truck className="w-4 h-4 text-cyan-500" />;
+      return <Truck size={16} color="#06B6D4" />;
     }
     if (t === "status_picked_up" || t.includes("picked")) {
-      return <Truck className="w-4 h-4 text-purple-500" />;
+      return <Truck size={16} color="#A855F7" />;
     }
     if (t === "status_accepted" || t.includes("accepted")) {
-      return <CheckCircle2 className="w-4 h-4 text-amber-500" />;
+      return <CheckCircle2 size={16} color="#F59E0B" />;
     }
 
     switch (category) {
       case "delivery":
-        return <Truck className="w-4 h-4 text-primary" />;
+        return <Truck size={16} color="#00E676" />;
       case "runner":
-        return <Bike className="w-4 h-4 text-accent" />;
-      case "admin":
-        return <BellRing className="w-4 h-4 text-indigo-500" />;
-      case "system":
-        return <Info className="w-4 h-4 text-secondary-foreground" />;
+        return <Bike size={16} color="#00E676" />;
       default:
-        return <FileText className="w-4 h-4 text-blue-500" />;
+        return <FileText size={16} color="#00E676" />;
     }
   };
 
-  // Filter & Sort Notifications
   const filteredNotifications = useMemo(() => {
     return notifications
       .filter((notif) => {
@@ -112,41 +94,51 @@ export function NotificationList({ onClose }: NotificationListProps) {
   };
 
   return (
-    <Card className="shadow-xl border bg-background/95 backdrop-blur-md overflow-hidden">
-      {/* Header */}
-      <CardHeader className="flex flex-row items-center justify-between pb-3 border-b px-4 py-3">
-        <div className="flex items-center gap-2">
-          <CardTitle className="text-base font-bold">Notifications</CardTitle>
+    <div style={{
+      background: "#0B120D",
+      border: "1px solid rgba(0, 230, 118, 0.1)",
+      borderRadius: "20px",
+      boxShadow: "0 20px 40px rgba(0,0,0,0.5), inset 0 0 20px rgba(0,230,118,0.02)",
+      overflow: "visible",
+      display: "flex",
+      flexDirection: "column",
+      maxHeight: "450px"
+    }}>
+      {/* Header, styled to ensure top border radius looks good */}
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "1.25rem 1.5rem", borderBottom: "1px solid rgba(255,255,255,0.05)", borderTopLeftRadius: "20px", borderTopRightRadius: "20px", backgroundColor: "#0B120D" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+          <h3 style={{ margin: 0, color: "#fff", fontSize: "1.1rem", fontWeight: 800 }}>Notifications</h3>
           {unreadCount > 0 && (
-            <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-primary/10 text-primary border border-primary/20">
+            <span style={{ background: "rgba(0,230,118,0.15)", color: "#00E676", fontSize: "0.7rem", fontWeight: 700, padding: "2px 8px", borderRadius: "12px", border: "1px solid rgba(0,230,118,0.3)" }}>
               {unreadCount} new
             </span>
           )}
         </div>
-
         {unreadCount > 0 && (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={markAllAsRead}
-            className="text-xs h-7 px-2 text-primary hover:bg-primary/10"
-          >
-            <Check className="w-3 h-3 mr-1" /> Mark all read
-          </Button>
+          <button onClick={markAllAsRead} style={{ background: "transparent", border: "none", color: "#00E676", fontSize: "0.75rem", fontWeight: 600, display: "flex", alignItems: "center", gap: "4px", cursor: "pointer" }}>
+            <Check size={14} /> Mark all read
+          </button>
         )}
-      </CardHeader>
+      </div>
 
-      {/* Category Pills */}
-      <div className="flex items-center gap-1 px-3 py-2 border-b bg-secondary/20 overflow-x-auto text-xs">
-        {(["all", "delivery", "request", "runner", "system", "admin"] as const).map((cat) => (
+      {/* Tabs */}
+      <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", padding: "1rem 1.5rem", borderBottom: "1px solid rgba(255,255,255,0.05)", overflowX: "auto" }}>
+        {(["all", "delivery", "request", "runner"] as const).map((cat) => (
           <button
             key={cat}
             onClick={() => setSelectedCategory(cat)}
-            className={`px-2.5 py-1 rounded-full capitalize font-medium transition-colors shrink-0 ${
-              selectedCategory === cat
-                ? "bg-primary text-primary-foreground"
-                : "text-muted-foreground hover:bg-secondary"
-            }`}
+            style={{
+              background: selectedCategory === cat ? "rgba(0,230,118,0.15)" : "transparent",
+              color: selectedCategory === cat ? "#00E676" : "#A7B8B0",
+              border: selectedCategory === cat ? "1px solid rgba(0,230,118,0.3)" : "1px solid transparent",
+              padding: "0.35rem 0.85rem",
+              borderRadius: "20px",
+              fontSize: "0.75rem",
+              fontWeight: selectedCategory === cat ? 700 : 500,
+              cursor: "pointer",
+              textTransform: "capitalize",
+              transition: "all 0.2s"
+            }}
           >
             {cat}
           </button>
@@ -154,71 +146,71 @@ export function NotificationList({ onClose }: NotificationListProps) {
       </div>
 
       {/* List Content */}
-      <CardContent className="p-0 max-h-[380px] overflow-y-auto">
+      <div style={{ overflowY: "auto", flex: 1, padding: "0.5rem 0", borderBottomLeftRadius: "20px", borderBottomRightRadius: "20px", backgroundColor: "#0B120D" }}>
         {filteredNotifications.length === 0 ? (
-          <EmptyState
-            icon={BellOff}
-            title="No Notifications"
-            description={
-              selectedCategory === "all"
-                ? "You're all caught up! New notifications will appear here."
-                : `No ${selectedCategory} notifications found.`
-            }
-            className="border-none bg-transparent my-4"
-          />
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "3rem 2rem", textAlign: "center", gap: "1rem" }}>
+            <div style={{ width: "48px", height: "48px", borderRadius: "50%", background: "rgba(255,255,255,0.02)", border: "1px dashed rgba(255,255,255,0.1)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <BellOff size={20} color="#A7B8B0" />
+            </div>
+            <div>
+              <h4 style={{ color: "#fff", fontWeight: 700, margin: 0, fontSize: "0.95rem" }}>No Notifications</h4>
+              <p style={{ color: "#A7B8B0", fontSize: "0.8rem", margin: "0.25rem 0 0 0" }}>
+                {selectedCategory === "all" ? "You're all caught up!" : `No ${selectedCategory} notifications found.`}
+              </p>
+            </div>
+          </div>
         ) : (
-          <div className="divide-y">
+          <div style={{ display: "flex", flexDirection: "column" }}>
             {filteredNotifications.map((notif) => (
               <div
                 key={notif.id}
-                className={`p-3.5 hover:bg-secondary/40 transition-colors flex gap-3 group relative cursor-pointer ${
-                  !notif.is_read
-                    ? "bg-primary/5 dark:bg-primary/10 border-l-2 border-primary"
-                    : ""
-                }`}
                 onClick={() => handleNotificationClick(notif)}
+                style={{
+                  display: "flex", gap: "1rem", padding: "1rem 1.5rem", cursor: "pointer",
+                  background: !notif.is_read ? "rgba(0,230,118,0.05)" : "transparent",
+                  borderLeft: !notif.is_read ? "2px solid #00E676" : "2px solid transparent",
+                  transition: "background 0.2s",
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.background = "rgba(0,230,118,0.08)"}
+                onMouseLeave={(e) => e.currentTarget.style.background = !notif.is_read ? "rgba(0,230,118,0.05)" : "transparent"}
               >
-                <div className="mt-0.5 shrink-0 p-1.5 rounded-full bg-secondary/50">
+                <div style={{ marginTop: "0.25rem", flexShrink: 0, width: "32px", height: "32px", borderRadius: "50%", background: "rgba(255,255,255,0.03)", display: "flex", alignItems: "center", justifyContent: "center" }}>
                   {getIcon(notif)}
                 </div>
 
-                <div className="space-y-0.5 flex-1 min-w-0 pr-6">
-                  <div className="flex items-center justify-between gap-2">
-                    <p className={`text-xs ${!notif.is_read ? "font-bold text-foreground" : "font-medium text-foreground/90"} truncate`}>
+                <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: "0.25rem" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "0.5rem" }}>
+                    <p style={{ margin: 0, color: !notif.is_read ? "#fff" : "rgba(255,255,255,0.8)", fontSize: "0.85rem", fontWeight: !notif.is_read ? 700 : 500 }}>
                       {notif.title}
                     </p>
-                    <span className="text-[10px] text-muted-foreground shrink-0">
+                    <span style={{ color: "#A7B8B0", fontSize: "0.65rem", flexShrink: 0 }}>
                       {formatDistanceToNow(new Date(notif.created_at))} ago
                     </span>
                   </div>
-
-                  <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
+                  <p style={{ margin: 0, color: "#A7B8B0", fontSize: "0.8rem", lineHeight: 1.4 }}>
                     {notif.message}
                   </p>
                 </div>
 
-                {/* Unread indicator dot */}
-                {!notif.is_read && (
-                  <span className="w-2 h-2 rounded-full bg-primary shrink-0 mt-1" />
-                )}
-
-                {/* Delete notification button */}
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    deleteNotification(notif.id);
-                  }}
-                  className="absolute right-2 bottom-2 opacity-0 group-hover:opacity-100 p-1 text-muted-foreground hover:text-destructive rounded transition-opacity"
-                  title="Delete notification"
-                >
-                  <Trash2 className="w-3.5 h-3.5" />
-                </button>
+                <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "space-between", width: "20px" }}>
+                  {!notif.is_read ? <div style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#00E676", marginTop: "0.5rem" }} /> : <div />}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      deleteNotification(notif.id);
+                    }}
+                    style={{ background: "transparent", border: "none", color: "rgba(255,255,255,0.2)", cursor: "pointer", padding: "4px" }}
+                    onMouseEnter={(e) => e.currentTarget.style.color = "#EF4444"}
+                    onMouseLeave={(e) => e.currentTarget.style.color = "rgba(255,255,255,0.2)"}
+                  >
+                    <Trash2 size={14} />
+                  </button>
+                </div>
               </div>
             ))}
           </div>
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }

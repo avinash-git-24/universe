@@ -64,7 +64,7 @@ function LoginContent() {
     if (error) {
       setLoading(false);
       if (error.message.toLowerCase().includes("invalid login credentials") ||
-          error.message.toLowerCase().includes("invalid credentials")) {
+        error.message.toLowerCase().includes("invalid credentials")) {
         setErrors({ form: "Incorrect email or password. Please try again." });
       } else if (error.message.toLowerCase().includes("email not confirmed")) {
         setErrors({ form: "Please verify your email before signing in." });
@@ -93,8 +93,8 @@ function LoginContent() {
             className="rounded-[var(--radius-md)] px-4 py-3 text-sm bg-[var(--color-error-subtle)] text-[var(--color-error-foreground)] border border-[var(--color-error)]/30"
             style={{ fontFamily: "var(--font-inter)" }}
           >
-            {callbackError === "auth_callback_failed" 
-              ? "Authentication failed. Please try again." 
+            {callbackError === "auth_callback_failed"
+              ? "Authentication failed. Please try again."
               : callbackError}
           </div>
         )}

@@ -22,10 +22,10 @@ export function AuthLogo() {
         <Zap size={18} className="text-white fill-white" />
       </div>
       <span
-        className="text-xl font-extrabold tracking-tight text-[var(--color-text)]"
+        className="text-2xl font-extrabold tracking-tight text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.3)]"
         style={{ fontFamily: "var(--font-plus-jakarta-sans)" }}
       >
-        Uni<span className="text-[var(--color-primary)]">Verse</span>
+        Uni<span className="text-[#00E676] drop-shadow-[0_0_15px_rgba(0,230,118,0.5)]">Verse</span>
       </span>
     </Link>
   );
