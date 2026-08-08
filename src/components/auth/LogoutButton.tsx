@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import { LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -12,13 +12,15 @@ interface LogoutButtonProps {
   className?: string;
   showIcon?: boolean;
   label?: string;
+  children?: ReactNode;
 }
 
 export function LogoutButton({ 
   variant = "ghost", 
   className = "", 
   showIcon = true,
-  label = "Log out"
+  label = "Log out",
+  children
 }: LogoutButtonProps) {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
@@ -43,8 +45,12 @@ export function LogoutButton({
       onClick={handleLogout}
       disabled={isLoading}
     >
-      {showIcon && <LogOut className="w-4 h-4 mr-2" />}
-      {isLoading ? "Logging out..." : label}
+      {children ? children : (
+        <>
+          {showIcon && <LogOut className="w-4 h-4 mr-2" />}
+          {isLoading ? "Logging out..." : label}
+        </>
+      )}
     </Button>
   );
 }

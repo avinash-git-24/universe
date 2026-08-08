@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 export interface ErrorStateProps {
   title?: string;
   description?: string;
-  icon?: React.ElementType;
+  icon?: React.ElementType<any>;
   onRetry?: () => void;
   retryLabel?: string;
   className?: string;
@@ -26,7 +26,10 @@ export function ErrorState({
       role="alert"
     >
       <div className="w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 flex items-center justify-center mx-auto">
-        <Icon className="w-6 h-6" />
+        {(() => {
+          const IconComp = Icon as any;
+          return <IconComp className="w-6 h-6" />;
+        })()}
       </div>
 
       <div className="space-y-1">

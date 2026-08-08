@@ -51,7 +51,10 @@ export function RequestStatusBadge({
         className
       )}
     >
-      {showIcon && <Icon className={cn(ICON_SIZE_MAP[size], "shrink-0")} />}
+      {showIcon && (() => {
+        const IconComp = Icon as any;
+        return <IconComp className={cn(ICON_SIZE_MAP[size], "shrink-0")} />;
+      })()}
       <span>{config.label}</span>
     </Badge>
   );

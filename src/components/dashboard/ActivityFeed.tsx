@@ -1,10 +1,10 @@
 "use client";
 
 import { CheckCircle2, MessageSquare, Package } from "lucide-react";
-import type { Request } from "@/lib/database/requests";
+import type { DeliveryRequest } from "@/lib/database/requests";
 
 interface ActivityFeedProps {
-  requests: Request[];
+  requests: DeliveryRequest[];
 }
 
 export function ActivityFeed({ requests }: ActivityFeedProps) {

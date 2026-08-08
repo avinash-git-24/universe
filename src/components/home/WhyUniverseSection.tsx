@@ -74,7 +74,7 @@ function AdvantageCard({
   highlight,
   index,
 }: {
-  icon: React.ElementType;
+  icon: React.ElementType<any>;
   title: string;
   description: string;
   accentColor: string;
@@ -127,7 +127,10 @@ function AdvantageCard({
           border: `1px solid ${accentColor}30`,
         }}
       >
-        <Icon size={22} style={{ color: accentColor }} strokeWidth={1.8} />
+        {(() => {
+          const IconComp = Icon as any;
+          return <IconComp size={22} style={{ color: accentColor }} strokeWidth={1.8} />;
+        })()}
       </div>
 
       {/* Text */}

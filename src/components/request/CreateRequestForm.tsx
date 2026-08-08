@@ -129,7 +129,7 @@ export function CreateRequestForm({ requesterId }: { requesterId: string }) {
     }
   };
 
-  const categories: { label: Category; icon: React.ElementType }[] = [
+  const categories: { label: Category; icon: React.ElementType<any> }[] = [
     { label: "Snack", icon: Pizza },
     { label: "Beverage", icon: Coffee },
     { label: "Meal", icon: Utensils },
@@ -213,7 +213,10 @@ export function CreateRequestForm({ requesterId }: { requesterId: string }) {
                       transition: "all 0.2s"
                     }}
                   >
-                    <cat.icon size={24} color={isActive ? "#00E676" : "#A7B8B0"} strokeWidth={1.5} />
+                    {(() => {
+                      const IconComp = cat.icon as any;
+                      return <IconComp size={24} color={isActive ? "#00E676" : "#A7B8B0"} strokeWidth={1.5} />;
+                    })()}
                     <span style={{ color: isActive ? "#fff" : "#A7B8B0", fontSize: "0.75rem", fontWeight: isActive ? 600 : 500 }}>{cat.label}</span>
                     
                     {/* Active Triangle */}
