@@ -30,6 +30,7 @@ const navItems = [
 
 export function Sidebar() {
   const pathname = usePathname();
+  const isProfilePage = pathname === "/dashboard/profile";
 
   return (
     <aside style={{
@@ -59,7 +60,7 @@ export function Sidebar() {
 
       {/* Nav Links */}
       <nav style={{ display: "flex", flexDirection: "column", gap: "0.25rem", flex: 1 }}>
-        {navItems.map((item) => {
+        {!isProfilePage && navItems.map((item) => {
           const isActive = pathname === item.href;
           return (
             <Link key={item.name} href={item.href} style={{ textDecoration: "none" }}>
@@ -91,37 +92,39 @@ export function Sidebar() {
       </nav>
 
       {/* Upgrade to Pro */}
-      <div style={{
-        background: "rgba(10,15,12,0.6)",
-        border: "1px solid rgba(102,255,178,0.1)",
-        borderRadius: "16px",
-        padding: "1.25rem",
-        marginBottom: "1rem",
-        backdropFilter: "blur(10px)"
-      }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.5rem" }}>
-          <Crown size={16} color="#F59E0B" />
-          <h4 style={{ color: "#fff", fontWeight: 700, fontSize: "0.875rem" }}>Upgrade to Pro</h4>
+      {!isProfilePage && (
+        <div style={{
+          background: "rgba(10,15,12,0.6)",
+          border: "1px solid rgba(102,255,178,0.1)",
+          borderRadius: "16px",
+          padding: "1.25rem",
+          marginBottom: "1rem",
+          backdropFilter: "blur(10px)"
+        }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.5rem" }}>
+            <Crown size={16} color="#F59E0B" />
+            <h4 style={{ color: "#fff", fontWeight: 700, fontSize: "0.875rem" }}>Upgrade to Pro</h4>
+          </div>
+          <p style={{ color: "#A7B8B0", fontSize: "0.7rem", lineHeight: 1.4, marginBottom: "1rem" }}>
+            Unlock more features and get unlimited requests.
+          </p>
+          <button style={{
+            width: "100%",
+            padding: "0.6rem",
+            background: "linear-gradient(135deg, #00C853 0%, #00E676 100%)",
+            color: "#000",
+            border: "none",
+            borderRadius: "8px",
+            fontWeight: 800,
+            fontSize: "0.8rem",
+            cursor: "pointer",
+            boxShadow: "0 0 15px rgba(0,230,118,0.3)",
+            transition: "transform 0.2s"
+          }} className="hover:scale-105">
+            Upgrade Now
+          </button>
         </div>
-        <p style={{ color: "#A7B8B0", fontSize: "0.7rem", lineHeight: 1.4, marginBottom: "1rem" }}>
-          Unlock more features and get unlimited requests.
-        </p>
-        <button style={{
-          width: "100%",
-          padding: "0.6rem",
-          background: "linear-gradient(135deg, #00C853 0%, #00E676 100%)",
-          color: "#000",
-          border: "none",
-          borderRadius: "8px",
-          fontWeight: 800,
-          fontSize: "0.8rem",
-          cursor: "pointer",
-          boxShadow: "0 0 15px rgba(0,230,118,0.3)",
-          transition: "transform 0.2s"
-        }} className="hover:scale-105">
-          Upgrade Now
-        </button>
-      </div>
+      )}
 
       {/* Logout */}
       <div style={{ paddingTop: "0.5rem", borderTop: "1px solid rgba(102,255,178,0.05)" }}>

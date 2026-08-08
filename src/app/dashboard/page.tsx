@@ -47,25 +47,25 @@ export default async function DashboardPage() {
 
   const stats = [
     {
-      label: "Total Requests", value: requests.length > 0 ? requests.length : 128, icon: Package,
+      label: "Total Requests", value: requests.length, icon: Package,
       gradient: "rgba(10,15,12,0.4)",
       iconBg: "rgba(0,230,118,0.1)",
       trend: "All time",
     },
     {
-      label: "Active Requests", value: activeRequests.length > 0 ? activeRequests.length : 8, icon: Bike,
+      label: "Active Requests", value: activeRequests.length, icon: Bike,
       gradient: "rgba(10,15,12,0.4)",
       iconBg: "rgba(102,255,178,0.1)",
       trend: "In progress",
     },
     {
-      label: "Completed", value: completedRequests.length > 0 ? completedRequests.length : 96, icon: CheckCircle2,
+      label: "Completed", value: completedRequests.length, icon: CheckCircle2,
       gradient: "rgba(10,15,12,0.4)",
       iconBg: "rgba(0,230,118,0.1)",
       trend: "Delivered",
     },
     {
-      label: "Cancelled", value: cancelledRequests.length > 0 ? cancelledRequests.length : 24, icon: AlertCircle,
+      label: "Cancelled", value: cancelledRequests.length, icon: AlertCircle,
       gradient: "rgba(10,15,12,0.4)",
       iconBg: "rgba(239,68,68,0.1)",
       trend: "Not completed",
@@ -93,7 +93,6 @@ export default async function DashboardPage() {
           {/* Bell */}
           <div style={{ position: "relative", background: "rgba(10,15,12,0.4)", border: "1px solid rgba(102,255,178,0.1)", padding: "0.65rem", borderRadius: "12px", backdropFilter: "blur(10px)" }}>
             <NotificationBell />
-            <div style={{ position: "absolute", top: "-5px", right: "-5px", background: "#00E676", color: "#000", fontSize: "0.65rem", fontWeight: 800, width: "18px", height: "18px", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}>3</div>
           </div>
           {/* Button */}
           <Link href="/request/new" style={{ textDecoration: "none" }}>
@@ -125,7 +124,7 @@ export default async function DashboardPage() {
             </div>
 
             {/* Charts Row */}
-            <DashboardCharts />
+            <DashboardCharts requests={requests} />
 
             {/* Active Deliveries */}
             <section>
@@ -136,92 +135,101 @@ export default async function DashboardPage() {
                     background: "#00E676",
                     color: "#000", fontSize: "0.72rem", fontWeight: 800,
                     borderRadius: "20px", padding: "0.15rem 0.55rem",
-                  }}>2</span>
+                  }}>{activeRequests.length}</span>
                 </h2>
-                <Link href="/dashboard/requests" style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: "0.25rem", color: "#00E676", fontSize: "0.8rem", fontWeight: 600 }}>
-                  View all <ArrowRight size={13} />
-                </Link>
+                {activeRequests.length > 0 && (
+                  <Link href="/dashboard/requests" style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: "0.25rem", color: "#00E676", fontSize: "0.8rem", fontWeight: 600 }}>
+                    View all <ArrowRight size={13} />
+                  </Link>
+                )}
               </div>
 
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "1rem" }}>
-                {/* Fallback to mock data to match image exactly if activeRequests is empty */}
-                {[
-                  { id: 1, title: "Pending", item: "Lays", from: "Vending Machine", to: "Hostel D, Room 402", dist: "2.4 km away • 18 mins", price: "₹4", color: "#F59E0B", runner: "#6de3f8" },
-                  { id: 2, title: "Picked Up", item: "Lays", from: "Vending Machine", to: "Hostel C, Room 401", dist: "1.8 km away • 12 mins", price: "₹5", color: "#6366f1", runner: "#3a7b9d" },
-                ].map((req, i) => {
-                  const actualReq = activeRequests[i];
-                  return (
-                    <Link key={req.id} href={`/dashboard/requests`} style={{ textDecoration: "none" }}>
-                      <div style={{
-                        background: "rgba(10,15,12,0.4)",
-                        border: `1px solid ${req.color}30`,
-                        borderLeft: `4px solid ${req.color}`,
-                        borderRadius: "20px",
-                        padding: "1.25rem",
-                        cursor: "pointer",
-                        transition: "all 0.3s ease",
-                        backdropFilter: "blur(20px)",
-                        position: "relative",
-                        overflow: "hidden",
-                      }} className="group hover:border-[#00E676]/40 hover:-translate-y-1 hover:shadow-[0_10px_30px_rgba(0,0,0,0.5)]">
-                        {/* Glow background on hover */}
-                        <div
-                          className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none duration-500"
-                          style={{ background: `radial-gradient(150px circle at top right, ${req.color}15, transparent)` }}
-                        />
-
-                        {/* Status badge */}
-                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "0.875rem", position: "relative", zIndex: 1 }}>
-                          <span style={{
-                            background: `rgba(${req.color === '#F59E0B' ? '245,158,11' : '99,102,241'},0.15)`, color: req.color,
-                            fontSize: "0.7rem", fontWeight: 700,
-                            borderRadius: "20px", padding: "0.2rem 0.65rem",
-                            border: `1px solid ${req.color}30`,
-                            whiteSpace: "nowrap",
-                          }}>{actualReq?.status || req.title}</span>
-                          
-                          <div style={{
-                            background: "rgba(0,230,118,0.1)",
-                            color: "#00E676", fontWeight: 800, fontSize: "0.95rem",
-                            borderRadius: "10px", padding: "0.25rem 0.65rem",
-                            border: "1px solid rgba(0,230,118,0.2)"
-                          }}>₹{actualReq?.delivery_fee || req.price.replace('₹', '')}</div>
-                        </div>
-
-                        {/* Route info */}
-                        <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem", marginBottom: "1rem", position: "relative", zIndex: 1 }}>
-                          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "0.8rem", color: "rgba(255,255,255,0.6)" }}>
-                            <MapPin size={14} color="#00E676" />
-                            <span><b style={{ color: "rgba(255,255,255,0.85)" }}>From:</b> {actualReq?.pickup_location || req.from}</span>
-                          </div>
-                          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "0.8rem", color: "rgba(255,255,255,0.6)" }}>
-                            <MapPin size={14} color="#6366f1" />
-                            <span><b style={{ color: "rgba(255,255,255,0.85)" }}>To:</b> {actualReq?.dropoff_location || req.to}</span>
-                          </div>
-                          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "0.75rem", color: "rgba(255,255,255,0.4)" }}>
-                            <Clock size={12} />
-                            <span>{req.dist}</span>
-                          </div>
-                        </div>
-
-                        {/* Runner info */}
+              <div style={{ display: "grid", gridTemplateColumns: activeRequests.length > 0 ? "repeat(2, 1fr)" : "1fr", gap: "1rem" }}>
+                {activeRequests.length === 0 ? (
+                  <div style={{
+                    background: "rgba(10,15,12,0.4)",
+                    border: "1px dashed rgba(255,255,255,0.1)",
+                    borderRadius: "20px",
+                    padding: "3rem",
+                    textAlign: "center",
+                    color: "rgba(255,255,255,0.5)",
+                    fontSize: "0.9rem"
+                  }}>
+                    No active deliveries right now.
+                  </div>
+                ) : (
+                  activeRequests.slice(0, 2).map((req) => {
+                    // map backend status to UI color/text
+                    const meta = statusMeta[req.status] || { color: "#F59E0B", label: req.status };
+                    
+                    return (
+                      <Link key={req.id} href={`/dashboard/requests/${req.id}`} style={{ textDecoration: "none" }}>
                         <div style={{
-                          display: "flex", alignItems: "center", justifyContent: "space-between",
-                          paddingTop: "0.75rem", borderTop: "1px solid rgba(255,255,255,0.07)",
-                          position: "relative", zIndex: 1
-                        }}>
-                          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                            <User size={13} color="#00E676" />
-                            <span style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.6)" }}>
-                              Runner: <b style={{ color: "#fff" }}>{req.runner}</b>
-                            </span>
+                          background: "rgba(10,15,12,0.4)",
+                          border: `1px solid ${meta.color}30`,
+                          borderLeft: `4px solid ${meta.color}`,
+                          borderRadius: "20px",
+                          padding: "1.25rem",
+                          cursor: "pointer",
+                          transition: "all 0.3s ease",
+                          backdropFilter: "blur(20px)",
+                          position: "relative",
+                          overflow: "hidden",
+                        }} className="group hover:border-[#00E676]/40 hover:-translate-y-1 hover:shadow-[0_10px_30px_rgba(0,0,0,0.5)]">
+                          {/* Glow background on hover */}
+                          <div
+                            className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none duration-500"
+                            style={{ background: `radial-gradient(150px circle at top right, ${meta.color}15, transparent)` }}
+                          />
+
+                          {/* Status badge */}
+                          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "0.875rem", position: "relative", zIndex: 1 }}>
+                            <span style={{
+                              background: `rgba(${meta.color === '#F59E0B' ? '245,158,11' : '99,102,241'},0.15)`, color: meta.color,
+                              fontSize: "0.7rem", fontWeight: 700,
+                              borderRadius: "20px", padding: "0.2rem 0.65rem",
+                              border: `1px solid ${meta.color}30`,
+                              whiteSpace: "nowrap",
+                            }}>{meta.label}</span>
+                            
+                            <div style={{
+                              background: "rgba(0,230,118,0.1)",
+                              color: "#00E676", fontWeight: 800, fontSize: "0.95rem",
+                              borderRadius: "10px", padding: "0.25rem 0.65rem",
+                              border: "1px solid rgba(0,230,118,0.2)"
+                            }}>₹{req.delivery_fee}</div>
                           </div>
-                          <span style={{ color: "#00E676", fontSize: "0.7rem", fontWeight: 700 }}>Assigned</span>
+
+                          {/* Route info */}
+                          <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem", marginBottom: "1rem", position: "relative", zIndex: 1 }}>
+                            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "0.8rem", color: "rgba(255,255,255,0.6)" }}>
+                              <MapPin size={14} color="#00E676" />
+                              <span><b style={{ color: "rgba(255,255,255,0.85)" }}>From:</b> {req.pickup_location}</span>
+                            </div>
+                            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "0.8rem", color: "rgba(255,255,255,0.6)" }}>
+                              <MapPin size={14} color="#6366f1" />
+                              <span><b style={{ color: "rgba(255,255,255,0.85)" }}>To:</b> {req.dropoff_location}</span>
+                            </div>
+                          </div>
+
+                          {/* Runner info */}
+                          <div style={{
+                            display: "flex", alignItems: "center", justifyContent: "space-between",
+                            paddingTop: "0.75rem", borderTop: "1px solid rgba(255,255,255,0.07)",
+                            position: "relative", zIndex: 1
+                          }}>
+                            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                              <User size={13} color="#00E676" />
+                              <span style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.6)" }}>
+                                Runner: <b style={{ color: "#fff" }}>{req.assignments && req.assignments.length > 0 ? "Assigned" : "Pending"}</b>
+                              </span>
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                    </Link>
-                  );
-                })}
+                      </Link>
+                    );
+                  })
+                )}
               </div>
             </section>
 
@@ -231,9 +239,11 @@ export default async function DashboardPage() {
                 <h2 style={{ fontWeight: 800, fontSize: "1.1rem", display: "flex", alignItems: "center", gap: "0.5rem", color: "#fff" }}>
                   Recent Completed
                 </h2>
-                <Link href="/dashboard/requests" style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: "0.25rem", color: "#00E676", fontSize: "0.8rem", fontWeight: 600 }}>
-                  View all <ArrowRight size={13} />
-                </Link>
+                {completedRequests.length > 0 && (
+                  <Link href="/dashboard/requests" style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: "0.25rem", color: "#00E676", fontSize: "0.8rem", fontWeight: 600 }}>
+                    View all <ArrowRight size={13} />
+                  </Link>
+                )}
               </div>
               <div style={{
                 background: "rgba(10,15,12,0.4)",
@@ -252,20 +262,37 @@ export default async function DashboardPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.02)" }}>
-                      <td style={{ padding: "1rem", color: "#fff", fontSize: "0.85rem", display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                        <div style={{ width: "24px", height: "30px", background: "#ef4444", borderRadius: "4px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.6rem", fontWeight: 800 }}>Lays</div>
-                        Lays
-                      </td>
-                      <td style={{ padding: "1rem", color: "rgba(255,255,255,0.8)", fontSize: "0.85rem" }}>Vending Machine</td>
-                      <td style={{ padding: "1rem", color: "rgba(255,255,255,0.8)", fontSize: "0.85rem" }}>Hostel D, Room 402</td>
-                      <td style={{ padding: "1rem", color: "rgba(255,255,255,0.8)", fontSize: "0.85rem" }}>#6de3f8</td>
-                      <td style={{ padding: "1rem", color: "rgba(255,255,255,0.6)", fontSize: "0.85rem" }}>22 hrs ago</td>
-                      <td style={{ padding: "1rem" }}>
-                        <span style={{ background: "rgba(0,230,118,0.1)", color: "#00E676", fontSize: "0.7rem", fontWeight: 700, padding: "0.2rem 0.5rem", borderRadius: "10px" }}>Delivered</span>
-                      </td>
-                      <td style={{ padding: "1rem", color: "#fff", fontSize: "0.85rem", fontWeight: 700 }}>₹10</td>
-                    </tr>
+                    {completedRequests.length === 0 ? (
+                      <tr>
+                        <td colSpan={7} style={{ padding: "2rem", textAlign: "center", color: "rgba(255,255,255,0.5)", fontSize: "0.9rem" }}>
+                          No completed requests yet.
+                        </td>
+                      </tr>
+                    ) : (
+                      completedRequests.slice(0, 5).map(req => (
+                        <tr key={req.id} style={{ borderBottom: "1px solid rgba(255,255,255,0.02)" }}>
+                          <td style={{ padding: "1rem", color: "#fff", fontSize: "0.85rem", display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                            <div style={{ width: "24px", height: "30px", background: "#ef4444", borderRadius: "4px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.6rem", fontWeight: 800 }}>
+                              {req.items[0]?.name?.substring(0, 2).toUpperCase() || 'IT'}
+                            </div>
+                            {req.items.length > 0 ? req.items[0].name : 'Items'}
+                            {req.items.length > 1 && ` +${req.items.length - 1}`}
+                          </td>
+                          <td style={{ padding: "1rem", color: "rgba(255,255,255,0.8)", fontSize: "0.85rem" }}>{req.pickup_location}</td>
+                          <td style={{ padding: "1rem", color: "rgba(255,255,255,0.8)", fontSize: "0.85rem" }}>{req.dropoff_location}</td>
+                          <td style={{ padding: "1rem", color: "rgba(255,255,255,0.8)", fontSize: "0.85rem" }}>{req.assignments && req.assignments.length > 0 ? "Assigned" : "-"}</td>
+                          <td style={{ padding: "1rem", color: "rgba(255,255,255,0.6)", fontSize: "0.85rem" }}>
+                            {new Date(req.created_at).toLocaleDateString()}
+                          </td>
+                          <td style={{ padding: "1rem" }}>
+                            <span style={{ background: "rgba(0,230,118,0.1)", color: "#00E676", fontSize: "0.7rem", fontWeight: 700, padding: "0.2rem 0.5rem", borderRadius: "10px" }}>
+                              Delivered
+                            </span>
+                          </td>
+                          <td style={{ padding: "1rem", color: "#fff", fontSize: "0.85rem", fontWeight: 700 }}>₹{req.delivery_fee}</td>
+                        </tr>
+                      ))
+                    )}
                   </tbody>
                 </table>
               </div>

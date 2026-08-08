@@ -60,11 +60,11 @@ export function ProfileSummary({ profile, email }: ProfileSummaryProps) {
       <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem", position: "relative", zIndex: 1 }}>
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
           <Mail size={14} color="#00E676" />
-          <span style={{ color: "#A7B8B0", fontSize: "0.8rem" }}>{email || "student@marwadiuniversity.ac.in"}</span>
+          <span style={{ color: "#A7B8B0", fontSize: "0.8rem" }}>{email || "No email provided"}</span>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
           <Phone size={14} color="#00E676" />
-          <span style={{ color: "#A7B8B0", fontSize: "0.8rem" }}>{(profile as any)?.phone_number || "+91 12345 67890"}</span>
+          <span style={{ color: "#A7B8B0", fontSize: "0.8rem" }}>{(profile as any)?.phone_number || "Add phone number"}</span>
         </div>
       </div>
 

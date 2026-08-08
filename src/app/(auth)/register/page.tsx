@@ -105,13 +105,42 @@ export default function RegisterPage() {
     setLoading(true);
 
     const supabase = createClient();
-    const { error } = await supabase.auth.signUp({
+
+    // We use a raw fetch first to capture the actual Supabase error body,
+    // because the supabase-js client wraps HTTP-500 responses as
+    // AuthRetryableFetchError with message="{}" losing the real msg.
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!;
+    let realErrorMsg = "";
+    try {
+      const raw = await fetch(`${supabaseUrl}/auth/v1/signup`, {
+        method: "POST",
+        headers: {
+          "apikey": supabaseKey,
+          "Authorization": `Bearer ${supabaseKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          password,
+          data: { full_name: name },
+        }),
+      });
+      if (!raw.ok) {
+        const body = await raw.json().catch(() => ({}));
+        // body.msg is the GoTrue error field (e.g. "Error sending confirmation email")
+        realErrorMsg = body.msg || body.error_description || body.message || `HTTP ${raw.status}`;
+        console.error("[Register] Supabase raw error:", raw.status, body);
+      }
+    } catch {
+      // Network error — fall through to the supabase-js call which will also fail
+    }
+
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
-        // Pass name as metadata — stored in auth.users.raw_user_meta_data
         data: { full_name: name },
-        // Supabase sends a verification email; clicking it hits /auth/callback
         emailRedirectTo: `${window.location.origin}/auth/callback`,
       },
     });
@@ -119,17 +148,31 @@ export default function RegisterPage() {
     setLoading(false);
 
     if (error) {
-      if (error.message.toLowerCase().includes("already registered") ||
-        error.message.toLowerCase().includes("user already exists")) {
+      // Use the real GoTrue error if we captured it, otherwise fall back to the JS client message
+      const msg = realErrorMsg || error.message || "Registration failed.";
+
+      if (msg.toLowerCase().includes("already registered") || msg.toLowerCase().includes("user already exists")) {
         setErrors({ form: "An account with this email already exists. Try signing in instead." });
+      } else if (msg.toLowerCase().includes("error sending confirmation email")) {
+        setErrors({
+          form: `Supabase cannot send verification emails (SMTP failure). ` +
+            `To fix: Go to Supabase Dashboard → Authentication → Settings → ` +
+            `Email Auth → turn OFF "Enable email confirmations" → Save. ` +
+            `(Raw error: "${msg}")`,
+        });
       } else {
-        setErrors({ form: error.message });
+        setErrors({ form: `Registration error: ${msg}` });
       }
       return;
     }
 
-    // Navigate to verify-email confirmation screen
-    router.push(ROUTES.VERIFY_EMAIL);
+    // Signup succeeded. If email confirmation is disabled, data.session is set → go to dashboard.
+    // If email confirmation is enabled and working, data.session is null → go to verify-email page.
+    if (data?.session) {
+      router.push("/dashboard");
+    } else {
+      router.push(ROUTES.VERIFY_EMAIL);
+    }
   }
 
   return (

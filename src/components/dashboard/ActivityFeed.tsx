@@ -1,41 +1,82 @@
 "use client";
 
-import { CheckCircle2, MessageSquare, Package } from "lucide-react";
-import type { DeliveryRequest } from "@/lib/database/requests";
+import { CheckCircle2, MessageSquare, Package, AlertCircle } from "lucide-react";
+import type { StudentRequestWithDetails } from "@/lib/database/requests";
+import { formatDistanceToNow } from "date-fns";
 
 interface ActivityFeedProps {
-  requests: DeliveryRequest[];
+  requests: StudentRequestWithDetails[];
 }
 
 export function ActivityFeed({ requests }: ActivityFeedProps) {
-  // To match the exact image, we'll use static mock data if the actual timeline is empty
-  // The image shows 3 specific events: delivered, created, picked up.
-  const activities = [
-    {
-      id: 1,
-      text: (<span>Your request for <b style={{ color: "#00E676", fontWeight: 700 }}>Lays</b> was delivered successfully.</span>),
-      time: "22 hrs ago",
-      icon: CheckCircle2,
-      color: "#00E676",
-      bg: "rgba(0,230,118,0.15)"
-    },
-    {
-      id: 2,
-      text: (<span>Your request for <b style={{ color: "#6366f1", fontWeight: 700 }}>lays</b> created a request.</span>),
-      time: "23 hrs ago",
-      icon: MessageSquare, // using a chat bubble/circle like icon for purple
+  // Generate activities from requests
+  let activities: {
+    id: string;
+    text: React.ReactNode;
+    time: string;
+    date: Date;
+    icon: any;
+    color: string;
+    bg: string;
+  }[] = [];
+
+  requests.forEach(req => {
+    const itemName = req.items[0]?.name || "items";
+    
+    // Created
+    activities.push({
+      id: `${req.id}-created`,
+      text: (<span>Your request for <b style={{ color: "#6366f1", fontWeight: 700 }}>{itemName}</b> was created.</span>),
+      time: formatDistanceToNow(new Date(req.created_at), { addSuffix: true }),
+      date: new Date(req.created_at),
+      icon: MessageSquare,
       color: "#6366f1",
       bg: "rgba(99,102,241,0.15)"
-    },
-    {
-      id: 3,
-      text: (<span>Your request for <b style={{ color: "#F59E0B", fontWeight: 700 }}>lays</b> was picked up.</span>),
-      time: "23 hrs ago",
-      icon: Package,
-      color: "#F59E0B",
-      bg: "rgba(245,158,11,0.15)"
+    });
+
+    // Picked up
+    if (req.status === "picked_up" || req.status === "in_transit" || req.status === "delivered") {
+      activities.push({
+        id: `${req.id}-picked`,
+        text: (<span>Your request for <b style={{ color: "#F59E0B", fontWeight: 700 }}>{itemName}</b> was picked up.</span>),
+        time: formatDistanceToNow(new Date(req.updated_at), { addSuffix: true }), // Using updated_at as proxy for state change time
+        date: new Date(req.updated_at),
+        icon: Package,
+        color: "#F59E0B",
+        bg: "rgba(245,158,11,0.15)"
+      });
     }
-  ];
+
+    // Delivered
+    if (req.status === "delivered") {
+      activities.push({
+        id: `${req.id}-delivered`,
+        text: (<span>Your request for <b style={{ color: "#00E676", fontWeight: 700 }}>{itemName}</b> was delivered successfully.</span>),
+        time: formatDistanceToNow(new Date(req.updated_at), { addSuffix: true }),
+        date: new Date(req.updated_at),
+        icon: CheckCircle2,
+        color: "#00E676",
+        bg: "rgba(0,230,118,0.15)"
+      });
+    }
+
+    // Cancelled
+    if (req.status === "cancelled") {
+      activities.push({
+        id: `${req.id}-cancelled`,
+        text: (<span>Your request for <b style={{ color: "#ef4444", fontWeight: 700 }}>{itemName}</b> was cancelled.</span>),
+        time: formatDistanceToNow(new Date(req.updated_at), { addSuffix: true }),
+        date: new Date(req.updated_at),
+        icon: AlertCircle,
+        color: "#ef4444",
+        bg: "rgba(239,68,68,0.15)"
+      });
+    }
+  });
+
+  // Sort newest first, take top 5
+  activities.sort((a, b) => b.date.getTime() - a.date.getTime());
+  activities = activities.slice(0, 5);
 
   return (
     <div style={{
@@ -56,28 +97,34 @@ export function ActivityFeed({ requests }: ActivityFeedProps) {
           zIndex: 0
         }} />
 
-        {activities.map((activity) => (
-          <div key={activity.id} style={{ display: "flex", gap: "1rem", position: "relative", zIndex: 1 }}>
-            {/* Timeline icon */}
-            <div style={{
-              width: "28px", height: "28px", borderRadius: "50%",
-              background: activity.bg, color: activity.color,
-              display: "flex", alignItems: "center", justifyContent: "center",
-              flexShrink: 0, border: `1px solid ${activity.color}40`,
-              boxShadow: `0 0 10px ${activity.color}30`
-            }}>
-              <activity.icon size={14} />
-            </div>
-
-            {/* Content */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem", paddingTop: "0.2rem" }}>
-              <p style={{ color: "rgba(255,255,255,0.9)", fontSize: "0.8rem", lineHeight: 1.4, margin: 0 }}>
-                {activity.text}
-              </p>
-              <span style={{ color: "rgba(255,255,255,0.4)", fontSize: "0.7rem" }}>{activity.time}</span>
-            </div>
+        {activities.length === 0 ? (
+          <div style={{ textAlign: "center", color: "rgba(255,255,255,0.5)", fontSize: "0.9rem", padding: "1rem 0" }}>
+            No recent activity.
           </div>
-        ))}
+        ) : (
+          activities.map((activity) => (
+            <div key={activity.id} style={{ display: "flex", gap: "1rem", position: "relative", zIndex: 1 }}>
+              {/* Timeline icon */}
+              <div style={{
+                width: "28px", height: "28px", borderRadius: "50%",
+                background: activity.bg, color: activity.color,
+                display: "flex", alignItems: "center", justifyContent: "center",
+                flexShrink: 0, border: `1px solid ${activity.color}40`,
+                boxShadow: `0 0 10px ${activity.color}30`
+              }}>
+                <activity.icon size={14} />
+              </div>
+
+              {/* Content */}
+              <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem", paddingTop: "0.2rem" }}>
+                <p style={{ color: "rgba(255,255,255,0.9)", fontSize: "0.8rem", lineHeight: 1.4, margin: 0 }}>
+                  {activity.text}
+                </p>
+                <span suppressHydrationWarning style={{ color: "rgba(255,255,255,0.4)", fontSize: "0.7rem" }}>{activity.time}</span>
+              </div>
+            </div>
+          ))
+        )}
       </div>
     </div>
   );

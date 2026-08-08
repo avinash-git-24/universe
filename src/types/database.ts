@@ -42,6 +42,47 @@ export type Database = {
         };
         Relationships: [];
       };
+      user_settings: {
+        Row: {
+          user_id: string;
+          notify_request_updates: boolean;
+          notify_delivery_updates: boolean;
+          notify_chat_messages: boolean;
+          profile_visibility: string;
+          activity_visibility: string;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          user_id: string;
+          notify_request_updates?: boolean;
+          notify_delivery_updates?: boolean;
+          notify_chat_messages?: boolean;
+          profile_visibility?: string;
+          activity_visibility?: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          user_id?: string;
+          notify_request_updates?: boolean;
+          notify_delivery_updates?: boolean;
+          notify_chat_messages?: boolean;
+          profile_visibility?: string;
+          activity_visibility?: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "user_settings_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: true;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
       delivery_requests: {
         Row: {
           id: string;
@@ -372,6 +413,10 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
+      delete_own_account: {
+        Args: Record<PropertyKey, never>;
+        Returns: undefined;
+      };
       is_admin: {
         Args: { user_id: string };
         Returns: boolean;
