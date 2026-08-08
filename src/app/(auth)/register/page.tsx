@@ -10,7 +10,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Eye, EyeOff, Mail, Lock, User, Hash } from "lucide-react";
+import { Eye, EyeOff, Mail, Lock, User } from "lucide-react";
 import { AuthCard } from "@/components/auth/AuthCard";
 import { GoogleButton } from "@/components/auth/GoogleButton";
 import { Input } from "@/components/ui/input";
@@ -26,7 +26,6 @@ const PASSWORD_MIN = 8;
 
 interface FormErrors {
   name?: string;
-  enrollment?: string;
   email?: string;
   password?: string;
   confirm?: string;
@@ -35,7 +34,6 @@ interface FormErrors {
 
 function validate(fields: {
   name: string;
-  enrollment: string;
   email: string;
   password: string;
   confirm: string;
@@ -44,10 +42,6 @@ function validate(fields: {
   const errs: FormErrors = {};
   if (!fields.name.trim()) errs.name = "Full name is required.";
   else if (fields.name.trim().length < 2) errs.name = "Name must be at least 2 characters.";
-
-  if (!fields.enrollment.trim()) errs.enrollment = "Enrollment number is required.";
-  else if (!/^\d{9,12}$/.test(fields.enrollment.trim()))
-    errs.enrollment = "Enter a valid Marwadi University enrollment number.";
 
   if (!fields.email) errs.email = "University email is required.";
   else if (!MU_EMAIL_REGEX.test(fields.email))
@@ -92,7 +86,6 @@ const STRENGTH_COLORS = [
 export default function RegisterPage() {
   const router = useRouter();
   const [name, setName] = useState("");
-  const [enrollment, setEnrollment] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
@@ -106,7 +99,7 @@ export default function RegisterPage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    const errs = validate({ name, enrollment, email, password, confirm, agreed });
+    const errs = validate({ name, email, password, confirm, agreed });
     if (Object.keys(errs).length) { setErrors(errs); return; }
     setErrors({});
     setLoading(true);
@@ -116,8 +109,8 @@ export default function RegisterPage() {
       email,
       password,
       options: {
-        // Pass name & enrollment as metadata — stored in auth.users.raw_user_meta_data
-        data: { full_name: name, enrollment_number: enrollment },
+        // Pass name as metadata — stored in auth.users.raw_user_meta_data
+        data: { full_name: name },
         // Supabase sends a verification email; clicking it hits /auth/callback
         emailRedirectTo: `${window.location.origin}/auth/callback`,
       },
@@ -127,7 +120,7 @@ export default function RegisterPage() {
 
     if (error) {
       if (error.message.toLowerCase().includes("already registered") ||
-          error.message.toLowerCase().includes("user already exists")) {
+        error.message.toLowerCase().includes("user already exists")) {
         setErrors({ form: "An account with this email already exists. Try signing in instead." });
       } else {
         setErrors({ form: error.message });
@@ -169,23 +162,6 @@ export default function RegisterPage() {
           error={errors.name}
           leftIcon={<User size={16} />}
           size="lg"
-        />
-
-        {/* Enrollment Number */}
-        <Input
-          id="reg-enrollment"
-          type="text"
-          inputMode="numeric"
-          label="Enrollment Number"
-          placeholder="210303105XXXXX"
-          autoComplete="off"
-          required
-          value={enrollment}
-          onChange={(e) => setEnrollment(e.target.value)}
-          error={errors.enrollment}
-          leftIcon={<Hash size={16} />}
-          size="lg"
-          hint="Your Marwadi University enrollment number"
         />
 
         {/* University Email */}

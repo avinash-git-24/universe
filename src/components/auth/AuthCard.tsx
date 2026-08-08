@@ -92,23 +92,7 @@ export function AuthCard({ title, subtitle, children }: AuthCardProps) {
 
         {/* ── Card Header ── */}
         <div className="px-8 pt-8 pb-6" style={{ position: "relative" }}>
-          {/* "Welcome Back!" pill — top right */}
-          <div
-            className="absolute top-7 right-7 flex items-center gap-1.5 px-3 py-1.5 rounded-full"
-            style={{
-              background: "rgba(0,230,118,0.1)",
-              border: "1px solid rgba(0,230,118,0.25)",
-              backdropFilter: "blur(8px)",
-            }}
-          >
-            <Sparkle size={10} />
-            <span
-              className="text-xs font-semibold"
-              style={{ color: "#00E676", fontFamily: "var(--font-inter)" }}
-            >
-              Welcome Back!
-            </span>
-          </div>
+
 
           {/* Sparkle top-left of title area */}
           <div className="mb-3">

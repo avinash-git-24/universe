@@ -216,6 +216,11 @@ export async function acceptRequest(
   requestId: string,
   runnerId: string
 ): Promise<boolean> {
+  if (!requestId || !runnerId) {
+    console.error("acceptRequest – missing parameters:", { requestId, runnerId });
+    return false;
+  }
+
   // 1. Create the assignment row first (so RLS policy is satisfied for status update)
   const { error: assignError } = await supabase
     .from("delivery_assignments")
@@ -226,12 +231,7 @@ export async function acceptRequest(
     });
 
   if (assignError) {
-    console.error("acceptRequest – assignment insert failed:", {
-      code: assignError.code,
-      message: assignError.message,
-      details: assignError.details,
-      hint: assignError.hint,
-    });
+    console.error("acceptRequest – assignment insert failed:", JSON.stringify(assignError, null, 2), assignError);
     return false;
   }
 
