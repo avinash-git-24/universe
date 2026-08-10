@@ -74,7 +74,7 @@ function AdvantageCard({
   highlight,
   index,
 }: {
-  icon: React.ElementType<any>;
+  icon: React.ComponentType<{ size?: number; strokeWidth?: number; style?: React.CSSProperties }>;
   title: string;
   description: string;
   accentColor: string;
@@ -128,8 +128,7 @@ function AdvantageCard({
         }}
       >
         {(() => {
-          const IconComp = Icon as any;
-          return <IconComp size={22} style={{ color: accentColor }} strokeWidth={1.8} />;
+          return <Icon size={22} style={{ color: accentColor }} strokeWidth={1.8} />;
         })()}
       </div>
 

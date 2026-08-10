@@ -10,7 +10,12 @@ interface RequestStatusDonutProps {
   total: number;
 }
 
-const CustomTooltip = ({ active, payload }: any) => {
+interface DonutTooltipProps {
+  active?: boolean;
+  payload?: Array<{ name: string; value: number; payload: { color: string } }>;
+}
+
+const CustomTooltip = ({ active, payload }: DonutTooltipProps) => {
   if (active && payload && payload.length) {
     return (
       <div className="bg-[#0a0f0d]/90 backdrop-blur-md border border-white/10 rounded-xl shadow-2xl p-4 text-sm min-w-[140px]">

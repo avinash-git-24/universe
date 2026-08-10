@@ -64,7 +64,7 @@ export function ProfileSummary({ profile, email }: ProfileSummaryProps) {
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
           <Phone size={14} color="#00E676" />
-          <span style={{ color: "#A7B8B0", fontSize: "0.8rem" }}>{(profile as any)?.phone_number || "Add phone number"}</span>
+          <span style={{ color: "#A7B8B0", fontSize: "0.8rem" }}>{(profile as Record<string, unknown>)?.phone_number as string | undefined || "Add phone number"}</span>
         </div>
       </div>
 

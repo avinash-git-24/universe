@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 
 export type Category = "Snack" | "Beverage" | "Meal" | "Grocery" | "Stationery" | "Medicine";
 
-const CATEGORIES: { id: Category; label: string; icon: React.ElementType<any> }[] = [
+const CATEGORIES: { id: Category; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
   { id: "Snack", label: "Snack", icon: Pizza },
   { id: "Beverage", label: "Beverage", icon: Coffee },
   { id: "Meal", label: "Meal", icon: Utensils },
@@ -39,8 +39,7 @@ export function CategorySelector({ selectedCategory, onSelect }: CategorySelecto
             )}
           >
             {(() => {
-              const IconComp = Icon as any;
-              return <IconComp className="w-6 h-6 mb-2" />;
+              return <Icon className="w-6 h-6 mb-2" />;
             })()}
             <span className="text-xs font-medium">{cat.label}</span>
           </button>

@@ -4,7 +4,7 @@ import { FolderOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export interface EmptyStateProps {
-  icon?: React.ElementType<any>;
+  icon?: React.ComponentType<{ className?: string }>;
   title: string;
   description?: string;
   actionLabel?: string;
@@ -26,7 +26,7 @@ export function EmptyState({
     >
       <div className="w-12 h-12 rounded-full bg-secondary/30 text-muted-foreground flex items-center justify-center">
         {(() => {
-          const IconComp = Icon as any;
+          const IconComp = Icon;
           return <IconComp className="w-6 h-6" />;
         })()}
       </div>

@@ -21,7 +21,7 @@ interface RequestActivityChartProps {
 
 interface CustomTooltipProps {
   active?: boolean;
-  payload?: any[];
+  payload?: Array<{ color: string; name: string; value: number }>;
   label?: string;
 }
 

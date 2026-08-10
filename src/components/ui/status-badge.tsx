@@ -11,7 +11,7 @@ export interface StatusBadgeProps {
   className?: string;
 }
 
-const STATUS_ICONS: Record<string, React.ElementType> = {
+const STATUS_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
   pending: Clock,
   accepted: CheckCircle2,
   picked_up: Package,
@@ -52,7 +52,7 @@ export function RequestStatusBadge({
       )}
     >
       {showIcon && (() => {
-        const IconComp = Icon as any;
+        const IconComp = Icon;
         return <IconComp className={cn(ICON_SIZE_MAP[size], "shrink-0")} />;
       })()}
       <span>{config.label}</span>

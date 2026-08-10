@@ -97,8 +97,8 @@ export function ProfileForm({
       setSuccess(true);
       router.refresh();
       setTimeout(() => setSuccess(false), 3000);
-    } catch (err: any) {
-      setError(err.message || "Failed to upload photo.");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Failed to upload photo.");
     } finally {
       setUploading(false);
       // Reset input so the same file can be selected again if needed
@@ -134,8 +134,8 @@ export function ProfileForm({
       setSuccess(true);
       router.refresh();
       setTimeout(() => setSuccess(false), 3000);
-    } catch (err: any) {
-      setError(err.message || "Failed to remove photo.");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Failed to remove photo.");
     } finally {
       setLoading(false);
     }
@@ -163,8 +163,8 @@ export function ProfileForm({
       setSuccess(true);
       router.refresh(); 
       setTimeout(() => setSuccess(false), 3000);
-    } catch (err: any) {
-      setError(err.message || "Failed to update profile.");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Failed to update profile.");
     } finally {
       setLoading(false);
     }

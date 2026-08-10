@@ -11,15 +11,27 @@ import { AnalyticsSummaryBar } from "@/components/analytics/AnalyticsSummaryBar"
 import { RecentActivityList } from "@/components/analytics/RecentActivityList";
 import { aggregateDailyVolume } from "@/lib/database/analytics";
 import { IndianRupee, Package, ShieldCheck } from "lucide-react";
+import type { Database } from "@/types/database";
 
 type TimeRange = 7 | 30 | 90;
+type DeliveryRequestRow = Database["public"]["Tables"]["delivery_requests"]["Row"];
+type AssignmentRow = Database["public"]["Tables"]["delivery_assignments"]["Row"];
+type TransactionRow = Database["public"]["Tables"]["transactions"]["Row"];
+
+interface ActivityEntry {
+  id: string;
+  type: "request_created" | "request_completed" | "request_cancelled" | "payment" | "earning";
+  title: string;
+  description: string;
+  date: Date;
+}
 
 interface AnalyticsClientWrapperProps {
   role: "student" | "runner";
   initialData: {
-    requestsData: any[];
-    assignmentsData: any[];
-    transactionsData: any[];
+    requestsData: DeliveryRequestRow[];
+    assignmentsData: AssignmentRow[];
+    transactionsData: TransactionRow[];
   };
 }
 
@@ -27,9 +39,11 @@ export function AnalyticsClientWrapper({ role, initialData }: AnalyticsClientWra
   const [timeRange, setTimeRange] = useState<TimeRange>(7);
 
   // Helper to filter items for a specific date range (start date inclusive, end date exclusive)
-  const filterByDateRange = (items: any[], startCutoff: Date, endCutoff?: Date) => {
+  const filterByDateRange = <T extends { created_at?: string; assigned_at?: string }>(items: T[], startCutoff: Date, endCutoff?: Date): T[] => {
     return items.filter(item => {
-      const date = new Date(item.created_at || item.assigned_at);
+      const dateStr = (item.created_at ?? item.assigned_at) ?? '';
+      if (!dateStr) return false;
+      const date = new Date(dateStr);
       if (endCutoff) {
         return isAfter(date, startCutoff) && !isAfter(date, endCutoff);
       }
@@ -82,11 +96,11 @@ export function AnalyticsClientWrapper({ role, initialData }: AnalyticsClientWra
     const deliveriesCompleted = currentRole === "runner" ? dataObj.assignmentsData.filter(a => a.status === "completed").length : 0;
 
     const completedRequests = currentRole === "student" 
-      ? dataObj.requestsData.filter((r: any) => r.status === "delivered").length
+      ? dataObj.requestsData.filter((r) => r.status === "delivered").length
       : deliveriesCompleted;
       
     const cancelledRequests = currentRole === "student"
-      ? dataObj.requestsData.filter((r: any) => r.status === "cancelled").length
+      ? dataObj.requestsData.filter((r) => r.status === "cancelled").length
       : 0;
 
     const avgSpending = currentRole === "student"
@@ -121,8 +135,8 @@ export function AnalyticsClientWrapper({ role, initialData }: AnalyticsClientWra
 
     const items = role === "student" ? filteredData.requestsData : filteredData.assignmentsData;
     
-    items.forEach((item: any) => {
-      const itemDateStr = format(startOfDay(new Date(item.created_at || item.assigned_at)), "MMM dd");
+    (items as Array<{ created_at?: string; assigned_at?: string; status: string }>).forEach((item) => {
+      const itemDateStr = format(startOfDay(new Date((item.created_at ?? item.assigned_at) as string)), "MMM dd");
       const day = days.find(d => d.date === itemDateStr);
       if (day) {
         day.created += 1;
@@ -149,7 +163,7 @@ export function AnalyticsClientWrapper({ role, initialData }: AnalyticsClientWra
 
   // Compile Recent Activity Feed
   const recentActivities = useMemo(() => {
-    let activities: any[] = [];
+    const activities: ActivityEntry[] = [];
     
     if (role === "student") {
       filteredData.requestsData.forEach(r => {

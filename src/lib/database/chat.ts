@@ -77,7 +77,7 @@ export async function getConversations(
       ).length;
 
       const otherParticipantRecord = conv.participants.find(
-        (p: any) => p.profile.id !== userId
+        (p: { profile: { id: string }; last_read_at: string | null }) => p.profile.id !== userId
       );
 
       return {

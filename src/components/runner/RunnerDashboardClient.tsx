@@ -279,7 +279,7 @@ export function RunnerDashboardClient({
             <Wallet className="w-5 h-5 text-emerald-400" />
           </div>
           <div>
-            <p className="text-sm text-white/60 font-medium">Today's Earnings</p>
+            <p className="text-sm text-white/60 font-medium">Today&apos;s Earnings</p>
             <p className="text-2xl font-bold text-white mt-0.5 flex items-center">
               <IndianRupee className="w-5 h-5 mr-0.5" />
               {totalEarnings}

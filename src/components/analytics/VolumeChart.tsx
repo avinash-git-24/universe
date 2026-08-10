@@ -18,7 +18,13 @@ interface VolumeChartProps {
   description?: string;
 }
 
-const CustomTooltip = ({ active, payload, label }: any) => {
+interface VolumeTooltipProps {
+  active?: boolean;
+  payload?: Array<{ value: number }>;
+  label?: string;
+}
+
+const CustomTooltip = ({ active, payload, label }: VolumeTooltipProps) => {
   if (active && payload && payload.length) {
     return (
       <div className="bg-[#0a0f0d]/90 backdrop-blur-md border border-white/10 rounded-xl shadow-2xl p-4 text-sm min-w-[140px]">

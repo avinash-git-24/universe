@@ -12,6 +12,10 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Root-level scratch/debug scripts
+    "test_insert.js",
+    "test_rls.js",
+    "spec.json",
   ]),
 ]);
 

@@ -15,7 +15,7 @@ export function ActivityFeed({ requests }: ActivityFeedProps) {
     text: React.ReactNode;
     time: string;
     date: Date;
-    icon: any;
+    icon: React.ComponentType<{ size?: number }>;
     color: string;
     bg: string;
   }[] = [];
@@ -112,7 +112,7 @@ export function ActivityFeed({ requests }: ActivityFeedProps) {
                 flexShrink: 0, border: `1px solid ${activity.color}40`,
                 boxShadow: `0 0 10px ${activity.color}30`
               }}>
-                <activity.icon size={14} />
+                {(() => { const ActivityIcon = activity.icon; return <ActivityIcon size={14} />; })()}
               </div>
 
               {/* Content */}

@@ -119,8 +119,8 @@ export function SettingsClient({
       setSettingsSuccess(true);
       router.refresh();
       setTimeout(() => setSettingsSuccess(false), 3000);
-    } catch (err: any) {
-      setSettingsError(err.message || "Unable to update your settings. Please try again.");
+    } catch (err: unknown) {
+      setSettingsError(err instanceof Error ? err.message : "Unable to update your settings. Please try again.");
     } finally {
       setSettingsLoading(false);
     }
@@ -166,8 +166,8 @@ export function SettingsClient({
       setNewPassword("");
       setConfirmPassword("");
       setTimeout(() => setPwdSuccess(false), 3000);
-    } catch (err: any) {
-      setPwdError(err.message || "Failed to change password.");
+    } catch (err: unknown) {
+      setPwdError(err instanceof Error ? err.message : "Failed to change password.");
     } finally {
       setPwdLoading(false);
     }
@@ -195,8 +195,8 @@ export function SettingsClient({
       // Upon success, sign out and redirect
       await supabase.auth.signOut();
       router.push("/login");
-    } catch (err: any) {
-      setDeleteError(err.message || "Unable to delete account. Please try again later.");
+    } catch (err: unknown) {
+      setDeleteError(err instanceof Error ? err.message : "Unable to delete account. Please try again later.");
       setDeleteLoading(false);
     }
   };
