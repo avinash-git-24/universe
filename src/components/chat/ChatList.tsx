@@ -1,135 +1,115 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { formatDistanceToNow } from "date-fns";
-import { MessageSquare } from "lucide-react";
+import { useMemo, useState } from "react";
+import { Search } from "lucide-react";
 import { ConversationWithDetails } from "@/lib/database/chat";
-import { createClient } from "@/lib/supabase/client";
-import { Avatar } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { EmptyState } from "@/components/shared/EmptyState";
+import { format } from "date-fns";
 
 interface ChatListProps {
   userId: string;
   initialConversations: ConversationWithDetails[];
   activeConversationId: string | null;
   onSelectConversation: (id: string) => void;
+  onlineUsers: Set<string>;
 }
 
-export function ChatList({ userId, initialConversations, activeConversationId, onSelectConversation }: ChatListProps) {
-  const [conversations, setConversations] = useState(initialConversations);
-  const [onlineUsers, setOnlineUsers] = useState<Set<string>>(new Set());
+export function ChatList({ userId, initialConversations, activeConversationId, onSelectConversation, onlineUsers }: ChatListProps) {
+  const [searchQuery, setSearchQuery] = useState("");
 
-  useEffect(() => {
-    const supabase = createClient();
+  const filteredConversations = useMemo(() => {
+    if (!searchQuery.trim()) return initialConversations;
     
-    // Subscribe to presence
-    const room = supabase.channel("global_presence");
-    
-    room
-      .on("presence", { event: "sync" }, () => {
-        const state = room.presenceState();
-        const online = new Set<string>();
-        Object.values(state).forEach((presences: unknown) => {
-          (presences as { user_id: string }[]).forEach((p) => {
-            if (p.user_id) online.add(p.user_id);
-          });
-        });
-        setOnlineUsers(online);
-      })
-      .subscribe(async (status) => {
-        if (status === "SUBSCRIBED") {
-          await room.track({ user_id: userId, online_at: new Date().toISOString() });
-        }
-      });
-
-    // Listen to new messages to update the list
-    const msgChannel = supabase
-      .channel("chat_list_updates")
-      .on(
-        "postgres_changes",
-        { event: "INSERT", schema: "public", table: "messages" },
-        (payload) => {
-          const newMsg = payload.new;
-          setConversations((prev) => {
-            const updated = prev.map((c) => {
-              if (c.id === newMsg.conversation_id) {
-                return {
-                  ...c,
-                  last_message: newMsg as ConversationWithDetails["last_message"],
-                  unread_count: newMsg.sender_id !== userId && activeConversationId !== c.id 
-                    ? c.unread_count + 1 
-                    : c.unread_count,
-                  updated_at: newMsg.created_at,
-                };
-              }
-              return c;
-            });
-            // Re-sort
-            return updated.sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime());
-          });
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(room);
-      supabase.removeChannel(msgChannel);
-    };
-  }, [userId, activeConversationId]);
+    const lowerQuery = searchQuery.toLowerCase();
+    return initialConversations.filter(c => {
+      const nameMatch = c.other_participant.full_name?.toLowerCase().includes(lowerQuery);
+      const reqMatch = c.delivery_request && (
+        c.delivery_request.pickup_location.toLowerCase().includes(lowerQuery) ||
+        c.delivery_request.dropoff_location.toLowerCase().includes(lowerQuery) ||
+        c.delivery_request.id.toLowerCase().includes(lowerQuery)
+      );
+      return nameMatch || reqMatch;
+    });
+  }, [searchQuery, initialConversations]);
 
   return (
-    <div className="w-full h-full flex flex-col bg-card border-r">
-      <div className="p-4 border-b">
-        <h2 className="font-bold text-lg">Messages</h2>
-      </div>
-      <div className="flex-1 overflow-y-auto">
-        {conversations.length === 0 ? (
-          <EmptyState
-            icon={MessageSquare}
-            title="No Conversations Yet"
-            description="Start a chat from a delivery request or user profile."
-            className="border-none bg-transparent my-6"
+    <div className="flex flex-col h-full bg-[#0a0f0d] relative overflow-hidden shrink-0">
+      <div className="p-4 border-b border-white/10 shrink-0 bg-[#0d1310] relative z-10">
+        <h2 className="font-bold text-lg text-white mb-3 tracking-wide">Messages</h2>
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
+          <input
+            type="text"
+            placeholder="Search conversations..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full bg-white/5 border border-white/10 rounded-xl py-2 pl-9 pr-4 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-[#10b981]/50 focus:bg-white/10 transition-colors"
           />
-        ) : (
-          conversations.map((conv) => {
-            const other = conv.other_participant;
-            const isActive = activeConversationId === conv.id;
-            const isOnline = onlineUsers.has(other.id);
+        </div>
+      </div>
 
-            return (
-              <button
-                key={conv.id}
-                onClick={() => onSelectConversation(conv.id)}
-                className={`w-full p-4 flex items-start gap-3 border-b hover:bg-secondary/30 transition-colors text-left ${isActive ? "bg-secondary/50" : ""}`}
-              >
-                <Avatar 
-                  name={other.full_name || "User"} 
-                  src={other.avatar_url} 
-                  online={isOnline} 
-                  className="w-10 h-10" 
-                />
-                <div className="flex-1 min-w-0">
-                  <div className="flex justify-between items-baseline mb-1">
-                    <p className="font-semibold truncate">{other.full_name}</p>
-                    {conv.last_message && (
-                      <span className="text-xs text-muted-foreground shrink-0 ml-2">
-                        {formatDistanceToNow(new Date(conv.last_message.created_at), { addSuffix: true })}
-                      </span>
-                    )}
+      <div className="flex-1 overflow-y-auto z-0 p-2">
+        {filteredConversations.length === 0 ? (
+          <div className="flex flex-col items-center justify-center h-full opacity-50 px-4 text-center">
+            <p className="text-sm text-white/70">No conversations found</p>
+          </div>
+        ) : (
+          <div className="space-y-1">
+            {filteredConversations.map((conv) => {
+              const isUnread = conv.unread_count > 0;
+              const isActive = conv.id === activeConversationId;
+              const isOnline = onlineUsers.has(conv.other_participant.id);
+              
+              return (
+                <button
+                  key={conv.id}
+                  onClick={() => onSelectConversation(conv.id)}
+                  className={`w-full text-left p-3 rounded-xl transition-all duration-200 group flex gap-3 relative overflow-hidden ${
+                    isActive 
+                      ? 'bg-[#10b981]/10 border border-[#10b981]/20' 
+                      : 'hover:bg-white/5 border border-transparent'
+                  }`}
+                >
+                  {/* Avatar */}
+                  <div className="relative shrink-0">
+                    <div className="w-12 h-12 rounded-full overflow-hidden bg-gradient-to-br from-white/10 to-white/5 flex items-center justify-center font-bold text-white text-lg">
+                      {conv.other_participant.full_name?.charAt(0) || '?'}
+                    </div>
+                    {/* Status Indicator */}
+                    <div className={`absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full border-2 border-[#0a0f0d] transition-colors ${
+                      isOnline ? 'bg-[#10b981]' : 'bg-white/20'
+                    }`} />
                   </div>
-                  <p className="text-sm text-muted-foreground truncate">
-                    {conv.last_message?.content || "Say hi!"}
-                  </p>
-                </div>
-                {conv.unread_count > 0 && (
-                  <Badge variant="error" className="shrink-0 h-5 w-5 flex items-center justify-center p-0 rounded-full">
-                    {conv.unread_count}
-                  </Badge>
-                )}
-              </button>
-            );
-          })
+
+                  {/* Content */}
+                  <div className="flex-1 min-w-0 flex flex-col justify-center">
+                    <div className="flex justify-between items-baseline mb-1">
+                      <span className={`font-semibold text-[15px] truncate pr-2 ${isActive ? 'text-[#10b981]' : 'text-white/90'}`}>
+                        {conv.other_participant.full_name}
+                      </span>
+                      {conv.last_message && (
+                        <span className="text-[11px] text-white/40 shrink-0 font-medium">
+                          {format(new Date(conv.last_message.created_at), "MMM d")}
+                        </span>
+                      )}
+                    </div>
+                    
+                    <div className="flex items-center justify-between gap-2">
+                      <p className={`text-xs truncate ${isUnread ? 'text-white font-medium' : 'text-white/50'}`}>
+                        {conv.last_message?.image_url 
+                          ? 'Sent an image 📷' 
+                          : (conv.last_message?.content || 'No messages yet')}
+                      </p>
+                      {isUnread && (
+                        <span className="shrink-0 w-5 h-5 rounded-full bg-[#10b981] flex items-center justify-center text-[10px] font-bold text-[#0d1310] shadow-[0_0_10px_rgba(16,185,129,0.3)]">
+                          {conv.unread_count}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
         )}
       </div>
     </div>

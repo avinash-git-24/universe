@@ -4,12 +4,54 @@ import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Lock, LogOut, Trash2, Bell, Shield, Activity, User, Eye, EyeOff, Save, CheckCircle2, X } from "lucide-react";
+import { Lock, LogOut, Trash2, Bell, Shield, Activity, User, Eye, EyeOff, Save, CheckCircle2, X, ChevronDown } from "lucide-react";
 import { useRouter } from "next/navigation";
 import type { Database } from "@/types/database";
 
 type Profile = Database["public"]["Tables"]["profiles"]["Row"];
 type UserSettings = Database["public"]["Tables"]["user_settings"]["Row"];
+
+const SectionCard = ({ title, icon, children }: { title: string, icon: React.ReactNode, children: React.ReactNode }) => (
+  <div style={{
+    background: "rgba(10,15,12,0.6)",
+    borderRadius: "20px",
+    padding: "2rem",
+    border: "1px solid rgba(102,255,178,0.1)",
+    backdropFilter: "blur(20px)",
+    boxShadow: "0 8px 32px rgba(0,0,0,0.3)",
+    marginBottom: "1.5rem"
+  }}>
+    <div className="flex items-center gap-3 mb-6 border-b border-[rgba(255,255,255,0.05)] pb-4">
+      <div style={{ color: "#00E676" }}>{icon}</div>
+      <h2 style={{ color: "#fff", fontWeight: 700, fontSize: "1.2rem", margin: 0 }}>{title}</h2>
+    </div>
+    {children}
+  </div>
+);
+
+const ToggleItem = ({ label, desc, checked, onChange }: { label: string, desc: string, checked: boolean, onChange: (v: boolean) => void }) => (
+  <div className="flex items-start justify-between py-3 border-b border-[rgba(255,255,255,0.02)] last:border-0">
+    <div>
+      <p style={{ color: "#fff", fontWeight: 600, fontSize: "0.95rem", margin: 0 }}>{label}</p>
+      <p style={{ color: "rgba(255,255,255,0.5)", fontSize: "0.8rem", margin: 0, marginTop: "0.25rem" }}>{desc}</p>
+    </div>
+    <button
+      type="button"
+      onClick={() => onChange(!checked)}
+      style={{
+        width: "44px", height: "24px", borderRadius: "12px",
+        background: checked ? "#00E676" : "rgba(255,255,255,0.1)",
+        position: "relative", cursor: "pointer", transition: "all 0.2s ease"
+      }}
+    >
+      <div style={{
+        width: "20px", height: "20px", borderRadius: "50%", background: "#fff",
+        position: "absolute", top: "2px", left: checked ? "22px" : "2px",
+        transition: "all 0.2s ease", boxShadow: "0 2px 4px rgba(0,0,0,0.2)"
+      }} />
+    </button>
+  </div>
+);
 
 export function SettingsClient({ 
   userId, 
@@ -161,48 +203,6 @@ export function SettingsClient({
 
   // --- UI COMPONENTS ---
 
-  const SectionCard = ({ title, icon, children }: { title: string, icon: React.ReactNode, children: React.ReactNode }) => (
-    <div style={{
-      background: "rgba(10,15,12,0.6)",
-      borderRadius: "20px",
-      padding: "2rem",
-      border: "1px solid rgba(102,255,178,0.1)",
-      backdropFilter: "blur(20px)",
-      boxShadow: "0 8px 32px rgba(0,0,0,0.3)",
-      marginBottom: "1.5rem"
-    }}>
-      <div className="flex items-center gap-3 mb-6 border-b border-[rgba(255,255,255,0.05)] pb-4">
-        <div style={{ color: "#00E676" }}>{icon}</div>
-        <h2 style={{ color: "#fff", fontWeight: 700, fontSize: "1.2rem", margin: 0 }}>{title}</h2>
-      </div>
-      {children}
-    </div>
-  );
-
-  const ToggleItem = ({ label, desc, checked, onChange }: { label: string, desc: string, checked: boolean, onChange: (v: boolean) => void }) => (
-    <div className="flex items-start justify-between py-3 border-b border-[rgba(255,255,255,0.02)] last:border-0">
-      <div>
-        <p style={{ color: "#fff", fontWeight: 600, fontSize: "0.95rem", margin: 0 }}>{label}</p>
-        <p style={{ color: "rgba(255,255,255,0.5)", fontSize: "0.8rem", margin: 0, marginTop: "0.25rem" }}>{desc}</p>
-      </div>
-      <button
-        type="button"
-        onClick={() => onChange(!checked)}
-        style={{
-          width: "44px", height: "24px", borderRadius: "12px",
-          background: checked ? "#00E676" : "rgba(255,255,255,0.1)",
-          position: "relative", cursor: "pointer", transition: "all 0.2s ease"
-        }}
-      >
-        <div style={{
-          width: "20px", height: "20px", borderRadius: "50%", background: "#fff",
-          position: "absolute", top: "2px", left: checked ? "22px" : "2px",
-          transition: "all 0.2s ease", boxShadow: "0 2px 4px rgba(0,0,0,0.2)"
-        }} />
-      </button>
-    </div>
-  );
-
   return (
     <div className="flex flex-col gap-6">
 
@@ -332,27 +332,37 @@ export function SettingsClient({
             
             <div className="flex flex-col gap-1.5">
               <label className="text-sm font-semibold text-white">Profile Visibility</label>
-              <select 
-                value={profileVis} 
-                onChange={(e) => setProfileVis(e.target.value)}
-                className="w-full px-4 py-2.5 bg-[rgba(255,255,255,0.02)] text-white border border-[rgba(255,255,255,0.1)] rounded-[var(--radius-md)] text-sm outline-none focus:border-[#00E676] appearance-none"
-              >
-                <option value="public">Public (Visible to everyone)</option>
-                <option value="runners_only">Runners Only</option>
-                <option value="private">Private</option>
-              </select>
+              <div className="relative">
+                <select 
+                  value={profileVis} 
+                  onChange={(e) => setProfileVis(e.target.value)}
+                  className="w-full pl-4 pr-10 py-2.5 bg-[rgba(255,255,255,0.02)] text-white border border-[rgba(255,255,255,0.1)] rounded-[var(--radius-md)] text-sm outline-none focus:border-[#00E676] appearance-none"
+                >
+                  <option value="public" className="bg-[#050A07] text-white">Public (Visible to everyone)</option>
+                  <option value="runners_only" className="bg-[#050A07] text-white">Runners Only</option>
+                  <option value="private" className="bg-[#050A07] text-white">Private</option>
+                </select>
+                <div className="absolute right-3 top-3 text-[#A7B8B0] pointer-events-none">
+                  <ChevronDown size={16} />
+                </div>
+              </div>
             </div>
             
             <div className="flex flex-col gap-1.5">
               <label className="text-sm font-semibold text-white">Activity Visibility</label>
-              <select 
-                value={activityVis} 
-                onChange={(e) => setActivityVis(e.target.value)}
-                className="w-full px-4 py-2.5 bg-[rgba(255,255,255,0.02)] text-white border border-[rgba(255,255,255,0.1)] rounded-[var(--radius-md)] text-sm outline-none focus:border-[#00E676] appearance-none"
-              >
-                <option value="public">Public</option>
-                <option value="private">Private (Only me)</option>
-              </select>
+              <div className="relative">
+                <select 
+                  value={activityVis} 
+                  onChange={(e) => setActivityVis(e.target.value)}
+                  className="w-full pl-4 pr-10 py-2.5 bg-[rgba(255,255,255,0.02)] text-white border border-[rgba(255,255,255,0.1)] rounded-[var(--radius-md)] text-sm outline-none focus:border-[#00E676] appearance-none"
+                >
+                  <option value="public" className="bg-[#050A07] text-white">Public</option>
+                  <option value="private" className="bg-[#050A07] text-white">Private (Only me)</option>
+                </select>
+                <div className="absolute right-3 top-3 text-[#A7B8B0] pointer-events-none">
+                  <ChevronDown size={16} />
+                </div>
+              </div>
             </div>
 
           </div>

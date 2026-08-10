@@ -42,15 +42,15 @@ export function EmptyRequests({
   const Icon = config.icon;
 
   return (
-    <div className="flex flex-col items-center justify-center p-12 text-center border border-dashed rounded-xl bg-background/50 my-4">
-      <Icon className="w-16 h-16 text-muted-foreground/30 mb-4" />
-      <h3 className="text-lg font-semibold">{message || config.title}</h3>
-      <p className="text-sm text-muted-foreground max-w-sm mt-2 mb-6">
+    <div className="flex flex-col items-center justify-center p-12 text-center border border-white/5 rounded-xl bg-[#131815]/50 backdrop-blur-sm my-4 shadow-inner shadow-white/5">
+      <Icon className="w-16 h-16 text-white/10 mb-4" />
+      <h3 className="text-lg font-semibold text-white/90">{message || config.title}</h3>
+      <p className="text-sm text-white/50 max-w-sm mt-2 mb-6">
         {description || config.description}
       </p>
       {showCreate && (
         <Link href="/request/new">
-          <Button>Create a Request</Button>
+          <Button className="bg-emerald-600 hover:bg-emerald-500 text-white shadow-[0_0_15px_rgba(5,150,105,0.2)] border border-emerald-500/50 transition-all duration-300">Create a Request</Button>
         </Link>
       )}
     </div>

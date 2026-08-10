@@ -11,6 +11,8 @@ export function mockUser(overrides: Partial<Profile> = {}): Profile {
     role: "student",
     avatar_url: null,
     account_status: "active",
+    department: null,
+    semester: null,
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
     ...overrides,

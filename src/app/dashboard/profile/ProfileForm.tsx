@@ -4,7 +4,7 @@ import { useState, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { User, Mail, CheckCircle2, Upload, Trash2, Camera, Save, ShieldCheck, X } from "lucide-react";
+import { User, Mail, CheckCircle2, Upload, Trash2, Camera, Save, ShieldCheck, X, BookOpen, GraduationCap, ChevronDown } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import type { Database } from "@/types/database";
@@ -24,7 +24,25 @@ export function ProfileForm({
   const supabase = createClient();
   const fileInputRef = useRef<HTMLInputElement>(null);
   
+  const PREDEFINED_DEPARTMENTS = [
+    "Computer Engineering",
+    "Computer Science & Engineering",
+    "Information Technology",
+    "Electronics & Communication Engineering",
+    "Electrical Engineering",
+    "Mechanical Engineering",
+    "Civil Engineering",
+    "Artificial Intelligence & Machine Learning",
+    "Data Science",
+  ];
+
+  const initialDept = initialData.department || "";
+  const isCustomInitial = initialDept && !PREDEFINED_DEPARTMENTS.includes(initialDept);
+
   const [fullName, setFullName] = useState(initialData.full_name || "");
+  const [department, setDepartment] = useState(isCustomInitial ? "Other" : initialDept);
+  const [customDepartment, setCustomDepartment] = useState(isCustomInitial ? initialDept : "");
+  const [semester, setSemester] = useState(initialData.semester || "");
   const [avatarUrl, setAvatarUrl] = useState<string | null>(initialData.avatar_url || null);
   
   const [loading, setLoading] = useState(false);
@@ -134,6 +152,8 @@ export function ProfileForm({
         .from("profiles")
         .update({
           full_name: fullName,
+          department: department === "Other" ? (customDepartment || null) : (department || null),
+          semester: semester || null,
           updated_at: new Date().toISOString()
         })
         .eq("id", userId);
@@ -157,24 +177,25 @@ export function ProfileForm({
     <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
       <div style={{
         background: "rgba(10,15,12,0.6)",
-        borderRadius: "20px",
-        padding: "2rem",
+        borderRadius: "16px",
+        padding: "1.5rem",
         border: "1px solid rgba(102,255,178,0.1)",
         backdropFilter: "blur(20px)",
         boxShadow: "0 8px 32px rgba(0,0,0,0.3)",
         width: "100%",
+        maxWidth: "640px",
         marginBottom: "1rem"
       }}>
         {/* Photo Section */}
-        <div style={{ display: "flex", gap: "1.5rem", alignItems: "center", marginBottom: "2.5rem" }}>
+        <div style={{ display: "flex", gap: "1.25rem", alignItems: "center", marginBottom: "1.5rem" }}>
           
           <div style={{ position: "relative" }}>
             {/* Avatar Container */}
             <div style={{
-              width: "120px", height: "120px", borderRadius: "50%",
+              width: "96px", height: "96px", borderRadius: "50%",
               background: avatarUrl ? "transparent" : "#00E676", color: "#000",
               display: "flex", alignItems: "center", justifyContent: "center",
-              fontWeight: 800, fontSize: "3rem",
+              fontWeight: 800, fontSize: "2.5rem",
               boxShadow: "0 0 25px rgba(0,230,118,0.3)",
               border: "2px solid #00E676",
               overflow: "hidden",
@@ -211,9 +232,9 @@ export function ProfileForm({
             </button>
           </div>
 
-          <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-            <h3 style={{ color: "#fff", fontWeight: 700, fontSize: "1.1rem", margin: 0 }}>Profile Photo</h3>
-            <p style={{ color: "rgba(255,255,255,0.5)", fontSize: "0.85rem", margin: 0, marginBottom: "0.5rem" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}>
+            <h3 style={{ color: "#fff", fontWeight: 700, fontSize: "1rem", margin: 0 }}>Profile Photo</h3>
+            <p style={{ color: "rgba(255,255,255,0.5)", fontSize: "0.8rem", margin: 0, marginBottom: "0.25rem" }}>
               Upload a clear photo so others can recognize you.
             </p>
             
@@ -270,43 +291,109 @@ export function ProfileForm({
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           
           {/* Read-only email */}
-          <div className="flex flex-col gap-1.5 w-full">
-            <label className="text-[0.9rem] font-semibold text-white font-[family-name:var(--font-inter)] mb-1">
+          <div className="flex flex-col gap-1 w-full">
+            <label className="text-[0.85rem] font-semibold text-white font-[family-name:var(--font-inter)]">
               University Email
             </label>
             <div className="relative">
-              <span className="absolute left-3 top-3 text-[#A7B8B0]"><Mail size={16} /></span>
+              <span className="absolute left-3 top-2.5 text-[#A7B8B0]"><Mail size={16} /></span>
               <input 
                 disabled
                 value={email}
-                className="w-full pl-10 pr-4 py-2.5 bg-[rgba(255,255,255,0.02)] text-white/50 border border-[rgba(255,255,255,0.05)] rounded-[var(--radius-md)] cursor-not-allowed text-sm font-[family-name:var(--font-inter)] outline-none"
+                className="w-full pl-10 pr-4 py-2 bg-[rgba(255,255,255,0.02)] text-white/50 border border-[rgba(255,255,255,0.05)] rounded-[var(--radius-md)] cursor-not-allowed text-sm font-[family-name:var(--font-inter)] outline-none"
               />
             </div>
-            <p className="text-[0.8rem] text-[#A7B8B0]/60 mt-1 font-[family-name:var(--font-inter)]">
+            <p className="text-[0.75rem] text-[#A7B8B0]/60 font-[family-name:var(--font-inter)]">
               Your email cannot be changed as it is tied to your university identity.
             </p>
           </div>
 
           {/* Full Name */}
-          <div className="flex flex-col gap-1.5 w-full">
-            <label className="text-[0.9rem] font-semibold text-white font-[family-name:var(--font-inter)] mb-1">
+          <div className="flex flex-col gap-1 w-full">
+            <label className="text-[0.85rem] font-semibold text-white font-[family-name:var(--font-inter)]">
               Full Name
             </label>
             <div className="relative">
-              <span className="absolute left-3 top-3 text-[#A7B8B0]"><User size={16} /></span>
+              <span className="absolute left-3 top-2.5 text-[#A7B8B0]"><User size={16} /></span>
               <input 
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
                 placeholder="Enter your full name"
-                className="w-full pl-10 pr-4 py-2.5 bg-[rgba(255,255,255,0.02)] text-white border border-[rgba(255,255,255,0.1)] rounded-[var(--radius-md)] text-sm font-[family-name:var(--font-inter)] outline-none focus:border-[#00E676] transition-colors"
+                className="w-full pl-10 pr-4 py-2 bg-[rgba(255,255,255,0.02)] text-white border border-[rgba(255,255,255,0.1)] rounded-[var(--radius-md)] text-sm font-[family-name:var(--font-inter)] outline-none focus:border-[#00E676] transition-colors"
               />
             </div>
-            <p className="text-[0.8rem] text-[#A7B8B0]/60 mt-1 font-[family-name:var(--font-inter)]">
+            <p className="text-[0.75rem] text-[#A7B8B0]/60 font-[family-name:var(--font-inter)]">
               Enter your full name as it appears on your university records.
             </p>
+          </div>
+
+          {/* Department and Semester row */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+            {/* Department / Branch */}
+            <div className="flex flex-col gap-1 w-full">
+              <label className="text-[0.85rem] font-semibold text-white font-[family-name:var(--font-inter)]">
+                Department / Branch
+              </label>
+              <div className="relative">
+                <span className="absolute left-3 top-2.5 text-[#A7B8B0]"><BookOpen size={16} /></span>
+                <select 
+                  value={department}
+                  onChange={(e) => setDepartment(e.target.value)}
+                  className="w-full pl-10 pr-10 py-2 bg-[rgba(255,255,255,0.02)] text-white border border-[rgba(255,255,255,0.1)] rounded-[var(--radius-md)] text-sm font-[family-name:var(--font-inter)] outline-none focus:border-[#00E676] transition-colors appearance-none"
+                >
+                  <option value="" disabled className="bg-[#050A07] text-white">Select your branch</option>
+                  {PREDEFINED_DEPARTMENTS.map(dept => (
+                    <option key={dept} value={dept} className="bg-[#050A07] text-white">{dept}</option>
+                  ))}
+                  <option value="Other" className="bg-[#050A07] text-white">Other</option>
+                </select>
+                <div className="absolute right-3 top-2.5 text-[#A7B8B0] pointer-events-none">
+                  <ChevronDown size={16} />
+                </div>
+              </div>
+              {department === "Other" && (
+                <div className="relative mt-2">
+                  <span className="absolute left-3 top-2.5 text-[#A7B8B0]"><BookOpen size={16} /></span>
+                  <input 
+                    value={customDepartment}
+                    onChange={(e) => setCustomDepartment(e.target.value)}
+                    placeholder="Enter your department"
+                    className="w-full pl-10 pr-4 py-2 bg-[rgba(255,255,255,0.02)] text-white border border-[rgba(255,255,255,0.1)] rounded-[var(--radius-md)] text-sm font-[family-name:var(--font-inter)] outline-none focus:border-[#00E676] transition-colors"
+                  />
+                </div>
+              )}
+            </div>
+
+            {/* Semester */}
+            <div className="flex flex-col gap-1 w-full">
+              <label className="text-[0.85rem] font-semibold text-white font-[family-name:var(--font-inter)]">
+                Semester
+              </label>
+              <div className="relative">
+                <span className="absolute left-3 top-2.5 text-[#A7B8B0]"><GraduationCap size={16} /></span>
+                <select 
+                  value={semester}
+                  onChange={(e) => setSemester(e.target.value)}
+                  className="w-full pl-10 pr-10 py-2 bg-[rgba(255,255,255,0.02)] text-white border border-[rgba(255,255,255,0.1)] rounded-[var(--radius-md)] text-sm font-[family-name:var(--font-inter)] outline-none focus:border-[#00E676] transition-colors appearance-none"
+                >
+                  <option value="" disabled className="bg-[#050A07] text-white">Select your semester</option>
+                  <option value="Semester 1" className="bg-[#050A07] text-white">Semester 1</option>
+                  <option value="Semester 2" className="bg-[#050A07] text-white">Semester 2</option>
+                  <option value="Semester 3" className="bg-[#050A07] text-white">Semester 3</option>
+                  <option value="Semester 4" className="bg-[#050A07] text-white">Semester 4</option>
+                  <option value="Semester 5" className="bg-[#050A07] text-white">Semester 5</option>
+                  <option value="Semester 6" className="bg-[#050A07] text-white">Semester 6</option>
+                  <option value="Semester 7" className="bg-[#050A07] text-white">Semester 7</option>
+                  <option value="Semester 8" className="bg-[#050A07] text-white">Semester 8</option>
+                </select>
+                <div className="absolute right-3 top-2.5 text-[#A7B8B0] pointer-events-none">
+                  <ChevronDown size={16} />
+                </div>
+              </div>
+            </div>
           </div>
 
           {error && (
@@ -339,12 +426,12 @@ export function ProfileForm({
             </div>
           )}
 
-          <div className="mt-2 flex justify-end gap-3 items-center border-t border-[rgba(255,255,255,0.05)] pt-6">
+          <div className="flex justify-end gap-3 items-center border-t border-[rgba(255,255,255,0.05)] pt-4 mt-2 w-full">
             <Button
               type="button"
               variant="ghost"
               onClick={() => router.push('/dashboard')}
-              style={{ color: "#fff", padding: "0.8rem 1.5rem" }}
+              style={{ color: "#fff", padding: "0.6rem 1.25rem", fontSize: "0.85rem" }}
             >
               Cancel
             </Button>
@@ -352,8 +439,8 @@ export function ProfileForm({
               type="submit" 
               isLoading={loading}
               style={{
-                background: "#00E676", color: "#000", fontWeight: 800, fontSize: "0.9rem",
-                borderRadius: "8px", padding: "0.8rem 1.5rem",
+                background: "#00E676", color: "#000", fontWeight: 800, fontSize: "0.85rem",
+                borderRadius: "8px", padding: "0.6rem 1.25rem",
                 boxShadow: "0 0 15px rgba(0,230,118,0.2)",
                 display: "flex", alignItems: "center", gap: "0.5rem"
               }}

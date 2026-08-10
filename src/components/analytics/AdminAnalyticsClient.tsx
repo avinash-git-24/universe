@@ -141,8 +141,6 @@ export function AdminAnalyticsClient({
             data={chartData}
             title="Transaction Volume"
             description="Daily transaction volume"
-            type="line"
-            color="hsl(var(--primary))"
           />
         </div>
 

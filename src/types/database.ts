@@ -17,6 +17,8 @@ export type Database = {
           role: "student" | "runner" | "admin";
           account_status: "active" | "suspended";
           avatar_url: string | null;
+          department: string | null;
+          semester: string | null;
           created_at: string;
           updated_at: string;
         };
@@ -27,6 +29,8 @@ export type Database = {
           role?: "student" | "runner" | "admin";
           account_status?: "active" | "suspended";
           avatar_url?: string | null;
+          department?: string | null;
+          semester?: string | null;
           created_at?: string;
           updated_at?: string;
         };
@@ -37,6 +41,8 @@ export type Database = {
           role?: "student" | "runner" | "admin";
           account_status?: "active" | "suspended";
           avatar_url?: string | null;
+          department?: string | null;
+          semester?: string | null;
           created_at?: string;
           updated_at?: string;
         };
@@ -245,20 +251,31 @@ export type Database = {
       conversations: {
         Row: {
           id: string;
+          request_id: string | null;
           created_at: string;
           updated_at: string;
         };
         Insert: {
           id?: string;
+          request_id?: string | null;
           created_at?: string;
           updated_at?: string;
         };
         Update: {
           id?: string;
+          request_id?: string | null;
           created_at?: string;
           updated_at?: string;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "conversations_request_id_fkey";
+            columns: ["request_id"];
+            isOneToOne: false;
+            referencedRelation: "delivery_requests";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       conversation_participants: {
         Row: {
@@ -299,6 +316,7 @@ export type Database = {
           conversation_id: string;
           sender_id: string;
           content: string;
+          image_url: string | null;
           status: "sent" | "delivered" | "read";
           created_at: string;
         };
@@ -307,6 +325,7 @@ export type Database = {
           conversation_id: string;
           sender_id: string;
           content: string;
+          image_url?: string | null;
           status?: "sent" | "delivered" | "read";
           created_at?: string;
         };
@@ -315,6 +334,7 @@ export type Database = {
           conversation_id?: string;
           sender_id?: string;
           content?: string;
+          image_url?: string | null;
           status?: "sent" | "delivered" | "read";
           created_at?: string;
         };

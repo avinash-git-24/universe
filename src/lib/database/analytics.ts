@@ -131,14 +131,14 @@ export async function getUserAnalytics(
   userId: string,
   role: "student" | "runner"
 ) {
-  const thirtyDaysAgo = subDays(new Date(), 30).toISOString();
+  const oneEightyDaysAgo = subDays(new Date(), 180).toISOString();
 
   if (role === "student") {
     const { data: requests } = await supabase
       .from("delivery_requests")
       .select("*")
       .eq("requester_id", userId)
-      .gte("created_at", thirtyDaysAgo);
+      .gte("created_at", oneEightyDaysAgo);
 
     const { data: wallet } = await supabase
       .from("wallets")
@@ -153,7 +153,7 @@ export async function getUserAnalytics(
         .select("*")
         .eq("wallet_id", wallet.id)
         .eq("type", "payment")
-        .gte("created_at", thirtyDaysAgo);
+        .gte("created_at", oneEightyDaysAgo);
       transactions = data || [];
     }
 
@@ -175,7 +175,7 @@ export async function getUserAnalytics(
       .select("*, delivery_requests(*)")
       .eq("runner_id", userId)
       .eq("status", "completed")
-      .gte("created_at", thirtyDaysAgo);
+      .gte("created_at", oneEightyDaysAgo);
 
     const { data: wallet } = await supabase
       .from("wallets")
@@ -190,7 +190,7 @@ export async function getUserAnalytics(
         .select("*")
         .eq("wallet_id", wallet.id)
         .eq("type", "earning")
-        .gte("created_at", thirtyDaysAgo);
+        .gte("created_at", oneEightyDaysAgo);
       transactions = data || [];
     }
 
@@ -238,9 +238,9 @@ export async function getAdminAnalytics(supabase: SupabaseClient<Database>) {
   };
 }
 
-export function aggregateDailyVolume(transactions: Transaction[]) {
-  const days = Array.from({ length: 30 }).map((_, i) => {
-    const d = startOfDay(subDays(new Date(), 29 - i));
+export function aggregateDailyVolume(transactions: Transaction[], daysCount = 30) {
+  const days = Array.from({ length: daysCount }).map((_, i) => {
+    const d = startOfDay(subDays(new Date(), daysCount - 1 - i));
     return {
       date: format(d, "MMM dd"),
       rawDate: d,

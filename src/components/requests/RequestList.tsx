@@ -3,7 +3,8 @@
 import { useState, useMemo } from "react";
 import Link from "next/link";
 import { format } from "date-fns";
-import { MapPin, Package, Clock, IndianRupee, MessageSquare, CheckCircle2, History, AlertCircle } from "lucide-react";
+import { MapPin, Package, Clock, IndianRupee, MessageSquare, CheckCircle2, History, AlertCircle, Search } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { Database } from "@/types/database";
 import type { StudentRequestWithDetails } from "@/lib/database/requests";
 import { StudentRequestCard } from "@/components/request/StudentRequestCard";
@@ -15,6 +16,7 @@ import { CancelRequestButton } from "./CancelRequestButton";
 import { RequestStatusBadge } from "@/components/request/RequestStatusBadge";
 import { RequestTimeline } from "@/components/request/RequestTimeline";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import {
   Modal,
@@ -126,66 +128,109 @@ export function RequestList({ initialRequests }: RequestListProps) {
   return (
     <div className="space-y-6">
       {/* Category Tabs */}
-      <div className="flex flex-wrap gap-2 border-b pb-4">
-        <Button
-          variant={activeTab === "active" ? "primary" : "secondary"}
+      <div className="flex flex-wrap gap-3 pb-4">
+        <button
+          className={cn(
+            "flex items-center px-5 py-2.5 rounded-full text-base font-medium transition-all duration-300 border",
+            activeTab === "active" 
+              ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.15)]"
+              : "bg-white/5 border-white/10 text-white/70 hover:bg-white/10 hover:text-white"
+          )}
           onClick={() => handleTabChange("active")}
         >
-          <Clock className="w-4 h-4 mr-2" />
+          <Clock className="w-5 h-5 mr-2.5" />
           Active Requests
           {counts.active > 0 && (
-            <Badge variant="primary" className="ml-2 px-1.5 py-0.5 text-xs">
+            <span className={cn(
+              "ml-2 px-2 py-0.5 rounded-full text-xs font-bold",
+              activeTab === "active" ? "bg-emerald-500 text-white" : "bg-white/20 text-white"
+            )}>
               {counts.active}
-            </Badge>
+            </span>
           )}
-        </Button>
+        </button>
 
-        <Button
-          variant={activeTab === "completed" ? "primary" : "secondary"}
+        <button
+          className={cn(
+            "flex items-center px-5 py-2.5 rounded-full text-base font-medium transition-all duration-300 border",
+            activeTab === "completed" 
+              ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.15)]"
+              : "bg-white/5 border-white/10 text-white/70 hover:bg-white/10 hover:text-white"
+          )}
           onClick={() => handleTabChange("completed")}
         >
-          <CheckCircle2 className="w-4 h-4 mr-2" />
+          <CheckCircle2 className="w-5 h-5 mr-2.5" />
           Completed
           {counts.completed > 0 && (
-            <Badge variant="neutral" className="ml-2 px-1.5 py-0.5 text-xs">
+            <span className={cn(
+              "ml-2 px-2 py-0.5 rounded-full text-xs font-bold",
+              activeTab === "completed" ? "bg-emerald-500 text-white" : "bg-white/20 text-white"
+            )}>
               {counts.completed}
-            </Badge>
+            </span>
           )}
-        </Button>
+        </button>
 
-        <Button
-          variant={activeTab === "cancelled" ? "primary" : "secondary"}
+        <button
+          className={cn(
+            "flex items-center px-5 py-2.5 rounded-full text-base font-medium transition-all duration-300 border",
+            activeTab === "cancelled" 
+              ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.15)]"
+              : "bg-white/5 border-white/10 text-white/70 hover:bg-white/10 hover:text-white"
+          )}
           onClick={() => handleTabChange("cancelled")}
         >
-          <AlertCircle className="w-4 h-4 mr-2" />
+          <AlertCircle className="w-5 h-5 mr-2.5" />
           Cancelled
           {counts.cancelled > 0 && (
-            <Badge variant="neutral" className="ml-2 px-1.5 py-0.5 text-xs">
+            <span className={cn(
+              "ml-2 px-2 py-0.5 rounded-full text-xs font-bold",
+              activeTab === "cancelled" ? "bg-emerald-500 text-white" : "bg-white/20 text-white"
+            )}>
               {counts.cancelled}
-            </Badge>
+            </span>
           )}
-        </Button>
+        </button>
 
-        <Button
-          variant={activeTab === "all" ? "primary" : "secondary"}
+        <button
+          className={cn(
+            "flex items-center px-5 py-2.5 rounded-full text-base font-medium transition-all duration-300 border",
+            activeTab === "all" 
+              ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.15)]"
+              : "bg-white/5 border-white/10 text-white/70 hover:bg-white/10 hover:text-white"
+          )}
           onClick={() => handleTabChange("all")}
         >
-          <History className="w-4 h-4 mr-2" />
-          All Requests ({counts.all})
-        </Button>
+          <History className="w-5 h-5 mr-2.5" />
+          All Requests
+          <span className={cn(
+            "ml-2 px-2 py-0.5 rounded-full text-xs font-bold",
+            activeTab === "all" ? "bg-emerald-500 text-white" : "bg-white/20 text-white"
+          )}>
+            {counts.all}
+          </span>
+        </button>
       </div>
 
       {/* Controls: Search, Status Filter, Sort */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-5">
         <div className="flex-1 w-full">
-          <RequestSearch searchQuery={searchQuery} onSearchChange={handleSearchChange} />
+          <div className="relative group">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40 group-focus-within:text-emerald-400 transition-colors" />
+            <Input
+              placeholder="Search by category, pickup, or delivery location..."
+              className="h-12 pl-10 w-full bg-white/5 border-white/10 text-white placeholder:text-white/40 focus-visible:ring-1 focus-visible:ring-emerald-500/50 focus-visible:border-emerald-500/50 rounded-xl text-base"
+              value={searchQuery}
+              onChange={(e) => handleSearchChange(e.target.value)}
+            />
+          </div>
           {activeTab === "all" && (
             <RequestFilters currentFilter={statusFilter} onFilterChange={handleFilterChange} />
           )}
         </div>
 
         <select
-          className="h-11 px-3 border rounded-md bg-background text-sm w-full md:w-auto"
+          className="h-12 rounded-xl border border-white/10 bg-[#131815] px-4 py-2 text-base focus:outline-none focus:ring-1 focus:ring-emerald-500/50 text-white"
           value={sortBy}
           onChange={(e) => {
             setSortBy(e.target.value as "newest" | "oldest");
@@ -201,7 +246,7 @@ export function RequestList({ initialRequests }: RequestListProps) {
       {filteredRequests.length === 0 ? (
         <EmptyRequests category={activeTab} showCreate={initialRequests.length === 0 || activeTab === "active"} />
       ) : (
-        <div className="grid gap-6">
+        <div className="grid gap-8">
           {currentRequests.map((req) => (
             <StudentRequestCard
               key={req.id}

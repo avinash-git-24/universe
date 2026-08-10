@@ -37,7 +37,7 @@ export function RequestTimeline({ status, className }: RequestTimelineProps) {
       <div className="flex items-center justify-between w-full relative">
         {/* Background track line */}
         <div className="absolute left-3 right-3 top-3.5 sm:top-4 -translate-y-1/2 h-1 bg-border rounded-full" />
-        
+
         {/* Active progress line */}
         <div
           className="absolute left-3 top-3.5 sm:top-4 -translate-y-1/2 h-1 bg-primary rounded-full transition-all duration-500"

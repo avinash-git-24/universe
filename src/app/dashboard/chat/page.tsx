@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 export default async function ChatPage({
   searchParams,
 }: {
-  searchParams: Promise<{ startWithUserId?: string }>;
+  searchParams: Promise<{ startWithUserId?: string; requestId?: string }>;
 }) {
   const supabase = await createClient();
   const { data: { user }, error: authError } = await supabase.auth.getUser();
@@ -22,22 +22,22 @@ export default async function ChatPage({
     redirect(ROUTES.LOGIN);
   }
 
-  const { startWithUserId } = await searchParams;
+  const { startWithUserId, requestId } = await searchParams;
 
-  if (startWithUserId && startWithUserId !== user.id) {
+  if (startWithUserId && requestId && startWithUserId !== user.id) {
     // Attempt to ensure a conversation exists
-    await getOrCreateConversation(supabase, user.id, startWithUserId);
+    await getOrCreateConversation(supabase, user.id, startWithUserId, requestId);
     redirect("/dashboard/chat");
   }
 
   const initialConversations = await getConversations(supabase, user.id);
 
   return (
-    <div className="min-h-screen bg-secondary/30 pt-24 pb-12 px-4">
-      <div className="max-w-6xl mx-auto space-y-6">
+    <div className="min-h-[calc(100vh-4rem)] bg-background">
+      <div className="max-w-[1400px] mx-auto p-4 md:p-8 h-full flex flex-col pt-12 md:pt-24 space-y-6">
         <div>
-          <h1 className="text-3xl font-extrabold tracking-tight">Messages</h1>
-          <p className="text-muted-foreground mt-1">Chat in real-time about your deliveries.</p>
+          <h1 className="text-3xl font-extrabold tracking-tight text-white">Messages</h1>
+          <p className="text-white/50 mt-1">Chat in real-time about your deliveries.</p>
         </div>
         
         <ChatClient userId={user.id} initialConversations={initialConversations} />

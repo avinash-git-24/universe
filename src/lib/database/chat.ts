@@ -1,6 +1,6 @@
 import { SupabaseClient } from "@supabase/supabase-js";
 import { Database } from "@/types/database";
-import { Profile } from "./requests";
+import { Profile, DeliveryRequest } from "./requests";
 
 export type Message = Database["public"]["Tables"]["messages"]["Row"];
 export type Conversation = Database["public"]["Tables"]["conversations"]["Row"];
@@ -9,6 +9,8 @@ export interface ConversationWithDetails extends Conversation {
   other_participant: Profile;
   last_message?: Message;
   unread_count: number;
+  delivery_request?: DeliveryRequest;
+  other_last_read_at?: string | null;
 }
 
 /**
@@ -35,11 +37,13 @@ export async function getConversations(
     .select(`
       *,
       participants:conversation_participants(
+        last_read_at,
         profile:profiles(*)
       ),
       messages(
         *
-      )
+      ),
+      delivery_request:delivery_requests(*)
     `)
     .in("id", conversationIds)
     .order("updated_at", { ascending: false });
@@ -72,11 +76,17 @@ export async function getConversations(
         (m) => m.sender_id !== userId && new Date(m.created_at) > lastReadAt
       ).length;
 
+      const otherParticipantRecord = conv.participants.find(
+        (p: any) => p.profile.id !== userId
+      );
+
       return {
         ...conv,
         other_participant: otherParticipant,
         last_message: sortedMessages[0],
         unread_count: unreadCount,
+        delivery_request: conv.delivery_request || undefined,
+        other_last_read_at: otherParticipantRecord?.last_read_at || null,
       };
     })
   );
@@ -90,7 +100,8 @@ export async function getConversations(
 export async function getOrCreateConversation(
   supabase: SupabaseClient<Database>,
   userId1: string,
-  userId2: string
+  userId2: string,
+  requestId: string
 ): Promise<string | null> {
   // Check if a conversation already exists between these two
   // We can do it via a query
@@ -111,13 +122,25 @@ export async function getOrCreateConversation(
     const p1Ids = p1.map((p) => p.conversation_id);
     const p2Ids = p2.map((p) => p.conversation_id);
     const common = p1Ids.filter((id) => p2Ids.includes(id));
-    if (common.length > 0) return common[0];
+    if (common.length > 0) {
+      // If a request ID is provided, verify it matches or update it?
+      // Actually, just find the specific conversation for this request ID
+      const { data: convWithReq } = await supabase
+        .from("conversations")
+        .select("id")
+        .in("id", common)
+        .eq("request_id", requestId);
+      
+      if (convWithReq && convWithReq.length > 0) {
+        return convWithReq[0].id;
+      }
+    }
   }
 
   // Create new conversation
   const { data: newConv, error: createError } = await supabase
     .from("conversations")
-    .insert({})
+    .insert({ request_id: requestId })
     .select("id")
     .single();
 
@@ -156,7 +179,8 @@ export async function sendMessage(
   supabase: SupabaseClient<Database>,
   conversationId: string,
   senderId: string,
-  content: string
+  content: string,
+  imageUrl?: string | null
 ): Promise<Message | null> {
   const { data, error } = await supabase
     .from("messages")
@@ -164,6 +188,7 @@ export async function sendMessage(
       conversation_id: conversationId,
       sender_id: senderId,
       content,
+      image_url: imageUrl,
     })
     .select("*")
     .single();
@@ -204,4 +229,40 @@ export async function markConversationAsRead(
     .eq("conversation_id", conversationId)
     .neq("sender_id", userId)
     .in("status", ["sent", "delivered"]);
+}
+
+/**
+ * Uploads an image to the chat_images bucket and returns the public URL.
+ */
+export async function uploadChatImage(
+  supabase: SupabaseClient<Database>,
+  conversationId: string,
+  file: File
+): Promise<string | null> {
+  try {
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${Math.random().toString(36).substring(2, 15)}_${Date.now()}.${fileExt}`;
+    const filePath = `${conversationId}/${fileName}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from('chat_images')
+      .upload(filePath, file, {
+        cacheControl: '3600',
+        upsert: false
+      });
+
+    if (uploadError) {
+      console.error("Error uploading chat image:", uploadError);
+      return null;
+    }
+
+    const { data } = supabase.storage
+      .from('chat_images')
+      .getPublicUrl(filePath);
+
+    return data.publicUrl;
+  } catch (error) {
+    console.error("Exception uploading chat image:", error);
+    return null;
+  }
 }
