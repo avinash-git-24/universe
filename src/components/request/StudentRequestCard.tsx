@@ -1,13 +1,48 @@
 "use client";
 
 import { memo } from "react";
-import { formatDistanceToNow, format } from "date-fns";
-import { Package, MapPin, IndianRupee, User, Eye, Clock } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
-import { RequestStatusBadge } from "./RequestStatusBadge";
+import { formatDistanceToNow } from "date-fns";
+import { Package, MapPin, Clock } from "lucide-react";
+import { Card } from "@/components/ui/card";
 import { MyRequestTimeline } from "../requests/MyRequestTimeline";
 import type { StudentRequestWithDetails } from "@/lib/database/requests";
 import { cn } from "@/lib/utils";
+
+// Custom badge renderer strictly for this card to match the dark premium aesthetic perfectly without affecting global styles.
+function CardStatusBadge({ status }: { status: string }) {
+  let bg = "bg-white/5";
+  let border = "border-white/10";
+  let text = "text-white/50";
+  let label = "Unknown";
+
+  if (status === "pending" || status === "accepted" || status === "picked_up") {
+    bg = "bg-[#082a18]";
+    border = "border-emerald-500/40";
+    text = "text-emerald-400";
+    label = "Active";
+  } else if (status === "in_transit") {
+    bg = "bg-[#0a1e3f]";
+    border = "border-blue-500/40";
+    text = "text-blue-400";
+    label = "In Transit";
+  } else if (status === "delivered") {
+    bg = "bg-white/5";
+    border = "border-white/20";
+    text = "text-white/70";
+    label = "Delivered";
+  } else if (status === "cancelled") {
+    bg = "bg-[#3a0a14]";
+    border = "border-red-500/40";
+    text = "text-red-400";
+    label = "Cancelled";
+  }
+
+  return (
+    <div className={cn("inline-flex items-center justify-center px-3 py-0.5 rounded-full text-[10px] font-bold tracking-wide uppercase border", bg, border, text)}>
+      {label}
+    </div>
+  );
+}
 
 interface StudentRequestCardProps {
   request: StudentRequestWithDetails;
@@ -16,9 +51,6 @@ interface StudentRequestCardProps {
 }
 
 export const StudentRequestCard = memo(function StudentRequestCard({ request, onClick, className }: StudentRequestCardProps) {
-  // Find the active assignment (if any) to display the runner
-  const activeAssignment = request.assignments?.find(a => a.status === "active" || a.status === "completed");
-  const runner = activeAssignment?.runner;
   const itemCount = request.items.reduce((acc, item) => acc + item.quantity, 0);
   const itemNames = request.items.map(i => i.name).join(", ");
 
@@ -35,80 +67,87 @@ export const StudentRequestCard = memo(function StudentRequestCard({ request, on
         }
       }}
       className={cn(
-        "w-full flex flex-col md:flex-row overflow-hidden transition-all duration-300 focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-none bg-[#131815]/80 backdrop-blur-md border border-emerald-900/30 rounded-xl",
-        onClick && "cursor-pointer hover:border-emerald-500/40 hover:shadow-[0_4px_20px_rgba(16,185,129,0.05)]",
+        "w-full flex flex-col lg:flex-row overflow-hidden transition-all duration-300 focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-none bg-[#0c120f] border border-[#1c2420]/70 rounded-[20px] relative group shadow-sm",
+        onClick && "cursor-pointer hover:border-white/15 hover:bg-[#0f1612] hover:shadow-md hover:shadow-emerald-900/5",
         className
       )}
     >
-      {/* Container for responsive layout */}
-      <div className="w-full p-5 sm:p-6 md:p-8 flex flex-col md:flex-row gap-6 md:gap-8 items-start md:items-center">
+      <div className="w-full p-6 md:p-8 flex flex-col lg:flex-row gap-8 lg:gap-12 items-start lg:items-center">
         
-        {/* LEFT COLUMN: Icon, Name, Date */}
-        <div className="flex items-start gap-5 md:w-72 shrink-0">
-          <div className="w-12 h-12 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center shrink-0 shadow-[inset_0_0_10px_rgba(16,185,129,0.1)]">
-            <Package className="w-6 h-6 text-emerald-400" />
-          </div>
-          <div className="space-y-1 min-w-0">
-            <h3 className="text-lg font-bold text-white truncate leading-tight">
-              {request.items.map(i => i.name).join(", ")}
-            </h3>
-            <div className="flex items-center text-sm text-white/50">
-              <Clock className="w-4 h-4 mr-1.5" />
-              {formatDistanceToNow(new Date(request.created_at))} ago
+        {/* LEFT COLUMN: Icon, Name, Date, Status */}
+        <div className="flex flex-col gap-4 lg:w-[260px] shrink-0">
+          <div className="flex items-start gap-4 lg:gap-5">
+            <div className="w-[72px] h-[72px] rounded-2xl bg-[#0a2014] flex items-center justify-center shrink-0 shadow-[inset_0_0_20px_rgba(16,185,129,0.05)] border border-emerald-900/30">
+              <Package className="w-8 h-8 text-emerald-400" />
+            </div>
+            <div className="flex flex-col gap-2.5 min-w-0 pt-0.5">
+              <div className="space-y-1">
+                <h3 className="text-xl font-bold text-white truncate leading-tight tracking-tight">
+                  {request.items.map(i => i.name).join(", ")}
+                </h3>
+                <div className="flex items-center text-xs text-white/40 font-medium">
+                  <Clock className="w-3 h-3 mr-1.5 opacity-70" />
+                  {formatDistanceToNow(new Date(request.created_at))} ago
+                </div>
+              </div>
+              <div>
+                <CardStatusBadge status={request.status} />
+              </div>
             </div>
           </div>
         </div>
 
         {/* CENTER COLUMN: Timeline & Info Row */}
-        <div className="flex-1 w-full flex flex-col gap-6">
-          <div className="px-2">
+        <div className="flex-1 w-full flex flex-col gap-10">
+          <div className="px-2 w-full">
             <MyRequestTimeline status={request.status} />
           </div>
           
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-6 text-sm">
-            <div className="flex items-center min-w-0 flex-1">
-              <MapPin className="w-5 h-5 mr-2 text-emerald-500 shrink-0" />
-              <div className="flex flex-col">
-                <span className="text-xs text-white/40 uppercase tracking-wider font-semibold">From</span>
-                <span className="truncate font-medium text-white/80">{request.pickup_location}</span>
+          <div className="flex justify-between text-sm w-full relative px-2">
+            
+            {/* FROM - Aligning with 0% (Requested) */}
+            <div className="flex items-start w-[140px]">
+              <MapPin className="w-4 h-4 mr-2.5 text-emerald-500 shrink-0 mt-0.5 opacity-80" />
+              <div className="flex flex-col gap-0.5">
+                <span className="text-[10px] text-white/30 uppercase tracking-widest font-bold">From</span>
+                <span className="truncate font-semibold text-white/90 text-sm leading-tight">{request.pickup_location}</span>
               </div>
             </div>
             
-            <div className="flex items-center min-w-0 flex-1">
-              <MapPin className="w-5 h-5 mr-2 text-emerald-500 shrink-0" />
-              <div className="flex flex-col">
-                <span className="text-xs text-white/40 uppercase tracking-wider font-semibold">To</span>
-                <span className="truncate font-medium text-white">{request.dropoff_location}</span>
+            {/* TO - Aligning with 50% (Picked Up) */}
+            <div className="flex items-start w-[140px] justify-center text-left absolute left-1/2 -translate-x-1/2">
+              <MapPin className="w-4 h-4 mr-2.5 text-emerald-500 shrink-0 mt-0.5 opacity-80" />
+              <div className="flex flex-col gap-0.5">
+                <span className="text-[10px] text-white/30 uppercase tracking-widest font-bold">To</span>
+                <span className="truncate font-semibold text-white/90 text-sm leading-tight">{request.dropoff_location}</span>
               </div>
             </div>
 
-            <div className="flex items-center shrink-0">
-              <Package className="w-5 h-5 mr-2 text-emerald-500 shrink-0" />
-              <div className="flex flex-col">
-                <span className="text-xs text-white/40 uppercase tracking-wider font-semibold">Items</span>
-                <span className="font-medium text-white/80">{itemCount} item{itemCount !== 1 ? "s" : ""}</span>
+            {/* ITEMS - Aligning with 100% (Delivered) */}
+            <div className="flex items-start w-[140px] justify-end text-left">
+              <Package className="w-4 h-4 mr-2.5 text-emerald-500 shrink-0 mt-0.5 opacity-80" />
+              <div className="flex flex-col gap-0.5">
+                <span className="text-[10px] text-white/30 uppercase tracking-widest font-bold">Items</span>
+                <span className="font-semibold text-white/90 text-sm leading-tight">{itemCount} item{itemCount !== 1 ? "s" : ""}</span>
               </div>
             </div>
           </div>
         </div>
 
-        {/* RIGHT COLUMN: Amount, Status, Action */}
-        <div className="flex flex-row md:flex-col items-center md:items-end justify-between md:justify-center w-full md:w-40 shrink-0 gap-4 pt-4 md:pt-0 border-t md:border-t-0 border-white/5">
-          <div className="flex md:flex-col items-center md:items-end gap-3 md:gap-2">
-            <div className="text-2xl font-bold text-white flex items-center leading-none">
-              <IndianRupee className="w-5 h-5 mr-0.5 text-white/70" />
-              {request.delivery_fee}
-            </div>
-            <RequestStatusBadge status={request.status} />
+        {/* RIGHT COLUMN: Action */}
+        {onClick && (
+          <div className="hidden lg:flex flex-col justify-center shrink-0 w-32 h-[72px]">
+            {request.status === "in_transit" ? (
+              <div className="px-5 py-2.5 rounded-lg bg-transparent border border-blue-500/50 text-blue-400 text-[13px] font-bold hover:bg-blue-500/10 transition-colors cursor-pointer text-center whitespace-nowrap ml-auto w-full">
+                View Details
+              </div>
+            ) : (
+              <div className="w-[42px] h-[42px] rounded-xl bg-[#131b17] border border-[#1c2420] flex items-center justify-center text-white/40 group-hover:text-white group-hover:bg-[#1a241f] group-hover:border-white/10 transition-all ml-auto">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+              </div>
+            )}
           </div>
-
-          {onClick && (
-            <span className="text-sm font-semibold text-emerald-400 inline-flex items-center gap-1.5 hover:text-emerald-300 transition-colors py-1">
-              <Eye className="w-4 h-4" /> View Details
-            </span>
-          )}
-        </div>
-
+        )}
       </div>
     </Card>
   );

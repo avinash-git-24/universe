@@ -25,26 +25,29 @@ export default async function MyRequestsPage() {
   const requests = await getStudentRequests(supabase, user.id);
 
   return (
-    <div className="min-h-screen bg-[#0a0f0d] bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-emerald-900/10 via-[#0a0f0d] to-[#0a0f0d] pt-24 pb-12 px-4 text-white selection:bg-emerald-500/30">
-      <div className="max-w-5xl mx-auto space-y-8 relative z-10">
+    <div className="min-h-screen bg-[#080b09] pt-24 pb-12 px-4 text-white selection:bg-emerald-500/30">
+      <div className="max-w-6xl mx-auto space-y-8 relative z-10">
         
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
-            <h1 className="text-4xl font-extrabold tracking-tight text-white">My Requests</h1>
-            <p className="text-white/60 mt-2 text-lg">View and manage your delivery requests <span className="text-emerald-400">✦</span></p>
+            <h1 className="text-4xl font-extrabold tracking-tight text-white flex items-center gap-2">
+              My Requests
+              <span className="text-emerald-400 text-3xl">✦</span>
+            </h1>
+            <p className="text-white/60 mt-1 text-base">View and manage your delivery requests</p>
           </div>
           
-          <div className="flex gap-2 items-center">
+          <div className="flex gap-3 items-center">
             <NotificationBell />
             <Link href="/dashboard/requests">
-              <Button variant="secondary" size="icon" className="bg-white/5 border border-white/10 hover:bg-white/10 text-white">
+              <Button variant="secondary" size="icon" className="bg-transparent border border-white/10 hover:bg-white/5 text-white rounded-full h-10 w-10">
                 <RefreshCw className="w-4 h-4" />
               </Button>
             </Link>
             <Link href="/request/new">
-              <Button className="bg-emerald-600 hover:bg-emerald-500 text-white shadow-[0_0_15px_rgba(5,150,105,0.2)] border border-emerald-500/50 transition-all duration-300">
-                <Plus className="w-4 h-4 mr-2" />
+              <Button className="bg-emerald-500 hover:bg-emerald-400 text-black font-semibold rounded-lg h-10 px-4 transition-colors">
+                <Plus className="w-4 h-4 mr-1.5" />
                 New Request
               </Button>
             </Link>

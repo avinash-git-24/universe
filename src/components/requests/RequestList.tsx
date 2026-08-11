@@ -3,12 +3,11 @@
 import { useState, useMemo } from "react";
 import Link from "next/link";
 import { format } from "date-fns";
-import { MapPin, Package, Clock, IndianRupee, MessageSquare, CheckCircle2, History, AlertCircle, Search } from "lucide-react";
+import { MapPin, Package, Clock, IndianRupee, MessageSquare, CheckCircle2, History, AlertCircle, Search, SlidersHorizontal } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Database } from "@/types/database";
 import type { StudentRequestWithDetails } from "@/lib/database/requests";
 import { StudentRequestCard } from "@/components/request/StudentRequestCard";
-import { RequestSearch } from "./RequestSearch";
 import { RequestFilters } from "./RequestFilters";
 import { Pagination } from "./Pagination";
 import { EmptyRequests } from "./EmptyRequests";
@@ -17,7 +16,6 @@ import { RequestStatusBadge } from "@/components/request/RequestStatusBadge";
 import { RequestTimeline } from "@/components/request/RequestTimeline";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
 import {
   Modal,
   ModalContent,
@@ -128,84 +126,78 @@ export function RequestList({ initialRequests }: RequestListProps) {
   return (
     <div className="space-y-6">
       {/* Category Tabs */}
-      <div className="flex flex-wrap gap-3 pb-4">
+      <div className="flex flex-wrap gap-4 pb-6">
         <button
           className={cn(
-            "flex items-center px-5 py-2.5 rounded-full text-base font-medium transition-all duration-300 border",
+            "flex items-center px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 border",
             activeTab === "active" 
-              ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.15)]"
-              : "bg-white/5 border-white/10 text-white/70 hover:bg-white/10 hover:text-white"
+              ? "bg-[#082a18]/40 border-emerald-500/40 text-emerald-400"
+              : "bg-transparent border-[#1c2420] text-white/50 hover:border-white/20 hover:text-white/80"
           )}
           onClick={() => handleTabChange("active")}
         >
-          <Clock className="w-5 h-5 mr-2.5" />
+          <Clock className="w-4 h-4 mr-2" />
           Active Requests
-          {counts.active > 0 && (
-            <span className={cn(
-              "ml-2 px-2 py-0.5 rounded-full text-xs font-bold",
-              activeTab === "active" ? "bg-emerald-500 text-white" : "bg-white/20 text-white"
-            )}>
-              {counts.active}
-            </span>
-          )}
+          <span className={cn(
+            "ml-2.5 px-2 py-0.5 rounded-full text-xs font-bold min-w-[24px]",
+            activeTab === "active" ? "bg-emerald-500 text-[#0a0f0d]" : "bg-[#1c2420] text-white/50"
+          )}>
+            {counts.active}
+          </span>
         </button>
 
         <button
           className={cn(
-            "flex items-center px-5 py-2.5 rounded-full text-base font-medium transition-all duration-300 border",
+            "flex items-center px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 border",
             activeTab === "completed" 
-              ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.15)]"
-              : "bg-white/5 border-white/10 text-white/70 hover:bg-white/10 hover:text-white"
+              ? "bg-white/5 border-white/30 text-white"
+              : "bg-transparent border-[#1c2420] text-white/50 hover:border-white/20 hover:text-white/80"
           )}
           onClick={() => handleTabChange("completed")}
         >
-          <CheckCircle2 className="w-5 h-5 mr-2.5" />
+          <CheckCircle2 className="w-4 h-4 mr-2" />
           Completed
-          {counts.completed > 0 && (
-            <span className={cn(
-              "ml-2 px-2 py-0.5 rounded-full text-xs font-bold",
-              activeTab === "completed" ? "bg-emerald-500 text-white" : "bg-white/20 text-white"
-            )}>
-              {counts.completed}
-            </span>
-          )}
+          <span className={cn(
+            "ml-2.5 px-2 py-0.5 rounded-full text-xs font-bold min-w-[24px]",
+            activeTab === "completed" ? "bg-white/20 text-white" : "bg-[#1c2420] text-white/50"
+          )}>
+            {counts.completed}
+          </span>
         </button>
 
         <button
           className={cn(
-            "flex items-center px-5 py-2.5 rounded-full text-base font-medium transition-all duration-300 border",
+            "flex items-center px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 border",
             activeTab === "cancelled" 
-              ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.15)]"
-              : "bg-white/5 border-white/10 text-white/70 hover:bg-white/10 hover:text-white"
+              ? "bg-red-500/10 border-red-500/40 text-red-400"
+              : "bg-transparent border-[#1c2420] text-white/50 hover:border-white/20 hover:text-white/80"
           )}
           onClick={() => handleTabChange("cancelled")}
         >
-          <AlertCircle className="w-5 h-5 mr-2.5" />
+          <AlertCircle className="w-4 h-4 mr-2" />
           Cancelled
-          {counts.cancelled > 0 && (
-            <span className={cn(
-              "ml-2 px-2 py-0.5 rounded-full text-xs font-bold",
-              activeTab === "cancelled" ? "bg-emerald-500 text-white" : "bg-white/20 text-white"
-            )}>
-              {counts.cancelled}
-            </span>
-          )}
+          <span className={cn(
+            "ml-2.5 px-2 py-0.5 rounded-full text-xs font-bold min-w-[24px]",
+            activeTab === "cancelled" ? "bg-red-500 text-[#0a0f0d]" : "bg-[#1c2420] text-white/50"
+          )}>
+            {counts.cancelled}
+          </span>
         </button>
 
         <button
           className={cn(
-            "flex items-center px-5 py-2.5 rounded-full text-base font-medium transition-all duration-300 border",
+            "flex items-center px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 border",
             activeTab === "all" 
-              ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.15)]"
-              : "bg-white/5 border-white/10 text-white/70 hover:bg-white/10 hover:text-white"
+              ? "bg-white/5 border-white/30 text-white"
+              : "bg-transparent border-[#1c2420] text-white/50 hover:border-white/20 hover:text-white/80"
           )}
           onClick={() => handleTabChange("all")}
         >
-          <History className="w-5 h-5 mr-2.5" />
+          <History className="w-4 h-4 mr-2" />
           All Requests
           <span className={cn(
-            "ml-2 px-2 py-0.5 rounded-full text-xs font-bold",
-            activeTab === "all" ? "bg-emerald-500 text-white" : "bg-white/20 text-white"
+            "ml-2.5 px-2 py-0.5 rounded-full text-xs font-bold min-w-[24px]",
+            activeTab === "all" ? "bg-white/20 text-white" : "bg-[#1c2420] text-white/50"
           )}>
             {counts.all}
           </span>
@@ -213,33 +205,36 @@ export function RequestList({ initialRequests }: RequestListProps) {
       </div>
 
       {/* Controls: Search, Status Filter, Sort */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-5">
-        <div className="flex-1 w-full">
-          <div className="relative group">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40 group-focus-within:text-emerald-400 transition-colors" />
-            <Input
-              placeholder="Search by category, pickup, or delivery location..."
-              className="h-12 pl-10 w-full bg-white/5 border-white/10 text-white placeholder:text-white/40 focus-visible:ring-1 focus-visible:ring-emerald-500/50 focus-visible:border-emerald-500/50 rounded-xl text-base"
-              value={searchQuery}
-              onChange={(e) => handleSearchChange(e.target.value)}
-            />
-          </div>
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+        <div className="flex-1 w-full md:w-auto relative group">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30 group-focus-within:text-emerald-400 transition-colors" />
+          <Input
+            placeholder="Search by category, pickup, or delivery location..."
+            className="h-11 pl-11 w-full md:max-w-xl bg-[#0c120f] border-[#1c2420] text-white placeholder:text-white/30 focus-visible:ring-1 focus-visible:ring-emerald-500/50 rounded-lg text-sm transition-all"
+            value={searchQuery}
+            onChange={(e) => handleSearchChange(e.target.value)}
+          />
+        </div>
+
+        <div className="flex items-center gap-3 w-full md:w-auto">
           {activeTab === "all" && (
             <RequestFilters currentFilter={statusFilter} onFilterChange={handleFilterChange} />
           )}
+          <select
+            className="h-11 rounded-lg border border-[#1c2420] bg-[#0c120f] px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500/50 text-white/70 min-w-[150px] transition-all"
+            value={sortBy}
+            onChange={(e) => {
+              setSortBy(e.target.value as "newest" | "oldest");
+              setCurrentPage(1);
+            }}
+          >
+            <option value="newest" className="bg-[#0c120f]">Sort by Newest</option>
+            <option value="oldest" className="bg-[#0c120f]">Sort by Oldest</option>
+          </select>
+          <Button variant="secondary" size="icon" className="h-11 w-11 shrink-0 bg-[#0c120f] border border-[#1c2420] hover:bg-[#151c19] hover:text-white rounded-lg text-white/70 transition-all">
+            <SlidersHorizontal className="w-4 h-4" />
+          </Button>
         </div>
-
-        <select
-          className="h-12 rounded-xl border border-white/10 bg-[#131815] px-4 py-2 text-base focus:outline-none focus:ring-1 focus:ring-emerald-500/50 text-white"
-          value={sortBy}
-          onChange={(e) => {
-            setSortBy(e.target.value as "newest" | "oldest");
-            setCurrentPage(1);
-          }}
-        >
-          <option value="newest">Sort by Newest</option>
-          <option value="oldest">Sort by Oldest</option>
-        </select>
       </div>
 
       {/* Request List Cards or Empty State */}

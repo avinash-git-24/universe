@@ -1,77 +1,14 @@
 "use client";
 
-import { useState, Suspense } from "react";
+import { useState, Suspense, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { ROUTES } from "@/constants/routes";
 
-// ─── Static Space Background ──────────────────────────────────────────────────
-function Bg() {
-  return (
-    <div style={{ position: "absolute", inset: 0, overflow: "hidden", zIndex: 0 }}>
-      <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse 100% 70% at 50% 100%, #071A0C 0%, #050D07 40%, #030604 100%)" }} />
-      <div style={{ position: "absolute", top: "-5%", right: "-5%", width: "50%", height: "55%", background: "radial-gradient(ellipse at 65% 25%, rgba(0,200,100,0.18) 0%, rgba(0,100,50,0.07) 45%, transparent 70%)", filter: "blur(50px)" }} />
-      <div style={{ position: "absolute", top: "5%", left: "-8%", width: "35%", height: "45%", background: "radial-gradient(ellipse at 40% 50%, rgba(0,80,40,0.08) 0%, transparent 70%)", filter: "blur(60px)" }} />
-      <div style={{ position: "absolute", bottom: "-8%", left: "50%", transform: "translateX(-50%)", width: "140%", height: "50%", background: "radial-gradient(ellipse 65% 55% at 50% 100%, rgba(0,200,90,0.65) 0%, rgba(0,120,50,0.35) 30%, rgba(0,60,20,0.1) 60%, transparent 80%)", filter: "blur(6px)" }} />
-      <div style={{ position: "absolute", bottom: "-22%", left: "50%", transform: "translateX(-50%)", width: "120%", paddingBottom: "120%", borderRadius: "50%", background: "radial-gradient(ellipse 75% 75% at 50% 75%, #071A0C 20%, #040D06 60%, transparent 100%)", boxShadow: "0 -10px 60px 5px rgba(0,200,80,0.25)" }} />
-      <div style={{ position: "absolute", bottom: "3%", left: "50%", transform: "translateX(-50%)", width: "85%", height: "6%", background: "linear-gradient(90deg, transparent 5%, rgba(255,210,80,0.05) 20%, rgba(255,230,100,0.09) 40%, rgba(255,210,80,0.05) 55%, rgba(255,230,100,0.08) 70%, transparent 90%)", filter: "blur(3px)" }} />
-      {/* Orbital arcs */}
-      <svg style={{ position: "absolute", inset: 0, width: "100%", height: "100%", overflow: "visible" }} viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice">
-        <ellipse cx="720" cy="900" rx="680" ry="680" fill="none" stroke="rgba(0,200,80,0.1)" strokeWidth="1" />
-        <ellipse cx="720" cy="900" rx="820" ry="400" fill="none" stroke="rgba(0,180,70,0.07)" strokeWidth="1" strokeDasharray="10 8" />
-        <ellipse cx="720" cy="900" rx="960" ry="960" fill="none" stroke="rgba(0,160,60,0.05)" strokeWidth="1" />
-      </svg>
-      {/* Stars */}
-      <svg style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }} viewBox="0 0 1440 900">
-        <circle cx="95" cy="72" r="1.5" fill="white" opacity="0.75" />
-        <circle cx="310" cy="38" r="1" fill="white" opacity="0.55" />
-        <circle cx="750" cy="28" r="1.5" fill="white" opacity="0.65" />
-        <circle cx="1090" cy="55" r="1" fill="white" opacity="0.5" />
-        <circle cx="1310" cy="95" r="1.5" fill="white" opacity="0.7" />
-        <circle cx="44" cy="185" r="1" fill="white" opacity="0.45" />
-        <circle cx="210" cy="148" r="1.5" fill="white" opacity="0.65" />
-        <circle cx="960" cy="82" r="1" fill="white" opacity="0.55" />
-        <circle cx="1180" cy="195" r="1.5" fill="white" opacity="0.6" />
-        <circle cx="1395" cy="285" r="1" fill="white" opacity="0.4" />
-        <circle cx="55" cy="330" r="1" fill="white" opacity="0.45" />
-        <circle cx="1370" cy="165" r="1.5" fill="white" opacity="0.55" />
-        <circle cx="415" cy="92" r="1" fill="white" opacity="0.4" />
-        <circle cx="848" cy="48" r="1" fill="white" opacity="0.65" />
-        <circle cx="1035" cy="140" r="1.5" fill="white" opacity="0.5" />
-        <circle cx="655" cy="68" r="1" fill="white" opacity="0.55" />
-        <circle cx="172" cy="265" r="1" fill="white" opacity="0.4" />
-        <circle cx="1250" cy="130" r="1" fill="white" opacity="0.45" />
-        <circle cx="1140" cy="45" r="1.8" fill="rgba(100,255,150,0.85)" opacity="0.85" />
-        <circle cx="1285" cy="82" r="1.2" fill="rgba(120,255,160,0.7)" opacity="0.7" />
-        <circle cx="1040" cy="25" r="2" fill="rgba(140,255,170,0.75)" opacity="0.75" />
-      </svg>
-      {/* Sparkles */}
-      <svg style={{ position: "absolute", top: "14%", right: "17%", width: 18, height: 18 }} viewBox="0 0 20 20"><path d="M10 0 L11.5 8.5 L20 10 L11.5 11.5 L10 20 L8.5 11.5 L0 10 L8.5 8.5 Z" fill="rgba(100,255,150,0.65)" /></svg>
-      <svg style={{ position: "absolute", top: "27%", left: "19%", width: 11, height: 11 }} viewBox="0 0 20 20"><path d="M10 0 L11.5 8.5 L20 10 L11.5 11.5 L10 20 L8.5 11.5 L0 10 L8.5 8.5 Z" fill="rgba(80,220,120,0.45)" /></svg>
-      <svg style={{ position: "absolute", bottom: "28%", right: "11%", width: 15, height: 15 }} viewBox="0 0 20 20"><path d="M10 0 L11.5 8.5 L20 10 L11.5 11.5 L10 20 L8.5 11.5 L0 10 L8.5 8.5 Z" fill="rgba(100,255,150,0.45)" /></svg>
-      {/* Floating icons */}
-      <svg style={{ position: "absolute", left: "8%", top: "41%", opacity: 0.38 }} width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="rgba(0,230,100,0.8)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" /><polyline points="3.27 6.96 12 12.01 20.73 6.96" /><line x1="12" y1="22.08" x2="12" y2="12" />
-      </svg>
-      <svg style={{ position: "absolute", left: "9%", top: "62%", opacity: 0.38 }} width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="rgba(0,230,100,0.8)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z" /><path d="m3.5 11.5 1 4.5 4.5 1" /><path d="M20.5 3.5s-4-.5-6.5 1.5l-7 6 4 4 6-7c2-2.5 1.5-6.5 1.5-6.5z" /><circle cx="15" cy="9" r="1" fill="rgba(0,230,100,0.8)" />
-      </svg>
-      <svg style={{ position: "absolute", right: "8%", top: "47%", opacity: 0.42 }} width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="rgba(0,230,100,0.8)" strokeWidth="1.5">
-        <circle cx="12" cy="12" r="5" /><ellipse cx="12" cy="12" rx="11" ry="4.2" />
-      </svg>
-    </div>
-  );
-}
+// ─── Unused functions removed ───
 
-// ─── Sparkle Icon ─────────────────────────────────────────────────────────────
-function Sparkle({ size = 14, opacity = 0.8 }: { size?: number; opacity?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 20 20" fill="none" style={{ opacity, flexShrink: 0, display: "inline-block" }}>
-      <path d="M10 0 L11.5 8.5 L20 10 L11.5 11.5 L10 20 L8.5 11.5 L0 10 L8.5 8.5 Z" fill="#00E676" />
-    </svg>
-  );
-}
+
 
 // ─── Custom Input Field ───────────────────────────────────────────────────────
 function Field({
@@ -85,28 +22,29 @@ function Field({
 }) {
   const [focused, setFocused] = useState(false);
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
       <label htmlFor={id} style={{ fontSize: 13, fontWeight: 500, color: "#E8F0EB", letterSpacing: "-0.01em" }}>
         {label}
       </label>
       <div style={{
         position: "relative", display: "flex", alignItems: "center",
-        background: "rgba(3,8,5,0.92)",
-        border: `1.5px solid ${error ? "rgba(239,68,68,0.6)" : focused ? "rgba(0,230,118,0.55)" : "rgba(0,230,118,0.18)"}`,
-        borderRadius: 13,
-        boxShadow: focused ? "0 0 0 3px rgba(0,230,118,0.08)" : "none",
-        transition: "border-color 0.15s, box-shadow 0.15s",
+        background: "rgba(0,0,0,0.45)",
+        border: `1px solid ${error ? "rgba(239,68,68,0.5)" : focused ? "rgba(0,230,118,0.5)" : "rgba(0,230,118,0.25)"}`,
+        borderRadius: 14,
+        boxShadow: focused ? "0 0 0 1px rgba(0,230,118,0.3), 0 0 16px rgba(0,230,118,0.15)" : "none",
+        transition: "all 0.2s ease-in-out",
       }}>
-        <span style={{ position: "absolute", left: 16, display: "flex", alignItems: "center", color: "rgba(0,230,118,0.75)", pointerEvents: "none" }}>
+        <span style={{ position: "absolute", left: 16, display: "flex", alignItems: "center", color: "rgba(0,230,118,0.9)", pointerEvents: "none" }}>
           {leftIcon}
         </span>
         <input
+          className="dark-input"
           id={id} type={type} placeholder={placeholder} autoComplete={autoComplete}
           value={value} onChange={onChange}
           onFocus={() => setFocused(true)} onBlur={() => setFocused(false)}
           style={{
             width: "100%", background: "transparent", border: "none", outline: "none",
-            color: "#fff", fontSize: 14, padding: "14px 44px",
+            color: "#fff", fontSize: 15, padding: "16px 44px",
             letterSpacing: type === "password" ? "0.12em" : "normal",
             fontFamily: "inherit",
           }}
@@ -128,6 +66,17 @@ function validateEmail(e: string) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      const x = (e.clientX / window.innerWidth - 0.5) * 2;
+      const y = (e.clientY / window.innerHeight - 0.5) * 2;
+      document.documentElement.style.setProperty("--mx", x.toString());
+      document.documentElement.style.setProperty("--my", y.toString());
+    };
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => window.removeEventListener("mousemove", handleMouseMove);
+  }, []);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPw, setShowPw] = useState(false);
@@ -168,61 +117,86 @@ function LoginForm() {
 
   return (
     <div style={{
-      minHeight: "100dvh", background: "#070A08",
+      width: "100%",
       display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
-      padding: "48px 16px", position: "relative",
-      fontFamily: "'Inter', system-ui, sans-serif", overflow: "hidden",
+      fontFamily: "'Inter', system-ui, sans-serif",
     }}>
-      <Bg />
+      {/* 2.5D Parallax Background Wrapper */}
+      <div className="parallax-bg-wrapper" style={{
+        position: "fixed", inset: 0, zIndex: -1, overflow: "hidden", background: "#050A08"
+      }}>
+        {/* Layer 1: Distant Background (moves very slowly) */}
+        <div className="parallax-layer layer-1" style={{
+          position: "absolute", inset: "-5%", background: "url('/login-bg.jpg')",
+          backgroundSize: "cover", backgroundPosition: "center center", backgroundRepeat: "no-repeat",
+        }} />
 
-      <div style={{ position: "relative", zIndex: 1, width: "100%", maxWidth: 460, display: "flex", flexDirection: "column", alignItems: "center" }}>
+        {/* Layer 2: Subtle Nebula Overlay (moves slightly faster) */}
+        <div className="parallax-layer layer-2" style={{
+          position: "absolute", inset: "-10%",
+          background: "radial-gradient(ellipse at center, rgba(0,230,118,0.15) 0%, transparent 60%)",
+          mixBlendMode: "screen",
+        }} />
+
+        {/* Layer 3: Foreground Twinkling Stars (moves fastest) */}
+        <div className="parallax-layer layer-3" style={{
+          position: "absolute", inset: "-15%",
+          backgroundImage: "radial-gradient(1.5px 1.5px at 40px 60px, rgba(255,255,255,0.8) 100%, transparent), radial-gradient(2px 2px at 120px 200px, rgba(0,230,118,0.6) 100%, transparent), radial-gradient(1.5px 1.5px at 300px 90px, rgba(255,255,255,0.5) 100%, transparent), radial-gradient(2px 2px at 400px 300px, rgba(255,255,255,0.9) 100%, transparent), radial-gradient(1.5px 1.5px at 50px 350px, rgba(0,230,118,0.4) 100%, transparent), radial-gradient(1.5px 1.5px at 250px 450px, rgba(255,255,255,0.7) 100%, transparent)",
+          backgroundRepeat: "repeat", backgroundSize: "500px 500px",
+          mixBlendMode: "screen", opacity: 0.8,
+        }} />
+      </div>
+
+      <div style={{ position: "relative", zIndex: 1, width: "100%", maxWidth: 480, display: "flex", flexDirection: "column", alignItems: "center" }}>
 
         {/* ── Logo + tagline ── */}
-        <Link href="/" style={{ textDecoration: "none", display: "flex", flexDirection: "column", alignItems: "center", gap: 10, marginBottom: 32 }}>
+        <Link href="/" style={{ textDecoration: "none", display: "flex", flexDirection: "column", alignItems: "center", gap: 10, marginBottom: 40 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <div style={{ width: 42, height: 42, borderRadius: 11, background: "linear-gradient(145deg, #00E676 0%, #00A854 100%)", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 0 20px rgba(0,230,118,0.45)", flexShrink: 0 }}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <div style={{ width: 42, height: 42, borderRadius: 12, background: "linear-gradient(135deg, #00E676 0%, #00B74A 100%)", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 0 20px rgba(0,230,118,0.45)", flexShrink: 0 }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="black" stroke="black" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
                 <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
               </svg>
             </div>
-            <span style={{ fontSize: 32, fontWeight: 800, letterSpacing: "-0.03em", color: "#fff", lineHeight: 1 }}>
-              Uni<span style={{ color: "#00E676", textShadow: "0 0 24px rgba(0,230,118,0.5)" }}>Verse</span>
+            <span style={{ fontSize: 32, fontWeight: 800, letterSpacing: "-0.02em", color: "#fff", lineHeight: 1 }}>
+              UniVerse
             </span>
           </div>
-          <span style={{ fontSize: 13, color: "rgba(167,184,176,0.75)", letterSpacing: "0.01em" }}>One Universe. Infinite Possibilities.</span>
+          <span style={{ fontSize: 13, color: "rgba(167,184,176,0.85)", letterSpacing: "0.03em", fontWeight: 500, textTransform: "uppercase" }}>
+            One Universe. Infinite Possibilities.
+          </span>
         </Link>
 
         {/* ── Glass Card ── */}
         <div style={{
           width: "100%",
-          background: "rgba(8,15,11,0.82)",
-          border: "1px solid rgba(0,230,118,0.18)",
-          borderRadius: 26,
+          background: "rgba(5,11,8,0.75)",
+          border: "1px solid rgba(0,230,118,0.2)",
+          borderRadius: 28,
           backdropFilter: "blur(28px)",
           WebkitBackdropFilter: "blur(28px)",
-          boxShadow: "0 0 0 1px rgba(0,230,118,0.05), 0 0 50px rgba(0,230,118,0.1), 0 32px 80px rgba(0,0,0,0.75)",
+          boxShadow: "0 0 0 1px rgba(0,230,118,0.15), 0 0 60px rgba(0,230,118,0.12), 0 32px 80px rgba(0,0,0,0.95)",
           overflow: "hidden", position: "relative",
         }}>
           {/* Top gradient line */}
-          <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent 5%, rgba(0,230,118,0.45) 40%, rgba(0,230,118,0.45) 60%, transparent 95%)" }} />
+          <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent 5%, rgba(0,230,118,0.6) 40%, rgba(0,230,118,0.6) 60%, transparent 95%)" }} />
 
           {/* ── Card Header ── */}
-          <div style={{ padding: "32px 32px 24px", position: "relative" }}>
-            {/* Welcome Back! pill */}
-            <div style={{ position: "absolute", top: 28, right: 28, display: "flex", alignItems: "center", gap: 6, padding: "6px 12px", borderRadius: 999, background: "rgba(0,230,118,0.1)", border: "1px solid rgba(0,230,118,0.22)" }}>
-              <Sparkle size={9} />
-              <span style={{ fontSize: 12, fontWeight: 600, color: "#00E676", letterSpacing: "-0.01em" }}>Welcome Back!</span>
+          <div style={{ padding: "40px 40px 32px", position: "relative" }}>
+            <div style={{ marginBottom: 12 }}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M10 2L11 8L17 9L11 10L10 16L9 10L3 9L9 8L10 2Z" fill="#00E676" />
+                <path d="M19 12L19.5 14.5L22 15L19.5 15.5L19 18L18.5 15.5L16 15L18.5 14.5L19 12Z" fill="#00E676" />
+                <path d="M6 18L6.5 19.5L8 20L6.5 20.5L6 22L5.5 20.5L4 20L5.5 19.5L6 18Z" fill="#00E676" />
+              </svg>
             </div>
-            <div style={{ marginBottom: 10 }}><Sparkle size={11} opacity={0.55} /></div>
-            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
-              <h1 style={{ margin: 0, fontSize: 28, fontWeight: 700, color: "#fff", letterSpacing: "-0.03em", lineHeight: 1.1 }}>Welcome Back</h1>
-              <Sparkle size={14} opacity={0.65} />
-            </div>
-            <p style={{ margin: 0, fontSize: 14, color: "rgba(167,184,176,0.85)", letterSpacing: "-0.01em" }}>Sign in to continue your journey in UniVerse</p>
+            <h1 style={{ margin: "0 0 8px 0", fontSize: 32, fontWeight: 700, color: "#fff", letterSpacing: "-0.02em" }}>
+              Sign in
+            </h1>
+            <p style={{ margin: 0, fontSize: 15, color: "rgba(167,184,176,0.9)", letterSpacing: "-0.01em" }}>Continue your journey in UniVerse</p>
           </div>
 
           {/* ── Form ── */}
-          <form onSubmit={handleSubmit} noValidate style={{ padding: "0 32px 32px", display: "flex", flexDirection: "column", gap: 20 }}>
+          <form onSubmit={handleSubmit} noValidate style={{ padding: "0 40px 48px", display: "flex", flexDirection: "column", gap: 24 }}>
             {errors.form && (
               <div style={{ padding: "12px 16px", borderRadius: 12, background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.3)", color: "#fca5a5", fontSize: 14 }}>
                 {errors.form}
@@ -276,40 +250,42 @@ function LoginForm() {
 
             {/* Sign In Button */}
             <button
+              className="signin-btn"
               type="submit" disabled={loading}
               style={{
                 width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
-                background: loading ? "rgba(0,140,60,0.5)" : "linear-gradient(90deg, #00C853 0%, #00E676 50%, #69F0AE 100%)",
-                color: loading ? "rgba(255,255,255,0.5)" : "#000",
+                background: loading ? "rgba(0,140,60,0.5)" : "linear-gradient(90deg, #00B74A 0%, #00E676 100%)",
+                color: loading ? "rgba(255,255,255,0.5)" : "#020804",
                 fontWeight: 700, fontSize: 16, letterSpacing: "-0.01em",
-                border: "none", borderRadius: 13, padding: "15px 24px",
+                border: "none", borderRadius: 14, padding: "16px 24px",
                 cursor: loading ? "not-allowed" : "pointer",
-                boxShadow: loading ? "none" : "0 0 28px rgba(0,230,118,0.4), 0 4px 20px rgba(0,0,0,0.5)",
-                transition: "all 0.2s", fontFamily: "inherit",
+                boxShadow: loading ? "none" : "0 8px 24px rgba(0,230,118,0.3), 0 2px 8px rgba(0,0,0,0.5)",
+                transition: "all 0.2s ease-out", fontFamily: "inherit",
               }}
             >
               {loading
                 ? <><span style={{ width: 16, height: 16, border: "2px solid rgba(255,255,255,0.3)", borderTopColor: "#fff", borderRadius: "50%", display: "inline-block", animation: "spin 0.8s linear infinite" }} /> Signing in…</>
-                : <><span>Sign In</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" /></svg></>
+                : <><span>Sign In</span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" /></svg></>
               }
             </button>
 
             {/* OR Divider */}
             <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
               <div style={{ flex: 1, height: 1, background: "rgba(255,255,255,0.07)" }} />
-              <span style={{ fontSize: 12, color: "rgba(167,184,176,0.45)", fontWeight: 500, letterSpacing: "0.05em" }}>OR</span>
+              <span style={{ fontSize: 13, color: "rgba(167,184,176,0.6)", fontWeight: 500, letterSpacing: "0.05em" }}>OR</span>
               <div style={{ flex: 1, height: 1, background: "rgba(255,255,255,0.07)" }} />
             </div>
 
             {/* Google Button */}
             <button
+              className="google-btn"
               type="button" onClick={handleGoogle}
               style={{
                 width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 12,
-                background: "rgba(8,16,11,0.85)", border: "1px solid rgba(255,255,255,0.1)",
-                borderRadius: 13, padding: "14px 24px", color: "#fff",
+                background: "rgba(3,8,5,0.85)", border: "1px solid rgba(255,255,255,0.15)",
+                borderRadius: 14, padding: "15px 24px", color: "#fff",
                 fontWeight: 600, fontSize: 15, cursor: "pointer",
-                transition: "all 0.2s", fontFamily: "inherit", letterSpacing: "-0.01em",
+                transition: "all 0.2s ease-out", fontFamily: "inherit", letterSpacing: "-0.01em",
               }}
             >
               <svg viewBox="0 0 24 24" width="20" height="20" xmlns="http://www.w3.org/2000/svg">
@@ -324,31 +300,84 @@ function LoginForm() {
             {/* Sign up link */}
             <p style={{ margin: 0, textAlign: "center", fontSize: 14, color: "rgba(167,184,176,0.65)" }}>
               Don&apos;t have an account?{" "}
-              <Link href={ROUTES.REGISTER} style={{ color: "#00E676", fontWeight: 600, textDecoration: "none", display: "inline-flex", alignItems: "center", gap: 2 }}>
+              <Link href={ROUTES.REGISTER} style={{ color: "#00E676", fontWeight: 600, textDecoration: "none", display: "inline-flex", alignItems: "center", gap: 4 }}>
                 Create account
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginTop: 1 }}><polyline points="9 18 15 12 9 6" /></svg>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6" /></svg>
               </Link>
             </p>
           </form>
         </div>
 
         {/* ── Trust bar ── */}
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 20, marginTop: 28, flexWrap: "wrap", opacity: 0.5 }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 24, marginTop: 32, flexWrap: "wrap", opacity: 0.85 }}>
           {[
-            { label: "256-bit Encrypted", icon: <svg key="shield" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#00E676" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg> },
-            { label: "Your Data is Private", icon: <svg key="lock" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#00E676" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg> },
-            { label: "Trusted by Students", icon: <svg key="users" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#00E676" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /></svg> },
+            { label: "256-bit Encrypted", icon: <svg key="shield" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#00E676" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg> },
+            { label: "Your Data is Private", icon: <svg key="lock" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#00E676" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg> },
+            { label: "Trusted by Students", icon: <svg key="users" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#00E676" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /></svg> },
           ].map((item, i, arr) => (
-            <span key={item.label} style={{ display: "flex", alignItems: "center", gap: 5 }}>
+            <span key={item.label} style={{ display: "flex", alignItems: "center", gap: 6 }}>
               {item.icon}
-              <span style={{ fontSize: 12, color: "#A7B8B0" }}>{item.label}</span>
-              {i < arr.length - 1 && <span style={{ color: "#A7B8B0", marginLeft: 20 }}>•</span>}
+              <span style={{ fontSize: 13, color: "rgba(255,255,255,0.7)" }}>{item.label}</span>
+              {i < arr.length - 1 && <span style={{ color: "rgba(255,255,255,0.2)", marginLeft: 20 }}>•</span>}
             </span>
           ))}
         </div>
       </div>
 
-      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+      <style>{`
+        @keyframes spin { to { transform: rotate(360deg); } }
+        :root {
+          --mx: 0;
+          --my: 0;
+        }
+        .parallax-layer {
+          will-change: transform;
+          transition: transform 0.8s cubic-bezier(0.1, 0.7, 0.1, 1);
+        }
+        .layer-1 { transform: translate3d(calc(var(--mx) * -20px), calc(var(--my) * -20px), 0); }
+        .layer-2 { transform: translate3d(calc(var(--mx) * -40px), calc(var(--my) * -40px), 0); }
+        .layer-3 {
+          transform: translate3d(calc(var(--mx) * -70px), calc(var(--my) * -70px), 0);
+          animation: twinkle 5s ease-in-out infinite alternate;
+        }
+        @keyframes twinkle {
+          0% { opacity: 0.5; }
+          100% { opacity: 0.9; }
+        }
+        @media (hover: none) and (pointer: coarse) {
+          @keyframes auto-parallax-1 { 0% { transform: translate3d(-10px, -10px, 0); } 100% { transform: translate3d(10px, 10px, 0); } }
+          @keyframes auto-parallax-2 { 0% { transform: translate3d(-20px, -15px, 0); } 100% { transform: translate3d(20px, 15px, 0); } }
+          @keyframes auto-parallax-3 { 0% { transform: translate3d(-30px, -20px, 0); } 100% { transform: translate3d(30px, 20px, 0); } }
+          .layer-1 { animation: auto-parallax-1 15s ease-in-out infinite alternate; }
+          .layer-2 { animation: auto-parallax-2 18s ease-in-out infinite alternate; }
+          .layer-3 { animation: auto-parallax-3 20s ease-in-out infinite alternate; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .parallax-layer { animation: none !important; transform: none !important; }
+        }
+        .signin-btn:hover:not(:disabled) {
+          transform: translateY(-2px);
+          box-shadow: 0 12px 32px rgba(0,230,118,0.4), 0 4px 12px rgba(0,0,0,0.6) !important;
+        }
+        .signin-btn:active:not(:disabled) {
+          transform: translateY(0);
+          box-shadow: 0 4px 16px rgba(0,230,118,0.2) !important;
+        }
+        .google-btn:hover {
+          background: rgba(12,24,16,0.95) !important;
+          border-color: rgba(0,230,118,0.4) !important;
+        }
+        .dark-input::placeholder {
+          color: rgba(167,184,176,0.5) !important;
+        }
+        .dark-input:-webkit-autofill,
+        .dark-input:-webkit-autofill:hover, 
+        .dark-input:-webkit-autofill:focus, 
+        .dark-input:-webkit-autofill:active {
+          transition: background-color 5000s ease-in-out 0s;
+          -webkit-text-fill-color: #fff !important;
+        }
+      `}</style>
     </div>
   );
 }
