@@ -1,3 +1,4 @@
+import { getUser } from "@/lib/supabase/queries";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { ROUTES } from "@/constants/routes";
@@ -16,7 +17,7 @@ export default async function ChatPage({
   searchParams: Promise<{ startWithUserId?: string; requestId?: string }>;
 }) {
   const supabase = await createClient();
-  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  const { data: { user }, error: authError } = await getUser();
 
   if (authError || !user) {
     redirect(ROUTES.LOGIN);

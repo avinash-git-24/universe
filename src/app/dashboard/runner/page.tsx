@@ -1,3 +1,4 @@
+import { getUser } from "@/lib/supabase/queries";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { 
@@ -10,7 +11,7 @@ import { Bike, Sparkles, Bell, ChevronDown } from "lucide-react";
 
 export default async function RunnerDashboardPage() {
   const supabase = await createClient();
-  const { data: { user }, error } = await supabase.auth.getUser();
+  const { data: { user }, error } = await getUser();
 
   if (error || !user) {
     redirect("/login?redirectTo=/dashboard/runner");

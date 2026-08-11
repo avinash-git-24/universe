@@ -1,3 +1,4 @@
+import { getUser } from "@/lib/supabase/queries";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getActiveRunnerAssignment } from "@/lib/database/requests";
@@ -5,7 +6,7 @@ import { ActiveDeliveryClient } from "@/components/runner/ActiveDeliveryClient";
 
 export default async function ActiveDeliveryPage() {
   const supabase = await createClient();
-  const { data: { user }, error } = await supabase.auth.getUser();
+  const { data: { user }, error } = await getUser();
 
   if (error || !user) {
     redirect("/login?redirectTo=/dashboard/runner/active");

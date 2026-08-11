@@ -1,3 +1,4 @@
+import { getUser } from "@/lib/supabase/queries";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { Plus, RefreshCw } from "lucide-react";
@@ -16,7 +17,7 @@ export const metadata: Metadata = {
 
 export default async function MyRequestsPage() {
   const supabase = await createClient();
-  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  const { data: { user }, error: authError } = await getUser();
 
   if (authError || !user) {
     redirect(ROUTES.LOGIN);

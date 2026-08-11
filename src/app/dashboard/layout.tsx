@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { createClient } from "@/lib/supabase/server";
+import { getUser } from "@/lib/supabase/queries";
 import { RealtimeProvider } from "@/providers/RealtimeProvider";
 import { redirect } from "next/navigation";
 import { ROUTES } from "@/constants/routes";
@@ -7,8 +7,7 @@ import { ROUTES } from "@/constants/routes";
 import { Sidebar } from "@/components/dashboard/Sidebar";
 
 export default async function DashboardLayout({ children }: { children: ReactNode }) {
-  const supabase = await createClient();
-  const { data: { user }, error } = await supabase.auth.getUser();
+  const { data: { user }, error } = await getUser();
 
   if (error || !user) {
     redirect(ROUTES.LOGIN);

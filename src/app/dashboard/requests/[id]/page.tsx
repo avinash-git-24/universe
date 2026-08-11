@@ -1,3 +1,4 @@
+import { getUser } from "@/lib/supabase/queries";
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
@@ -21,7 +22,7 @@ interface RequestPageProps {
 
 export default async function RequestDetailsPage({ params }: RequestPageProps) {
   const supabase = await createClient();
-  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  const { data: { user }, error: authError } = await getUser();
 
   if (authError || !user) {
     redirect(ROUTES.LOGIN);

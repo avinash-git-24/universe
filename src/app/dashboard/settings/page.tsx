@@ -1,3 +1,4 @@
+import { getUser, getProfile } from "@/lib/supabase/queries";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { ROUTES } from "@/constants/routes";
@@ -14,18 +15,14 @@ export const metadata: Metadata = {
 
 export default async function SettingsPage() {
   const supabase = await createClient();
-  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  const { data: { user }, error: authError } = await getUser();
 
   if (authError || !user) {
     redirect(ROUTES.LOGIN);
   }
 
   // Fetch real profile data
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("*")
-    .eq("id", user.id)
-    .single();
+  const { data: profile } = await getProfile(user.id);
 
   // Fetch or initialize user settings
   let { data: settings } = await supabase

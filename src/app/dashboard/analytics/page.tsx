@@ -1,3 +1,4 @@
+import { getUser } from "@/lib/supabase/queries";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { ROUTES } from "@/constants/routes";
@@ -12,7 +13,7 @@ export const metadata: Metadata = {
 
 export default async function UserAnalyticsPage() {
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const { data: { user } } = await getUser();
 
   if (!user) redirect(ROUTES.LOGIN);
 

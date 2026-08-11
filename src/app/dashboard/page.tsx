@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { Package, Bike, CheckCircle2, AlertCircle, ArrowRight, MapPin, Clock, User, Search, Plus } from "lucide-react";
-import { createClient } from "@/lib/supabase/server";
+import { getUser, getProfile } from "@/lib/supabase/queries";
 import { getStudentRequests, type Profile } from "@/lib/database/requests";
 import { ROUTES } from "@/constants/routes";
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
@@ -29,16 +29,16 @@ const statusMeta: Record<string, { label: string; color: string; bg: string; dot
 };
 
 export default async function DashboardPage() {
-  const supabase = await createClient();
-  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  const { data: { user }, error: authError } = await getUser();
   if (authError || !user) redirect(ROUTES.LOGIN);
 
-  const { data: profile } = await supabase
-    .from("profiles").select("*").eq("id", user.id).single();
+  const { data: profile } = await getProfile(user.id);
 
   const displayName =
     profile?.full_name ?? user.email?.split("@")[0] ?? "Student";
 
+  const { createClient } = await import("@/lib/supabase/server");
+  const supabase = await createClient();
   const requests = await getStudentRequests(supabase, user.id);
 
   const activeRequests = requests.filter(r => !["delivered", "cancelled"].includes(r.status));

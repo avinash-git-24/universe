@@ -171,7 +171,8 @@ export default function CompleteProfilePage() {
 
     // Actually redirect the user after a short delay so they can see the success message
     setTimeout(() => {
-      window.location.href = ROUTES.DASHBOARD;
+      router.push(ROUTES.DASHBOARD);
+      router.refresh();
     }, 1500);
   }
 

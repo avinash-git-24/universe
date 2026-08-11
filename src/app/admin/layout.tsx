@@ -1,3 +1,4 @@
+import { getUser } from "@/lib/supabase/queries";
 import { ReactNode } from "react";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
@@ -6,7 +7,7 @@ import { AdminSidebar } from "@/components/admin/AdminSidebar";
 
 export default async function AdminLayout({ children }: { children: ReactNode }) {
   const supabase = await createClient();
-  const { data: { user }, error } = await supabase.auth.getUser();
+  const { data: { user }, error } = await getUser();
 
   if (error || !user) {
     redirect(ROUTES.LOGIN);

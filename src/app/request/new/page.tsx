@@ -1,3 +1,4 @@
+import { getUser } from "@/lib/supabase/queries";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { CreateRequestForm } from "@/components/request/CreateRequestForm";
@@ -7,8 +8,7 @@ import Link from "next/link";
 import { RealtimeProvider } from "@/providers/RealtimeProvider";
 
 export default async function NewRequestPage() {
-  const supabase = await createClient();
-  const { data: { user }, error } = await supabase.auth.getUser();
+  const { data: { user }, error } = await getUser();
 
   if (error || !user) {
     redirect("/login?redirectTo=/request/new");
