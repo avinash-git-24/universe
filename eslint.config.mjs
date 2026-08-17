@@ -16,6 +16,8 @@ const eslintConfig = defineConfig([
     "test_insert.js",
     "test_rls.js",
     "spec.json",
+    // Supabase
+    "supabase/**"
   ]),
 ]);
 

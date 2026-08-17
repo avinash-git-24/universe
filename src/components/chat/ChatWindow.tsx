@@ -1,11 +1,12 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { Send, MapPin, Package, Image as ImageIcon, Loader2, ExternalLink } from "lucide-react";
+import { Send, MapPin, Package, Image as ImageIcon, Loader2, ExternalLink, Tag } from "lucide-react";
 import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
 import { createClient } from "@/lib/supabase/client";
 import { Message, ConversationWithDetails, getMessages, sendMessage, markConversationAsRead, uploadChatImage } from "@/lib/database/chat";
 import { MessageBubble } from "@/components/chat/MessageBubble";
+import { OfferMessageCard } from "@/components/chat/OfferMessageCard";
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
 
@@ -195,7 +196,7 @@ export function ChatWindow({ userId, conversation, isOnline }: ChatWindowProps) 
           </div>
         </div>
         
-        {req && (
+        {req ? (
           <div className="flex items-center gap-2 overflow-x-auto no-scrollbar shrink-0 max-w-full">
             <div className="bg-white/5 border border-white/10 rounded-lg p-2.5 flex items-center gap-4 shrink-0">
               <div className="flex items-center gap-1.5 shrink-0">
@@ -227,7 +228,38 @@ export function ChatWindow({ userId, conversation, isOnline }: ChatWindowProps) 
               <ExternalLink className="w-4 h-4" />
             </Link>
           </div>
-        )}
+        ) : conversation.resale_listing ? (
+          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar shrink-0 max-w-full">
+            <div className="bg-white/5 border border-white/10 rounded-lg p-2.5 flex items-center gap-4 shrink-0">
+              <div className="flex items-center gap-1.5 shrink-0">
+                <Tag className="w-3.5 h-3.5 text-[#10b981]/70" />
+                <span className="text-xs text-white/70 font-medium truncate max-w-[150px]">
+                  {conversation.resale_listing.title}
+                </span>
+              </div>
+              <div className="w-px h-4 bg-white/10 shrink-0" />
+              <div className="flex items-center gap-1.5 shrink-0 text-xs text-white/50 font-bold">
+                ${conversation.resale_listing.price.toFixed(2)}
+              </div>
+              <div className="w-px h-4 bg-white/10 shrink-0" />
+              <span className={`shrink-0 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${
+                conversation.resale_listing.status === 'active' ? 'bg-[#10b981]/10 text-[#10b981]' : 
+                conversation.resale_listing.status === 'reserved' ? 'bg-orange-500/10 text-orange-400' :
+                'bg-white/10 text-white/50'
+              }`}>
+                {conversation.resale_listing.status}
+              </span>
+            </div>
+            
+            <Link 
+              href={`/dashboard/marketplace/${conversation.resale_listing.id}`}
+              className="shrink-0 flex items-center justify-center p-2.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-white/70 hover:text-white transition-colors"
+              title="View Listing Details"
+            >
+              <ExternalLink className="w-4 h-4" />
+            </Link>
+          </div>
+        ) : null}
       </div>
 
       {/* Message History */}
@@ -248,7 +280,16 @@ export function ChatWindow({ userId, conversation, isOnline }: ChatWindowProps) 
               </div>
             ) : (
               messages.map((msg) => (
-                <MessageBubble key={msg.id} message={msg} isMe={msg.sender_id === userId} />
+                msg.message_type === "offer" ? (
+                  <OfferMessageCard 
+                    key={msg.id} 
+                    message={msg} 
+                    currentUserId={userId} 
+                    conversationId={conversation.id} 
+                  />
+                ) : (
+                  <MessageBubble key={msg.id} message={msg} isMe={msg.sender_id === userId} />
+                )
               ))
             )}
             

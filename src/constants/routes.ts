@@ -29,6 +29,11 @@ export const ROUTES = {
   DELIVER: "/deliver",
   DELIVER_ACTIVE: "/deliver/active",
 
+  // ── Resale Marketplace ──
+  MARKETPLACE: "/dashboard/marketplace",
+  MARKETPLACE_SELL: "/dashboard/marketplace/sell",
+  MARKETPLACE_LISTING: (id: string) => `/dashboard/marketplace/${id}`,
+
   // ── Profile ──
   PROFILE: "/profile",
   PROFILE_EDIT: "/profile/edit",

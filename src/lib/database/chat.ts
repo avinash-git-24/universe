@@ -4,12 +4,14 @@ import { Profile, DeliveryRequest } from "./requests";
 
 export type Message = Database["public"]["Tables"]["messages"]["Row"];
 export type Conversation = Database["public"]["Tables"]["conversations"]["Row"];
+export type ResaleListing = Database["public"]["Tables"]["resale_listings"]["Row"];
 
 export interface ConversationWithDetails extends Conversation {
   other_participant: Profile;
   last_message?: Message;
   unread_count: number;
   delivery_request?: DeliveryRequest;
+  resale_listing?: ResaleListing;
   other_last_read_at?: string | null;
 }
 
@@ -43,7 +45,8 @@ export async function getConversations(
       messages(
         *
       ),
-      delivery_request:delivery_requests(*)
+      delivery_request:delivery_requests(*),
+      resale_listing:resale_listings(*)
     `)
     .in("id", conversationIds)
     .order("updated_at", { ascending: false });
@@ -86,6 +89,7 @@ export async function getConversations(
         last_message: sortedMessages[0],
         unread_count: unreadCount,
         delivery_request: conv.delivery_request || undefined,
+        resale_listing: conv.resale_listing || undefined,
         other_last_read_at: otherParticipantRecord?.last_read_at || null,
       };
     })
@@ -103,56 +107,38 @@ export async function getOrCreateConversation(
   userId2: string,
   requestId: string
 ): Promise<string | null> {
-  // Check if a conversation already exists between these two
-  // We can do it via a query
+  const { data, error } = await supabase.rpc("create_delivery_conversation", {
+    p_other_user_id: userId2,
+    p_request_id: requestId,
+  });
 
-  // If we don't have this RPC, we can do it via a query
-  // Find conversations where both users are participants
-  const { data: p1 } = await supabase
-    .from("conversation_participants")
-    .select("conversation_id")
-    .eq("profile_id", userId1);
-
-  const { data: p2 } = await supabase
-    .from("conversation_participants")
-    .select("conversation_id")
-    .eq("profile_id", userId2);
-
-  if (p1 && p2) {
-    const p1Ids = p1.map((p) => p.conversation_id);
-    const p2Ids = p2.map((p) => p.conversation_id);
-    const common = p1Ids.filter((id) => p2Ids.includes(id));
-    if (common.length > 0) {
-      // If a request ID is provided, verify it matches or update it?
-      // Actually, just find the specific conversation for this request ID
-      const { data: convWithReq } = await supabase
-        .from("conversations")
-        .select("id")
-        .in("id", common)
-        .eq("request_id", requestId);
-      
-      if (convWithReq && convWithReq.length > 0) {
-        return convWithReq[0].id;
-      }
-    }
+  if (error || !data) {
+    console.error("Error creating delivery conversation:", error);
+    return null;
   }
 
-  // Create new conversation
-  const { data: newConv, error: createError } = await supabase
-    .from("conversations")
-    .insert({ request_id: requestId })
-    .select("id")
-    .single();
+  return data;
+}
 
-  if (createError || !newConv) return null;
+/**
+ * Gets or creates a 1-on-1 conversation between a buyer and seller for a specific listing.
+ */
+export async function getOrCreateMarketplaceConversation(
+  supabase: SupabaseClient<Database>,
+  buyerId: string,
+  sellerId: string,
+  listingId: string
+): Promise<string | null> {
+  const { data, error } = await supabase.rpc("create_marketplace_conversation", {
+    p_listing_id: listingId,
+  });
 
-  // Add participants
-  await supabase.from("conversation_participants").insert([
-    { conversation_id: newConv.id, profile_id: userId1 },
-    { conversation_id: newConv.id, profile_id: userId2 },
-  ]);
+  if (error || !data) {
+    console.error("Error creating marketplace conversation:", error);
+    return null;
+  }
 
-  return newConv.id;
+  return data;
 }
 
 /**
@@ -180,7 +166,10 @@ export async function sendMessage(
   conversationId: string,
   senderId: string,
   content: string,
-  imageUrl?: string | null
+  imageUrl?: string | null,
+  messageType: string = "text",
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  metadata?: any | null
 ): Promise<Message | null> {
   const { data, error } = await supabase
     .from("messages")
@@ -189,6 +178,8 @@ export async function sendMessage(
       sender_id: senderId,
       content,
       image_url: imageUrl,
+      message_type: messageType,
+      metadata: metadata || null,
     })
     .select("*")
     .single();

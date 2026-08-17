@@ -9,7 +9,8 @@ import {
   BarChart2, 
   User, 
   Settings,
-  X
+  X,
+  ShoppingBag,
 } from "lucide-react";
 import { LogOut, Crown, Zap, FileText, Bike } from "lucide-react";
 import { LogoutButton } from "../auth/LogoutButton";
@@ -21,6 +22,7 @@ const navItems = [
   { name: "My Requests", href: "/dashboard/requests", icon: FileText },
   { name: "Runner Mode", href: "/dashboard/runner", icon: Bike },
   { name: "Wallet", href: "/dashboard/wallet", icon: Wallet, dot: true },
+  { name: "Marketplace", href: "/dashboard/marketplace", icon: ShoppingBag },
   { name: "Chat", href: "/dashboard/chat", icon: MessageSquare },
   { name: "Analytics", href: "/dashboard/analytics", icon: BarChart2 },
   { name: "Profile", href: "/dashboard/profile", icon: User },

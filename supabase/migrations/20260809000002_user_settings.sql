@@ -33,7 +33,7 @@ create policy "Users can insert own settings"
 
 -- Trigger for updated_at
 create trigger handle_updated_at before update on public.user_settings
-  for each row execute procedure moddatetime (updated_at);
+  for each row execute procedure public.handle_updated_at();
 
 -- Create a secure RPC function to delete the authenticated user's account
 create or replace function public.delete_own_account()

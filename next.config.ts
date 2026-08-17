@@ -35,7 +35,7 @@ const nextConfig: NextConfig = {
           },
           {
             key: "Content-Security-Policy",
-            value: "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data: https://*.universe.app; font-src 'self' data:; connect-src 'self' https://*.supabase.co wss://*.supabase.co;",
+            value: "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data: https://*.universe.app; font-src 'self' data:; connect-src 'self' https://*.supabase.co wss://*.supabase.co http://localhost:54321 http://127.0.0.1:54321 ws://localhost:54321 ws://127.0.0.1:54321;",
           },
         ],
       },

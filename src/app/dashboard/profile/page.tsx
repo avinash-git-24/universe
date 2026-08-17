@@ -6,6 +6,7 @@ import { ProfileForm } from "./ProfileForm";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { Metadata } from "next";
+import { UserRatingBadge } from "@/components/resale/UserRatingBadge";
 
 export const metadata: Metadata = {
   title: "Edit Profile · UniVerse",
@@ -46,18 +47,23 @@ export default async function ProfilePage() {
       <div style={{ maxWidth: "700px", margin: "0 auto", position: "relative", zIndex: 10 }}>
 
         {/* Header */}
-        <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginBottom: "2rem" }}>
-          <Link href="/dashboard" style={{
-            display: "inline-flex", alignItems: "center", justifyContent: "center",
-            width: "40px", height: "40px", borderRadius: "50%",
-            background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)",
-            color: "#A7B8B0", textDecoration: "none", transition: "all 0.2s"
-          }} className="hover:bg-[rgba(255,255,255,0.1)] hover:text-white">
-            <ArrowLeft size={18} />
-          </Link>
-          <h1 style={{ color: "#fff", fontWeight: 800, fontSize: "1.8rem", margin: 0, letterSpacing: "-0.02em" }}>
-            Edit Profile
-          </h1>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "2rem" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+            <Link href="/dashboard" style={{
+              display: "inline-flex", alignItems: "center", justifyContent: "center",
+              width: "40px", height: "40px", borderRadius: "50%",
+              background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)",
+              color: "#A7B8B0", textDecoration: "none", transition: "all 0.2s"
+            }} className="hover:bg-[rgba(255,255,255,0.1)] hover:text-white">
+              <ArrowLeft size={18} />
+            </Link>
+            <h1 style={{ color: "#fff", fontWeight: 800, fontSize: "1.8rem", margin: 0, letterSpacing: "-0.02em" }}>
+              Edit Profile
+            </h1>
+          </div>
+          <div style={{ background: "rgba(0,0,0,0.5)", padding: "0.5rem 1rem", borderRadius: "999px", border: "1px solid rgba(255,255,255,0.1)" }}>
+            <UserRatingBadge userId={user.id} />
+          </div>
         </div>
 
         {/* Profile Form Component */}

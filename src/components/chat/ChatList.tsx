@@ -13,7 +13,7 @@ interface ChatListProps {
   onlineUsers: Set<string>;
 }
 
-export function ChatList({ userId, initialConversations, activeConversationId, onSelectConversation, onlineUsers }: ChatListProps) {
+export function ChatList({ initialConversations, activeConversationId, onSelectConversation, onlineUsers }: ChatListProps) {
   const [searchQuery, setSearchQuery] = useState("");
 
   const filteredConversations = useMemo(() => {
@@ -27,7 +27,11 @@ export function ChatList({ userId, initialConversations, activeConversationId, o
         c.delivery_request.dropoff_location.toLowerCase().includes(lowerQuery) ||
         c.delivery_request.id.toLowerCase().includes(lowerQuery)
       );
-      return nameMatch || reqMatch;
+      const listMatch = c.resale_listing && (
+        c.resale_listing.title.toLowerCase().includes(lowerQuery) ||
+        c.resale_listing.id.toLowerCase().includes(lowerQuery)
+      );
+      return nameMatch || reqMatch || listMatch;
     });
   }, [searchQuery, initialConversations]);
 
@@ -92,6 +96,12 @@ export function ChatList({ userId, initialConversations, activeConversationId, o
                         </span>
                       )}
                     </div>
+                    
+                    {conv.resale_listing && (
+                      <p className="text-[10px] text-[#10b981]/70 truncate mb-1">
+                        Regarding: {conv.resale_listing.title}
+                      </p>
+                    )}
                     
                     <div className="flex items-center justify-between gap-2">
                       <p className={`text-xs truncate ${isUnread ? 'text-white font-medium' : 'text-white/50'}`}>

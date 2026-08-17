@@ -34,6 +34,7 @@ export function mockRequest(
     total_estimated_amount: 15,
     delivery_fee: 5,
     status: "pending",
+    linked_listing_id: null,
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
     items: [

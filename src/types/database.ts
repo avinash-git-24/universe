@@ -101,6 +101,7 @@ export type Database = {
           delivery_fee: number;
           created_at: string;
           updated_at: string;
+          linked_listing_id: string | null;
         };
         Insert: {
           id?: string;
@@ -113,6 +114,7 @@ export type Database = {
           delivery_fee?: number;
           created_at?: string;
           updated_at?: string;
+          linked_listing_id?: string | null;
         };
         Update: {
           id?: string;
@@ -125,6 +127,7 @@ export type Database = {
           delivery_fee?: number;
           created_at?: string;
           updated_at?: string;
+          linked_listing_id?: string | null;
         };
         Relationships: [];
       };
@@ -250,21 +253,27 @@ export type Database = {
       };
       conversations: {
         Row: {
+          created_at: string;
           id: string;
           request_id: string | null;
-          created_at: string;
+          listing_id: string | null;
+          buyer_id: string | null;
           updated_at: string;
         };
         Insert: {
+          created_at?: string;
           id?: string;
           request_id?: string | null;
-          created_at?: string;
+          listing_id?: string | null;
+          buyer_id?: string | null;
           updated_at?: string;
         };
         Update: {
+          created_at?: string;
           id?: string;
           request_id?: string | null;
-          created_at?: string;
+          listing_id?: string | null;
+          buyer_id?: string | null;
           updated_at?: string;
         };
         Relationships: [
@@ -273,6 +282,20 @@ export type Database = {
             columns: ["request_id"];
             isOneToOne: false;
             referencedRelation: "delivery_requests";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "conversations_listing_id_fkey";
+            columns: ["listing_id"];
+            isOneToOne: false;
+            referencedRelation: "resale_listings";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "conversations_buyer_id_fkey";
+            columns: ["buyer_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
             referencedColumns: ["id"];
           }
         ];
@@ -317,6 +340,8 @@ export type Database = {
           sender_id: string;
           content: string;
           image_url: string | null;
+          message_type: string;
+          metadata: Json | null;
           status: "sent" | "delivered" | "read";
           created_at: string;
         };
@@ -326,6 +351,8 @@ export type Database = {
           sender_id: string;
           content: string;
           image_url?: string | null;
+          message_type?: string;
+          metadata?: Json | null;
           status?: "sent" | "delivered" | "read";
           created_at?: string;
         };
@@ -335,6 +362,8 @@ export type Database = {
           sender_id?: string;
           content?: string;
           image_url?: string | null;
+          message_type?: string;
+          metadata?: Json | null;
           status?: "sent" | "delivered" | "read";
           created_at?: string;
         };
@@ -428,11 +457,225 @@ export type Database = {
           }
         ];
       };
+      resale_listing_images: {
+        Row: {
+          id: string
+          listing_id: string
+          storage_path: string
+          display_order: number
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          listing_id: string
+          storage_path: string
+          display_order?: number
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          listing_id?: string
+          storage_path?: string
+          display_order?: number
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "resale_listing_images_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "resale_listings"
+            referencedColumns: ["id"]
+          }
+        ]
+      };
+      resale_listings: {
+        Row: {
+          id: string
+          seller_id: string
+          title: string
+          description: string | null
+          category: string
+          condition: string
+          price: number
+          original_price: number | null
+          negotiable: boolean
+          pickup_location: string | null
+          status: string
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          seller_id: string
+          title: string
+          description?: string | null
+          category: string
+          condition: string
+          price: number
+          original_price?: number | null
+          negotiable?: boolean
+          pickup_location?: string | null
+          status?: string
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          seller_id?: string
+          title?: string
+          description?: string | null
+          category?: string
+          condition?: string
+          price?: number
+          original_price?: number | null
+          negotiable?: boolean
+          pickup_location?: string | null
+          status?: string
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "resale_listings_seller_id_fkey"
+            columns: ["seller_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          }
+        ]
+      };
+      resale_offers: {
+        Row: {
+          id: string
+          listing_id: string
+          buyer_id: string
+          seller_id: string
+          offer_price: number
+          status: string
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          listing_id: string
+          buyer_id: string
+          seller_id: string
+          offer_price: number
+          status?: string
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          listing_id?: string
+          buyer_id?: string
+          seller_id?: string
+          offer_price?: number
+          status?: string
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "resale_offers_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "resale_listings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "resale_offers_buyer_id_fkey"
+            columns: ["buyer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "resale_offers_seller_id_fkey"
+            columns: ["seller_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          }
+        ]
+      };
+      escrow_holds: {
+        Row: {
+          id: string
+          buyer_id: string
+          wallet_id: string
+          target_listing_id: string
+          item_price: number
+          delivery_fee: number
+          status: "held" | "released" | "refunded"
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          buyer_id: string
+          wallet_id: string
+          target_listing_id: string
+          item_price: number
+          delivery_fee: number
+          status?: "held" | "released" | "refunded"
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          buyer_id?: string
+          wallet_id?: string
+          target_listing_id?: string
+          item_price?: number
+          delivery_fee?: number
+          status?: "held" | "released" | "refunded"
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "escrow_holds_buyer_id_fkey"
+            columns: ["buyer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "escrow_holds_wallet_id_fkey"
+            columns: ["wallet_id"]
+            isOneToOne: false
+            referencedRelation: "wallets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "escrow_holds_target_listing_id_fkey"
+            columns: ["target_listing_id"]
+            isOneToOne: false
+            referencedRelation: "resale_listings"
+            referencedColumns: ["id"]
+          }
+        ]
+      };
     };
     Views: {
       [_ in never]: never;
     };
     Functions: {
+      create_delivery_conversation: {
+        Args: {
+          p_other_user_id: string;
+          p_request_id: string;
+        };
+        Returns: string;
+      };
+      create_marketplace_conversation: {
+        Args: {
+          p_listing_id: string;
+        };
+        Returns: string;
+      };
       delete_own_account: {
         Args: Record<PropertyKey, never>;
         Returns: undefined;
@@ -455,6 +698,14 @@ export type Database = {
           updated_at: string;
         };
       };
+      checkout_resale_offer_with_delivery: {
+        Args: {
+          p_offer_id: string
+          p_dropoff_location: string
+          p_pickup_location: string
+        }
+        Returns: string
+      };
     };
     Enums: {
       user_role: "student" | "runner" | "admin";
@@ -464,6 +715,7 @@ export type Database = {
       account_status: "active" | "suspended" | "pending";
       transaction_type: "deposit" | "withdrawal" | "payment" | "earning" | "refund";
       transaction_status: "pending" | "completed" | "failed";
+      escrow_status: "held" | "released" | "refunded";
     };
     CompositeTypes: {
       [_ in never]: never;
