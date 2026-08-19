@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
-import Image from "next/image";
-import { ChevronLeft, ChevronRight, ImageIcon } from "lucide-react";
+import { useState, useEffect } from "react";
+
+import { ChevronLeft, ChevronRight, ImageIcon, Loader2 } from "lucide-react";
 import type { ResaleListingImageRow } from "@/lib/database/resale/types";
 
 interface ResaleImageGalleryProps {
@@ -13,6 +13,50 @@ interface ResaleImageGalleryProps {
 
 export function ResaleImageGallery({ title, images, signedUrls }: ResaleImageGalleryProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [blobUrls, setBlobUrls] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    let active = true;
+    const generatedUrls: string[] = [];
+
+    const fetchImages = async () => {
+      const newBlobUrls: Record<string, string> = {};
+      for (const [path, url] of Object.entries(signedUrls)) {
+        if (!url) continue;
+        try {
+          // Replace 127.0.0.1 with localhost to ensure it matches connect-src CSP
+          const fetchUrl = url.replace('127.0.0.1', 'localhost');
+          const res = await fetch(fetchUrl);
+          if (res.ok) {
+            const blob = await res.blob();
+            const objectUrl = URL.createObjectURL(blob);
+            if (active) {
+              newBlobUrls[path] = objectUrl;
+              generatedUrls.push(objectUrl);
+            } else {
+              URL.revokeObjectURL(objectUrl);
+            }
+          }
+        } catch (err) {
+          console.error("Failed to fetch image", err);
+        }
+      }
+      if (active) {
+        setBlobUrls(newBlobUrls);
+      }
+    };
+
+    fetchImages();
+
+    return () => {
+      active = false;
+      generatedUrls.forEach(URL.revokeObjectURL);
+    };
+  }, [signedUrls]);
+
+  const getImageUrl = (path: string) => {
+    return blobUrls[path] || '';
+  };
 
   // Filter images that have valid signed URLs to avoid broken states
   const validImages = images.filter((img) => signedUrls[img.storage_path]);
@@ -39,14 +83,17 @@ export function ResaleImageGallery({ title, images, signedUrls }: ResaleImageGal
     <div className="flex flex-col gap-4">
       {/* Main Image */}
       <div className="relative w-full aspect-square md:aspect-[4/3] bg-black/40 border border-[#00E676]/10 rounded-2xl overflow-hidden group">
-        <Image
-          src={signedUrls[currentImage.storage_path]}
-          alt={`${title} - Image ${currentIndex + 1}`}
-          fill
-          className="object-contain"
-          sizes="(max-width: 768px) 100vw, 50vw"
-          priority
-        />
+        {getImageUrl(currentImage.storage_path) ? (
+          <img
+            src={getImageUrl(currentImage.storage_path)}
+            alt={`${title} - Image ${currentIndex + 1}`}
+            className="absolute inset-0 w-full h-full object-contain"
+          />
+        ) : (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <Loader2 className="w-8 h-8 animate-spin text-[#00E676]/50" />
+          </div>
+        )}
 
         {validImages.length > 1 && (
           <>
@@ -88,13 +135,17 @@ export function ResaleImageGallery({ title, images, signedUrls }: ResaleImageGal
                     : "border-transparent opacity-60 hover:opacity-100 hover:border-[#00E676]/50"
                 }`}
               >
-                <Image
-                  src={signedUrls[img.storage_path]}
-                  alt={`Thumbnail ${idx + 1}`}
-                  fill
-                  className="object-cover"
-                  sizes="80px"
-                />
+                {getImageUrl(img.storage_path) ? (
+                  <img
+                    src={getImageUrl(img.storage_path)}
+                    alt={`Thumbnail ${idx + 1}`}
+                    className="absolute inset-0 w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/20">
+                    <Loader2 className="w-4 h-4 animate-spin text-[#00E676]/30" />
+                  </div>
+                )}
               </button>
             );
           })}
