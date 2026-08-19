@@ -1,6 +1,6 @@
 "use client";
 
-import { memo } from "react";
+import { memo, useState, useEffect } from "react";
 import Link from "next/link";
 import { MapPin, Clock, Tag, HandCoins } from "lucide-react";
 import type { ResaleListingWithImages } from "@/lib/database/resale";
@@ -67,6 +67,41 @@ export const ResaleListingCard = memo(function ResaleListingCard({
   isFavorited = false,
   showFavoriteButton = false,
 }: ResaleListingCardProps) {
+  const [blobUrl, setBlobUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!primaryImageUrl) return;
+
+    let active = true;
+    let objectUrl: string | null = null;
+
+    const fetchImage = async () => {
+      try {
+        const fetchUrl = primaryImageUrl.replace('127.0.0.1', 'localhost');
+        const res = await fetch(fetchUrl);
+        if (res.ok) {
+          const blob = await res.blob();
+          objectUrl = URL.createObjectURL(blob);
+          if (active) {
+            setBlobUrl(objectUrl);
+          } else {
+            URL.revokeObjectURL(objectUrl);
+          }
+        }
+      } catch (err) {
+        console.error("Failed to fetch card image", err);
+      }
+    };
+
+    fetchImage();
+
+    return () => {
+      active = false;
+      if (objectUrl) {
+        URL.revokeObjectURL(objectUrl);
+      }
+    };
+  }, [primaryImageUrl]);
   const conditionStyle = CONDITION_COLORS[listing.condition] ?? CONDITION_COLORS.fair;
   const discountPct =
     listing.original_price && listing.original_price > listing.price
@@ -104,10 +139,10 @@ export const ResaleListingCard = memo(function ResaleListingCard({
             flexShrink: 0,
           }}
         >
-          {primaryImageUrl ? (
+          {blobUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
-              src={primaryImageUrl}
+              src={blobUrl}
               alt={listing.title}
               style={{
                 width: "100%",
@@ -132,7 +167,7 @@ export const ResaleListingCard = memo(function ResaleListingCard({
           <div
             className="img-fallback"
             style={{
-              display: primaryImageUrl ? "none" : "flex",
+              display: blobUrl ? "none" : "flex",
               position: "absolute",
               inset: 0,
               alignItems: "center",
@@ -141,8 +176,14 @@ export const ResaleListingCard = memo(function ResaleListingCard({
               gap: "0.5rem",
             }}
           >
-            <Tag size={32} color="rgba(167,184,176,0.3)" />
-            <span style={{ color: "rgba(167,184,176,0.4)", fontSize: "0.7rem" }}>No image</span>
+            {primaryImageUrl && !blobUrl ? (
+              <div className="w-5 h-5 border-2 border-[#00E676]/30 border-t-[#00E676] rounded-full animate-spin" />
+            ) : (
+              <>
+                <Tag size={32} color="rgba(167,184,176,0.3)" />
+                <span style={{ color: "rgba(167,184,176,0.4)", fontSize: "0.7rem" }}>No image</span>
+              </>
+            )}
           </div>
 
           {/* Badges overlay */}
