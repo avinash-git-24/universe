@@ -12,7 +12,7 @@ import { DashboardCharts } from "@/components/dashboard/DashboardCharts";
 import { NotificationBell } from "@/components/notifications/NotificationBell";
 import Link from "next/link";
 import type { Metadata } from "next";
-import SpaceBackground from "@/components/auth/SpaceBackground";
+import LazySpaceBackground from "@/components/auth/LazySpaceBackground";
 
 export const metadata: Metadata = {
   title: "Dashboard · UniVerse",
@@ -83,7 +83,7 @@ export default async function DashboardPage() {
     }}>
       {/* Floating particles background (re-using SpaceBackground) */}
       <div className="absolute inset-0 z-0 pointer-events-none opacity-40">
-        <SpaceBackground />
+        <LazySpaceBackground />
       </div>
 
       <div style={{ maxWidth: "1400px", margin: "0 auto", position: "relative", zIndex: 10 }}>

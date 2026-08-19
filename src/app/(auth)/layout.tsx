@@ -10,7 +10,7 @@
  */
 
 import type { Metadata } from "next";
-import SpaceBackground from "@/components/auth/SpaceBackground";
+import LazySpaceBackground from "@/components/auth/LazySpaceBackground";
 
 export const metadata: Metadata = {
   title: {
@@ -42,7 +42,7 @@ export default function AuthLayout({
       }}
     >
       {/* Space background — absolute so it fills this container */}
-      <SpaceBackground />
+      <LazySpaceBackground />
 
       {/* Page content — sits above the space background */}
       <div style={{ position: "relative", zIndex: 1, width: "100%", display: "flex", flexDirection: "column", alignItems: "center" }}>

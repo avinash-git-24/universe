@@ -1,6 +1,5 @@
 import { Navbar } from "@/components/home/Navbar";
 import { HeroSection } from "@/components/home/HeroSection";
-import { CampusBackground } from "@/components/home/CampusBackground";
 import { WhyUniverseSection } from "@/components/home/WhyUniverseSection";
 import { HowItWorksSection } from "@/components/home/HowItWorksSection";
 import { FloatingObjects } from "@/components/home/FloatingObjects";
@@ -10,8 +9,8 @@ export default function RootPage() {
   return (
     <>
       <Navbar />
+      {/* CampusBackground is rendered internally by HeroSection — do not render again here */}
       <HeroSection />
-      <CampusBackground />
       <WhyUniverseSection />
       <HowItWorksSection />
       <FloatingObjects />

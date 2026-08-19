@@ -3,7 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { ROUTES } from "@/constants/routes";
 import { SettingsClient } from "./SettingsClient";
-import SpaceBackground from "@/components/auth/SpaceBackground";
+import LazySpaceBackground from "@/components/auth/LazySpaceBackground";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { Metadata } from "next";
@@ -43,9 +43,9 @@ export default async function SettingsPage() {
 
   return (
     <div style={{ minHeight: "100vh", paddingTop: "2rem", paddingBottom: "3rem", paddingLeft: "2rem", paddingRight: "2rem", position: "relative" }}>
-      {/* Floating particles background (re-using SpaceBackground) */}
+      {/* Floating particles background (lazy-loaded Three.js) */}
       <div className="absolute inset-0 z-0 pointer-events-none opacity-40 fixed">
-        <SpaceBackground />
+        <LazySpaceBackground />
       </div>
 
       <div style={{ maxWidth: "800px", margin: "0 auto", position: "relative", zIndex: 10 }}>
