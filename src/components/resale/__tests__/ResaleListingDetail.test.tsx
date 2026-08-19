@@ -54,6 +54,19 @@ const mockSignedUrls = {
 };
 
 describe("Phase 2C: Resale Listing Detail Page", () => {
+  beforeAll(() => {
+    global.URL.createObjectURL = vi.fn((blob: Blob) => `blob:http://localhost/${blob.size}`);
+    global.URL.revokeObjectURL = vi.fn();
+    global.fetch = vi.fn().mockImplementation(async (url) => ({
+      ok: true,
+      blob: async () => new Blob([url], { type: 'image/jpeg' })
+    }));
+  });
+
+  afterAll(() => {
+    vi.restoreAllMocks();
+  });
+
   it("Valid listing loads correctly", () => {
     render(
       <ResaleListingDetail
@@ -182,7 +195,7 @@ describe("Phase 2C: Resale Listing Detail Page", () => {
       expect(screen.getByText("No images available")).toBeInTheDocument();
     });
 
-    it("Multiple images can be navigated and signed URLs are used", () => {
+    it("Multiple images can be navigated and signed URLs are used", async () => {
       const multiImages: ResaleListingImageRow[] = [
         { id: "img-1", listing_id: "listing-123", storage_path: "path/1.jpg", display_order: 0, created_at: "" },
         { id: "img-2", listing_id: "listing-123", storage_path: "path/2.jpg", display_order: 1, created_at: "" },
@@ -200,17 +213,18 @@ describe("Phase 2C: Resale Listing Detail Page", () => {
         />
       );
       
-      // Should show the first image initially
-      const img = screen.getByAltText("Multiple Images - Image 1") as HTMLImageElement;
-      // Next.js Image component uses srcset, but the src will include our signed URL encoded
-      expect(img.src).toContain(encodeURIComponent("https://signed.url/1.jpg"));
+      // Wait for the async blob fetch to complete and image to render
+      const img = await screen.findByAltText("Multiple Images - Image 1") as HTMLImageElement;
+      expect(img.src).toMatch(/^blob:/);
+      expect(global.fetch).toHaveBeenCalledWith("https://signed.url/1.jpg");
 
       // Click next
       const nextBtn = screen.getByLabelText("Next image");
       fireEvent.click(nextBtn);
 
-      const img2 = screen.getByAltText("Multiple Images - Image 2") as HTMLImageElement;
-      expect(img2.src).toContain(encodeURIComponent("https://signed.url/2.jpg"));
+      const img2 = await screen.findByAltText("Multiple Images - Image 2") as HTMLImageElement;
+      expect(img2.src).toMatch(/^blob:/);
+      expect(global.fetch).toHaveBeenCalledWith("https://signed.url/2.jpg");
     });
   });
 });

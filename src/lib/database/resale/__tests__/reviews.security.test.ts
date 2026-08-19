@@ -59,7 +59,7 @@ let randomId: string;
 let listingId: string;
 
 describe("Phase 2H - Resale Reviews Security", () => {
-  beforeEach(async () => {
+  beforeAll(async () => {
     const runId = Math.random().toString(36).substring(7);
     sellerEmail = `seller_rev_sec_${runId}@example.com`;
     buyerEmail = `buyer_rev_sec_${runId}@example.com`;
@@ -68,14 +68,14 @@ describe("Phase 2H - Resale Reviews Security", () => {
     // 1. Create users via admin API (with retry for CI cold starts where Kong/GoTrue may return 502 initially)
     const createTestUser = async (email: string, password: string) => {
       let result;
-      for (let i = 0; i < 5; i++) {
+      for (let i = 0; i < 10; i++) {
         result = await adminClient.auth.admin.createUser({ email, password, email_confirm: true });
         // Break if successful or if the error is not a transient network/gateway error
         const status = (result.error as { status?: number } | null)?.status;
         if (!result.error || (status !== 500 && status !== 502 && status !== 503 && status !== 0)) {
           break;
         }
-        await new Promise((r) => setTimeout(r, 1000));
+        await new Promise((r) => setTimeout(r, 2000));
       }
       if (result?.error || !result?.data?.user) {
         const status = (result?.error as { status?: number } | null)?.status;
@@ -130,7 +130,7 @@ describe("Phase 2H - Resale Reviews Security", () => {
     if (oError) console.error("Insert offer error:", oError);
   });
 
-  afterEach(async () => {
+  afterAll(async () => {
     // Cleanup is handled by the ephemeral test database
   });
 
