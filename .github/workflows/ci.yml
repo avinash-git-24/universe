@@ -39,6 +39,14 @@ jobs:
       - name: Run TypeScript Type Check
         run: npx tsc --noEmit
 
+      - name: Setup Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Start Local Supabase
+        run: supabase start
+
       - name: Run Vitest Unit & Component Tests
         run: npm test
 
