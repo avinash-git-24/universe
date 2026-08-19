@@ -71,14 +71,14 @@ describe("Phase 2H - Resale Reviews Security", () => {
       for (let i = 0; i < 5; i++) {
         result = await adminClient.auth.admin.createUser({ email, password, email_confirm: true });
         // Break if successful or if the error is not a transient network/gateway error
-        const status = (result.error as any)?.status;
+        const status = (result.error as { status?: number } | null)?.status;
         if (!result.error || (status !== 502 && status !== 503 && status !== 0)) {
           break;
         }
         await new Promise((r) => setTimeout(r, 1000));
       }
       if (result?.error || !result?.data?.user) {
-        const status = (result?.error as any)?.status;
+        const status = (result?.error as { status?: number } | null)?.status;
         throw new Error(`Create user failed for ${email}. Status: ${status}. Message: ${result?.error?.message || JSON.stringify(result?.error)}`);
       }
       return result.data.user.id;
