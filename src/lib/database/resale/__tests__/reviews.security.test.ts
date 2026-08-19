@@ -72,7 +72,7 @@ describe("Phase 2H - Resale Reviews Security", () => {
         result = await adminClient.auth.admin.createUser({ email, password, email_confirm: true });
         // Break if successful or if the error is not a transient network/gateway error
         const status = (result.error as { status?: number } | null)?.status;
-        if (!result.error || (status !== 502 && status !== 503 && status !== 0)) {
+        if (!result.error || (status !== 500 && status !== 502 && status !== 503 && status !== 0)) {
           break;
         }
         await new Promise((r) => setTimeout(r, 1000));
