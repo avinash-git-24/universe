@@ -3,10 +3,11 @@ import { createClient } from "@supabase/supabase-js";
 import { Database } from "@/types/database";
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || "http://127.0.0.1:54321";
-const LOCAL_SERVICE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU";
-const SERVICE_ROLE_KEY = SUPABASE_URL.includes("127.0.0.1") || SUPABASE_URL.includes("localhost")
-  ? LOCAL_SERVICE_KEY
-  : (process.env.SUPABASE_SERVICE_ROLE_KEY || LOCAL_SERVICE_KEY);
+const SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY as string;
+
+if (!SERVICE_ROLE_KEY) {
+  throw new Error("SUPABASE_SERVICE_ROLE_KEY must be provided in the test environment variables.");
+}
 
 type ResaleReviewInsert = {
   id?: string;
@@ -64,30 +65,28 @@ describe("Phase 2H - Resale Reviews Security", () => {
     buyerEmail = `buyer_rev_sec_${runId}@example.com`;
     randomEmail = `random_rev_sec_${runId}@example.com`;
 
-    // 1. Create users via admin API
-    const { data: sData, error: sError } = await adminClient.auth.admin.createUser({
-      email: sellerEmail,
-      password: sellerPass,
-      email_confirm: true,
-    });
-    if (sError || !sData?.user) throw new Error(`Create seller failed: ${sError?.message}`);
-    sellerId = sData.user.id;
+    // 1. Create users via admin API (with retry for CI cold starts where Kong/GoTrue may return 502 initially)
+    const createTestUser = async (email: string, password: string) => {
+      let result;
+      for (let i = 0; i < 5; i++) {
+        result = await adminClient.auth.admin.createUser({ email, password, email_confirm: true });
+        // Break if successful or if the error is not a transient network/gateway error
+        const status = (result.error as any)?.status;
+        if (!result.error || (status !== 502 && status !== 503 && status !== 0)) {
+          break;
+        }
+        await new Promise((r) => setTimeout(r, 1000));
+      }
+      if (result?.error || !result?.data?.user) {
+        const status = (result?.error as any)?.status;
+        throw new Error(`Create user failed for ${email}. Status: ${status}. Message: ${result?.error?.message || JSON.stringify(result?.error)}`);
+      }
+      return result.data.user.id;
+    };
 
-    const { data: bData, error: bError } = await adminClient.auth.admin.createUser({
-      email: buyerEmail,
-      password: buyerPass,
-      email_confirm: true,
-    });
-    if (bError || !bData?.user) throw new Error(`Create buyer failed: ${bError?.message}`);
-    buyerId = bData.user.id;
-
-    const { data: rData, error: rError } = await adminClient.auth.admin.createUser({
-      email: randomEmail,
-      password: randomPass,
-      email_confirm: true,
-    });
-    if (rError || !rData?.user) throw new Error(`Create random user failed: ${rError?.message}`);
-    randomId = rData.user.id;
+    sellerId = await createTestUser(sellerEmail, sellerPass);
+    buyerId = await createTestUser(buyerEmail, buyerPass);
+    randomId = await createTestUser(randomEmail, randomPass);
 
     // Wait a tick for triggers to create profiles
     await new Promise((resolve) => setTimeout(resolve, 500));
