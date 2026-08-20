@@ -50,11 +50,6 @@ export async function getUserRatingStats(userId: string): Promise<UserRatingStat
   const supabase = createClient();
 
   try {
-    if (typeof (supabase as any).rpc !== "function") {
-      console.warn("supabase.rpc is not available on current client instance");
-      return { avg_rating: 0, total_reviews: 0 };
-    }
-
     const { data, error } = await supabase.rpc("get_user_rating", {
       target_user_id: userId,
     });
