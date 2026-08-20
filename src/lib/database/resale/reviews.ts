@@ -49,21 +49,29 @@ export async function createReview(params: CreateReviewParams) {
 export async function getUserRatingStats(userId: string): Promise<UserRatingStats | null> {
   const supabase = createClient();
 
-  const { data, error } = await supabase.rpc("get_user_rating", {
-    target_user_id: userId,
-  });
+  try {
+    if (typeof (supabase as any).rpc !== "function") {
+      console.warn("supabase.rpc is not available on current client instance");
+      return { avg_rating: 0, total_reviews: 0 };
+    }
 
-  if (error) {
-    console.error("Error fetching user rating stats:", error);
-    return null;
-  }
+    const { data, error } = await supabase.rpc("get_user_rating", {
+      target_user_id: userId,
+    });
 
-  // The RPC returns a single row if successful
-  if (data && data.length > 0) {
-    return {
-      avg_rating: data[0].avg_rating,
-      total_reviews: data[0].total_reviews,
-    };
+    if (error) {
+      console.error("Error fetching user rating stats:", error);
+      return { avg_rating: 0, total_reviews: 0 };
+    }
+
+    if (data && data.length > 0) {
+      return {
+        avg_rating: data[0].avg_rating,
+        total_reviews: data[0].total_reviews,
+      };
+    }
+  } catch (err) {
+    console.error("Error in getUserRatingStats:", err);
   }
 
   return { avg_rating: 0, total_reviews: 0 };
