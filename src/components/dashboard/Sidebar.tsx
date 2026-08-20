@@ -11,6 +11,7 @@ import {
   Settings,
   X,
   ShoppingBag,
+  Home,
 } from "lucide-react";
 import { LogOut, Crown, Zap, FileText, Bike } from "lucide-react";
 import { LogoutButton } from "../auth/LogoutButton";
@@ -18,6 +19,7 @@ import { createClient } from "@/lib/supabase/client";
 import { useEffect, useState } from "react";
 
 const navItems = [
+  { name: "Home", href: "/", icon: Home },
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { name: "My Requests", href: "/dashboard/requests", icon: FileText },
   { name: "Runner Mode", href: "/dashboard/runner", icon: Bike },
@@ -159,17 +161,19 @@ export function Sidebar() {
         zIndex: 50,
       }}>
         {/* Logo */}
-        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "2rem", paddingLeft: "0.5rem" }}>
-          <div style={{ 
-            background: "#00E676", 
-            borderRadius: "6px", 
-            padding: "4px",
-            display: "flex", alignItems: "center", justifyContent: "center"
-          }}>
-            <Zap size={16} color="#050A07" fill="#050A07" />
+        <Link href="/" style={{ textDecoration: "none" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "2rem", paddingLeft: "0.5rem" }}>
+            <div style={{ 
+              background: "#00E676", 
+              borderRadius: "6px", 
+              padding: "4px",
+              display: "flex", alignItems: "center", justifyContent: "center"
+            }}>
+              <Zap size={16} color="#050A07" fill="#050A07" />
+            </div>
+            <span style={{ color: "#fff", fontWeight: 800, fontSize: "1.2rem", letterSpacing: "-0.5px" }}>UniVerse</span>
           </div>
-          <span style={{ color: "#fff", fontWeight: 800, fontSize: "1.2rem", letterSpacing: "-0.5px" }}>UniVerse</span>
-        </div>
+        </Link>
 
         {/* Nav Links */}
         <nav style={{ display: "flex", flexDirection: "column", gap: "0.25rem", flex: 1 }}>
