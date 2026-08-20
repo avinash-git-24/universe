@@ -48,9 +48,10 @@ export async function createReview(params: CreateReviewParams) {
 
 export async function getUserRatingStats(userId: string): Promise<UserRatingStats | null> {
   const supabase = createClient();
+  const maybeRpc = (supabase as { rpc?: unknown }).rpc;
 
   try {
-    if (typeof (supabase as any).rpc !== "function") {
+    if (typeof maybeRpc !== "function") {
       console.warn("supabase.rpc is not available on current client instance");
       return { avg_rating: 0, total_reviews: 0 };
     }
