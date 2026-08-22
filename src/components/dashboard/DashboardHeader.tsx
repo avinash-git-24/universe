@@ -1,15 +1,40 @@
-import { NotificationBell } from "@/components/notifications/NotificationBell";
-import Link from "next/link";
-import { Plus, Sparkles } from "lucide-react";
+"use client";
+
+import { useState, useEffect } from "react";
+import { Sparkles } from "lucide-react";
 
 interface DashboardHeaderProps {
   displayName: string;
 }
 
-const hours = new Date().getHours();
-const greeting = hours < 12 ? "Good morning" : hours < 17 ? "Good afternoon" : "Good evening";
+function getGreeting(): { text: string; emoji: string } {
+  const hours = new Date().getHours();
+  if (hours < 12) {
+    return { text: "Good morning", emoji: "☀️" };
+  } else if (hours < 17) {
+    return { text: "Good afternoon", emoji: "🌤️" };
+  } else if (hours < 21) {
+    return { text: "Good evening", emoji: "🌆" };
+  } else {
+    return { text: "Good night", emoji: "🌙" };
+  }
+}
 
 export function DashboardHeader({ displayName }: DashboardHeaderProps) {
+  const [greeting, setGreeting] = useState(getGreeting);
+
+  useEffect(() => {
+    // Set client local time immediately on mount
+    setGreeting(getGreeting());
+
+    // Automatically check and update when crossing time periods without requiring page refresh
+    const timer = setInterval(() => {
+      setGreeting(getGreeting());
+    }, 30000);
+
+    return () => clearInterval(timer);
+  }, []);
+
   return (
     <div style={{ marginBottom: "1rem" }}>
       {/* Greeting pill */}
@@ -20,8 +45,11 @@ export function DashboardHeader({ displayName }: DashboardHeaderProps) {
         border: "1px solid rgba(0,230,118,0.2)"
       }}>
         <Sparkles size={13} color="#00E676" />
-        <span style={{ color: "#00E676", fontSize: "0.75rem", fontWeight: 700 }}>
-          {greeting} 🌙
+        <span
+          suppressHydrationWarning
+          style={{ color: "#00E676", fontSize: "0.75rem", fontWeight: 700 }}
+        >
+          {greeting.text} {greeting.emoji}
         </span>
       </div>
 
