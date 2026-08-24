@@ -1,16 +1,21 @@
+"use client";
+
 /**
  * UniVerse — Verify Email Page
  *
- * Beautiful post-registration success screen.
- * Explains that a verification email has been sent.
- * Static — no interactivity needed except resend link (stubbed).
+ * Post-registration screen informing the user that a verification
+ * email has been sent to their university inbox, with a fully
+ * functional resend action wired to Supabase Auth.
  */
 
+import { useState, useEffect, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { Mail, RefreshCw, ArrowLeft } from "lucide-react";
+import { Mail, RefreshCw, ArrowLeft, CheckCircle2, AlertCircle } from "lucide-react";
 import { AuthBackground } from "@/components/auth/AuthBackground";
 import { AuthLogo } from "@/components/auth/AuthLogo";
 import { ROUTES } from "@/constants/routes";
+import { createClient } from "@/lib/supabase/client";
 
 // ─── Animated envelope illustration ─────────────────────────────────────────
 
@@ -107,9 +112,72 @@ function StepIndicator() {
   );
 }
 
-// ─── Page ────────────────────────────────────────────────────────────────────
+// ─── Verify Email Form Component ──────────────────────────────────────────────
 
-export default function VerifyEmailPage() {
+function VerifyEmailContent() {
+  const searchParams = useSearchParams();
+  const queryEmail = searchParams.get("email") || "";
+  const [email, setEmail] = useState(queryEmail);
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
+  const [cooldown, setCooldown] = useState(0);
+
+  useEffect(() => {
+    if (queryEmail) {
+      setEmail(queryEmail);
+    }
+  }, [queryEmail]);
+
+  useEffect(() => {
+    if (cooldown <= 0) return;
+    const timer = setInterval(() => {
+      setCooldown((prev) => (prev <= 1 ? 0 : prev - 1));
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [cooldown]);
+
+  async function handleResend(e: React.FormEvent) {
+    e.preventDefault();
+    const targetEmail = email.trim().toLowerCase();
+
+    if (!targetEmail) {
+      setError("Please enter your university email to resend.");
+      return;
+    }
+
+    if (!targetEmail.endsWith("@marwadiuniversity.ac.in")) {
+      setError("Only @marwadiuniversity.ac.in email addresses are accepted.");
+      return;
+    }
+
+    setLoading(true);
+    setError("");
+    setMessage("");
+
+    try {
+      const supabase = createClient();
+      const { error: resendError } = await supabase.auth.resend({
+        type: "signup",
+        email: targetEmail,
+        options: {
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
+        },
+      });
+
+      if (resendError) {
+        setError(resendError.message || "Unable to resend verification email. Please try again later.");
+      } else {
+        setMessage(`Verification email resent to ${targetEmail}. Please check your inbox or spam folder.`);
+        setCooldown(60);
+      }
+    } catch {
+      setError("A network error occurred while resending. Please check your connection.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
     <>
       <AuthBackground />
@@ -154,13 +222,36 @@ export default function VerifyEmailPage() {
                 className="text-sm text-[var(--color-text-muted)] max-w-sm mx-auto leading-relaxed"
                 style={{ fontFamily: "var(--font-inter)" }}
               >
-                We&apos;ve sent a verification link to your{" "}
+                We&apos;ve sent a verification link to{" "}
                 <span className="font-semibold text-[var(--color-text)]">
-                  Marwadi University email
+                  {email ? email : "your Marwadi University email"}
                 </span>
                 . Click the link to activate your account.
               </p>
             </div>
+
+            {/* Success / Error Feedback */}
+            {message && (
+              <div
+                role="status"
+                className="w-full flex items-start gap-2.5 rounded-[var(--radius-md)] px-4 py-3 text-xs bg-[var(--color-success-subtle)] text-[var(--color-success-foreground)] border border-[var(--color-success)]/30 text-left"
+                style={{ fontFamily: "var(--font-inter)" }}
+              >
+                <CheckCircle2 size={16} className="text-[var(--color-success)] shrink-0 mt-0.5" />
+                <span>{message}</span>
+              </div>
+            )}
+
+            {error && (
+              <div
+                role="alert"
+                className="w-full flex items-start gap-2.5 rounded-[var(--radius-md)] px-4 py-3 text-xs bg-[var(--color-error-subtle)] text-[var(--color-error-foreground)] border border-[var(--color-error)]/30 text-left"
+                style={{ fontFamily: "var(--font-inter)" }}
+              >
+                <AlertCircle size={16} className="text-[var(--color-error)] shrink-0 mt-0.5" />
+                <span>{error}</span>
+              </div>
+            )}
 
             {/* Info box */}
             <div
@@ -189,15 +280,20 @@ export default function VerifyEmailPage() {
               </ul>
             </div>
 
-            {/* Resend */}
-            <form action="#" className="w-full">
+            {/* Resend Form */}
+            <form onSubmit={handleResend} className="w-full flex flex-col items-center gap-3">
               <button
                 type="submit"
-                className="inline-flex items-center gap-2 text-sm font-semibold text-[var(--color-primary)] hover:underline underline-offset-4 transition-colors duration-150"
+                disabled={loading || cooldown > 0}
+                className="inline-flex items-center gap-2 text-sm font-semibold text-[var(--color-primary)] hover:underline underline-offset-4 disabled:opacity-50 disabled:no-underline disabled:cursor-not-allowed transition-colors duration-150"
                 style={{ fontFamily: "var(--font-inter)" }}
               >
-                <RefreshCw size={14} />
-                Resend verification email
+                <RefreshCw size={14} className={loading ? "animate-spin" : ""} />
+                {loading
+                  ? "Resending..."
+                  : cooldown > 0
+                  ? `Resend available in ${cooldown}s`
+                  : "Resend verification email"}
               </button>
             </form>
           </div>
@@ -214,5 +310,17 @@ export default function VerifyEmailPage() {
         </Link>
       </div>
     </>
+  );
+}
+
+export default function VerifyEmailPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-dvh flex items-center justify-center bg-[#020503]">
+        <div className="w-6 h-6 border-2 border-emerald-500/30 border-t-emerald-500 rounded-full animate-spin" />
+      </div>
+    }>
+      <VerifyEmailContent />
+    </Suspense>
   );
 }

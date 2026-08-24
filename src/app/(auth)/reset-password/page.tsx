@@ -3,16 +3,17 @@
 /**
  * UniVerse — Reset Password Page
  *
- * Supabase redirects here after the user clicks the reset link in their email.
- * The URL contains a token hash that Supabase uses to identify the session.
+ * Supabase redirects here after the user clicks the recovery link in their email.
  * The user sets a new password on this page.
+ * Validates the recovery session and enforces strong password rules.
  *
  * Route: /reset-password
  */
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Lock, Eye, EyeOff, CheckCircle2 } from "lucide-react";
+import Link from "next/link";
+import { Lock, Eye, EyeOff, CheckCircle2, AlertTriangle, ArrowLeft } from "lucide-react";
 import { AuthCard } from "@/components/auth/AuthCard";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -62,7 +63,7 @@ function SuccessState() {
           className="text-sm text-[var(--color-text-muted)]"
           style={{ fontFamily: "var(--font-inter)" }}
         >
-          Your password has been changed successfully.
+          Your password has been changed successfully. You can now sign in with your new credentials.
         </p>
       </div>
       <Button
@@ -77,41 +78,134 @@ function SuccessState() {
   );
 }
 
+function InvalidLinkState({ error }: { error?: string }) {
+  return (
+    <div className="flex flex-col items-center gap-6 py-4 text-center">
+      <div
+        className="w-16 h-16 rounded-full flex items-center justify-center"
+        style={{ background: "var(--color-error-subtle)" }}
+      >
+        <AlertTriangle size={32} className="text-[var(--color-error)]" />
+      </div>
+      <div className="flex flex-col gap-2">
+        <h2
+          className="text-lg font-bold text-[var(--color-text)]"
+          style={{ fontFamily: "var(--font-plus-jakarta-sans)" }}
+        >
+          Invalid or Expired Link
+        </h2>
+        <p
+          className="text-sm text-[var(--color-text-muted)] max-w-xs mx-auto"
+          style={{ fontFamily: "var(--font-inter)" }}
+        >
+          {error || "This password reset link is invalid or has already expired. Please request a fresh reset link."}
+        </p>
+      </div>
+      <Link href={ROUTES.FORGOT_PASSWORD} className="w-full">
+        <Button variant="primary" size="lg" fullWidth>
+          Request new reset link
+        </Button>
+      </Link>
+      <Link
+        href={ROUTES.LOGIN}
+        className="inline-flex items-center gap-2 text-sm text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors duration-150"
+        style={{ fontFamily: "var(--font-inter)" }}
+      >
+        <ArrowLeft size={16} />
+        Back to sign in
+      </Link>
+    </div>
+  );
+}
+
 export default function ResetPasswordPage() {
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [checkingSession, setCheckingSession] = useState(true);
+  const [hasValidSession, setHasValidSession] = useState(false);
+  const [sessionError, setSessionError] = useState("");
   const [errors, setErrors] = useState<{ password?: string; confirm?: string; form?: string }>({});
   const [done, setDone] = useState(false);
 
   const strength = getPasswordStrength(password);
 
+  useEffect(() => {
+    async function checkRecoverySession() {
+      try {
+        const supabase = createClient();
+        const { data: { session }, error } = await supabase.auth.getSession();
+        if (error || !session) {
+          setHasValidSession(false);
+          setSessionError("No active recovery session found. Please use the link sent to your email.");
+        } else {
+          setHasValidSession(true);
+        }
+      } catch {
+        setHasValidSession(false);
+        setSessionError("Failed to verify reset session. Please try again.");
+      } finally {
+        setCheckingSession(false);
+      }
+    }
+
+    checkRecoverySession();
+  }, []);
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const errs: typeof errors = {};
-    if (!password) errs.password = "Password is required.";
-    else if (password.length < PASSWORD_MIN) errs.password = `Minimum ${PASSWORD_MIN} characters.`;
-    if (!confirm) errs.confirm = "Please confirm your new password.";
-    else if (password !== confirm) errs.confirm = "Passwords do not match.";
-    if (Object.keys(errs).length) { setErrors(errs); return; }
+    if (!password) {
+      errs.password = "Password is required.";
+    } else if (password.length < PASSWORD_MIN) {
+      errs.password = `Password must be at least ${PASSWORD_MIN} characters.`;
+    }
+
+    if (!confirm) {
+      errs.confirm = "Please confirm your new password.";
+    } else if (password !== confirm) {
+      errs.confirm = "Passwords do not match.";
+    }
+
+    if (Object.keys(errs).length) {
+      setErrors(errs);
+      return;
+    }
+
     setErrors({});
     setLoading(true);
 
-    const supabase = createClient();
-    const { error } = await supabase.auth.updateUser({ password });
+    try {
+      const supabase = createClient();
+      const { error } = await supabase.auth.updateUser({ password });
 
-    setLoading(false);
-    if (error) {
-      setErrors({ form: error.message });
-    } else {
-      setDone(true);
+      if (error) {
+        setErrors({ form: error.message || "Failed to update password. The link may have expired." });
+      } else {
+        // Sign out recovery session so the user signs in cleanly with new password
+        await supabase.auth.signOut();
+        setDone(true);
+      }
+    } catch {
+      setErrors({ form: "A network error occurred while updating your password. Please try again." });
+    } finally {
+      setLoading(false);
     }
   }
 
   return (
     <AuthCard title="Set new password" subtitle="Choose a strong password for your account">
-      {done ? (
+      {checkingSession ? (
+        <div className="flex flex-col items-center justify-center py-10 gap-3">
+          <div className="w-6 h-6 border-2 border-emerald-500/30 border-t-emerald-500 rounded-full animate-spin" />
+          <p className="text-xs text-[var(--color-text-muted)]" style={{ fontFamily: "var(--font-inter)" }}>
+            Verifying recovery session…
+          </p>
+        </div>
+      ) : !hasValidSession ? (
+        <InvalidLinkState error={sessionError} />
+      ) : done ? (
         <SuccessState />
       ) : (
         <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-5">
@@ -195,6 +289,15 @@ export default function ResetPasswordPage() {
           >
             Update Password
           </Button>
+
+          <Link
+            href={ROUTES.LOGIN}
+            className="inline-flex items-center justify-center gap-2 text-sm font-medium text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors duration-150 mt-1"
+            style={{ fontFamily: "var(--font-inter)" }}
+          >
+            <ArrowLeft size={16} />
+            Back to sign in
+          </Link>
         </form>
       )}
     </AuthCard>

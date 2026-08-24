@@ -57,7 +57,19 @@ function Field({
   );
 }
 
-function validateEmail(e: string) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e); }
+const MU_EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@marwadiuniversity\.ac\.in$/i;
+
+function sanitizeEmail(email: string): string {
+  return email
+    .replace(/[\u200B-\u200D\uFEFF\u00A0]/g, "")
+    .trim()
+    .toLowerCase();
+}
+
+function validateEmail(email: string): boolean {
+  const sanitized = sanitizeEmail(email);
+  return MU_EMAIL_REGEX.test(sanitized);
+}
 
 // ─── Login Form ───────────────────────────────────────────────────────────────
 function LoginForm() {
@@ -68,25 +80,28 @@ function LoginForm() {
   const [showPw, setShowPw] = useState(false);
   const [remember, setRemember] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [errors, setErrors] = useState<{ email?: string; password?: string; form?: string }>({});
+  const urlError = searchParams.get("error");
+  const [errors, setErrors] = useState<{ email?: string; password?: string; form?: string }>(() =>
+    urlError ? { form: urlError } : {}
+  );
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    const normalizedEmail = sanitizeEmail(email);
     const errs: typeof errors = {};
-    if (!email) errs.email = "Email is required.";
-    else if (!validateEmail(email)) errs.email = "Enter a valid email.";
+    if (!normalizedEmail) errs.email = "Email is required.";
+    else if (!validateEmail(normalizedEmail)) errs.email = "Only @marwadiuniversity.ac.in emails are allowed.";
     if (!password) errs.password = "Password is required.";
     else if (password.length < 6) errs.password = "Min 6 characters.";
     if (Object.keys(errs).length) { setErrors(errs); return; }
     setErrors({}); setLoading(true);
-    const { error } = await createClient().auth.signInWithPassword({ email, password });
+    const { error } = await createClient().auth.signInWithPassword({ email: normalizedEmail, password });
     if (error) {
       setLoading(false);
       setErrors({ form: error.message.toLowerCase().includes("invalid") ? "Incorrect email or password." : error.message });
       return;
     }
-    router.push(searchParams.get("redirectTo") ?? ROUTES.DASHBOARD);
-    router.refresh();
+    window.location.href = searchParams.get("redirectTo") ?? ROUTES.DASHBOARD;
   }
 
   async function handleGoogle() {

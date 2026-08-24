@@ -165,14 +165,16 @@ CREATE TRIGGER on_requests_updated
 
 -- Auto-create profile on auth.users INSERT
 CREATE OR REPLACE FUNCTION public.handle_new_user()
-RETURNS TRIGGER AS $$
+RETURNS TRIGGER 
+SET search_path = public
+AS $$
 BEGIN
     INSERT INTO public.profiles (id, full_name, enrollment_number, role)
     VALUES (
         NEW.id,
         NEW.raw_user_meta_data->>'full_name',
         NEW.raw_user_meta_data->>'enrollment_number',
-        'student'::user_role -- Default role
+        'student'::public.user_role -- Default role
     );
     RETURN NEW;
 END;

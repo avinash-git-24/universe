@@ -1,8 +1,12 @@
 /**
  * UniVerse — Supabase Middleware Client
  *
- * Use ONLY inside middleware.ts.
- * Refreshes expired sessions by reading/writing cookies on the Response.
+ * Used inside src/proxy.ts.
+ * Refreshes expired sessions and enforces route protection rules:
+ *   1. Protects dashboard and application areas from unauthenticated access.
+ *   2. Prevents unconfirmed email accounts from bypassing verification.
+ *   3. Redirects authenticated users away from auth pages to dashboard.
+ *   4. Ensures cookies and session tokens are preserved across all redirects.
  *
  * @module lib/supabase/middleware
  */
@@ -40,36 +44,72 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // ── Route Protection ──────────────────────────────────────────────────────
-
   const { pathname } = request.nextUrl;
 
-  // Auth-only pages (no login needed)
+  // Auth pages (where logged-in users generally shouldn't be)
   const authRoutes = ["/login", "/register", "/forgot-password", "/verify-email"];
 
-  // Protected pages (must be logged in)
-  const protectedRoutes = ["/dashboard", "/complete-profile", "/profile", "/requests", "/deliver", "/settings"];
+  // Protected pages (must be fully authenticated and email-verified)
+  const protectedRoutes = [
+    "/dashboard",
+    "/complete-profile",
+    "/profile",
+    "/requests",
+    "/deliver",
+    "/request",
+    "/settings",
+    "/admin",
+  ];
 
-  const isAuthRoute = authRoutes.some((route) => pathname.startsWith(route));
-  const isProtectedRoute = protectedRoutes.some((route) => pathname.startsWith(route));
+  const isAuthRoute = authRoutes.some((route) => pathname === route || pathname.startsWith(`${route}/`));
+  const isProtectedRoute = protectedRoutes.some((route) => pathname === route || pathname.startsWith(`${route}/`));
 
-  // Redirect logged-in users away from auth pages
-  if (user && isAuthRoute) {
+  // Determine if email confirmation is required & verified
+  // OAuth accounts usually have email_verified or provider != email
+  const isEmailConfirmed = !!user?.email_confirmed_at || (!!user && user.app_metadata?.provider !== "email");
+  const isAuthenticated = !!user && isEmailConfirmed;
+
+  // Helper to construct redirect with preserved session cookies
+  const createRedirectWithCookies = (url: URL) => {
+    const redirectRes = NextResponse.redirect(url);
+    supabaseResponse.cookies.getAll().forEach((cookie) => {
+      redirectRes.cookies.set(cookie.name, cookie.value, {
+        path: cookie.path,
+        domain: cookie.domain,
+        maxAge: cookie.maxAge,
+        sameSite: cookie.sameSite,
+        httpOnly: cookie.httpOnly,
+        secure: cookie.secure,
+      });
+    });
+    return redirectRes;
+  };
+
+  // 1. Protected routes protection
+  if (isProtectedRoute) {
+    if (!user) {
+      const url = request.nextUrl.clone();
+      url.pathname = "/login";
+      url.searchParams.set("redirectTo", pathname);
+      return createRedirectWithCookies(url);
+    }
+
+    if (!isEmailConfirmed) {
+      const url = request.nextUrl.clone();
+      url.pathname = "/verify-email";
+      if (user.email) {
+        url.searchParams.set("email", user.email);
+      }
+      return createRedirectWithCookies(url);
+    }
+  }
+
+  // 2. Redirect authenticated users away from auth pages
+  if (isAuthenticated && isAuthRoute) {
     const url = request.nextUrl.clone();
     url.pathname = "/dashboard";
-    return NextResponse.redirect(url);
+    return createRedirectWithCookies(url);
   }
 
-  // Redirect unauthenticated users away from protected pages
-  if (!user && isProtectedRoute) {
-    const url = request.nextUrl.clone();
-    url.pathname = "/login";
-    // Preserve the original destination so we can redirect after login
-    url.searchParams.set("redirectTo", pathname);
-    return NextResponse.redirect(url);
-  }
-
-  // IMPORTANT: Return supabaseResponse, NOT a new NextResponse.
-  // Returning a different response drops cookies and breaks session persistence.
   return supabaseResponse;
 }

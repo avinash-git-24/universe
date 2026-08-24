@@ -16,8 +16,18 @@ import { Button } from "@/components/ui/button";
 import { ROUTES } from "@/constants/routes";
 import { createClient } from "@/lib/supabase/client";
 
-function validateEmail(email: string) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+const MU_EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@marwadiuniversity\.ac\.in$/i;
+
+function sanitizeEmail(email: string): string {
+  return email
+    .replace(/[\u200B-\u200D\uFEFF\u00A0]/g, "")
+    .trim()
+    .toLowerCase();
+}
+
+function validateEmail(email: string): boolean {
+  const sanitized = sanitizeEmail(email);
+  return MU_EMAIL_REGEX.test(sanitized);
 }
 
 // ─── Success State ────────────────────────────────────────────────────────────
@@ -86,13 +96,14 @@ export default function ForgotPasswordPage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!email) { setError("Email is required."); return; }
-    if (!validateEmail(email)) { setError("Enter a valid email address."); return; }
+    const normalizedEmail = sanitizeEmail(email);
+    if (!normalizedEmail) { setError("Email is required."); return; }
+    if (!validateEmail(normalizedEmail)) { setError("Only @marwadiuniversity.ac.in email addresses are accepted."); return; }
     setError("");
     setLoading(true);
 
     const supabase = createClient();
-    const { error: supabaseError } = await supabase.auth.resetPasswordForEmail(email, {
+    const { error: supabaseError } = await supabase.auth.resetPasswordForEmail(normalizedEmail, {
       // The callback route detects type=recovery and redirects to /reset-password
       redirectTo: `${window.location.origin}/auth/callback?type=recovery`,
     });
