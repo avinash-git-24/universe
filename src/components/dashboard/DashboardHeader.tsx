@@ -58,10 +58,10 @@ export function DashboardHeader({ displayName }: DashboardHeaderProps) {
         fontSize: "2.2rem",
         letterSpacing: "-0.02em", lineHeight: 1.15, margin: 0,
       }}>
-        Welcome back, <span style={{ color: "#00E676" }}>{displayName}</span>!
+        <span style={{ color: "#00E676" }}>{displayName}</span>!
       </h1>
       <p style={{ color: "rgba(255,255,255,0.6)", marginTop: "0.5rem", fontSize: "0.95rem" }}>
-        Here&apos;s what&apos;s happening with your deliveries today.
+        Your campus, your deliveries, your UniVerse.
       </p>
     </div>
   );

@@ -11,40 +11,46 @@ interface TransactionHistoryProps {
 export function TransactionHistory({ transactions }: TransactionHistoryProps) {
   if (transactions.length === 0) {
     return (
-      <div className="text-center p-8 border rounded-lg bg-card text-muted-foreground mt-4">
-        No transactions found.
+      <div className="text-center p-12 border border-white/10 rounded-2xl bg-[#0d1411]/80 backdrop-blur-md text-white/50 mt-2 flex flex-col items-center justify-center gap-3">
+        <Clock className="w-8 h-8 text-white/20" />
+        <p className="text-base font-medium">No transactions found.</p>
+        <p className="text-xs text-white/40">Your deposits and payments will appear here.</p>
       </div>
     );
   }
 
   return (
-    <div className="mt-6 space-y-4">
+    <div className="space-y-3">
       {transactions.map((tx) => {
         const isPositive = tx.type === "deposit" || tx.type === "earning" || tx.type === "refund";
         return (
-          <div key={tx.id} className="flex items-center justify-between p-4 border rounded-lg bg-card">
+          <div key={tx.id} className="flex items-center justify-between p-4 sm:p-5 border border-white/10 rounded-2xl bg-[#0d1411]/80 hover:border-emerald-500/30 transition-all backdrop-blur-md">
             <div className="flex items-center gap-4">
-              <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${isPositive ? 'bg-emerald-500/10 text-emerald-500' : 'bg-destructive/10 text-destructive'}`}>
+              <div className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 border ${
+                isPositive 
+                  ? 'bg-emerald-500/15 text-[#00E676] border-emerald-500/20' 
+                  : 'bg-rose-500/15 text-rose-400 border-rose-500/20'
+              }`}>
                 {isPositive ? <ArrowDownLeft className="w-5 h-5" /> : <ArrowUpRight className="w-5 h-5" />}
               </div>
               <div>
-                <p className="font-semibold capitalize">{tx.type}</p>
-                <div className="flex items-center text-xs text-muted-foreground mt-1 gap-2">
+                <p className="font-bold text-white text-base capitalize">{tx.type}</p>
+                <div className="flex items-center text-xs text-white/50 mt-1 gap-2.5 flex-wrap">
                   <span className="flex items-center"><Clock className="w-3 h-3 mr-1" /> {format(new Date(tx.created_at), "MMM d, h:mm a")}</span>
-                  {tx.status === "completed" && <span className="flex items-center text-emerald-500"><CheckCircle2 className="w-3 h-3 mr-1" /> Completed</span>}
-                  {tx.status === "pending" && <span className="flex items-center text-amber-500"><Clock className="w-3 h-3 mr-1" /> Pending</span>}
-                  {tx.status === "failed" && <span className="flex items-center text-destructive"><XCircle className="w-3 h-3 mr-1" /> Failed</span>}
+                  {tx.status === "completed" && <span className="flex items-center text-[#00E676] bg-emerald-500/10 px-2 py-0.5 rounded-full font-semibold"><CheckCircle2 className="w-3 h-3 mr-1" /> Completed</span>}
+                  {tx.status === "pending" && <span className="flex items-center text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded-full font-semibold"><Clock className="w-3 h-3 mr-1" /> Pending</span>}
+                  {tx.status === "failed" && <span className="flex items-center text-rose-400 bg-rose-500/10 px-2 py-0.5 rounded-full font-semibold"><XCircle className="w-3 h-3 mr-1" /> Failed</span>}
                 </div>
               </div>
             </div>
             
             <div className="text-right">
-              <p className={`font-bold ${isPositive ? 'text-emerald-500' : ''}`}>
+              <p className={`font-black text-lg ${isPositive ? 'text-[#00E676]' : 'text-white'}`}>
                 {isPositive ? "+" : "-"} ₹{tx.amount}
               </p>
               {tx.description && (
-                <p className="text-xs text-muted-foreground flex items-center justify-end mt-1">
-                  <FileText className="w-3 h-3 mr-1" /> {tx.description}
+                <p className="text-xs text-white/60 flex items-center justify-end mt-1 font-medium">
+                  <FileText className="w-3 h-3 mr-1 opacity-70" /> {tx.description}
                 </p>
               )}
             </div>

@@ -2,9 +2,7 @@
 
 import { useState } from "react";
 import { Wallet } from "@/lib/database/wallet";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Wallet as WalletIcon, IndianRupee, Plus, ArrowRightLeft } from "lucide-react";
+import { Wallet as WalletIcon, Plus, ArrowRightLeft } from "lucide-react";
 import { TopUpModal } from "./TopUpModal";
 
 interface WalletOverviewProps {
@@ -20,41 +18,49 @@ export function WalletOverview({ wallet, role, userId }: WalletOverviewProps) {
 
   return (
     <>
-      <Card className="bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20">
-        <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-semibold text-primary uppercase tracking-wider flex items-center">
-            <WalletIcon className="w-4 h-4 mr-2" />
-            {role === "runner" ? "Earnings Balance" : "Wallet Balance"}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+      <div className="bg-[#0d1411] border border-emerald-500/20 rounded-2xl p-6 sm:p-8 shadow-[0_0_40px_rgba(0,230,118,0.06)] relative overflow-hidden backdrop-blur-xl">
+        {/* Subtle decorative glow */}
+        <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none" />
+
+        <div className="relative z-10">
+          <div className="text-xs sm:text-sm font-bold text-[#00E676] uppercase tracking-wider flex items-center gap-2 mb-4">
+            <WalletIcon className="w-4 h-4" />
+            <span>{role === "runner" ? "Earnings Balance" : "Wallet Balance"}</span>
+          </div>
+
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6">
             <div>
-              <div className="text-5xl font-extrabold flex items-center">
-                <IndianRupee className="w-10 h-10 mr-1 opacity-80" />
+              <div className="text-5xl sm:text-6xl font-black text-white flex items-center tracking-tight">
+                <span className="text-[#00E676] text-4xl sm:text-5xl mr-2 font-bold">₹</span>
                 {balance.toFixed(2)}
               </div>
-              <p className="text-sm text-muted-foreground mt-2">
+              <p className="text-sm text-white/60 mt-2 font-medium">
                 Available to {role === "runner" ? "withdraw or spend" : "spend on deliveries"}
               </p>
             </div>
             
-            <div className="flex gap-2">
+            <div className="flex gap-3">
               {role === "student" ? (
-                <Button onClick={() => setIsTopUpOpen(true)} className="w-full sm:w-auto">
-                  <Plus className="w-4 h-4 mr-2" />
-                  Add Funds
-                </Button>
+                <button
+                  onClick={() => setIsTopUpOpen(true)}
+                  className="w-full sm:w-auto bg-[#00E676] hover:bg-[#00c864] text-[#050A07] font-bold text-sm sm:text-base px-6 py-3.5 rounded-xl shadow-[0_0_20px_rgba(0,230,118,0.25)] hover:shadow-[0_0_30px_rgba(0,230,118,0.4)] transition-all flex items-center justify-center gap-2"
+                >
+                  <Plus className="w-5 h-5 stroke-[2.5]" />
+                  <span>Add Funds</span>
+                </button>
               ) : (
-                <Button onClick={() => alert("Withdrawal system coming soon!")} className="w-full sm:w-auto">
-                  <ArrowRightLeft className="w-4 h-4 mr-2" />
-                  Withdraw Funds
-                </Button>
+                <button
+                  onClick={() => alert("Withdrawal system coming soon!")}
+                  className="w-full sm:w-auto bg-white/10 hover:bg-white/15 text-white font-semibold text-sm sm:text-base px-6 py-3.5 rounded-xl border border-white/10 transition-all flex items-center justify-center gap-2"
+                >
+                  <ArrowRightLeft className="w-5 h-5" />
+                  <span>Withdraw Funds</span>
+                </button>
               )}
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       <TopUpModal 
         isOpen={isTopUpOpen} 

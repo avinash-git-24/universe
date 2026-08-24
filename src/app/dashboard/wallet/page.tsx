@@ -33,11 +33,14 @@ export default async function WalletPage() {
   const transactions = wallet ? await getTransactions(supabase, wallet.id) : [];
 
   return (
-    <div className="min-h-screen bg-secondary/30 pt-24 pb-12 px-4">
-      <div className="max-w-4xl mx-auto space-y-8">
+    <div className="min-h-screen bg-[#080b09] text-white pt-24 pb-12 px-4 selection:bg-emerald-500/30">
+      <div className="max-w-4xl mx-auto space-y-8 relative z-10">
         <div>
-          <h1 className="text-3xl font-extrabold tracking-tight">Wallet</h1>
-          <p className="text-muted-foreground mt-1">
+          <h1 className="text-4xl font-extrabold tracking-tight text-white flex items-center gap-2">
+            Wallet
+            <span className="text-[#00E676] text-3xl">✦</span>
+          </h1>
+          <p className="text-white/60 mt-1 text-base">
             {profile.role === "runner" 
               ? "Track your earnings and withdraw funds." 
               : "Manage your funds for delivery requests."}
@@ -47,7 +50,9 @@ export default async function WalletPage() {
         <WalletOverview wallet={wallet} role={profile.role} userId={user.id} />
 
         <div className="pt-4">
-          <h2 className="text-xl font-bold">Transaction History</h2>
+          <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-2">
+            Transaction History
+          </h2>
           <TransactionHistory transactions={transactions} />
         </div>
       </div>
