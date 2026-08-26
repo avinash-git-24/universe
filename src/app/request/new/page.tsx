@@ -14,6 +14,30 @@ export default async function NewRequestPage() {
     redirect("/login?redirectTo=/request/new");
   }
 
+  // Ensure user profile exists in public.profiles to satisfy foreign keys
+  const supabase = await createClient();
+  const { data: profile } = await supabase.from("profiles").select("id").eq("id", user.id).maybeSingle();
+  if (!profile) {
+    const fullName =
+      user.user_metadata?.full_name ||
+      user.user_metadata?.name ||
+      user.email?.split("@")[0] ||
+      "Student";
+    const enrollmentNumber =
+      user.user_metadata?.enrollment_number ||
+      (user.email?.includes("@") ? user.email.split("@")[0] : null);
+
+    await supabase.from("profiles").upsert(
+      {
+        id: user.id,
+        full_name: fullName,
+        enrollment_number: enrollmentNumber,
+        role: "student",
+      },
+      { onConflict: "id" }
+    );
+  }
+
   return (
     <RealtimeProvider userId={user.id}>
       <div style={{ display: "flex", minHeight: "100vh", backgroundColor: "#050805", padding: "2rem" }}>

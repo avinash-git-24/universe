@@ -148,6 +148,35 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
         return;
       }
 
+      // Ensure profile exists in public.profiles to satisfy foreign key constraint
+      const { data: existingProfile } = await supabase
+        .from("profiles")
+        .select("id")
+        .eq("id", currentUserId)
+        .maybeSingle();
+
+      if (!existingProfile) {
+        const fallbackName =
+          user?.user_metadata?.full_name ||
+          user?.user_metadata?.name ||
+          user?.email?.split("@")[0] ||
+          "Student";
+
+        const fallbackEnrollment =
+          user?.user_metadata?.enrollment_number ||
+          (user?.email?.includes("@") ? user.email.split("@")[0] : null);
+
+        await supabase.from("profiles").upsert(
+          {
+            id: currentUserId,
+            full_name: fallbackName,
+            enrollment_number: fallbackEnrollment,
+            role: "student",
+          },
+          { onConflict: "id" }
+        );
+      }
+
       const requestData: Omit<InsertRequest, "requester_id"> = {
         pickup_location: pickupLocation,
         dropoff_location: `${dropoffHostel}, Room ${dropoffRoom.trim()}`,
