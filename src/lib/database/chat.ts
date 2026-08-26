@@ -22,80 +22,110 @@ export async function getConversations(
   supabase: SupabaseClient<Database>,
   userId: string
 ): Promise<ConversationWithDetails[]> {
-  // First get the conversation IDs the user is a part of
-  const { data: participants, error: pError } = await supabase
-    .from("conversation_participants")
-    .select("conversation_id")
-    .eq("profile_id", userId);
+  try {
+    // First get the conversation IDs the user is a part of
+    const { data: participants, error: pError } = await supabase
+      .from("conversation_participants")
+      .select("conversation_id")
+      .eq("profile_id", userId);
 
-  if (pError || !participants) return [];
+    if (pError || !participants || participants.length === 0) return [];
 
-  const conversationIds = participants.map((p) => p.conversation_id);
-  if (conversationIds.length === 0) return [];
+    const conversationIds = participants.map((p) => p.conversation_id);
 
-  // Fetch the conversations with other participants and latest message
-  const { data: conversations, error: cError } = await supabase
-    .from("conversations")
-    .select(`
-      *,
-      participants:conversation_participants(
-        last_read_at,
-        profile:profiles(*)
-      ),
-      messages(
-        *
-      ),
-      delivery_request:delivery_requests(*),
-      resale_listing:resale_listings(*)
-    `)
-    .in("id", conversationIds)
-    .order("updated_at", { ascending: false });
+    // Fetch the conversations with other participants and latest message
+    const { data: conversations, error: cError } = await supabase
+      .from("conversations")
+      .select(`
+        *,
+        participants:conversation_participants(
+          profile_id,
+          last_read_at,
+          profile:profiles(*)
+        ),
+        messages(
+          *
+        ),
+        delivery_request:delivery_requests(*),
+        resale_listing:resale_listings(*)
+      `)
+      .in("id", conversationIds)
+      .order("updated_at", { ascending: false });
 
-  if (cError || !conversations) return [];
+    if (cError || !conversations) {
+      console.error("Error fetching conversations:", cError);
+      return [];
+    }
 
-  // Map and calculate unread counts (all messages created after last_read_at)
-  const mapped = await Promise.all(
-    conversations.map(async (conv) => {
-      // Find the other participant
-      const otherParticipant = conv.participants.find(
-        (p: { profile: { id: string } }) => p.profile.id !== userId
-      )?.profile as unknown as Profile;
+    // Map and calculate unread counts safely
+    const mapped: ConversationWithDetails[] = await Promise.all(
+      conversations.map(async (conv) => {
+        const participantList = (conv.participants || []) as Array<{
+          profile_id: string;
+          last_read_at: string | null;
+          profile?: Profile | null;
+        }>;
 
-      // Get my participant record to check last_read_at
-      const { data: myParticipant } = await supabase
-        .from("conversation_participants")
-        .select("last_read_at")
-        .eq("conversation_id", conv.id)
-        .eq("profile_id", userId)
-        .single();
+        // Find the other participant record
+        const otherRecord = participantList.find((p) => p.profile_id !== userId);
+        const myRecord = participantList.find((p) => p.profile_id === userId);
 
-      const lastReadAt = myParticipant?.last_read_at ? new Date(myParticipant.last_read_at) : new Date(0);
-      
-      const sortedMessages = (conv.messages as Message[]).sort(
-        (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-      );
+        let otherParticipant: Profile | null = otherRecord?.profile || null;
 
-      const unreadCount = sortedMessages.filter(
-        (m) => m.sender_id !== userId && new Date(m.created_at) > lastReadAt
-      ).length;
+        // If profile wasn't populated via relation join, fetch it directly
+        if (!otherParticipant && otherRecord?.profile_id) {
+          const { data: prof } = await supabase
+            .from("profiles")
+            .select("*")
+            .eq("id", otherRecord.profile_id)
+            .single();
+          otherParticipant = prof as Profile | null;
+        }
 
-      const otherParticipantRecord = conv.participants.find(
-        (p: { profile: { id: string }; last_read_at: string | null }) => p.profile.id !== userId
-      );
+        // Final fallback profile to prevent UI crashes
+        if (!otherParticipant) {
+          otherParticipant = {
+            id: otherRecord?.profile_id || "unknown",
+            full_name: "University Student",
+            avatar_url: null,
+            role: "student",
+            enrollment_number: null,
+            account_status: "active",
+            department: null,
+            semester: null,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          } as unknown as Profile;
+        }
 
-      return {
-        ...conv,
-        other_participant: otherParticipant,
-        last_message: sortedMessages[0],
-        unread_count: unreadCount,
-        delivery_request: conv.delivery_request || undefined,
-        resale_listing: conv.resale_listing || undefined,
-        other_last_read_at: otherParticipantRecord?.last_read_at || null,
-      };
-    })
-  );
+        const lastReadAt = myRecord?.last_read_at ? new Date(myRecord.last_read_at) : new Date(0);
+        
+        const rawMessages = (conv.messages || []) as Message[];
+        const sortedMessages = [...rawMessages].sort(
+          (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+        );
 
-  return mapped;
+        const unreadCount = sortedMessages.filter(
+          (m) => m.sender_id !== userId && new Date(m.created_at) > lastReadAt
+        ).length;
+
+        return {
+          ...conv,
+          other_participant: otherParticipant,
+          last_message: sortedMessages[0] || null,
+          unread_count: unreadCount,
+          delivery_request: conv.delivery_request || undefined,
+          resale_listing: conv.resale_listing || undefined,
+          other_last_read_at: otherRecord?.last_read_at || null,
+        } as ConversationWithDetails;
+      })
+    );
+
+    return mapped;
+  } catch (err) {
+    console.error("Critical error in getConversations:", err);
+    return [];
+  }
 }
 
 /**
@@ -107,17 +137,81 @@ export async function getOrCreateConversation(
   userId2: string,
   requestId?: string | null
 ): Promise<string | null> {
-  const { data, error } = await supabase.rpc("create_delivery_conversation", {
-    p_other_user_id: userId2,
-    p_request_id: requestId && requestId.trim() ? requestId.trim() : null,
-  });
+  try {
+    const trimmedReqId = requestId && requestId.trim() ? requestId.trim() : null;
 
-  if (error || !data) {
-    console.error("Error creating delivery conversation:", error);
+    // 1. Check if conversation already exists between these 2 users
+    const { data: myConvs } = await supabase
+      .from("conversation_participants")
+      .select("conversation_id")
+      .eq("profile_id", userId1);
+
+    if (myConvs && myConvs.length > 0) {
+      const convIds = myConvs.map((c) => c.conversation_id);
+      const { data: otherConvs } = await supabase
+        .from("conversation_participants")
+        .select("conversation_id")
+        .eq("profile_id", userId2)
+        .in("conversation_id", convIds);
+
+      if (otherConvs && otherConvs.length > 0) {
+        const sharedIds = otherConvs.map((c) => c.conversation_id);
+        
+        if (trimmedReqId) {
+          const { data: matchConv } = await supabase
+            .from("conversations")
+            .select("id")
+            .eq("request_id", trimmedReqId)
+            .in("id", sharedIds)
+            .limit(1)
+            .single();
+
+          if (matchConv?.id) {
+            return matchConv.id;
+          }
+        } else {
+          return sharedIds[0];
+        }
+      }
+    }
+
+    // 2. Try RPC create_delivery_conversation
+    try {
+      const { data: rpcConvId, error: rpcError } = await supabase.rpc("create_delivery_conversation", {
+        p_other_user_id: userId2,
+        p_request_id: trimmedReqId,
+      });
+
+      if (!rpcError && rpcConvId) {
+        return rpcConvId;
+      }
+    } catch {
+      // Ignore and proceed to fallback
+    }
+
+    // 3. Fallback: Direct table insert
+    const { data: newConv, error: insertError } = await supabase
+      .from("conversations")
+      .insert({ request_id: trimmedReqId })
+      .select("id")
+      .single();
+
+    if (insertError || !newConv) {
+      console.error("Error creating conversation fallback:", insertError);
+      return null;
+    }
+
+    // Insert participants
+    await supabase.from("conversation_participants").insert([
+      { conversation_id: newConv.id, profile_id: userId1 },
+      { conversation_id: newConv.id, profile_id: userId2 },
+    ]);
+
+    return newConv.id;
+  } catch (err) {
+    console.error("Error in getOrCreateConversation:", err);
     return null;
   }
-
-  return data;
 }
 
 /**

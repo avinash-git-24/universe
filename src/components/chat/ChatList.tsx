@@ -21,7 +21,7 @@ export function ChatList({ initialConversations, activeConversationId, onSelectC
     
     const lowerQuery = searchQuery.toLowerCase();
     return initialConversations.filter(c => {
-      const nameMatch = c.other_participant.full_name?.toLowerCase().includes(lowerQuery);
+      const nameMatch = c.other_participant?.full_name?.toLowerCase().includes(lowerQuery);
       const reqMatch = c.delivery_request && (
         c.delivery_request.pickup_location.toLowerCase().includes(lowerQuery) ||
         c.delivery_request.dropoff_location.toLowerCase().includes(lowerQuery) ||
@@ -61,7 +61,7 @@ export function ChatList({ initialConversations, activeConversationId, onSelectC
             {filteredConversations.map((conv) => {
               const isUnread = conv.unread_count > 0;
               const isActive = conv.id === activeConversationId;
-              const isOnline = onlineUsers.has(conv.other_participant.id);
+              const isOnline = Boolean(conv.other_participant?.id && onlineUsers.has(conv.other_participant.id));
               
               return (
                 <button
@@ -76,7 +76,7 @@ export function ChatList({ initialConversations, activeConversationId, onSelectC
                   {/* Avatar */}
                   <div className="relative shrink-0">
                     <div className="w-12 h-12 rounded-full overflow-hidden bg-gradient-to-br from-white/10 to-white/5 flex items-center justify-center font-bold text-white text-lg">
-                      {conv.other_participant.full_name?.charAt(0) || '?'}
+                      {conv.other_participant?.full_name?.charAt(0) || '?'}
                     </div>
                     {/* Status Indicator */}
                     <div className={`absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full border-2 border-[#0a0f0d] transition-colors ${
@@ -88,7 +88,7 @@ export function ChatList({ initialConversations, activeConversationId, onSelectC
                   <div className="flex-1 min-w-0 flex flex-col justify-center">
                     <div className="flex justify-between items-baseline mb-1">
                       <span className={`font-semibold text-[15px] truncate pr-2 ${isActive ? 'text-[#10b981]' : 'text-white/90'}`}>
-                        {conv.other_participant.full_name}
+                        {conv.other_participant?.full_name || "User"}
                       </span>
                       {conv.last_message && (
                         <span className="text-[11px] text-white/40 shrink-0 font-medium">

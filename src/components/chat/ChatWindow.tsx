@@ -188,9 +188,9 @@ export function ChatWindow({ userId, conversation, isOnline }: ChatWindowProps) 
       {/* Header */}
       <div className="p-4 border-b border-white/10 flex flex-col md:flex-row md:items-center justify-between gap-3 shadow-sm z-10 bg-[#0d1310] shrink-0">
         <div>
-          <h2 className="font-bold text-lg text-white">{conversation.other_participant.full_name}</h2>
+          <h2 className="font-bold text-lg text-white">{conversation.other_participant?.full_name || "University Student"}</h2>
           <div className="flex items-center gap-2">
-            <span className="text-xs text-[#10b981] font-medium capitalize">{conversation.other_participant.role}</span>
+            <span className="text-xs text-[#10b981] font-medium capitalize">{conversation.other_participant?.role || "student"}</span>
             <span className="text-white/20 text-xs">•</span>
             <span className="text-xs text-white/50">{lastSeenText}</span>
           </div>

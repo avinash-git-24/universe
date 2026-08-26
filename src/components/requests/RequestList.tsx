@@ -354,7 +354,7 @@ export function RequestList({ initialRequests }: RequestListProps) {
                     </div>
                   </div>
 
-                  <Link href={`/dashboard/chat?startWithUserId=${selectedRunner.id}`}>
+                  <Link href={`/dashboard/chat?requestId=${selectedRequest.id}&startWithUserId=${selectedRunner.id}`}>
                     <Button size="sm" className="gap-1.5">
                       <MessageSquare className="w-4 h-4" /> Message
                     </Button>

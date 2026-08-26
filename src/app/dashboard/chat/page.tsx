@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 export default async function ChatPage({
   searchParams,
 }: {
-  searchParams: Promise<{ startWithUserId?: string; requestId?: string }>;
+  searchParams: Promise<{ id?: string; startWithUserId?: string; requestId?: string }>;
 }) {
   const supabase = await createClient();
   const { data: { user }, error: authError } = await getUser();

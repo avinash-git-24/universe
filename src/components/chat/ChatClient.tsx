@@ -16,10 +16,27 @@ interface ChatClientProps {
 export function ChatClient({ userId, initialConversations }: ChatClientProps) {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const activeId = searchParams.get("id") || (initialConversations.length > 0 ? initialConversations[0].id : null);
   
-  const [activeConversationId, setActiveConversationId] = useState<string | null>(activeId);
+  const [conversations, setConversations] = useState<ConversationWithDetails[]>(initialConversations);
+  const [activeConversationId, setActiveConversationId] = useState<string | null>(
+    searchParams.get("id") || (initialConversations.length > 0 ? initialConversations[0].id : null)
+  );
   const [onlineUsers, setOnlineUsers] = useState<Set<string>>(new Set());
+
+  // Sync state if server props change
+  useEffect(() => {
+    setConversations(initialConversations);
+  }, [initialConversations]);
+
+  // Sync activeConversationId with URL query params
+  useEffect(() => {
+    const urlId = searchParams.get("id");
+    if (urlId) {
+      setActiveConversationId(urlId);
+    } else if (conversations.length > 0 && !activeConversationId) {
+      setActiveConversationId(conversations[0].id);
+    }
+  }, [searchParams, conversations, activeConversationId]);
 
   useEffect(() => {
     const supabase = createClient();
@@ -47,7 +64,7 @@ export function ChatClient({ userId, initialConversations }: ChatClientProps) {
     };
   }, [userId]);
 
-  const activeConversation = initialConversations.find(c => c.id === activeConversationId);
+  const activeConversation = conversations.find((c) => c.id === activeConversationId);
 
   const handleSelect = (id: string) => {
     setActiveConversationId(id);
@@ -61,7 +78,7 @@ export function ChatClient({ userId, initialConversations }: ChatClientProps) {
       <div className={`w-full md:w-[350px] lg:w-[400px] border-b md:border-b-0 md:border-r border-white/20 shrink-0 flex flex-col ${activeConversationId ? 'hidden md:flex' : 'flex'}`}>
         <ChatList 
           userId={userId} 
-          initialConversations={initialConversations}
+          initialConversations={conversations}
           activeConversationId={activeConversationId}
           onSelectConversation={handleSelect}
           onlineUsers={onlineUsers}
@@ -85,7 +102,7 @@ export function ChatClient({ userId, initialConversations }: ChatClientProps) {
             <ChatWindow 
               userId={userId} 
               conversation={activeConversation} 
-              isOnline={onlineUsers.has(activeConversation.other_participant.id)}
+              isOnline={Boolean(activeConversation.other_participant?.id && onlineUsers.has(activeConversation.other_participant.id))}
             />
           </div>
         ) : (
