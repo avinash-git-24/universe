@@ -135,20 +135,49 @@ export const StudentRequestCard = memo(function StudentRequestCard({ request, on
         </div>
 
         {/* RIGHT COLUMN: Action */}
-        {onClick && (
-          <div className="hidden lg:flex flex-col justify-center shrink-0 w-32 h-[72px]">
-            {request.status === "in_transit" ? (
-              <div className="px-5 py-2.5 rounded-lg bg-transparent border border-blue-500/50 text-blue-400 text-[13px] font-bold hover:bg-blue-500/10 transition-colors cursor-pointer text-center whitespace-nowrap ml-auto w-full">
-                View Details
-              </div>
-            ) : (
-              <div className="w-[42px] h-[42px] rounded-xl bg-[#131b17] border border-[#1c2420] flex items-center justify-center text-white/40 group-hover:text-white group-hover:bg-[#1a241f] group-hover:border-white/10 transition-all ml-auto">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>
-              </div>
-            )}
-          </div>
-        )}
+        <div className="flex flex-col justify-center items-end shrink-0 min-w-32 gap-2">
+          {(() => {
+            const activeAssignment = request.assignments?.find(
+              (a) => a.status === "active" || a.status === "completed"
+            );
+            const runner = activeAssignment?.runner;
+
+            if (runner) {
+              return (
+                <div className="flex items-center gap-2">
+                  <a
+                    href={`/dashboard/chat?requestId=${request.id}&startWithUserId=${runner.id}`}
+                    onClick={(e) => e.stopPropagation()}
+                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-xs shadow-lg shadow-emerald-950/40 transition-all cursor-pointer z-10"
+                  >
+                    💬 Message Runner
+                  </a>
+                  {onClick && (
+                    <div className="w-[36px] h-[36px] rounded-xl bg-[#131b17] border border-[#1c2420] flex items-center justify-center text-white/40 group-hover:text-white group-hover:bg-[#1a241f] group-hover:border-white/10 transition-all">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                    </div>
+                  )}
+                </div>
+              );
+            }
+
+            if (onClick) {
+              return request.status === "in_transit" ? (
+                <div className="px-5 py-2.5 rounded-lg bg-transparent border border-blue-500/50 text-blue-400 text-[13px] font-bold hover:bg-blue-500/10 transition-colors cursor-pointer text-center whitespace-nowrap ml-auto w-full">
+                  View Details
+                </div>
+              ) : (
+                <div className="w-[42px] h-[42px] rounded-xl bg-[#131b17] border border-[#1c2420] flex items-center justify-center text-white/40 group-hover:text-white group-hover:bg-[#1a241f] group-hover:border-white/10 transition-all ml-auto">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                </div>
+              );
+            }
+
+            return null;
+          })()}
+        </div>
       </div>
     </Card>
   );
 });
+

@@ -1,8 +1,9 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Search } from "lucide-react";
+import { Search, Zap } from "lucide-react";
 import { ConversationWithDetails } from "@/lib/database/chat";
+import type { ActiveDeliveryContact } from "@/components/chat/ChatClient";
 import { format } from "date-fns";
 
 interface ChatListProps {
@@ -11,9 +12,18 @@ interface ChatListProps {
   activeConversationId: string | null;
   onSelectConversation: (id: string) => void;
   onlineUsers: Set<string>;
+  activeDeliveries?: ActiveDeliveryContact[];
+  onStartDeliveryChat?: (otherUserId: string, requestId: string) => void;
 }
 
-export function ChatList({ initialConversations, activeConversationId, onSelectConversation, onlineUsers }: ChatListProps) {
+export function ChatList({
+  initialConversations,
+  activeConversationId,
+  onSelectConversation,
+  onlineUsers,
+  activeDeliveries = [],
+  onStartDeliveryChat,
+}: ChatListProps) {
   const [searchQuery, setSearchQuery] = useState("");
 
   const filteredConversations = useMemo(() => {
@@ -51,9 +61,45 @@ export function ChatList({ initialConversations, activeConversationId, onSelectC
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto z-0 p-2">
+      <div className="flex-1 overflow-y-auto z-0 p-2 space-y-4">
+        {/* Active Deliveries Quick-Launch Section */}
+        {activeDeliveries.length > 0 && !searchQuery.trim() && (
+          <div className="space-y-1.5 pb-2 border-b border-white/10">
+            <div className="px-3 py-1 flex items-center justify-between text-[11px] font-bold tracking-wider text-emerald-400 uppercase">
+              <span className="flex items-center gap-1">
+                <Zap className="w-3 h-3 fill-emerald-400" /> Active Deliveries
+              </span>
+              <span className="text-white/40">{activeDeliveries.length}</span>
+            </div>
+            {activeDeliveries.map((del) => (
+              <button
+                key={del.requestId}
+                onClick={() => onStartDeliveryChat?.(del.otherUser.id, del.requestId)}
+                className="w-full text-left p-2.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 transition-all flex items-center justify-between gap-2 group"
+              >
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-1.5">
+                    <span className="font-semibold text-xs text-white truncate">
+                      {del.otherUser.full_name || "User"}
+                    </span>
+                    <span className="text-[9px] px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-400 font-bold">
+                      {del.isRunner ? "Requester" : "Runner"}
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-white/40 truncate mt-0.5">
+                    {del.pickupLocation} → {del.dropoffLocation}
+                  </p>
+                </div>
+                <span className="shrink-0 text-xs text-emerald-400 font-bold px-2 py-1 rounded-lg bg-emerald-500/20 group-hover:bg-emerald-400 group-hover:text-black transition-all">
+                  Chat
+                </span>
+              </button>
+            ))}
+          </div>
+        )}
+
         {filteredConversations.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-full opacity-50 px-4 text-center">
+          <div className="flex flex-col items-center justify-center h-48 opacity-50 px-4 text-center">
             <p className="text-sm text-white/70">No conversations found</p>
           </div>
         ) : (
