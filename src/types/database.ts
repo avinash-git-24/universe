@@ -666,7 +666,7 @@ export type Database = {
       create_delivery_conversation: {
         Args: {
           p_other_user_id: string;
-          p_request_id: string;
+          p_request_id?: string | null;
         };
         Returns: string;
       };

@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { formatDistanceToNow, format } from "date-fns";
-import { MapPin, Package, Clock, IndianRupee, Eye, CheckCircle2, History, Wallet, Star, LayoutGrid, List, Calendar, ArrowRight, Box, ChevronDown } from "lucide-react";
+import { MapPin, Package, Clock, IndianRupee, Eye, CheckCircle2, History, Wallet, Star, LayoutGrid, List, Calendar, ArrowRight, Box, ChevronDown, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -491,18 +492,24 @@ export function RunnerDashboardClient({
                       </div>
                     </div>
 
-                    <div className="p-5 pt-0 flex gap-3 relative z-10">
+                    <div className="p-5 pt-0 flex flex-wrap gap-2.5 relative z-10">
                       <button
                         onClick={() => setSelectedRequest(req)}
-                        className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl border border-white/10 text-white/70 hover:text-white hover:bg-white/5 transition-colors font-medium text-sm"
+                        className="flex-1 min-w-[85px] flex items-center justify-center gap-1.5 py-2.5 rounded-xl border border-white/10 text-white/70 hover:text-white hover:bg-white/5 transition-colors font-medium text-xs sm:text-sm"
                       >
                         <Eye className="w-4 h-4" /> Details
                       </button>
+                      <Link
+                        href={`/dashboard/chat?requestId=${req.id}&startWithUserId=${req.requester_id}`}
+                        className="flex-1 min-w-[85px] flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/25 transition-colors font-semibold text-xs sm:text-sm shadow-[0_0_12px_rgba(16,185,129,0.15)]"
+                      >
+                        <MessageSquare className="w-4 h-4" /> Chat
+                      </Link>
                       {action && (
                         <button
                           onClick={() => handleStatusUpdate(req.id, action.nextStatus)}
                           disabled={isUpdatingStatus === req.id}
-                          className="flex-[1.5] flex items-center justify-center gap-2 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-[#0a0f0d] font-bold text-sm transition-colors disabled:opacity-50"
+                          className="flex-[1.4] min-w-[125px] flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-[#0a0f0d] font-bold text-xs sm:text-sm transition-colors disabled:opacity-50"
                         >
                           {isUpdatingStatus === req.id ? "Updating..." : action.label}
                           <ArrowRight className="w-4 h-4" />
@@ -684,18 +691,30 @@ export function RunnerDashboardClient({
               )}
             </ModalBody>
 
-            <ModalFooter className="flex justify-end gap-2">
-              <Button variant="secondary" onClick={() => setSelectedRequest(null)}>
-                Close
-              </Button>
-              {selectedRequest.status === "pending" && (
-                <Button
-                  onClick={() => handleAccept(selectedRequest.id)}
-                  disabled={isAccepting === selectedRequest.id}
-                >
-                  {isAccepting === selectedRequest.id ? "Accepting..." : "Accept Request"}
+            <ModalFooter className="flex justify-between items-center gap-2">
+              <div>
+                {selectedRequest.status !== "pending" && (
+                  <Link
+                    href={`/dashboard/chat?requestId=${selectedRequest.id}&startWithUserId=${selectedRequest.requester_id}`}
+                    className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/25 transition-colors font-semibold text-sm shadow-[0_0_12px_rgba(16,185,129,0.15)]"
+                  >
+                    <MessageSquare className="w-4 h-4" /> Chat with Student
+                  </Link>
+                )}
+              </div>
+              <div className="flex gap-2">
+                <Button variant="secondary" onClick={() => setSelectedRequest(null)}>
+                  Close
                 </Button>
-              )}
+                {selectedRequest.status === "pending" && (
+                  <Button
+                    onClick={() => handleAccept(selectedRequest.id)}
+                    disabled={isAccepting === selectedRequest.id}
+                  >
+                    {isAccepting === selectedRequest.id ? "Accepting..." : "Accept Request"}
+                  </Button>
+                )}
+              </div>
             </ModalFooter>
           </ModalContent>
         )}

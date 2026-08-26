@@ -25,10 +25,14 @@ export default async function ChatPage({
 
   const { startWithUserId, requestId } = await searchParams;
 
-  if (startWithUserId && requestId && startWithUserId !== user.id) {
+  if (startWithUserId && startWithUserId !== user.id) {
     // Attempt to ensure a conversation exists
-    await getOrCreateConversation(supabase, user.id, startWithUserId, requestId);
-    redirect("/dashboard/chat");
+    const convId = await getOrCreateConversation(supabase, user.id, startWithUserId, requestId || null);
+    if (convId) {
+      redirect(`/dashboard/chat?id=${convId}`);
+    } else {
+      redirect("/dashboard/chat");
+    }
   }
 
   const initialConversations = await getConversations(supabase, user.id);

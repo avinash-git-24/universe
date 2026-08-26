@@ -269,6 +269,24 @@ export async function acceptRequest(
     return false;
   }
 
+  // 3. Automatically initialize the conversation between requester and runner
+  try {
+    const { data: reqData } = await supabase
+      .from("delivery_requests")
+      .select("requester_id")
+      .eq("id", requestId)
+      .single();
+
+    if (reqData?.requester_id && reqData.requester_id !== runnerId) {
+      await supabase.rpc("create_delivery_conversation", {
+        p_other_user_id: reqData.requester_id,
+        p_request_id: requestId,
+      });
+    }
+  } catch (convErr) {
+    console.error("Non-blocking error initializing conversation on accept:", convErr);
+  }
+
   return true;
 }
 

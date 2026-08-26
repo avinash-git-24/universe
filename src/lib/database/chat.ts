@@ -99,17 +99,17 @@ export async function getConversations(
 }
 
 /**
- * Gets or creates a 1-on-1 conversation between two users.
+ * Gets or creates a 1-on-1 conversation between two users for a delivery request.
  */
 export async function getOrCreateConversation(
   supabase: SupabaseClient<Database>,
   userId1: string,
   userId2: string,
-  requestId: string
+  requestId?: string | null
 ): Promise<string | null> {
   const { data, error } = await supabase.rpc("create_delivery_conversation", {
     p_other_user_id: userId2,
-    p_request_id: requestId,
+    p_request_id: requestId && requestId.trim() ? requestId.trim() : null,
   });
 
   if (error || !data) {

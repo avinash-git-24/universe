@@ -1,5 +1,5 @@
 import { format } from "date-fns";
-import { MapPin, Package, User, IndianRupee, FileText } from "lucide-react";
+import { MapPin, Package, User, IndianRupee, FileText, MessageSquare } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { RequestStatusBadge } from "../request/RequestStatusBadge";
 import { RequestTimeline } from "../request/RequestTimeline";
@@ -114,8 +114,8 @@ export function RequestDetails({ request }: RequestDetailsProps) {
                     <p className="text-sm text-muted-foreground">Assigned to this delivery</p>
                     
                     <div className="mt-3">
-                      <a href={`/dashboard/chat?startWithUserId=${runner.id}`} className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-9 px-4 py-2">
-                        Message {runner.full_name?.split(" ")[0] || "Runner"}
+                      <a href={`/dashboard/chat?requestId=${request.id}&startWithUserId=${runner.id}`} className="inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-9 px-4 py-2">
+                        <MessageSquare className="w-4 h-4" /> Message {runner.full_name?.split(" ")[0] || "Runner"}
                       </a>
                     </div>
                   </div>

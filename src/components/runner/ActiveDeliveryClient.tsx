@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { MapPin, Package, IndianRupee, MessageSquare, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
@@ -160,14 +161,19 @@ export function ActiveDeliveryClient({ initialAssignment }: ActiveDeliveryClient
             )}
           </div>
 
-          {/* Dummy Contact Actions for UI feel */}
+          {/* Contact Actions */}
           <div className="flex gap-2 pt-2">
             <Button variant="secondary" className="flex-1">
               <Phone className="w-4 h-4 mr-2" /> Call
             </Button>
-            <Button variant="secondary" className="flex-1">
-              <MessageSquare className="w-4 h-4 mr-2" /> Chat
-            </Button>
+            <Link
+              href={`/dashboard/chat?requestId=${request.id}&startWithUserId=${request.requester_id}`}
+              className="flex-1"
+            >
+              <Button variant="secondary" className="w-full bg-primary/10 border-primary/20 text-primary hover:bg-primary/20">
+                <MessageSquare className="w-4 h-4 mr-2" /> Chat
+              </Button>
+            </Link>
           </div>
         </CardContent>
 
