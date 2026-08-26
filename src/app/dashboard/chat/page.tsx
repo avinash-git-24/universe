@@ -37,8 +37,11 @@ export default async function ChatPage({
 
   const initialConversations = await getConversations(supabase, user.id);
 
-  // Fetch active delivery contacts (for both student requests and runner assignments)
+  // Fetch active delivery contacts and GROUP BY person (not per-request)
   const activeDeliveries: ActiveDeliveryContact[] = [];
+
+  // Helper map: otherUserId -> grouped contact
+  const contactMap = new Map<string, ActiveDeliveryContact>();
 
   try {
     // 1. As Requester (fetch requests with assigned runner)
@@ -59,7 +62,7 @@ export default async function ChatPage({
       .eq("requester_id", user.id)
       .in("status", ["accepted", "picked_up", "in_transit", "delivered"])
       .order("created_at", { ascending: false })
-      .limit(10);
+      .limit(20);
 
     if (requesterRequests) {
       for (const req of requesterRequests) {
@@ -68,16 +71,24 @@ export default async function ChatPage({
           (a) => a.status === "active" || a.status === "completed"
         );
         if (activeAssign?.runner) {
-          activeDeliveries.push({
-            requestId: req.id,
-            otherUser: activeAssign.runner,
-            pickupLocation: req.pickup_location,
-            dropoffLocation: req.dropoff_location,
-            status: req.status,
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            itemsSummary: (req.items as any[])?.map((i) => i.name).join(", ") || "Delivery items",
-            isRunner: false,
-          });
+          const runnerId = activeAssign.runner.id;
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const itemNames = (req.items as any[])?.map((i) => i.name).join(", ") || "Delivery";
+
+          if (!contactMap.has(runnerId)) {
+            contactMap.set(runnerId, {
+              otherUserId: runnerId,
+              otherUser: activeAssign.runner,
+              deliveryCount: 1,
+              latestItemsSummary: itemNames,
+              latestPickup: req.pickup_location,
+              latestDropoff: req.dropoff_location,
+              isRunner: false,
+            });
+          } else {
+            const existing = contactMap.get(runnerId)!;
+            existing.deliveryCount += 1;
+          }
         }
       }
     }
@@ -100,29 +111,40 @@ export default async function ChatPage({
       .eq("runner_id", user.id)
       .in("status", ["active", "completed"])
       .order("assigned_at", { ascending: false })
-      .limit(10);
+      .limit(20);
 
     if (runnerAssignments) {
       for (const a of runnerAssignments) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const req = (a as any).request;
         if (req?.requester) {
-          activeDeliveries.push({
-            requestId: req.id,
-            otherUser: req.requester,
-            pickupLocation: req.pickup_location,
-            dropoffLocation: req.dropoff_location,
-            status: req.status,
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            itemsSummary: (req.items as any[])?.map((i) => i.name).join(", ") || "Delivery items",
-            isRunner: true,
-          });
+          const requesterId = req.requester.id;
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const itemNames = (req.items as any[])?.map((i) => i.name).join(", ") || "Delivery";
+
+          if (!contactMap.has(requesterId)) {
+            contactMap.set(requesterId, {
+              otherUserId: requesterId,
+              otherUser: req.requester,
+              deliveryCount: 1,
+              latestItemsSummary: itemNames,
+              latestPickup: req.pickup_location,
+              latestDropoff: req.dropoff_location,
+              isRunner: true,
+            });
+          } else {
+            const existing = contactMap.get(requesterId)!;
+            existing.deliveryCount += 1;
+          }
         }
       }
     }
   } catch (err) {
     console.error("Error fetching active delivery contacts for chat:", err);
   }
+
+  // Convert map to array
+  activeDeliveries.push(...contactMap.values());
 
   return (
     <div className="min-h-[calc(100vh-4rem)] bg-background">

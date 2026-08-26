@@ -13,7 +13,6 @@ interface ChatListProps {
   onSelectConversation: (id: string) => void;
   onlineUsers: Set<string>;
   activeDeliveries?: ActiveDeliveryContact[];
-  onStartDeliveryChat?: (otherUserId: string, requestId: string) => void;
 }
 
 export function ChatList({
@@ -22,7 +21,6 @@ export function ChatList({
   onSelectConversation,
   onlineUsers,
   activeDeliveries = [],
-  onStartDeliveryChat,
 }: ChatListProps) {
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -72,28 +70,33 @@ export function ChatList({
               <span className="text-white/40">{activeDeliveries.length}</span>
             </div>
             {activeDeliveries.map((del) => (
-              <button
-                key={del.requestId}
-                onClick={() => onStartDeliveryChat?.(del.otherUser.id, del.requestId)}
-                className="w-full text-left p-2.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 transition-all flex items-center justify-between gap-2 group"
+              <a
+                key={del.otherUserId}
+                href={`/dashboard/chat?startWithUserId=${del.otherUserId}`}
+                className="w-full text-left p-2.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 transition-all flex items-center justify-between gap-2 group no-underline"
               >
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-1.5">
                     <span className="font-semibold text-xs text-white truncate">
                       {del.otherUser.full_name || "User"}
                     </span>
-                    <span className="text-[9px] px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-400 font-bold">
+                    <span className="text-[9px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-bold">
                       {del.isRunner ? "Requester" : "Runner"}
                     </span>
+                    {del.deliveryCount > 1 && (
+                      <span className="text-[9px] px-1.5 py-0.5 rounded bg-white/10 text-white/50 font-bold">
+                        {del.deliveryCount} orders
+                      </span>
+                    )}
                   </div>
                   <p className="text-[11px] text-white/40 truncate mt-0.5">
-                    {del.pickupLocation} → {del.dropoffLocation}
+                    {del.latestPickup} → {del.latestDropoff}
                   </p>
                 </div>
                 <span className="shrink-0 text-xs text-emerald-400 font-bold px-2 py-1 rounded-lg bg-emerald-500/20 group-hover:bg-emerald-400 group-hover:text-black transition-all">
                   Chat
                 </span>
-              </button>
+              </a>
             ))}
           </div>
         )}

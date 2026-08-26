@@ -129,7 +129,9 @@ export async function getConversations(
 }
 
 /**
- * Gets or creates a 1-on-1 conversation between two users for a delivery request.
+ * Gets or creates a 1-on-1 conversation between two users.
+ * KEY RULE: One conversation per unique user pair. If a conversation already
+ * exists between userId1 and userId2, we return that — regardless of requestId.
  */
 export async function getOrCreateConversation(
   supabase: SupabaseClient<Database>,
@@ -138,9 +140,7 @@ export async function getOrCreateConversation(
   requestId?: string | null
 ): Promise<string | null> {
   try {
-    const trimmedReqId = requestId && requestId.trim() ? requestId.trim() : null;
-
-    // 1. Check if conversation already exists between these 2 users
+    // 1. Find any existing shared conversation between these 2 users
     const { data: myConvs } = await supabase
       .from("conversation_participants")
       .select("conversation_id")
@@ -155,27 +155,15 @@ export async function getOrCreateConversation(
         .in("conversation_id", convIds);
 
       if (otherConvs && otherConvs.length > 0) {
-        const sharedIds = otherConvs.map((c) => c.conversation_id);
-        
-        if (trimmedReqId) {
-          const { data: matchConv } = await supabase
-            .from("conversations")
-            .select("id")
-            .eq("request_id", trimmedReqId)
-            .in("id", sharedIds)
-            .limit(1)
-            .single();
-
-          if (matchConv?.id) {
-            return matchConv.id;
-          }
-        } else {
-          return sharedIds[0];
-        }
+        // Return the first shared conversation (one chat per person pair)
+        return otherConvs[0].conversation_id;
       }
     }
 
-    // 2. Try RPC create_delivery_conversation
+    // 2. No existing conversation — create one
+    const trimmedReqId = requestId && requestId.trim() ? requestId.trim() : null;
+
+    // Try RPC first (handles RLS via SECURITY DEFINER)
     try {
       const { data: rpcConvId, error: rpcError } = await supabase.rpc("create_delivery_conversation", {
         p_other_user_id: userId2,
@@ -186,10 +174,10 @@ export async function getOrCreateConversation(
         return rpcConvId;
       }
     } catch {
-      // Ignore and proceed to fallback
+      // RPC not available, proceed to fallback
     }
 
-    // 3. Fallback: Direct table insert
+    // Fallback: Direct table insert
     const { data: newConv, error: insertError } = await supabase
       .from("conversations")
       .insert({ request_id: trimmedReqId })
