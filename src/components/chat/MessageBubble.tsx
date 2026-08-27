@@ -26,14 +26,15 @@ export const MessageBubble = memo(function MessageBubble({ message, isMe }: Mess
         >
           {message.image_url && (
             <div 
-              className="relative w-full max-w-[250px] aspect-square rounded-xl overflow-hidden mb-2 cursor-pointer border border-white/10"
+              className={`relative w-[240px] sm:w-[280px] aspect-square rounded-xl overflow-hidden cursor-pointer border border-white/10 ${message.content ? 'mb-2' : ''}`}
               onClick={() => setIsLightboxOpen(true)}
             >
               <Image 
                 src={message.image_url} 
                 alt="Shared image" 
                 fill
-                sizes="(max-width: 768px) 100vw, 250px"
+                unoptimized
+                sizes="(max-width: 768px) 240px, 280px"
                 className="object-cover hover:scale-105 transition-transform duration-300" 
               />
             </div>
@@ -74,6 +75,7 @@ export const MessageBubble = memo(function MessageBubble({ message, isMe }: Mess
               src={message.image_url} 
               alt="Shared image full size" 
               fill
+              unoptimized
               sizes="100vw"
               className="object-contain"
               priority

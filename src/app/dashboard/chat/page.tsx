@@ -25,7 +25,7 @@ export default async function ChatPage({
 
   const { startWithUserId, requestId } = await searchParams;
 
-  if (startWithUserId && startWithUserId !== user.id) {
+  if (startWithUserId) {
     // Attempt to ensure a conversation exists
     const convId = await getOrCreateConversation(supabase, user.id, startWithUserId, requestId || null);
     if (convId) {

@@ -66,8 +66,8 @@ export async function getConversations(
           profile?: Profile | null;
         }>;
 
-        // Find the other participant record
-        const otherRecord = participantList.find((p) => p.profile_id !== userId);
+        // Find the other participant record (or own record if self-conversation)
+        const otherRecord = participantList.find((p) => p.profile_id !== userId) || participantList.find((p) => p.profile_id === userId);
         const myRecord = participantList.find((p) => p.profile_id === userId);
 
         let otherParticipant: Profile | null = otherRecord?.profile || null;
@@ -139,7 +139,13 @@ export async function getOrCreateConversation(
   userId2: string,
   requestId?: string | null
 ): Promise<string | null> {
+  if (!userId1 || !userId2) {
+    return null;
+  }
+
   try {
+    const trimmedReqId = requestId && requestId.trim() ? requestId.trim() : null;
+
     // 1. Find any existing shared conversation between these 2 users
     const { data: myConvs } = await supabase
       .from("conversation_participants")
@@ -148,6 +154,18 @@ export async function getOrCreateConversation(
 
     if (myConvs && myConvs.length > 0) {
       const convIds = myConvs.map((c) => c.conversation_id);
+
+      if (userId1 === userId2) {
+        const existingConvId = convIds[0];
+        if (trimmedReqId) {
+          await supabase
+            .from("conversations")
+            .update({ request_id: trimmedReqId, updated_at: new Date().toISOString() })
+            .eq("id", existingConvId);
+        }
+        return existingConvId;
+      }
+
       const { data: otherConvs } = await supabase
         .from("conversation_participants")
         .select("conversation_id")
@@ -155,14 +173,19 @@ export async function getOrCreateConversation(
         .in("conversation_id", convIds);
 
       if (otherConvs && otherConvs.length > 0) {
-        // Return the first shared conversation (one chat per person pair)
-        return otherConvs[0].conversation_id;
+        const existingConvId = otherConvs[0].conversation_id;
+        // Optionally update the conversation to link to the latest delivery request
+        if (trimmedReqId) {
+          await supabase
+            .from("conversations")
+            .update({ request_id: trimmedReqId, updated_at: new Date().toISOString() })
+            .eq("id", existingConvId);
+        }
+        return existingConvId;
       }
     }
 
     // 2. No existing conversation — create one
-    const trimmedReqId = requestId && requestId.trim() ? requestId.trim() : null;
-
     // Try RPC first (handles RLS via SECURITY DEFINER)
     try {
       const { data: rpcConvId, error: rpcError } = await supabase.rpc("create_delivery_conversation", {
@@ -189,11 +212,14 @@ export async function getOrCreateConversation(
       return null;
     }
 
-    // Insert participants
-    await supabase.from("conversation_participants").insert([
-      { conversation_id: newConv.id, profile_id: userId1 },
-      { conversation_id: newConv.id, profile_id: userId2 },
-    ]);
+    // Insert participants (unique list to avoid duplicate keys)
+    const uniqueParticipants = Array.from(new Set([userId1, userId2]));
+    await supabase.from("conversation_participants").insert(
+      uniqueParticipants.map((pid) => ({
+        conversation_id: newConv.id,
+        profile_id: pid,
+      }))
+    );
 
     return newConv.id;
   } catch (err) {
