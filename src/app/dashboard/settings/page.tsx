@@ -42,7 +42,7 @@ export default async function SettingsPage() {
   }
 
   return (
-    <div style={{ minHeight: "100vh", paddingTop: "2rem", paddingBottom: "3rem", paddingLeft: "2rem", paddingRight: "2rem", position: "relative" }}>
+    <div className="min-h-screen pt-4 sm:pt-8 pb-16 px-3 sm:px-6 relative">
       {/* Floating particles background (lazy-loaded Three.js) */}
       <div className="absolute inset-0 z-0 pointer-events-none opacity-40 fixed">
         <LazySpaceBackground />
@@ -51,20 +51,20 @@ export default async function SettingsPage() {
       <div style={{ maxWidth: "800px", margin: "0 auto", position: "relative", zIndex: 10 }}>
         
         {/* Header */}
-        <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginBottom: "2rem" }}>
+        <div className="flex items-center gap-3 sm:gap-4 mb-6 sm:mb-8">
           <Link href="/dashboard" style={{
             display: "inline-flex", alignItems: "center", justifyContent: "center",
             width: "40px", height: "40px", borderRadius: "50%",
             background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)",
             color: "#A7B8B0", textDecoration: "none", transition: "all 0.2s"
-          }} className="hover:bg-[rgba(255,255,255,0.1)] hover:text-white">
+          }} className="hover:bg-[rgba(255,255,255,0.1)] hover:text-white shrink-0">
             <ArrowLeft size={18} />
           </Link>
           <div>
-            <h1 style={{ color: "#fff", fontWeight: 800, fontSize: "1.8rem", margin: 0, letterSpacing: "-0.02em" }}>
+            <h1 className="text-white font-extrabold text-2xl sm:text-3xl m-0 tracking-tight">
               Settings
             </h1>
-            <p style={{ color: "rgba(255,255,255,0.6)", fontSize: "0.9rem", margin: 0, marginTop: "0.25rem" }}>
+            <p className="text-white/60 text-xs sm:text-sm m-0 mt-1">
               Manage your account, security, and preferences.
             </p>
           </div>

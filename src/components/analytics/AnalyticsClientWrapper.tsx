@@ -210,26 +210,26 @@ export function AnalyticsClientWrapper({ role, initialData }: AnalyticsClientWra
   }, [filteredData, role]);
 
   return (
-    <div className="min-h-screen bg-[#0a0f0d] pt-24 pb-12 px-4 selection:bg-emerald-500/30">
+    <div className="min-h-screen bg-[#0a0f0d] pt-4 sm:pt-8 pb-12 px-3 sm:px-6 selection:bg-emerald-500/30">
       <div className="max-w-6xl mx-auto space-y-6">
         
         {/* Page Header & Filters */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 sm:gap-6">
           <div>
-            <h1 className="text-3xl font-extrabold tracking-tight text-white">Analytics & Reports</h1>
-            <p className="text-white/50 mt-1 text-sm font-medium">
+            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">Analytics & Reports</h1>
+            <p className="text-white/50 mt-1 text-xs sm:text-sm font-medium">
               Track your {role === "student" ? "spending, requests," : "earnings, deliveries,"} and activity.
             </p>
           </div>
           
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full md:w-auto">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 w-full md:w-auto">
             {/* Time Range Filter (Pill style matching reference) */}
             <div className="flex items-center bg-[#131b17] rounded-full border border-white/5 overflow-hidden w-full sm:w-auto">
               {[7, 30, 90].map((days) => (
                 <button
                   key={days}
                   onClick={() => setTimeRange(days as TimeRange)}
-                  className={`flex-1 sm:flex-none px-5 py-2 text-xs font-medium transition-all ${
+                  className={`flex-1 sm:flex-none px-4 sm:px-5 py-2 text-xs font-medium transition-all ${
                     timeRange === days 
                     ? "bg-[#10b981] text-[#0a0f0d] font-bold" 
                     : "text-white/50 hover:text-white hover:bg-white/5"
@@ -248,7 +248,7 @@ export function AnalyticsClientWrapper({ role, initialData }: AnalyticsClientWra
         </div>
         
         {/* Summary Cards Row */}
-        <div className="grid gap-5 md:grid-cols-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-5">
           <StatCard 
             title={role === "student" ? `Total Spent (${timeRange}d)` : `Total Earnings (${timeRange}d)`}
             value={`₹${(role === "student" ? summaryMetrics.totalSpent : summaryMetrics.totalEarned).toFixed(2)}`} 

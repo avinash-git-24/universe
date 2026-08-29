@@ -68,34 +68,24 @@ export function SavedListingsView() {
   }, []);
 
   return (
-    <div style={{ minHeight: "100vh", paddingTop: "2rem", paddingBottom: "4rem", paddingLeft: "2rem", paddingRight: "2rem" }}>
-      <div style={{ maxWidth: "1400px", margin: "0 auto" }}>
+    <div className="min-h-screen pt-4 sm:pt-8 pb-16 px-3 sm:px-6 lg:px-8">
+      <div className="max-w-[1400px] mx-auto">
         {/* Header */}
-        <div style={{ marginBottom: "2rem" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "1rem" }}>
+        <div className="mb-6 sm:mb-8">
+          <div className="flex items-center gap-2 mb-3">
             <Link
               href="/dashboard/marketplace"
-              style={{
-                display: "inline-flex", alignItems: "center", gap: "0.5rem",
-                color: "rgba(167,184,176,0.7)", fontSize: "0.875rem", fontWeight: 500, textDecoration: "none",
-                transition: "color 0.2s ease"
-              }}
-              className="hover:text-white"
+              className="inline-flex items-center gap-2 text-[#A7B8B0]/70 hover:text-white text-xs sm:text-sm font-medium no-underline transition-colors"
             >
               <ArrowLeft size={16} />
               Back to Marketplace
             </Link>
           </div>
-          <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-            <div style={{
-              width: "40px", height: "40px", borderRadius: "12px",
-              background: "rgba(239, 68, 68, 0.15)",
-              border: "1px solid rgba(239, 68, 68, 0.3)",
-              display: "flex", alignItems: "center", justifyContent: "center"
-            }}>
-              <Heart size={20} color="#ef4444" />
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-red-500/15 border border-red-500/30 flex items-center justify-center shrink-0">
+              <Heart size={20} className="text-red-500" />
             </div>
-            <h1 style={{ color: "#fff", fontSize: "2rem", fontWeight: 800, margin: 0, letterSpacing: "-0.03em" }}>
+            <h1 className="text-white text-2xl sm:text-3xl lg:text-4xl font-extrabold m-0 tracking-tight">
               Saved Listings
             </h1>
           </div>
@@ -105,36 +95,36 @@ export function SavedListingsView() {
         {isLoading ? (
           <ResaleSkeleton count={4} />
         ) : error ? (
-          <div style={{ textAlign: "center", padding: "4rem 1rem", background: "rgba(239,68,68,0.05)", borderRadius: "16px", border: "1px solid rgba(239,68,68,0.1)" }}>
-            <p style={{ color: "#ef4444", fontWeight: 600 }}>{error}</p>
+          <div className="text-center py-12 px-4 bg-red-500/5 rounded-2xl border border-red-500/10">
+            <p className="text-red-400 font-semibold">{error}</p>
             <button
               onClick={() => {
                 startTransition(() => {
                   router.refresh();
                 });
               }}
-              style={{ marginTop: "1rem", padding: "0.5rem 1.5rem", background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.2)", borderRadius: "8px", color: "#f87171", cursor: "pointer" }}
+              className="mt-4 px-6 py-2 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 cursor-pointer hover:bg-red-500/20 transition-colors"
             >
               Try Again
             </button>
           </div>
         ) : listings.length === 0 ? (
-          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "6rem 2rem", background: "rgba(10,15,12,0.4)", borderRadius: "24px", border: "1px dashed rgba(102,255,178,0.15)", textAlign: "center" }}>
-            <div style={{ width: "64px", height: "64px", borderRadius: "16px", background: "rgba(167,184,176,0.08)", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: "1.5rem" }}>
-              <PackageX size={32} color="rgba(167,184,176,0.4)" />
+          <div className="flex flex-col items-center justify-center py-16 sm:py-24 px-4 sm:px-8 bg-[#0A0F0C]/40 rounded-3xl border border-dashed border-[#66FFB2]/15 text-center">
+            <div className="w-16 h-16 rounded-2xl bg-[#A7B8B0]/10 flex items-center justify-center mb-6">
+              <PackageX size={32} className="text-[#A7B8B0]/40" />
             </div>
-            <h3 style={{ color: "#fff", fontSize: "1.25rem", fontWeight: 700, margin: "0 0 0.5rem 0" }}>No saved listings</h3>
-            <p style={{ color: "rgba(167,184,176,0.7)", fontSize: "0.95rem", maxWidth: "400px", margin: "0 0 2rem 0", lineHeight: 1.5 }}>
+            <h3 className="text-white text-xl sm:text-2xl font-bold m-0 mb-2">No saved listings</h3>
+            <p className="text-[#A7B8B0]/70 text-sm sm:text-base max-w-[400px] m-0 mb-8 leading-relaxed">
               You haven&apos;t saved any active listings yet. Browse the marketplace and tap the heart icon to save items for later.
             </p>
-            <Link href="/dashboard/marketplace" style={{ textDecoration: "none" }}>
-              <button style={{ padding: "0.75rem 2rem", background: "linear-gradient(135deg, #00C853 0%, #00E676 100%)", border: "none", borderRadius: "12px", color: "#050A07", fontSize: "0.9rem", fontWeight: 700, cursor: "pointer", boxShadow: "0 4px 20px rgba(0,230,118,0.2)" }}>
+            <Link href="/dashboard/marketplace" className="no-underline">
+              <button className="px-8 py-3 bg-[#00E676] hover:bg-[#00E676]/90 border-none rounded-xl text-[#050A07] text-sm font-extrabold cursor-pointer shadow-[0_4px_20px_rgba(0,230,118,0.2)] transition-all">
                 Browse Marketplace
               </button>
             </Link>
           </div>
         ) : (
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: "1.25rem" }}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5">
             {listings.map((listing) => (
               <ResaleListingCard
                 key={listing.id}

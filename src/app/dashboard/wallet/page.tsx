@@ -33,14 +33,14 @@ export default async function WalletPage() {
   const transactions = wallet ? await getTransactions(supabase, wallet.id) : [];
 
   return (
-    <div className="min-h-screen bg-[#080b09] text-white pt-24 pb-12 px-4 selection:bg-emerald-500/30">
-      <div className="max-w-4xl mx-auto space-y-8 relative z-10">
+    <div className="min-h-screen bg-[#080b09] text-white pt-4 sm:pt-8 pb-12 px-3 sm:px-6 selection:bg-emerald-500/30">
+      <div className="max-w-4xl mx-auto space-y-6 sm:space-y-8 relative z-10">
         <div>
-          <h1 className="text-4xl font-extrabold tracking-tight text-white flex items-center gap-2">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-white flex items-center gap-2">
             Wallet
-            <span className="text-[#00E676] text-3xl">✦</span>
+            <span className="text-[#00E676] text-2xl sm:text-3xl">✦</span>
           </h1>
-          <p className="text-white/60 mt-1 text-base">
+          <p className="text-white/60 mt-1 text-sm sm:text-base">
             {profile.role === "runner" 
               ? "Track your earnings and withdraw funds." 
               : "Manage your funds for delivery requests."}

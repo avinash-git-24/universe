@@ -171,7 +171,7 @@ async function ListingContent({ id }: { id: string }) {
 
   return (
     <div className="min-h-[calc(100vh-4rem)] bg-background">
-      <div className="p-4 md:p-8 pt-6 md:pt-12">
+      <div className="pt-4 sm:pt-8 pb-16 px-3 sm:px-6 lg:px-8">
         <ResaleListingDetail 
           listing={listing} 
           signedUrls={signedUrls} 

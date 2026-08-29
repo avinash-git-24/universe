@@ -12,18 +12,10 @@ type Profile = Database["public"]["Tables"]["profiles"]["Row"];
 type UserSettings = Database["public"]["Tables"]["user_settings"]["Row"];
 
 const SectionCard = ({ title, icon, children }: { title: string, icon: React.ReactNode, children: React.ReactNode }) => (
-  <div style={{
-    background: "rgba(10,15,12,0.6)",
-    borderRadius: "20px",
-    padding: "2rem",
-    border: "1px solid rgba(102,255,178,0.1)",
-    backdropFilter: "blur(20px)",
-    boxShadow: "0 8px 32px rgba(0,0,0,0.3)",
-    marginBottom: "1.5rem"
-  }}>
-    <div className="flex items-center gap-3 mb-6 border-b border-[rgba(255,255,255,0.05)] pb-4">
-      <div style={{ color: "#00E676" }}>{icon}</div>
-      <h2 style={{ color: "#fff", fontWeight: 700, fontSize: "1.2rem", margin: 0 }}>{title}</h2>
+  <div className="bg-[#0A0F0C]/60 rounded-2xl p-4 sm:p-7 border border-[#66FFB2]/10 backdrop-blur-xl shadow-2xl mb-6">
+    <div className="flex items-center gap-3 mb-5 border-b border-white/5 pb-3 sm:pb-4">
+      <div className="text-[#00E676]">{icon}</div>
+      <h2 className="text-white font-bold text-base sm:text-lg m-0">{title}</h2>
     </div>
     {children}
   </div>

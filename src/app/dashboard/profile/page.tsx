@@ -24,7 +24,7 @@ export default async function ProfilePage() {
   const { data: profile } = await getProfile(user.id);
 
   return (
-    <div style={{ minHeight: "100vh", paddingTop: "2rem", paddingBottom: "3rem", paddingLeft: "2rem", paddingRight: "2rem", position: "relative" }}>
+    <div className="min-h-screen pt-4 sm:pt-8 pb-16 px-3 sm:px-6 relative">
       {/* Global override ONLY for Profile page to make sidebar transparent so video shows behind it */}
       <style>{`
         aside { background: transparent !important; border-right-color: rgba(255,255,255,0.05) !important; }
@@ -47,21 +47,21 @@ export default async function ProfilePage() {
       <div style={{ maxWidth: "700px", margin: "0 auto", position: "relative", zIndex: 10 }}>
 
         {/* Header */}
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "2rem" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+        <div className="flex items-center justify-between gap-3 mb-6 sm:mb-8">
+          <div className="flex items-center gap-3">
             <Link href="/dashboard" style={{
               display: "inline-flex", alignItems: "center", justifyContent: "center",
               width: "40px", height: "40px", borderRadius: "50%",
               background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)",
               color: "#A7B8B0", textDecoration: "none", transition: "all 0.2s"
-            }} className="hover:bg-[rgba(255,255,255,0.1)] hover:text-white">
+            }} className="hover:bg-[rgba(255,255,255,0.1)] hover:text-white shrink-0">
               <ArrowLeft size={18} />
             </Link>
-            <h1 style={{ color: "#fff", fontWeight: 800, fontSize: "1.8rem", margin: 0, letterSpacing: "-0.02em" }}>
+            <h1 className="text-white font-extrabold text-2xl sm:text-3xl m-0 tracking-tight">
               Edit Profile
             </h1>
           </div>
-          <div style={{ background: "rgba(0,0,0,0.5)", padding: "0.5rem 1rem", borderRadius: "999px", border: "1px solid rgba(255,255,255,0.1)" }}>
+          <div className="bg-black/50 px-3 sm:px-4 py-1.5 rounded-full border border-white/10 shrink-0">
             <UserRatingBadge userId={user.id} />
           </div>
         </div>

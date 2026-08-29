@@ -174,22 +174,12 @@ export function ProfileForm({
   const initial = fullName ? fullName.charAt(0).toUpperCase() : email.charAt(0).toUpperCase();
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-      <div style={{
-        background: "rgba(10,15,12,0.6)",
-        borderRadius: "16px",
-        padding: "1.5rem",
-        border: "1px solid rgba(102,255,178,0.1)",
-        backdropFilter: "blur(20px)",
-        boxShadow: "0 8px 32px rgba(0,0,0,0.3)",
-        width: "100%",
-        maxWidth: "640px",
-        marginBottom: "1rem"
-      }}>
+    <div className="flex flex-col items-center w-full">
+      <div className="bg-[#0A0F0C]/60 border border-[#66FFB2]/10 rounded-2xl p-4 sm:p-7 backdrop-blur-xl shadow-2xl w-full max-w-[640px] mb-4">
         {/* Photo Section */}
-        <div style={{ display: "flex", gap: "1.25rem", alignItems: "center", marginBottom: "1.5rem" }}>
+        <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 items-center sm:items-start mb-6">
           
-          <div style={{ position: "relative" }}>
+          <div className="relative shrink-0">
             {/* Avatar Container */}
             <div style={{
               width: "96px", height: "96px", borderRadius: "50%",
@@ -232,13 +222,13 @@ export function ProfileForm({
             </button>
           </div>
 
-          <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}>
-            <h3 style={{ color: "#fff", fontWeight: 700, fontSize: "1rem", margin: 0 }}>Profile Photo</h3>
-            <p style={{ color: "rgba(255,255,255,0.5)", fontSize: "0.8rem", margin: 0, marginBottom: "0.25rem" }}>
+          <div className="flex flex-col items-center sm:items-start text-center sm:text-left gap-1 w-full">
+            <h3 className="text-white font-bold text-base m-0">Profile Photo</h3>
+            <p className="text-white/50 text-xs m-0 mb-2">
               Upload a clear photo so others can recognize you.
             </p>
             
-            <div style={{ display: "flex", gap: "0.75rem", alignItems: "center" }}>
+            <div className="flex flex-wrap justify-center sm:justify-start gap-2.5 w-full">
               <input 
                 type="file" 
                 ref={fileInputRef} 
@@ -251,18 +241,9 @@ export function ProfileForm({
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
                 disabled={uploading || loading}
-                style={{
-                  display: "flex", alignItems: "center", gap: "0.5rem",
-                  background: "transparent", color: "#00E676",
-                  border: "1px solid rgba(0,230,118,0.3)", borderRadius: "8px",
-                  padding: "0.6rem 1.25rem", fontSize: "0.85rem", fontWeight: 600,
-                  cursor: (uploading || loading) ? "not-allowed" : "pointer",
-                  opacity: (uploading || loading) ? 0.5 : 1,
-                  transition: "all 0.2s"
-                }}
-                className="hover:bg-[rgba(0,230,118,0.1)]"
+                className="flex items-center gap-2 bg-transparent text-[#00E676] border border-[#00E676]/30 rounded-xl px-4 py-2 text-xs sm:text-sm font-semibold cursor-pointer hover:bg-[#00E676]/10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <Upload size={16} />
+                <Upload size={15} />
                 {uploading ? "Uploading..." : "Upload Photo"}
               </button>
               
@@ -270,22 +251,13 @@ export function ProfileForm({
                 type="button"
                 onClick={handleRemovePhoto}
                 disabled={!avatarUrl || uploading || loading}
-                style={{
-                  display: "flex", alignItems: "center", gap: "0.5rem",
-                  background: "transparent", color: "#EF4444",
-                  border: "1px solid rgba(239,68,68,0.3)", borderRadius: "8px",
-                  padding: "0.6rem 1.25rem", fontSize: "0.85rem", fontWeight: 600,
-                  cursor: (!avatarUrl || uploading || loading) ? "not-allowed" : "pointer",
-                  opacity: (!avatarUrl || uploading || loading) ? 0.5 : 1,
-                  transition: "all 0.2s"
-                }}
-                className="hover:bg-[rgba(239,68,68,0.1)]"
+                className="flex items-center gap-2 bg-transparent text-red-400 border border-red-500/30 rounded-xl px-4 py-2 text-xs sm:text-sm font-semibold cursor-pointer hover:bg-red-500/10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <Trash2 size={16} />
+                <Trash2 size={15} />
                 Remove Photo
               </button>
             </div>
-            <p style={{ color: "rgba(255,255,255,0.3)", fontSize: "0.75rem", margin: 0, marginTop: "0.25rem" }}>
+            <p className="text-white/30 text-[11px] m-0 mt-1.5">
               JPG, PNG or WebP. Max size 2MB.
             </p>
           </div>

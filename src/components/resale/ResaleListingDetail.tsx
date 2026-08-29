@@ -96,7 +96,7 @@ export function ResaleListingDetail({
         </Link>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] gap-8 lg:gap-16">
+      <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] gap-6 lg:gap-14">
         {/* Left Column: Gallery */}
         <div className="w-full">
           <ResaleImageGallery 
@@ -109,35 +109,35 @@ export function ResaleListingDetail({
         {/* Right Column: Info & Actions */}
         <div className="flex flex-col">
           {/* Header & Price */}
-          <div className="mb-8">
-            <div className="flex items-center gap-3 mb-4">
+          <div className="mb-6 sm:mb-8">
+            <div className="flex items-center gap-3 mb-3">
               {getStatusBadge()}
-              <span className="text-white/40 text-sm">
+              <span className="text-white/40 text-xs sm:text-sm">
                 Posted {new Date(listing.created_at).toLocaleDateString("en-IN", { month: "short", day: "numeric" })}
               </span>
             </div>
-            <div className="flex items-start justify-between gap-4 mb-4">
-              <h1 className="text-3xl md:text-4xl font-extrabold text-white leading-tight">
+            <div className="flex items-start justify-between gap-3 mb-3">
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white leading-tight">
                 {listing.title}
               </h1>
               {!isOwner && isAvailable && (
-                <div className="shrink-0 mt-2">
-                  <FavoriteButton listingId={listing.id} initialIsFavorited={isFavorited} size={24} />
+                <div className="shrink-0 mt-1">
+                  <FavoriteButton listingId={listing.id} initialIsFavorited={isFavorited} size={22} />
                 </div>
               )}
             </div>
             
-            <div className="flex items-end gap-4 mb-2">
-              <span className="text-4xl font-black text-[#00E676]">{formatPrice(listing.price)}</span>
+            <div className="flex flex-wrap items-baseline gap-3 mb-2">
+              <span className="text-3xl sm:text-4xl font-black text-[#00E676]">{formatPrice(listing.price)}</span>
               {listing.original_price && listing.original_price > listing.price && (
-                <span className="text-xl text-[#A7B8B0] line-through mb-1">
+                <span className="text-lg sm:text-xl text-[#A7B8B0] line-through">
                   {formatPrice(listing.original_price)}
                 </span>
               )}
             </div>
             
             {listing.original_price && listing.original_price > listing.price && (
-              <p className="text-sm font-medium text-[#00E676]/80">
+              <p className="text-xs sm:text-sm font-medium text-[#00E676]/80">
                 You save {formatPrice(listing.original_price - listing.price)}!
               </p>
             )}

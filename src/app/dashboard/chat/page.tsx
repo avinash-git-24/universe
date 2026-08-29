@@ -148,10 +148,10 @@ export default async function ChatPage({
 
   return (
     <div className="min-h-[calc(100vh-4rem)] bg-background">
-      <div className="max-w-[1400px] mx-auto p-4 md:p-8 h-full flex flex-col pt-12 md:pt-24 space-y-6">
+      <div className="max-w-[1400px] mx-auto pt-4 sm:pt-8 pb-12 px-3 sm:px-6 h-full flex flex-col space-y-4 sm:space-y-6">
         <div>
-          <h1 className="text-3xl font-extrabold tracking-tight text-white">Messages</h1>
-          <p className="text-white/50 mt-1">Chat in real-time about your deliveries.</p>
+          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">Messages</h1>
+          <p className="text-white/50 text-xs sm:text-sm mt-1">Chat in real-time about your deliveries.</p>
         </div>
         
         <ChatClient

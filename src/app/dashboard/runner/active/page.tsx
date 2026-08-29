@@ -20,7 +20,7 @@ export default async function ActiveDeliveryPage() {
   }
 
   return (
-    <div className="min-h-screen bg-secondary/30 pt-24 pb-12 px-4">
+    <div className="min-h-screen bg-[#080b09] text-white pt-4 sm:pt-8 pb-12 px-3 sm:px-6">
       <ActiveDeliveryClient initialAssignment={activeAssignment} />
     </div>
   );

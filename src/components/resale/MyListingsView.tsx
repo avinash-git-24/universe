@@ -170,29 +170,29 @@ export function MyListingsView() {
     !data.isLoading;
 
   return (
-    <div style={{ minHeight: "100vh", paddingTop: "2rem", paddingBottom: "4rem", paddingLeft: "2rem", paddingRight: "2rem" }}>
-      <div style={{ maxWidth: "1400px", margin: "0 auto" }}>
+    <div className="min-h-screen pt-4 sm:pt-8 pb-16 px-3 sm:px-6 lg:px-8">
+      <div className="max-w-[1400px] mx-auto">
         {/* Header */}
-        <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", alignItems: "flex-end", gap: "1rem", marginBottom: "2rem" }}>
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-6 sm:mb-8">
           <div>
-            <h1 style={{ color: "#fff", fontWeight: 800, fontSize: "2.2rem", margin: 0, letterSpacing: "-0.03em" }}>
+            <h1 className="text-white font-extrabold text-2xl sm:text-3xl lg:text-4xl m-0 tracking-tight">
               My Inventory
             </h1>
-            <p style={{ color: "rgba(167,184,176,0.8)", fontSize: "1rem", marginTop: "0.25rem" }}>
+            <p className="text-[#A7B8B0]/80 text-xs sm:text-sm mt-1 mb-0">
               Manage your active, reserved, and sold listings.
             </p>
           </div>
-          <div style={{ display: "flex", gap: "0.5rem" }}>
+          <div className="flex flex-wrap gap-2.5 w-full sm:w-auto">
             <button
               onClick={() => router.push("/dashboard/marketplace/sell")}
-              className="flex items-center gap-2 px-4 py-2 bg-[#00E676] hover:bg-[#00E676]/90 text-black font-bold rounded-xl transition-all shadow-[0_0_15px_rgba(0,230,118,0.3)] hover:shadow-[0_0_25px_rgba(0,230,118,0.5)]"
+              className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2.5 bg-[#00E676] hover:bg-[#00E676]/90 text-black font-bold text-xs sm:text-sm rounded-xl transition-all shadow-[0_0_15px_rgba(0,230,118,0.3)] hover:shadow-[0_0_25px_rgba(0,230,118,0.5)] cursor-pointer"
             >
-              <Package size={18} />
+              <Package size={16} />
               Post New Item
             </button>
             <button
               onClick={() => router.push("/dashboard/marketplace")}
-              className="flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/10 hover:bg-white/10 text-white font-medium rounded-xl transition-all"
+              className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2.5 bg-white/5 border border-white/10 hover:bg-white/10 text-white font-medium text-xs sm:text-sm rounded-xl transition-all cursor-pointer"
             >
               Back to Market
             </button>
@@ -200,16 +200,16 @@ export function MyListingsView() {
         </div>
 
         {/* Tabs */}
-        <div style={{ display: "flex", gap: "0.5rem", marginBottom: "2rem", overflowX: "auto", paddingBottom: "0.5rem" }}>
+        <div className="flex gap-2 mb-6 sm:mb-8 overflow-x-auto pb-2 scrollbar-none">
           {(["all", "active", "reserved", "sold", "removed"] as StatusTab[]).map((tab) => (
             <button
               key={tab}
               onClick={() => setTab(tab)}
               style={{
-                padding: "0.5rem 1rem",
+                padding: "0.45rem 0.9rem",
                 borderRadius: "10px",
                 fontWeight: 600,
-                fontSize: "0.85rem",
+                fontSize: "0.8rem",
                 textTransform: "capitalize",
                 whiteSpace: "nowrap",
                 transition: "all 0.2s ease",
@@ -217,7 +217,7 @@ export function MyListingsView() {
                 color: currentTab === tab ? "#00E676" : "rgba(167,184,176,0.7)",
                 border: `1px solid ${currentTab === tab ? "rgba(0,230,118,0.3)" : "rgba(255,255,255,0.05)"}`,
               }}
-              className="hover:bg-white/5 hover:text-white"
+              className="hover:bg-white/5 hover:text-white cursor-pointer"
             >
               {tab}
             </button>
@@ -237,21 +237,21 @@ export function MyListingsView() {
             onClearFilters={currentTab !== "all" ? () => setTab("all") : undefined}
           />
         ) : (
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: "1.5rem" }}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
             {displayListings.map((listing) => (
               <div key={listing.id} className="relative group">
                 <ResaleListingCard
                   listing={listing}
                   primaryImageUrl={data.imageUrls[listing.id] ?? null}
                 />
-                {/* Overlay edit button that shows on hover */}
-                <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                {/* Overlay edit button that shows on hover and touch */}
+                <div className="absolute top-2 right-2 opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity z-10">
                   <button
                     onClick={(e) => {
                       e.preventDefault();
                       router.push(`/dashboard/marketplace/${listing.id}/edit`);
                     }}
-                    className="p-2 bg-black/70 hover:bg-black text-white rounded-full border border-white/20 backdrop-blur-md shadow-lg transition-all"
+                    className="p-2 bg-black/70 hover:bg-black text-white rounded-full border border-white/20 backdrop-blur-md shadow-lg transition-all cursor-pointer"
                     title="Edit Listing"
                   >
                     <Edit2 size={16} />

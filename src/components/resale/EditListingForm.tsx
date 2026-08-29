@@ -204,182 +204,180 @@ export function EditListingForm({ listing }: EditListingFormProps) {
   }
 
   return (
-    <div style={{ minHeight: "100vh", paddingTop: "2rem", paddingBottom: "4rem", paddingLeft: "1.5rem", paddingRight: "1.5rem" }}>
-      <div style={{ maxWidth: "700px", margin: "0 auto" }}>
+    <div className="min-h-screen pt-4 sm:pt-8 pb-16 px-3 sm:px-6">
+      <div className="max-w-[700px] mx-auto">
         
         {/* Header */}
-        <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginBottom: "2.5rem" }}>
+        <div className="flex items-center gap-3 sm:gap-4 mb-6 sm:mb-8">
           <button onClick={() => router.back()} style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: "40px", height: "40px", borderRadius: "50%", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", color: "#A7B8B0", cursor: "pointer", transition: "all 0.2s" }} className="hover:bg-[rgba(255,255,255,0.1)] hover:text-white" aria-label="Go back">
             <ArrowLeft size={18} />
           </button>
-          <h1 style={{ color: "#fff", fontWeight: 800, fontSize: "1.8rem", margin: 0, letterSpacing: "-0.02em" }}>Edit Listing</h1>
+          <h1 className="text-white font-extrabold text-2xl sm:text-3xl m-0 tracking-tight">Edit Listing</h1>
         </div>
 
         {errors.submit && (
-          <div style={{ background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.3)", borderRadius: "12px", padding: "1rem", marginBottom: "2rem", display: "flex", gap: "0.75rem", alignItems: "flex-start" }}>
-            <AlertTriangle size={20} color="#ef4444" style={{ flexShrink: 0, marginTop: "2px" }} />
+          <div className="bg-red-500/10 border border-red-500/30 rounded-2xl p-4 sm:p-5 mb-6 flex gap-3 items-start">
+            <AlertTriangle size={20} className="text-red-400 shrink-0 mt-0.5" />
             <div>
-              <h3 style={{ color: "#f87171", margin: "0 0 0.25rem", fontSize: "0.95rem", fontWeight: 600 }}>Update Failed</h3>
-              <p style={{ color: "rgba(255,255,255,0.8)", margin: 0, fontSize: "0.9rem", lineHeight: 1.5 }}>{errors.submit}</p>
+              <h3 className="text-red-400 m-0 mb-1 text-sm font-semibold">Update Failed</h3>
+              <p className="text-white/80 m-0 text-xs sm:text-sm leading-relaxed">{errors.submit}</p>
             </div>
           </div>
         )}
 
         <form onSubmit={handleSubmit} noValidate>
           {/* Note: Image editing is disabled in this phase for simplicity */}
-          <div style={{ background: "rgba(10,15,12,0.6)", border: "1px solid rgba(102,255,178,0.15)", borderRadius: "20px", padding: "2rem", marginBottom: "2rem" }}>
-            <p style={{ margin: "0 0 1rem", color: "rgba(167,184,176,0.8)", fontSize: "0.9rem" }}>
+          <div className="bg-[#0A0F0C]/60 border border-[#66FFB2]/15 rounded-2xl p-4 sm:p-7 mb-6">
+            <p className="m-0 mb-4 text-[#A7B8B0]/80 text-xs sm:text-sm">
               <strong>Note:</strong> Photo editing is currently disabled. To change photos, please create a new listing.
             </p>
             
             {/* Status */}
-            <div style={{ marginBottom: "1.5rem" }}>
-              <label htmlFor="status" style={{ display: "block", color: "#fff", fontWeight: 600, fontSize: "0.95rem", marginBottom: "0.6rem" }}>Status</label>
+            <div className="mb-5">
+              <label htmlFor="status" className="block text-white font-semibold text-sm mb-2">Status</label>
               <select
                 id="status"
                 value={status}
                 onChange={(e) => setStatus(e.target.value)}
-                style={{ width: "100%", padding: "1rem 1.25rem", background: "rgba(0,0,0,0.2)", border: "1px solid rgba(167,184,176,0.2)", borderRadius: "12px", color: "#fff", fontSize: "1rem", outline: "none", appearance: "none" }}
+                style={{ width: "100%", padding: "0.85rem 1rem", background: "rgba(0,0,0,0.2)", border: "1px solid rgba(167,184,176,0.2)", borderRadius: "12px", color: "#fff", fontSize: "0.95rem", outline: "none", appearance: "none" }}
               >
                 {(Object.entries(STATUS_LABELS)).map(([val, label]) => (
                   <option key={val} value={val} style={{ background: "#0f1713", color: "#fff" }}>{label}</option>
                 ))}
               </select>
-              <p style={{ margin: "0.4rem 0 0", color: "rgba(167,184,176,0.6)", fontSize: "0.8rem" }}>
+              <p className="m-0 mt-1.5 text-[#A7B8B0]/60 text-xs">
                 Active can move to Reserved/Sold/Removed. Sold/Removed cannot be moved back.
               </p>
             </div>
 
             {/* Title */}
-            <div style={{ marginBottom: "1.5rem" }}>
-              <label htmlFor="title" style={{ display: "block", color: "#fff", fontWeight: 600, fontSize: "0.95rem", marginBottom: "0.6rem" }}>Title <span style={{ color: "#ef4444" }}>*</span></label>
+            <div className="mb-5">
+              <label htmlFor="title" className="block text-white font-semibold text-sm mb-2">Title <span className="text-red-400">*</span></label>
               <input
                 id="title" type="text"
                 value={title} onChange={(e) => setTitle(e.target.value)}
                 maxLength={MAX_TITLE_LEN}
                 placeholder="e.g. Introduction to Algorithms 3rd Ed."
-                style={{ width: "100%", padding: "1rem 1.25rem", background: "rgba(0,0,0,0.2)", border: `1px solid ${errors.title ? "rgba(239,68,68,0.5)" : "rgba(167,184,176,0.2)"}`, borderRadius: "12px", color: "#fff", fontSize: "1rem", outline: "none", transition: "border-color 0.2s" }}
+                style={{ width: "100%", padding: "0.85rem 1rem", background: "rgba(0,0,0,0.2)", border: `1px solid ${errors.title ? "rgba(239,68,68,0.5)" : "rgba(167,184,176,0.2)"}`, borderRadius: "12px", color: "#fff", fontSize: "0.95rem", outline: "none", transition: "border-color 0.2s" }}
               />
-              {errors.title && <p style={{ color: "#ef4444", fontSize: "0.85rem", margin: "0.5rem 0 0" }}>{errors.title}</p>}
+              {errors.title && <p className="text-red-400 text-xs mt-1.5 mb-0">{errors.title}</p>}
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.5rem", marginBottom: "1.5rem" }}>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5 mb-5">
               {/* Category */}
               <div>
-                <label htmlFor="category" style={{ display: "block", color: "#fff", fontWeight: 600, fontSize: "0.95rem", marginBottom: "0.6rem" }}>Category <span style={{ color: "#ef4444" }}>*</span></label>
+                <label htmlFor="category" className="block text-white font-semibold text-sm mb-2">Category <span className="text-red-400">*</span></label>
                 <select
                   id="category"
                   value={category} onChange={(e) => setCategory(e.target.value as ResaleCategory)}
-                  style={{ width: "100%", padding: "1rem 1.25rem", background: "rgba(0,0,0,0.2)", border: `1px solid ${errors.category ? "rgba(239,68,68,0.5)" : "rgba(167,184,176,0.2)"}`, borderRadius: "12px", color: category ? "#fff" : "rgba(167,184,176,0.5)", fontSize: "1rem", outline: "none", appearance: "none" }}
+                  style={{ width: "100%", padding: "0.85rem 1rem", background: "rgba(0,0,0,0.2)", border: `1px solid ${errors.category ? "rgba(239,68,68,0.5)" : "rgba(167,184,176,0.2)"}`, borderRadius: "12px", color: category ? "#fff" : "rgba(167,184,176,0.5)", fontSize: "0.95rem", outline: "none", appearance: "none" }}
                 >
                   <option value="" disabled style={{ background: "#0f1713", color: "rgba(167,184,176,0.5)" }}>Select category</option>
                   {(Object.entries(CATEGORY_LABELS) as [ResaleCategory, string][]).map(([val, label]) => (
                     <option key={val} value={val} style={{ background: "#0f1713", color: "#fff" }}>{label}</option>
                   ))}
                 </select>
-                {errors.category && <p style={{ color: "#ef4444", fontSize: "0.85rem", margin: "0.5rem 0 0" }}>{errors.category}</p>}
+                {errors.category && <p className="text-red-400 text-xs mt-1.5 mb-0">{errors.category}</p>}
               </div>
               
               {/* Condition */}
               <div>
-                <label htmlFor="condition" style={{ display: "block", color: "#fff", fontWeight: 600, fontSize: "0.95rem", marginBottom: "0.6rem" }}>Condition <span style={{ color: "#ef4444" }}>*</span></label>
+                <label htmlFor="condition" className="block text-white font-semibold text-sm mb-2">Condition <span className="text-red-400">*</span></label>
                 <select
                   id="condition"
                   value={condition} onChange={(e) => setCondition(e.target.value as ResaleCondition)}
-                  style={{ width: "100%", padding: "1rem 1.25rem", background: "rgba(0,0,0,0.2)", border: `1px solid ${errors.condition ? "rgba(239,68,68,0.5)" : "rgba(167,184,176,0.2)"}`, borderRadius: "12px", color: condition ? "#fff" : "rgba(167,184,176,0.5)", fontSize: "1rem", outline: "none", appearance: "none" }}
+                  style={{ width: "100%", padding: "0.85rem 1rem", background: "rgba(0,0,0,0.2)", border: `1px solid ${errors.condition ? "rgba(239,68,68,0.5)" : "rgba(167,184,176,0.2)"}`, borderRadius: "12px", color: condition ? "#fff" : "rgba(167,184,176,0.5)", fontSize: "0.95rem", outline: "none", appearance: "none" }}
                 >
                   <option value="" disabled style={{ background: "#0f1713", color: "rgba(167,184,176,0.5)" }}>Select condition</option>
                   {(Object.entries(CONDITION_LABELS) as [ResaleCondition, string][]).map(([val, label]) => (
                     <option key={val} value={val} style={{ background: "#0f1713", color: "#fff" }}>{label}</option>
                   ))}
                 </select>
-                {errors.condition && <p style={{ color: "#ef4444", fontSize: "0.85rem", margin: "0.5rem 0 0" }}>{errors.condition}</p>}
+                {errors.condition && <p className="text-red-400 text-xs mt-1.5 mb-0">{errors.condition}</p>}
               </div>
             </div>
 
             {/* Description */}
-            <div style={{ marginBottom: "1.5rem" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: "0.6rem" }}>
-                <label htmlFor="desc" style={{ display: "block", color: "#fff", fontWeight: 600, fontSize: "0.95rem" }}>Description</label>
-                <span style={{ color: "rgba(167,184,176,0.5)", fontSize: "0.8rem" }}>{description.length} / {MAX_DESC_LEN}</span>
+            <div className="mb-2">
+              <div className="flex justify-between items-baseline mb-2">
+                <label htmlFor="desc" className="block text-white font-semibold text-sm">Description</label>
+                <span className="text-[#A7B8B0]/50 text-xs">{description.length} / {MAX_DESC_LEN}</span>
               </div>
               <textarea
                 id="desc" value={description} onChange={(e) => setDescription(e.target.value)}
                 maxLength={MAX_DESC_LEN}
                 placeholder="Share any additional details, flaws, or features..."
-                style={{ width: "100%", minHeight: "140px", padding: "1rem 1.25rem", background: "rgba(0,0,0,0.2)", border: "1px solid rgba(167,184,176,0.2)", borderRadius: "12px", color: "#fff", fontSize: "1rem", outline: "none", resize: "vertical", fontFamily: "inherit", transition: "border-color 0.2s" }}
+                style={{ width: "100%", minHeight: "130px", padding: "0.85rem 1rem", background: "rgba(0,0,0,0.2)", border: "1px solid rgba(167,184,176,0.2)", borderRadius: "12px", color: "#fff", fontSize: "0.95rem", outline: "none", resize: "vertical", fontFamily: "inherit", transition: "border-color 0.2s" }}
               />
             </div>
           </div>
 
-          <div style={{ background: "rgba(10,15,12,0.6)", border: "1px solid rgba(102,255,178,0.15)", borderRadius: "20px", padding: "2rem", marginBottom: "2.5rem" }}>
-            <h2 style={{ color: "#fff", fontSize: "1.2rem", fontWeight: 700, margin: "0 0 1.5rem" }}>Pricing & Handover</h2>
+          <div className="bg-[#0A0F0C]/60 border border-[#66FFB2]/15 rounded-2xl p-4 sm:p-7 mb-6">
+            <h2 className="text-white text-base sm:text-lg font-bold m-0 mb-4">Pricing & Handover</h2>
             
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.5rem", marginBottom: "1.5rem" }}>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5 mb-5">
               {/* Price */}
               <div>
-                <label htmlFor="price" style={{ display: "block", color: "#fff", fontWeight: 600, fontSize: "0.95rem", marginBottom: "0.6rem" }}>Selling Price (₹) <span style={{ color: "#ef4444" }}>*</span></label>
+                <label htmlFor="price" className="block text-white font-semibold text-sm mb-2">Selling Price (₹) <span className="text-red-400">*</span></label>
                 <div style={{ position: "relative" }}>
-                  <span style={{ position: "absolute", left: "1.25rem", top: "50%", transform: "translateY(-50%)", color: "rgba(167,184,176,0.6)", fontSize: "1rem", pointerEvents: "none" }}>₹</span>
+                  <span style={{ position: "absolute", left: "1rem", top: "50%", transform: "translateY(-50%)", color: "rgba(167,184,176,0.6)", fontSize: "1rem", pointerEvents: "none" }}>₹</span>
                   <input
                     id="price" type="number" min="0" step="1"
                     value={price} onChange={(e) => setPrice(e.target.value)}
                     placeholder="0"
-                    style={{ width: "100%", padding: "1rem 1.25rem 1rem 2.25rem", background: "rgba(0,0,0,0.2)", border: `1px solid ${errors.price ? "rgba(239,68,68,0.5)" : "rgba(167,184,176,0.2)"}`, borderRadius: "12px", color: "#00E676", fontSize: "1.1rem", fontWeight: 700, outline: "none" }}
+                    style={{ width: "100%", padding: "0.85rem 1rem 0.85rem 2rem", background: "rgba(0,0,0,0.2)", border: `1px solid ${errors.price ? "rgba(239,68,68,0.5)" : "rgba(167,184,176,0.2)"}`, borderRadius: "12px", color: "#00E676", fontSize: "1rem", fontWeight: 700, outline: "none" }}
                   />
                 </div>
-                {errors.price && <p style={{ color: "#ef4444", fontSize: "0.85rem", margin: "0.5rem 0 0" }}>{errors.price}</p>}
+                {errors.price && <p className="text-red-400 text-xs mt-1.5 mb-0">{errors.price}</p>}
               </div>
               
               {/* Original Price */}
               <div>
-                <label htmlFor="original_price" style={{ display: "block", color: "#fff", fontWeight: 600, fontSize: "0.95rem", marginBottom: "0.6rem" }}>Original Price (Optional)</label>
+                <label htmlFor="original_price" className="block text-white font-semibold text-sm mb-2">Original Price (Optional)</label>
                 <div style={{ position: "relative" }}>
-                  <span style={{ position: "absolute", left: "1.25rem", top: "50%", transform: "translateY(-50%)", color: "rgba(167,184,176,0.6)", fontSize: "1rem", pointerEvents: "none" }}>₹</span>
+                  <span style={{ position: "absolute", left: "1rem", top: "50%", transform: "translateY(-50%)", color: "rgba(167,184,176,0.6)", fontSize: "1rem", pointerEvents: "none" }}>₹</span>
                   <input
                     id="original_price" type="number" min="0" step="1"
                     value={originalPrice} onChange={(e) => setOriginalPrice(e.target.value)}
                     placeholder="0"
-                    style={{ width: "100%", padding: "1rem 1.25rem 1rem 2.25rem", background: "rgba(0,0,0,0.2)", border: `1px solid ${errors.original_price ? "rgba(239,68,68,0.5)" : "rgba(167,184,176,0.2)"}`, borderRadius: "12px", color: "#fff", fontSize: "1rem", outline: "none" }}
+                    style={{ width: "100%", padding: "0.85rem 1rem 0.85rem 2rem", background: "rgba(0,0,0,0.2)", border: `1px solid ${errors.original_price ? "rgba(239,68,68,0.5)" : "rgba(167,184,176,0.2)"}`, borderRadius: "12px", color: "#fff", fontSize: "1rem", outline: "none" }}
                   />
                 </div>
-                {errors.original_price && <p style={{ color: "#ef4444", fontSize: "0.85rem", margin: "0.5rem 0 0" }}>{errors.original_price}</p>}
+                {errors.original_price && <p className="text-red-400 text-xs mt-1.5 mb-0">{errors.original_price}</p>}
               </div>
             </div>
 
-            <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "2rem" }}>
+            <div className="flex items-center gap-2.5 mb-5">
               <input
                 type="checkbox" id="negotiable" checked={negotiable}
                 onChange={(e) => setNegotiable(e.target.checked)}
                 style={{ width: "18px", height: "18px", cursor: "pointer", accentColor: "#00E676" }}
               />
-              <label htmlFor="negotiable" style={{ color: "#fff", fontSize: "0.95rem", cursor: "pointer" }}>Price is negotiable</label>
+              <label htmlFor="negotiable" className="text-white text-sm cursor-pointer">Price is negotiable</label>
             </div>
 
             <div>
-              <label htmlFor="location" style={{ display: "block", color: "#fff", fontWeight: 600, fontSize: "0.95rem", marginBottom: "0.6rem" }}>Pickup Location (Optional)</label>
+              <label htmlFor="location" className="block text-white font-semibold text-sm mb-2">Pickup Location (Optional)</label>
               <input
                 id="location" type="text" maxLength={MAX_LOCATION_LEN}
                 value={pickupLocation} onChange={(e) => setPickupLocation(e.target.value)}
                 placeholder="e.g. Block C entrance, Library Cafe"
-                style={{ width: "100%", padding: "1rem 1.25rem", background: "rgba(0,0,0,0.2)", border: `1px solid ${errors.pickup_location ? "rgba(239,68,68,0.5)" : "rgba(167,184,176,0.2)"}`, borderRadius: "12px", color: "#fff", fontSize: "1rem", outline: "none" }}
+                style={{ width: "100%", padding: "0.85rem 1rem", background: "rgba(0,0,0,0.2)", border: `1px solid ${errors.pickup_location ? "rgba(239,68,68,0.5)" : "rgba(167,184,176,0.2)"}`, borderRadius: "12px", color: "#fff", fontSize: "0.95rem", outline: "none" }}
               />
-              {errors.pickup_location && <p style={{ color: "#ef4444", fontSize: "0.85rem", margin: "0.5rem 0 0" }}>{errors.pickup_location}</p>}
+              {errors.pickup_location && <p className="text-red-400 text-xs mt-1.5 mb-0">{errors.pickup_location}</p>}
             </div>
           </div>
 
-          <div style={{ display: "flex", gap: "1rem", justifyContent: "flex-end" }}>
+          <div className="flex flex-col-reverse sm:flex-row gap-3 justify-end">
             <button
               type="button" onClick={() => router.back()} disabled={isSubmitting}
-              style={{ padding: "0.9rem 2rem", background: "transparent", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "12px", color: "#fff", fontWeight: 600, fontSize: "1rem", cursor: isSubmitting ? "not-allowed" : "pointer", opacity: isSubmitting ? 0.5 : 1 }}
-              className="hover:bg-white/5 transition-colors"
+              className="w-full sm:w-auto px-6 py-3 bg-transparent border border-white/10 rounded-xl text-white font-semibold text-sm hover:bg-white/5 transition-colors cursor-pointer disabled:opacity-50"
             >
               Cancel
             </button>
             <button
               type="submit" disabled={isSubmitting}
-              style={{ display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.9rem 2.5rem", background: "linear-gradient(135deg, #00C853 0%, #00E676 100%)", border: "none", borderRadius: "12px", color: "#050A07", fontWeight: 800, fontSize: "1rem", cursor: isSubmitting ? "not-allowed" : "pointer", opacity: isSubmitting ? 0.8 : 1, boxShadow: "0 4px 20px rgba(0,230,118,0.25)" }}
-              className="hover:scale-105 hover:shadow-[0_6px_28px_rgba(0,230,118,0.35)] transition-all"
+              className="w-full sm:w-auto px-8 py-3 bg-[#00E676] hover:bg-[#00E676]/90 border-none rounded-xl text-black font-extrabold text-sm shadow-[0_4px_20px_rgba(0,230,118,0.25)] transition-all cursor-pointer flex items-center justify-center gap-2 disabled:opacity-50"
             >
               {isSubmitting ? (
                 <><Loader2 size={18} className="animate-spin" /> Saving...</>

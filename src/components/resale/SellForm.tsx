@@ -408,19 +408,13 @@ export function SellForm() {
   }
 
   return (
-    <div style={{ maxWidth: "1100px", margin: "0 auto", padding: "2rem 2rem 5rem" }}>
+    <div className="max-w-[1100px] mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8 pb-20">
 
       {/* ── Back + Header ── */}
-      <div style={{ marginBottom: "2rem" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "1rem" }}>
-          <Link href="/dashboard/marketplace" style={{ textDecoration: "none" }}>
-            <button style={{
-              display: "flex", alignItems: "center", gap: "0.45rem",
-              background: "transparent", border: "none",
-              color: "rgba(167,184,176,0.6)", fontSize: "0.82rem", fontWeight: 600,
-              cursor: "pointer", padding: "0.3rem 0", transition: "color 0.15s ease",
-            }}
-              className="hover:text-[#A7B8B0]"
+      <div className="mb-6 sm:mb-8">
+        <div className="flex items-center gap-2 mb-3">
+          <Link href="/dashboard/marketplace" className="no-underline">
+            <button className="flex items-center gap-1.5 bg-transparent border-none text-[#A7B8B0]/70 hover:text-white text-xs sm:text-sm font-semibold cursor-pointer py-1 transition-colors"
               aria-label="Back to UniVerse Resale"
             >
               <ArrowLeft size={15} />
@@ -429,33 +423,24 @@ export function SellForm() {
           </Link>
         </div>
 
-        <h1 style={{ color: "#fff", fontSize: "1.75rem", fontWeight: 800, margin: "0 0 0.4rem", letterSpacing: "-0.03em" }}>
+        <h1 className="text-white text-2xl sm:text-3xl font-extrabold m-0 mb-1.5 tracking-tight">
           Sell an Item
         </h1>
-        <p style={{ color: "rgba(167,184,176,0.65)", fontSize: "0.9rem", margin: 0 }}>
+        <p className="text-[#A7B8B0]/70 text-xs sm:text-sm m-0">
           Turn things you no longer need into value for another student.
         </p>
       </div>
 
       {/* ── Global submit error ── */}
       {errors.submit && (
-        <div style={{
-          display: "flex", alignItems: "flex-start", gap: "0.75rem",
-          background: "rgba(239,68,68,0.07)", border: "1px solid rgba(239,68,68,0.25)",
-          borderRadius: "14px", padding: "1rem 1.25rem", marginBottom: "1.5rem",
-        }} role="alert">
-          <AlertTriangle size={18} color="#f87171" style={{ flexShrink: 0, marginTop: "1px" }} />
-          <p style={{ color: "#f87171", fontSize: "0.875rem", margin: 0 }}>{errors.submit}</p>
+        <div className="flex items-start gap-3 bg-red-500/10 border border-red-500/30 rounded-2xl p-4 sm:p-5 mb-6" role="alert">
+          <AlertTriangle size={18} className="text-red-400 shrink-0 mt-0.5" />
+          <p className="text-red-400 text-xs sm:text-sm m-0">{errors.submit}</p>
         </div>
       )}
 
       {/* ── Two-column layout ── */}
-      <div style={{
-        display: "grid",
-        gridTemplateColumns: "repeat(auto-fit, minmax(340px, 1fr))",
-        gap: "1.75rem",
-        alignItems: "start",
-      }}>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-7 items-start">
 
         {/* ════════════════════════════════════════════════════════════════════════
             LEFT: Photos
@@ -660,7 +645,7 @@ export function SellForm() {
 
             {/* ── Category ── */}
             <FieldGroup label="Category" htmlFor="sell-category" required error={errors.category}>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "0.4rem" }}>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5 sm:gap-2">
                 {VALID_CATEGORIES.map((cat) => (
                   <button
                     key={cat}
@@ -668,7 +653,7 @@ export function SellForm() {
                     onClick={() => setCategory(cat)}
                     aria-pressed={category === cat}
                     style={{
-                      padding: "0.45rem 0.5rem",
+                      padding: "0.55rem 0.5rem",
                       borderRadius: "9px",
                       border: `1px solid ${category === cat ? "#00E676" : "rgba(102,255,178,0.1)"}`,
                       background: category === cat ? "rgba(0,230,118,0.1)" : "rgba(5,10,7,0.6)",
@@ -729,7 +714,7 @@ export function SellForm() {
             </FieldGroup>
 
             {/* ── Price ── */}
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
               <FieldGroup label="Selling Price (₹)" htmlFor="sell-price" required error={errors.price}>
                 <div style={{ position: "relative" }}>
                   <span style={{ position: "absolute", left: "0.85rem", top: "50%", transform: "translateY(-50%)", color: "rgba(167,184,176,0.5)", fontSize: "0.9rem", pointerEvents: "none" }}>₹</span>
