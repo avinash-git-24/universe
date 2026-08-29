@@ -73,51 +73,39 @@ export default async function DashboardPage() {
   ];
 
   return (
-    <div style={{
-      minHeight: "100vh",
-      paddingTop: "2rem",
-      paddingBottom: "3rem",
-      paddingLeft: "2rem",
-      paddingRight: "2rem",
-      position: "relative",
-    }}>
+    <div className="min-h-screen pt-4 pb-12 px-3 sm:px-6 sm:py-8 lg:p-8 relative">
       {/* Floating particles background (re-using SpaceBackground) */}
       <div className="absolute inset-0 z-0 pointer-events-none opacity-40">
         <LazySpaceBackground />
       </div>
 
-      <div style={{ maxWidth: "1400px", margin: "0 auto", position: "relative", zIndex: 10 }}>
+      <div className="max-w-[1400px] mx-auto relative z-10">
         
         {/* TOP BAR */}
-        <div style={{ display: "flex", justifyContent: "flex-end", gap: "1.25rem", marginBottom: "1rem", alignItems: "center" }}>
+        <div className="flex justify-between sm:justify-end gap-3 sm:gap-5 mb-4 sm:mb-6 items-center">
           {/* Bell */}
-          <div style={{ position: "relative", background: "rgba(10,15,12,0.4)", border: "1px solid rgba(102,255,178,0.1)", padding: "0.65rem", borderRadius: "12px", backdropFilter: "blur(10px)" }}>
+          <div className="relative bg-[#0a0f0c]/40 border border-[#66ffb2]/10 p-2.5 rounded-xl backdrop-blur-md">
             <NotificationBell />
           </div>
           {/* Button */}
-          <Link href="/request/new" style={{ textDecoration: "none" }}>
-            <button style={{ 
-              display: "flex", alignItems: "center", gap: "0.5rem",
-              background: "#00E676", color: "#000", fontWeight: 800, fontSize: "0.85rem",
-              border: "none", borderRadius: "12px", padding: "0.7rem 1.25rem", cursor: "pointer",
-              boxShadow: "0 0 15px rgba(0,230,118,0.3)"
-            }} className="hover:scale-105 transition-transform">
+          <Link href="/request/new" className="no-underline">
+            <button className="flex items-center gap-2 bg-[#00E676] text-black font-extrabold text-xs sm:text-sm rounded-xl px-3.5 sm:px-5 py-2.5 sm:py-3 cursor-pointer shadow-[0_0_15px_rgba(0,230,118,0.3)] hover:scale-105 transition-transform">
               <Plus size={16} /> New Request
             </button>
           </Link>
         </div>
 
-        {/* Main 2-col layout */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 340px", gap: "1.5rem", alignItems: "start" }}>
+        {/* Main layout (stacks on <xl, 2-col on xl+) */}
+        <div className="grid grid-cols-1 xl:grid-cols-[1fr_340px] gap-6 items-start">
 
           {/* LEFT: Requests & Charts */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+          <div className="flex flex-col gap-6">
             
             {/* Header */}
             <DashboardHeader displayName={displayName} />
 
             {/* Stats Row */}
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "1rem" }}>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
               {stats.map(s => (
                 <StatsCard key={s.label} {...s} />
               ))}
@@ -128,33 +116,23 @@ export default async function DashboardPage() {
 
             {/* Active Deliveries */}
             <section>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
-                <h2 style={{ fontWeight: 800, fontSize: "1.1rem", display: "flex", alignItems: "center", gap: "0.5rem", color: "#fff" }}>
+              <div className="flex justify-between items-center mb-3 sm:mb-4">
+                <h2 className="font-extrabold text-base sm:text-lg flex items-center gap-2 text-white">
                   Active Deliveries
-                  <span style={{
-                    background: "#00E676",
-                    color: "#000", fontSize: "0.72rem", fontWeight: 800,
-                    borderRadius: "20px", padding: "0.15rem 0.55rem",
-                  }}>{activeRequests.length}</span>
+                  <span className="bg-[#00E676] text-black text-[11px] sm:text-xs font-extrabold rounded-full px-2 py-0.5">
+                    {activeRequests.length}
+                  </span>
                 </h2>
                 {activeRequests.length > 0 && (
-                  <Link href="/dashboard/requests" style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: "0.25rem", color: "#00E676", fontSize: "0.8rem", fontWeight: 600 }}>
+                  <Link href="/dashboard/requests" className="no-underline flex items-center gap-1 text-[#00E676] text-xs sm:text-sm font-semibold hover:underline">
                     View all <ArrowRight size={13} />
                   </Link>
                 )}
               </div>
 
-              <div style={{ display: "grid", gridTemplateColumns: activeRequests.length > 0 ? "repeat(2, 1fr)" : "1fr", gap: "1rem" }}>
+              <div className={`grid ${activeRequests.length > 0 ? "grid-cols-1 md:grid-cols-2" : "grid-cols-1"} gap-3 sm:gap-4`}>
                 {activeRequests.length === 0 ? (
-                  <div style={{
-                    background: "rgba(10,15,12,0.4)",
-                    border: "1px dashed rgba(255,255,255,0.1)",
-                    borderRadius: "20px",
-                    padding: "3rem",
-                    textAlign: "center",
-                    color: "rgba(255,255,255,0.5)",
-                    fontSize: "0.9rem"
-                  }}>
+                  <div className="bg-[#0a0f0c]/40 border border-dashed border-white/10 rounded-[20px] p-8 sm:p-12 text-center text-white/50 text-sm">
                     No active deliveries right now.
                   </div>
                 ) : (
@@ -163,19 +141,13 @@ export default async function DashboardPage() {
                     const meta = statusMeta[req.status] || { color: "#F59E0B", label: req.status };
                     
                     return (
-                      <Link key={req.id} href={`/dashboard/requests/${req.id}`} style={{ textDecoration: "none" }}>
-                        <div style={{
-                          background: "rgba(10,15,12,0.4)",
-                          border: `1px solid ${meta.color}30`,
-                          borderLeft: `4px solid ${meta.color}`,
-                          borderRadius: "20px",
-                          padding: "1.25rem",
-                          cursor: "pointer",
-                          transition: "all 0.3s ease",
-                          backdropFilter: "blur(20px)",
-                          position: "relative",
-                          overflow: "hidden",
-                        }} className="group hover:border-[#00E676]/40 hover:-translate-y-1 hover:shadow-[0_10px_30px_rgba(0,0,0,0.5)]">
+                      <Link key={req.id} href={`/dashboard/requests/${req.id}`} className="no-underline">
+                        <div
+                          style={{
+                            borderLeftColor: meta.color,
+                          }}
+                          className="bg-[#0a0f0c]/40 border border-white/10 border-l-4 rounded-[20px] p-4 sm:p-5 cursor-pointer transition-all duration-300 backdrop-blur-xl relative overflow-hidden group hover:border-[#00E676]/40 hover:-translate-y-1 hover:shadow-[0_10px_30px_rgba(0,0,0,0.5)]"
+                        >
                           {/* Glow background on hover */}
                           <div
                             className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none duration-500"
@@ -183,45 +155,41 @@ export default async function DashboardPage() {
                           />
 
                           {/* Status badge */}
-                          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "0.875rem", position: "relative", zIndex: 1 }}>
-                            <span style={{
-                              background: `rgba(${meta.color === '#F59E0B' ? '245,158,11' : '99,102,241'},0.15)`, color: meta.color,
-                              fontSize: "0.7rem", fontWeight: 700,
-                              borderRadius: "20px", padding: "0.2rem 0.65rem",
-                              border: `1px solid ${meta.color}30`,
-                              whiteSpace: "nowrap",
-                            }}>{meta.label}</span>
+                          <div className="flex justify-between items-start mb-3.5 relative z-10">
+                            <span
+                              style={{
+                                color: meta.color,
+                                borderColor: `${meta.color}30`,
+                                background: `rgba(${meta.color === '#F59E0B' ? '245,158,11' : '99,102,241'},0.15)`,
+                              }}
+                              className="text-[11px] font-bold rounded-full px-2.5 py-0.5 border whitespace-nowrap"
+                            >
+                              {meta.label}
+                            </span>
                             
-                            <div style={{
-                              background: "rgba(0,230,118,0.1)",
-                              color: "#00E676", fontWeight: 800, fontSize: "0.95rem",
-                              borderRadius: "10px", padding: "0.25rem 0.65rem",
-                              border: "1px solid rgba(0,230,118,0.2)"
-                            }}>₹{req.delivery_fee}</div>
+                            <div className="bg-[#00E676]/10 text-[#00E676] font-extrabold text-sm sm:text-[15px] rounded-[10px] px-2.5 py-1 border border-[#00E676]/20">
+                              ₹{req.delivery_fee}
+                            </div>
                           </div>
 
                           {/* Route info */}
-                          <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem", marginBottom: "1rem", position: "relative", zIndex: 1 }}>
-                            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "0.8rem", color: "rgba(255,255,255,0.6)" }}>
-                              <MapPin size={14} color="#00E676" />
-                              <span><b style={{ color: "rgba(255,255,255,0.85)" }}>From:</b> {req.pickup_location}</span>
+                          <div className="flex flex-col gap-2 mb-3.5 relative z-10">
+                            <div className="flex items-center gap-2 text-xs sm:text-sm text-white/60 min-w-0">
+                              <MapPin size={14} className="text-[#00E676] shrink-0" />
+                              <span className="truncate"><b className="text-white/85">From:</b> {req.pickup_location}</span>
                             </div>
-                            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "0.8rem", color: "rgba(255,255,255,0.6)" }}>
-                              <MapPin size={14} color="#6366f1" />
-                              <span><b style={{ color: "rgba(255,255,255,0.85)" }}>To:</b> {req.dropoff_location}</span>
+                            <div className="flex items-center gap-2 text-xs sm:text-sm text-white/60 min-w-0">
+                              <MapPin size={14} className="text-[#6366f1] shrink-0" />
+                              <span className="truncate"><b className="text-white/85">To:</b> {req.dropoff_location}</span>
                             </div>
                           </div>
 
                           {/* Runner info */}
-                          <div style={{
-                            display: "flex", alignItems: "center", justifyContent: "space-between",
-                            paddingTop: "0.75rem", borderTop: "1px solid rgba(255,255,255,0.07)",
-                            position: "relative", zIndex: 1
-                          }}>
-                            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                              <User size={13} color="#00E676" />
-                              <span style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.6)" }}>
-                                Runner: <b style={{ color: "#fff" }}>{req.assignments && req.assignments.length > 0 ? "Assigned" : "Pending"}</b>
+                          <div className="flex items-center justify-between pt-3 border-t border-white/[0.07] relative z-10">
+                            <div className="flex items-center gap-2">
+                              <User size={13} className="text-[#00E676]" />
+                              <span className="text-xs text-white/60">
+                                Runner: <b className="text-white">{req.assignments && req.assignments.length > 0 ? "Assigned" : "Pending"}</b>
                               </span>
                             </div>
                           </div>
@@ -234,62 +202,57 @@ export default async function DashboardPage() {
             </section>
 
             {/* Recent Completed Table */}
-            <section style={{ marginTop: "1rem" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
-                <h2 style={{ fontWeight: 800, fontSize: "1.1rem", display: "flex", alignItems: "center", gap: "0.5rem", color: "#fff" }}>
+            <section className="mt-2">
+              <div className="flex justify-between items-center mb-3 sm:mb-4">
+                <h2 className="font-extrabold text-base sm:text-lg flex items-center gap-2 text-white">
                   Recent Completed
                 </h2>
                 {completedRequests.length > 0 && (
-                  <Link href="/dashboard/requests" style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: "0.25rem", color: "#00E676", fontSize: "0.8rem", fontWeight: 600 }}>
+                  <Link href="/dashboard/requests" className="no-underline flex items-center gap-1 text-[#00E676] text-xs sm:text-sm font-semibold hover:underline">
                     View all <ArrowRight size={13} />
                   </Link>
                 )}
               </div>
-              <div style={{
-                background: "rgba(10,15,12,0.4)",
-                border: "1px solid rgba(102,255,178,0.1)",
-                borderRadius: "24px",
-                padding: "1rem",
-                backdropFilter: "blur(20px)",
-                overflowX: "auto"
-              }}>
-                <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left" }}>
+              <div className="bg-[#0a0f0c]/40 border border-[#66ffb2]/10 rounded-[20px] sm:rounded-[24px] p-3 sm:p-4 backdrop-blur-xl overflow-x-auto">
+                <table className="w-full border-collapse text-left min-w-[580px]">
                   <thead>
-                    <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
+                    <tr className="border-b border-white/5">
                       {["Item", "From", "To", "Runner", "Time", "Status", "Price"].map(h => (
-                        <th key={h} style={{ padding: "1rem", color: "#A7B8B0", fontWeight: 700, fontSize: "0.75rem" }}>{h}</th>
+                        <th key={h} className="p-3 sm:p-4 text-[#A7B8B0] font-bold text-xs">{h}</th>
                       ))}
                     </tr>
                   </thead>
                   <tbody>
                     {completedRequests.length === 0 ? (
                       <tr>
-                        <td colSpan={7} style={{ padding: "2rem", textAlign: "center", color: "rgba(255,255,255,0.5)", fontSize: "0.9rem" }}>
+                        <td colSpan={7} className="p-8 text-center text-white/50 text-sm">
                           No completed requests yet.
                         </td>
                       </tr>
                     ) : (
                       completedRequests.slice(0, 5).map(req => (
-                        <tr key={req.id} style={{ borderBottom: "1px solid rgba(255,255,255,0.02)" }}>
-                          <td style={{ padding: "1rem", color: "#fff", fontSize: "0.85rem", display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                            <div style={{ width: "24px", height: "30px", background: "#ef4444", borderRadius: "4px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.6rem", fontWeight: 800 }}>
+                        <tr key={req.id} className="border-b border-white/[0.02] hover:bg-white/[0.02] transition-colors">
+                          <td className="p-3 sm:p-4 text-white text-xs sm:text-sm flex items-center gap-2 font-medium">
+                            <div className="w-6 h-7 bg-red-500 rounded flex items-center justify-center text-[10px] font-extrabold shrink-0">
                               {req.items[0]?.name?.substring(0, 2).toUpperCase() || 'IT'}
                             </div>
-                            {req.items.length > 0 ? req.items[0].name : 'Items'}
-                            {req.items.length > 1 && ` +${req.items.length - 1}`}
+                            <span className="truncate max-w-[120px]">
+                              {req.items.length > 0 ? req.items[0].name : 'Items'}
+                              {req.items.length > 1 && ` +${req.items.length - 1}`}
+                            </span>
                           </td>
-                          <td style={{ padding: "1rem", color: "rgba(255,255,255,0.8)", fontSize: "0.85rem" }}>{req.pickup_location}</td>
-                          <td style={{ padding: "1rem", color: "rgba(255,255,255,0.8)", fontSize: "0.85rem" }}>{req.dropoff_location}</td>
-                          <td style={{ padding: "1rem", color: "rgba(255,255,255,0.8)", fontSize: "0.85rem" }}>{req.assignments && req.assignments.length > 0 ? "Assigned" : "-"}</td>
-                          <td style={{ padding: "1rem", color: "rgba(255,255,255,0.6)", fontSize: "0.85rem" }}>
+                          <td className="p-3 sm:p-4 text-white/80 text-xs sm:text-sm truncate max-w-[120px]">{req.pickup_location}</td>
+                          <td className="p-3 sm:p-4 text-white/80 text-xs sm:text-sm truncate max-w-[120px]">{req.dropoff_location}</td>
+                          <td className="p-3 sm:p-4 text-white/80 text-xs sm:text-sm">{req.assignments && req.assignments.length > 0 ? "Assigned" : "-"}</td>
+                          <td className="p-3 sm:p-4 text-white/60 text-xs sm:text-sm whitespace-nowrap">
                             {new Date(req.created_at).toLocaleDateString()}
                           </td>
-                          <td style={{ padding: "1rem" }}>
-                            <span style={{ background: "rgba(0,230,118,0.1)", color: "#00E676", fontSize: "0.7rem", fontWeight: 700, padding: "0.2rem 0.5rem", borderRadius: "10px" }}>
+                          <td className="p-3 sm:p-4">
+                            <span className="bg-[#00E676]/10 text-[#00E676] text-[11px] font-bold px-2 py-0.5 rounded-[10px] whitespace-nowrap">
                               Delivered
                             </span>
                           </td>
-                          <td style={{ padding: "1rem", color: "#fff", fontSize: "0.85rem", fontWeight: 700 }}>₹{req.delivery_fee}</td>
+                          <td className="p-3 sm:p-4 text-white text-xs sm:text-sm font-bold whitespace-nowrap">₹{req.delivery_fee}</td>
                         </tr>
                       ))
                     )}
@@ -300,7 +263,7 @@ export default async function DashboardPage() {
           </div>
 
           {/* RIGHT: Sidebar */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "1rem", position: "sticky", top: "2rem" }}>
+          <div className="flex flex-col gap-4 relative xl:sticky xl:top-8 w-full">
             <QuickActions />
             <ProfileSummary profile={profile as Profile} email={user.email || ""} />
             <ActivityFeed requests={requests} />

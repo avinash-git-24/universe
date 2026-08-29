@@ -120,7 +120,7 @@ function LoginForm() {
     <div style={{
       width: "100%", minHeight: "100dvh",
       display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
-      fontFamily: "'Inter', system-ui, sans-serif", padding: "20px",
+      fontFamily: "'Inter', system-ui, sans-serif", padding: "16px 12px",
     }}>
       {/* ── Original High-Definition Crisp Static Cosmic Background Wallpaper ── */}
       <div style={{
@@ -145,18 +145,18 @@ function LoginForm() {
 
       <div style={{ position: "relative", zIndex: 1, width: "100%", maxWidth: 480, display: "flex", flexDirection: "column", alignItems: "center" }}>
         {/* ── Logo + tagline ── */}
-        <Link href="/" style={{ textDecoration: "none", display: "flex", flexDirection: "column", alignItems: "center", gap: 10, marginBottom: 40 }}>
+        <Link href="/" className="login-logo-link" style={{ textDecoration: "none", display: "flex", flexDirection: "column", alignItems: "center", gap: 8, marginBottom: 28 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <div style={{ width: 42, height: 42, borderRadius: 12, background: "linear-gradient(135deg, #38BDF8 0%, #0284C7 100%)", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 0 20px rgba(56,189,248,0.45)", flexShrink: 0 }}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="black" stroke="black" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
+            <div style={{ width: 38, height: 38, borderRadius: 12, background: "linear-gradient(135deg, #38BDF8 0%, #0284C7 100%)", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 0 20px rgba(56,189,248,0.45)", flexShrink: 0 }}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="black" stroke="black" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
                 <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
               </svg>
             </div>
-            <span style={{ fontSize: 32, fontWeight: 800, letterSpacing: "-0.02em", color: "#fff", lineHeight: 1 }}>
+            <span style={{ fontSize: 28, fontWeight: 800, letterSpacing: "-0.02em", color: "#fff", lineHeight: 1 }}>
               UniVerse
             </span>
           </div>
-          <span style={{ fontSize: 13, color: "rgba(180,205,235,0.85)", letterSpacing: "0.03em", fontWeight: 500, textTransform: "uppercase" }}>
+          <span style={{ fontSize: 12, color: "rgba(180,205,235,0.85)", letterSpacing: "0.03em", fontWeight: 500, textTransform: "uppercase", textAlign: "center" }}>
             One Universe. Infinite Possibilities.
           </span>
         </Link>
@@ -166,7 +166,7 @@ function LoginForm() {
           width: "100%",
           background: "rgba(5,12,24,0.85)",
           border: "1px solid rgba(56,189,248,0.25)",
-          borderRadius: 28,
+          borderRadius: 24,
           boxShadow: "0 24px 60px rgba(0,0,0,0.9)",
           overflow: "hidden", position: "relative",
         }}>
@@ -174,24 +174,24 @@ function LoginForm() {
           <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent 5%, rgba(56,189,248,0.6) 40%, rgba(56,189,248,0.6) 60%, transparent 95%)" }} />
 
           {/* ── Card Header ── */}
-          <div style={{ padding: "40px 40px 32px", position: "relative" }}>
-            <div style={{ marginBottom: 12 }}>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <div className="login-card-header" style={{ padding: "28px 24px 20px", position: "relative" }}>
+            <div style={{ marginBottom: 10 }}>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M10 2L11 8L17 9L11 10L10 16L9 10L3 9L9 8L10 2Z" fill="#38BDF8" />
                 <path d="M19 12L19.5 14.5L22 15L19.5 15.5L19 18L18.5 15.5L16 15L18.5 14.5L19 12Z" fill="#38BDF8" />
                 <path d="M6 18L6.5 19.5L8 20L6.5 20.5L6 22L5.5 20.5L4 20L5.5 19.5L6 18Z" fill="#38BDF8" />
               </svg>
             </div>
-            <h1 style={{ margin: "0 0 8px 0", fontSize: 32, fontWeight: 700, color: "#fff", letterSpacing: "-0.02em" }}>
+            <h1 style={{ margin: "0 0 6px 0", fontSize: 26, fontWeight: 700, color: "#fff", letterSpacing: "-0.02em" }}>
               Sign in
             </h1>
-            <p style={{ margin: 0, fontSize: 15, color: "rgba(180,205,235,0.9)", letterSpacing: "-0.01em" }}>Continue your journey in UniVerse</p>
+            <p style={{ margin: 0, fontSize: 14, color: "rgba(180,205,235,0.9)", letterSpacing: "-0.01em" }}>Continue your journey in UniVerse</p>
           </div>
 
           {/* ── Form ── */}
-          <form onSubmit={handleSubmit} noValidate style={{ padding: "0 40px 48px", display: "flex", flexDirection: "column", gap: 24 }}>
+          <form onSubmit={handleSubmit} noValidate className="login-card-form" style={{ padding: "0 24px 32px", display: "flex", flexDirection: "column", gap: 20 }}>
             {errors.form && (
-              <div style={{ padding: "12px 16px", borderRadius: 12, background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.3)", color: "#fca5a5", fontSize: 14 }}>
+              <div style={{ padding: "12px 16px", borderRadius: 12, background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.3)", color: "#fca5a5", fontSize: 14, wordBreak: "break-word" }}>
                 {errors.form}
               </div>
             )}
@@ -229,14 +229,14 @@ function LoginForm() {
             />
 
             {/* Remember me + Forgot password */}
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 8 }}>
               <label style={{ display: "flex", alignItems: "center", gap: 9, cursor: "pointer", userSelect: "none" }}>
                 <span onClick={() => setRemember(v => !v)} style={{ width: 18, height: 18, borderRadius: 5, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", background: remember ? "#38BDF8" : "rgba(3,10,22,0.9)", border: `1.5px solid ${remember ? "#38BDF8" : "rgba(56,189,248,0.3)"}`, transition: "all 0.15s" }}>
                   {remember && <svg viewBox="0 0 10 8" width="10" height="8" fill="none"><path d="M1 4l2.5 2.5L9 1" stroke="black" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" opacity="0.9" /></svg>}
                 </span>
-                <span style={{ fontSize: 14, color: "rgba(180,205,235,0.9)" }}>Remember me</span>
+                <span style={{ fontSize: 13, color: "rgba(180,205,235,0.9)" }}>Remember me</span>
               </label>
-              <Link href={ROUTES.FORGOT_PASSWORD} style={{ fontSize: 14, color: "#38BDF8", textDecoration: "none", fontWeight: 500 }}>
+              <Link href={ROUTES.FORGOT_PASSWORD} style={{ fontSize: 13, color: "#38BDF8", textDecoration: "none", fontWeight: 500 }}>
                 Forgot password?
               </Link>
             </div>
@@ -249,8 +249,8 @@ function LoginForm() {
                 width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
                 background: loading ? "rgba(2,132,199,0.5)" : "linear-gradient(90deg, #0284C7 0%, #38BDF8 100%)",
                 color: loading ? "rgba(255,255,255,0.5)" : "#020804",
-                fontWeight: 700, fontSize: 16, letterSpacing: "-0.01em",
-                border: "none", borderRadius: 14, padding: "16px 24px",
+                fontWeight: 700, fontSize: 15, letterSpacing: "-0.01em",
+                border: "none", borderRadius: 14, padding: "14px 20px",
                 cursor: loading ? "not-allowed" : "pointer",
                 boxShadow: loading ? "none" : "0 4px 14px rgba(0,0,0,0.4)",
                 transition: "all 0.2s ease-out", fontFamily: "inherit",
@@ -258,14 +258,14 @@ function LoginForm() {
             >
               {loading
                 ? <><span style={{ width: 16, height: 16, border: "2px solid rgba(255,255,255,0.3)", borderTopColor: "#fff", borderRadius: "50%", display: "inline-block", animation: "spin 0.8s linear infinite" }} /> Signing in…</>
-                : <><span>Sign In</span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" /></svg></>
+                : <><span>Sign In</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" /></svg></>
               }
             </button>
 
             {/* OR Divider */}
             <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
               <div style={{ flex: 1, height: 1, background: "rgba(255,255,255,0.07)" }} />
-              <span style={{ fontSize: 13, color: "rgba(180,205,235,0.6)", fontWeight: 500, letterSpacing: "0.05em" }}>OR</span>
+              <span style={{ fontSize: 12, color: "rgba(180,205,235,0.6)", fontWeight: 500, letterSpacing: "0.05em" }}>OR</span>
               <div style={{ flex: 1, height: 1, background: "rgba(255,255,255,0.07)" }} />
             </div>
 
@@ -274,14 +274,14 @@ function LoginForm() {
               className="google-btn"
               type="button" onClick={handleGoogle}
               style={{
-                width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 12,
+                width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 10,
                 background: "rgba(4,12,25,0.85)", border: "1px solid rgba(255,255,255,0.15)",
-                borderRadius: 14, padding: "15px 24px", color: "#fff",
-                fontWeight: 600, fontSize: 15, cursor: "pointer",
+                borderRadius: 14, padding: "13px 20px", color: "#fff",
+                fontWeight: 600, fontSize: 14, cursor: "pointer",
                 transition: "all 0.2s ease-out", fontFamily: "inherit", letterSpacing: "-0.01em",
               }}
             >
-              <svg viewBox="0 0 24 24" width="20" height="20" xmlns="http://www.w3.org/2000/svg">
+              <svg viewBox="0 0 24 24" width="18" height="18" xmlns="http://www.w3.org/2000/svg">
                 <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
                 <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
                 <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" />
@@ -291,27 +291,27 @@ function LoginForm() {
             </button>
 
             {/* Sign up link */}
-            <p style={{ margin: 0, textAlign: "center", fontSize: 14, color: "rgba(180,205,235,0.65)" }}>
+            <p style={{ margin: 0, textAlign: "center", fontSize: 13, color: "rgba(180,205,235,0.65)" }}>
               Don&apos;t have an account?{" "}
               <Link href={ROUTES.REGISTER} style={{ color: "#38BDF8", fontWeight: 600, textDecoration: "none", display: "inline-flex", alignItems: "center", gap: 4 }}>
                 Create account
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6" /></svg>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6" /></svg>
               </Link>
             </p>
           </form>
         </div>
 
         {/* ── Trust bar ── */}
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 24, marginTop: 32, flexWrap: "wrap", opacity: 0.85 }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 14, marginTop: 24, flexWrap: "wrap", opacity: 0.85, padding: "0 10px" }}>
           {[
-            { label: "256-bit Encrypted", icon: <svg key="shield" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#38BDF8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg> },
-            { label: "Your Data is Private", icon: <svg key="lock" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#38BDF8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg> },
-            { label: "Trusted by Students", icon: <svg key="users" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#38BDF8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /></svg> },
+            { label: "256-bit Encrypted", icon: <svg key="shield" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#38BDF8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg> },
+            { label: "Your Data is Private", icon: <svg key="lock" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#38BDF8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg> },
+            { label: "Trusted by Students", icon: <svg key="users" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#38BDF8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /></svg> },
           ].map((item, i, arr) => (
-            <span key={item.label} style={{ display: "flex", alignItems: "center", gap: 6 }}>
+            <span key={item.label} style={{ display: "flex", alignItems: "center", gap: 5 }}>
               {item.icon}
-              <span style={{ fontSize: 13, color: "rgba(255,255,255,0.7)" }}>{item.label}</span>
-              {i < arr.length - 1 && <span style={{ color: "rgba(255,255,255,0.2)", marginLeft: 20 }}>•</span>}
+              <span style={{ fontSize: 12, color: "rgba(255,255,255,0.7)" }}>{item.label}</span>
+              {i < arr.length - 1 && <span style={{ color: "rgba(255,255,255,0.2)", marginLeft: 8 }}>•</span>}
             </span>
           ))}
         </div>
@@ -319,6 +319,11 @@ function LoginForm() {
 
       <style>{`
         @keyframes spin { to { transform: rotate(360deg); } }
+        @media (min-width: 640px) {
+          .login-logo-link { margin-bottom: 36px !important; gap: 10px !important; }
+          .login-card-header { padding: 36px 36px 28px !important; }
+          .login-card-form { padding: 0 36px 44px !important; }
+        }
         .signin-btn:hover:not(:disabled) {
           transform: translateY(-2px);
           box-shadow: 0 6px 18px rgba(0,0,0,0.6) !important;

@@ -57,9 +57,9 @@ function EnvelopeIllustration() {
 function StepIndicator() {
   const steps = ["Create Account", "Verify Email", "Complete Profile"];
   return (
-    <div className="flex items-center gap-2" aria-label="Onboarding steps">
+    <div className="flex items-center gap-1.5 sm:gap-2" aria-label="Onboarding steps">
       {steps.map((step, i) => (
-        <div key={step} className="flex items-center gap-2">
+        <div key={step} className="flex items-center gap-1.5 sm:gap-2">
           <div className="flex flex-col items-center gap-1">
             <div
               className={[
@@ -96,7 +96,7 @@ function StepIndicator() {
           </div>
           {i < steps.length - 1 && (
             <div
-              className="w-8 sm:w-12 h-px mb-4"
+              className="w-4 sm:w-8 md:w-12 h-px mb-0 sm:mb-4"
               style={{
                 background:
                   i === 0
@@ -181,14 +181,14 @@ function VerifyEmailContent() {
   return (
     <>
       <AuthBackground />
-      <div className="min-h-dvh flex flex-col items-center justify-center px-4 py-12 sm:px-6">
+      <div className="min-h-dvh flex flex-col items-center justify-center px-3 py-8 sm:px-6 sm:py-12">
         {/* Logo */}
-        <div className="mb-10">
+        <div className="mb-6 sm:mb-10">
           <AuthLogo />
         </div>
 
         {/* Step progress */}
-        <div className="mb-8">
+        <div className="mb-6 sm:mb-8">
           <StepIndicator />
         </div>
 
@@ -206,24 +206,24 @@ function VerifyEmailContent() {
             aria-hidden="true"
           />
 
-          <div className="px-8 py-10 flex flex-col items-center gap-6">
+          <div className="px-5 sm:px-8 py-6 sm:py-10 flex flex-col items-center gap-5 sm:gap-6">
             {/* Illustration */}
             <EnvelopeIllustration />
 
             {/* Copy */}
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-2.5 sm:gap-3">
               <h1
-                className="text-2xl font-bold text-[var(--color-text)]"
+                className="text-xl sm:text-2xl font-bold text-[var(--color-text)]"
                 style={{ fontFamily: "var(--font-plus-jakarta-sans)" }}
               >
                 Check your inbox
               </h1>
               <p
-                className="text-sm text-[var(--color-text-muted)] max-w-sm mx-auto leading-relaxed"
+                className="text-xs sm:text-sm text-[var(--color-text-muted)] max-w-sm mx-auto leading-relaxed"
                 style={{ fontFamily: "var(--font-inter)" }}
               >
                 We&apos;ve sent a verification link to{" "}
-                <span className="font-semibold text-[var(--color-text)]">
+                <span className="font-semibold text-[var(--color-text)] break-all">
                   {email ? email : "your Marwadi University email"}
                 </span>
                 . Click the link to activate your account.

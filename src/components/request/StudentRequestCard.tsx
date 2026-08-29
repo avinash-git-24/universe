@@ -98,44 +98,44 @@ export const StudentRequestCard = memo(function StudentRequestCard({ request, on
         </div>
 
         {/* CENTER COLUMN: Timeline & Info Row */}
-        <div className="flex-1 w-full flex flex-col gap-10">
-          <div className="px-2 w-full">
+        <div className="flex-1 w-full flex flex-col gap-6 sm:gap-10">
+          <div className="px-1 sm:px-2 w-full">
             <MyRequestTimeline status={request.status} />
           </div>
           
-          <div className="flex justify-between text-sm w-full relative px-2">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 text-sm w-full px-1 sm:px-2">
             
-            {/* FROM - Aligning with 0% (Requested) */}
-            <div className="flex items-start w-[140px]">
-              <MapPin className="w-4 h-4 mr-2.5 text-emerald-500 shrink-0 mt-0.5 opacity-80" />
-              <div className="flex flex-col gap-0.5">
+            {/* FROM */}
+            <div className="flex items-start min-w-0">
+              <MapPin className="w-4 h-4 mr-2 text-emerald-500 shrink-0 mt-0.5 opacity-80" />
+              <div className="flex flex-col gap-0.5 min-w-0">
                 <span className="text-[10px] text-white/30 uppercase tracking-widest font-bold">From</span>
-                <span className="truncate font-semibold text-white/90 text-sm leading-tight">{request.pickup_location}</span>
+                <span className="truncate font-semibold text-white/90 text-xs sm:text-sm leading-tight">{request.pickup_location}</span>
               </div>
             </div>
             
-            {/* TO - Aligning with 50% (Picked Up) */}
-            <div className="flex items-start w-[140px] justify-center text-left absolute left-1/2 -translate-x-1/2">
-              <MapPin className="w-4 h-4 mr-2.5 text-emerald-500 shrink-0 mt-0.5 opacity-80" />
-              <div className="flex flex-col gap-0.5">
+            {/* TO */}
+            <div className="flex items-start sm:justify-center min-w-0">
+              <MapPin className="w-4 h-4 mr-2 text-emerald-500 shrink-0 mt-0.5 opacity-80" />
+              <div className="flex flex-col gap-0.5 min-w-0">
                 <span className="text-[10px] text-white/30 uppercase tracking-widest font-bold">To</span>
-                <span className="truncate font-semibold text-white/90 text-sm leading-tight">{request.dropoff_location}</span>
+                <span className="truncate font-semibold text-white/90 text-xs sm:text-sm leading-tight">{request.dropoff_location}</span>
               </div>
             </div>
 
-            {/* ITEMS - Aligning with 100% (Delivered) */}
-            <div className="flex items-start w-[140px] justify-end text-left">
-              <Package className="w-4 h-4 mr-2.5 text-emerald-500 shrink-0 mt-0.5 opacity-80" />
-              <div className="flex flex-col gap-0.5">
+            {/* ITEMS */}
+            <div className="flex items-start sm:justify-end min-w-0">
+              <Package className="w-4 h-4 mr-2 text-emerald-500 shrink-0 mt-0.5 opacity-80" />
+              <div className="flex flex-col gap-0.5 min-w-0">
                 <span className="text-[10px] text-white/30 uppercase tracking-widest font-bold">Items</span>
-                <span className="font-semibold text-white/90 text-sm leading-tight">{itemCount} item{itemCount !== 1 ? "s" : ""}</span>
+                <span className="font-semibold text-white/90 text-xs sm:text-sm leading-tight">{itemCount} item{itemCount !== 1 ? "s" : ""}</span>
               </div>
             </div>
           </div>
         </div>
 
         {/* RIGHT COLUMN: Action */}
-        <div className="flex flex-col justify-center items-end shrink-0 min-w-32 gap-2">
+        <div className="flex items-center justify-between sm:justify-end w-full lg:w-auto shrink-0 gap-2 pt-3 lg:pt-0 border-t lg:border-t-0 border-white/5">
           {(() => {
             const activeAssignment = request.assignments?.find(
               (a) => a.status === "active" || a.status === "completed"
@@ -144,16 +144,16 @@ export const StudentRequestCard = memo(function StudentRequestCard({ request, on
 
             if (runner) {
               return (
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-end">
                   <a
                     href={`/dashboard/chat?requestId=${request.id}&startWithUserId=${runner.id}`}
                     onClick={(e) => e.stopPropagation()}
-                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-xs shadow-lg shadow-emerald-950/40 transition-all cursor-pointer z-10"
+                    className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-xs shadow-lg shadow-emerald-950/40 transition-all cursor-pointer z-10 w-full sm:w-auto text-center"
                   >
                     💬 Message Runner
                   </a>
                   {onClick && (
-                    <div className="w-[36px] h-[36px] rounded-xl bg-[#131b17] border border-[#1c2420] flex items-center justify-center text-white/40 group-hover:text-white group-hover:bg-[#1a241f] group-hover:border-white/10 transition-all">
+                    <div className="w-[36px] h-[36px] rounded-xl bg-[#131b17] border border-[#1c2420] flex items-center justify-center text-white/40 group-hover:text-white group-hover:bg-[#1a241f] group-hover:border-white/10 transition-all shrink-0">
                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>
                     </div>
                   )}
@@ -163,12 +163,12 @@ export const StudentRequestCard = memo(function StudentRequestCard({ request, on
 
             if (onClick) {
               return request.status === "in_transit" ? (
-                <div className="px-5 py-2.5 rounded-lg bg-transparent border border-blue-500/50 text-blue-400 text-[13px] font-bold hover:bg-blue-500/10 transition-colors cursor-pointer text-center whitespace-nowrap ml-auto w-full">
+                <div className="px-5 py-2.5 rounded-lg bg-transparent border border-blue-500/50 text-blue-400 text-[13px] font-bold hover:bg-blue-500/10 transition-colors cursor-pointer text-center whitespace-nowrap w-full lg:w-auto">
                   View Details
                 </div>
               ) : (
-                <div className="w-[42px] h-[42px] rounded-xl bg-[#131b17] border border-[#1c2420] flex items-center justify-center text-white/40 group-hover:text-white group-hover:bg-[#1a241f] group-hover:border-white/10 transition-all ml-auto">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                <div className="w-[36px] sm:w-[42px] h-[36px] sm:h-[42px] rounded-xl bg-[#131b17] border border-[#1c2420] flex items-center justify-center text-white/40 group-hover:text-white group-hover:bg-[#1a241f] group-hover:border-white/10 transition-all ml-auto">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>
                 </div>
               );
             }

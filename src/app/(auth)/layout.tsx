@@ -29,23 +29,13 @@ export default function AuthLayout({
     // This outer div owns the dark background — completely covering the body's
     // default light color set in the root layout.
     <div
-      style={{
-        minHeight: "100dvh",
-        background: "#070A08",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "3rem 1rem",
-        position: "relative",
-        overflow: "hidden",
-      }}
+      className="min-h-[100dvh] bg-[#070A08] flex flex-col items-center justify-center py-6 sm:py-12 px-3 sm:px-6 relative overflow-x-hidden"
     >
       {/* Space background — absolute so it fills this container */}
       <LazySpaceBackground />
 
       {/* Page content — sits above the space background */}
-      <div style={{ position: "relative", zIndex: 1, width: "100%", display: "flex", flexDirection: "column", alignItems: "center" }}>
+      <div className="relative z-10 w-full flex flex-col items-center max-w-full">
         {children}
       </div>
     </div>

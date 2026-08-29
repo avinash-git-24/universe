@@ -144,70 +144,70 @@ export default function RegisterPage() {
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff03_1px,transparent_1px),linear-gradient(to_bottom,#ffffff03_1px,transparent_1px)] bg-[size:32px_32px] [mask-image:radial-gradient(ellipse_60%_60%_at_50%_50%,#000_30%,transparent_100%)]" />
       </div>
 
-      <div className="w-full max-w-[1100px] mx-auto flex flex-col min-h-[100dvh] justify-center py-10 lg:py-12 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-20 items-center w-full mt-auto mb-auto">
+      <div className="w-full max-w-[1100px] mx-auto flex flex-col min-h-[100dvh] justify-center py-6 sm:py-10 lg:py-12 px-3 sm:px-6 relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 xl:gap-20 items-center w-full mt-auto mb-auto">
 
           {/* LEFT COLUMN: BRANDING */}
-          <div className="flex flex-col gap-10 text-left relative w-full max-w-[460px] mx-auto lg:mx-0">
+          <div className="flex flex-col gap-6 lg:gap-10 text-left relative w-full max-w-[460px] mx-auto lg:mx-0">
 
             {/* Logo & Badge */}
-            <div className="space-y-5">
+            <div className="space-y-3 sm:space-y-5">
               <div className="flex items-center gap-2">
-                <div className="w-9 h-9 bg-emerald-500 rounded-xl flex items-center justify-center shadow-[0_0_15px_rgba(16,185,129,0.4)]">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" className="text-black">
+                <div className="w-8 h-8 sm:w-9 sm:h-9 bg-emerald-500 rounded-xl flex items-center justify-center shadow-[0_0_15px_rgba(16,185,129,0.4)] flex-shrink-0">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" className="text-black sm:w-5 sm:h-5">
                     <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
                   </svg>
                 </div>
-                <span className="text-[28px] font-extrabold text-white tracking-tight leading-none pt-1">UniVerse</span>
+                <span className="text-2xl sm:text-[28px] font-extrabold text-white tracking-tight leading-none pt-1">UniVerse</span>
               </div>
-              <p className="text-[#a1a1aa] text-[15px] font-medium tracking-wide">One Universe. Infinite Possibilities.</p>
+              <p className="text-[#a1a1aa] text-xs sm:text-[15px] font-medium tracking-wide">One Universe. Infinite Possibilities.</p>
 
-              <div className="inline-flex items-center gap-2 border border-emerald-500/30 bg-emerald-500/5 px-3 py-1.5 rounded-full w-fit shadow-[inset_0_0_10px_rgba(16,185,129,0.05)]">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-emerald-500"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg>
-                <span className="text-xs font-semibold text-emerald-400 tracking-wide">Exclusively for Marwadi University</span>
+              <div className="inline-flex items-center gap-2 border border-emerald-500/30 bg-emerald-500/5 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full w-fit shadow-[inset_0_0_10px_rgba(16,185,129,0.05)]">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-emerald-500 sm:w-3.5 sm:h-3.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg>
+                <span className="text-[11px] sm:text-xs font-semibold text-emerald-400 tracking-wide">Exclusively for Marwadi University</span>
               </div>
             </div>
 
             {/* Headline */}
-            <div className="space-y-4">
-              <h1 className="text-[44px] leading-[1.1] font-extrabold text-white tracking-tight">
-                Delivering more <br /> than packages.<br />
+            <div className="space-y-2 sm:space-y-4">
+              <h1 className="text-2xl sm:text-3xl lg:text-[44px] leading-tight lg:leading-[1.1] font-extrabold text-white tracking-tight">
+                Delivering more than packages.<br className="hidden sm:inline" />{" "}
                 <span className="text-emerald-500">Building trust.</span>
               </h1>
-              <p className="text-[#a1a1aa] text-base leading-relaxed pr-6 font-medium">
+              <p className="text-[#a1a1aa] text-xs sm:text-base leading-relaxed lg:pr-6 font-medium">
                 A secure and reliable platform for students to send and receive within campus.
               </p>
             </div>
 
-            {/* Benefits */}
-            <div className="space-y-7 pt-4">
-              <div className="flex gap-4 items-center">
-                <div className="w-14 h-14 rounded-full border border-emerald-500/40 bg-[#040805] flex items-center justify-center shrink-0 shadow-[0_0_20px_rgba(16,185,129,0.15)] relative z-20">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" className="text-emerald-500"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" /></svg>
+            {/* Benefits (hidden on small mobile <640px to prioritize registration form above the fold) */}
+            <div className="hidden sm:flex flex-col gap-4 lg:gap-7 pt-1 lg:pt-4">
+              <div className="flex gap-3.5 items-center">
+                <div className="w-11 h-11 lg:w-14 lg:h-14 rounded-full border border-emerald-500/40 bg-[#040805] flex items-center justify-center shrink-0 shadow-[0_0_20px_rgba(16,185,129,0.15)] relative z-20">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" className="text-emerald-500 lg:w-6 lg:h-6"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" /></svg>
                 </div>
                 <div className="space-y-0.5 relative z-20">
-                  <h3 className="text-white font-bold text-[15px] tracking-wide">Fast Campus Deliveries</h3>
-                  <p className="text-[#a1a1aa] text-[13px] leading-relaxed">Quick pickup and on-time delivery anywhere in campus.</p>
+                  <h3 className="text-white font-bold text-sm lg:text-[15px] tracking-wide">Fast Campus Deliveries</h3>
+                  <p className="text-[#a1a1aa] text-xs lg:text-[13px] leading-relaxed">Quick pickup and on-time delivery anywhere in campus.</p>
                 </div>
               </div>
 
-              <div className="flex gap-4 items-center">
-                <div className="w-14 h-14 rounded-full border border-emerald-500/40 bg-[#040805] flex items-center justify-center shrink-0 shadow-[0_0_20px_rgba(16,185,129,0.15)] relative z-20">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-emerald-500"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /><path d="m9 12 2 2 4-4" /></svg>
+              <div className="flex gap-3.5 items-center">
+                <div className="w-11 h-11 lg:w-14 lg:h-14 rounded-full border border-emerald-500/40 bg-[#040805] flex items-center justify-center shrink-0 shadow-[0_0_20px_rgba(16,185,129,0.15)] relative z-20">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-emerald-500 lg:w-6 lg:h-6"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /><path d="m9 12 2 2 4-4" /></svg>
                 </div>
                 <div className="space-y-0.5 relative z-20">
-                  <h3 className="text-white font-bold text-[15px] tracking-wide">Verified Students Only</h3>
-                  <p className="text-[#a1a1aa] text-[13px] leading-relaxed">Safe, trusted and verified student community.</p>
+                  <h3 className="text-white font-bold text-sm lg:text-[15px] tracking-wide">Verified Students Only</h3>
+                  <p className="text-[#a1a1aa] text-xs lg:text-[13px] leading-relaxed">Safe, trusted and verified student community.</p>
                 </div>
               </div>
 
-              <div className="flex gap-4 items-center">
-                <div className="w-14 h-14 rounded-full border border-emerald-500/40 bg-[#040805] flex items-center justify-center shrink-0 shadow-[0_0_20px_rgba(16,185,129,0.15)] relative z-20">
-                  <Lock className="w-6 h-6 text-emerald-500" />
+              <div className="flex gap-3.5 items-center">
+                <div className="w-11 h-11 lg:w-14 lg:h-14 rounded-full border border-emerald-500/40 bg-[#040805] flex items-center justify-center shrink-0 shadow-[0_0_20px_rgba(16,185,129,0.15)] relative z-20">
+                  <Lock className="w-5 h-5 lg:w-6 lg:h-6 text-emerald-500" />
                 </div>
                 <div className="space-y-0.5 relative z-20">
-                  <h3 className="text-white font-bold text-[15px] tracking-wide">Secure & Private</h3>
-                  <p className="text-[#a1a1aa] text-[13px] leading-relaxed">Your data is encrypted and your privacy is our priority.</p>
+                  <h3 className="text-white font-bold text-sm lg:text-[15px] tracking-wide">Secure & Private</h3>
+                  <p className="text-[#a1a1aa] text-xs lg:text-[13px] leading-relaxed">Your data is encrypted and your privacy is our priority.</p>
                 </div>
               </div>
             </div>
@@ -217,7 +217,6 @@ export default function RegisterPage() {
               <div className="w-[500px] h-[500px] bg-emerald-500/10 rounded-full blur-[120px] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none" />
 
               <div className="relative w-[400px] h-[350px]">
-
                 {/* Concentric rings floor */}
                 <div className="absolute bottom-10 left-10 w-[220px] h-[70px] border border-emerald-500/20 rounded-[100%] shadow-[0_0_40px_rgba(16,185,129,0.1)]" />
                 <div className="absolute bottom-12 left-16 w-[170px] h-[50px] border border-emerald-500/40 rounded-[100%]" />
@@ -256,7 +255,6 @@ export default function RegisterPage() {
                   {/* Lightning Bolt */}
                   <path d="M75 75 L68 85 L75 85 L72 95 L85 82 L77 82 L82 72 Z" fill="#10b981" className="drop-shadow-[0_0_10px_rgba(16,185,129,1)]" />
                 </svg>
-
               </div>
             </div>
           </div>
@@ -264,20 +262,20 @@ export default function RegisterPage() {
           {/* RIGHT COLUMN: FORM CARD */}
           <div className="w-full max-w-[480px] mx-auto relative z-20">
 
-            <div className="relative bg-gradient-to-b from-[#0a120d]/95 to-[#030604]/95 backdrop-blur-2xl border border-emerald-500/20 rounded-[32px] p-8 sm:p-10 overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.6),0_0_80px_rgba(16,185,129,0.08)]">
+            <div className="relative bg-gradient-to-b from-[#0a120d]/95 to-[#030604]/95 backdrop-blur-2xl border border-emerald-500/20 rounded-[24px] sm:rounded-[32px] p-5 sm:p-8 lg:p-10 overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.6),0_0_80px_rgba(16,185,129,0.08)]">
 
-              <div className="mb-7">
-                <h2 className="text-[32px] font-bold text-white mb-2 tracking-tight flex items-center gap-3">
+              <div className="mb-5 sm:mb-7">
+                <h2 className="text-2xl sm:text-[32px] font-bold text-white mb-1.5 sm:mb-2 tracking-tight flex items-center gap-2 sm:gap-3">
                   Create <span className="text-emerald-500">your account</span>
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" className="text-emerald-500 drop-shadow-[0_0_8px_rgba(16,185,129,0.8)]"><path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z" fill="currentColor" /></svg>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="text-emerald-500 drop-shadow-[0_0_8px_rgba(16,185,129,0.8)]"><path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z" fill="currentColor" /></svg>
                 </h2>
-                <p className="text-[#a1a1aa] text-[15px] font-medium">Join UniVerse — exclusively for Marwadi University</p>
+                <p className="text-[#a1a1aa] text-xs sm:text-[15px] font-medium">Join UniVerse — exclusively for Marwadi University</p>
               </div>
 
-              <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-4">
+              <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-3.5 sm:gap-4">
                 {/* Global error */}
                 {errors.form && (
-                  <div role="alert" className="rounded-lg px-4 py-3 text-sm bg-red-500/10 text-red-400 border border-red-500/30">
+                  <div role="alert" className="rounded-lg px-3.5 py-2.5 text-xs sm:text-sm bg-red-500/10 text-red-400 border border-red-500/30 break-words">
                     {errors.form}
                   </div>
                 )}
@@ -299,7 +297,7 @@ export default function RegisterPage() {
                 />
 
                 {/* University Email */}
-                <div className="flex flex-col gap-1.5">
+                <div className="flex flex-col gap-1">
                   <Input
                     id="reg-email"
                     type="email"
@@ -315,14 +313,14 @@ export default function RegisterPage() {
                     className="!bg-[#040805] !border-white/10 !text-white placeholder:!text-white/30 focus:!border-emerald-500 focus:!ring-1 focus:!ring-emerald-500 !shadow-[inset_0_2px_4px_rgba(0,0,0,0.4)] focus:!shadow-[0_0_15px_rgba(16,185,129,0.2)] !rounded-[12px] !h-11"
                   />
                   {!errors.email && (
-                    <p className="text-[13px] text-[#a1a1aa] font-[family-name:var(--font-inter)]">
+                    <p className="text-[12px] sm:text-[13px] text-[#a1a1aa] font-[family-name:var(--font-inter)]">
                       Must end with <span className="text-emerald-500/80">@marwadiuniversity.ac.in</span>
                     </p>
                   )}
                 </div>
 
                 {/* Password */}
-                <div className="flex flex-col gap-1.5">
+                <div className="flex flex-col gap-1">
                   <Input
                     id="reg-password"
                     type={showPassword ? "text" : "password"}
@@ -376,8 +374,8 @@ export default function RegisterPage() {
                 />
 
                 {/* Terms checkbox */}
-                <label className="flex items-center gap-3 cursor-pointer group select-none mt-2">
-                  <span className="relative inline-flex items-center justify-center shrink-0">
+                <label className="flex items-start gap-2.5 cursor-pointer group select-none mt-1">
+                  <span className="relative inline-flex items-center justify-center shrink-0 mt-0.5">
                     <input
                       id="reg-terms"
                       type="checkbox"
@@ -401,7 +399,7 @@ export default function RegisterPage() {
                       )}
                     </span>
                   </span>
-                  <span className="text-[13px] text-[#a1a1aa] font-medium leading-none mt-0.5">
+                  <span className="text-[12px] sm:text-[13px] text-[#a1a1aa] font-medium leading-normal">
                     I agree to the{" "}
                     <Link href={ROUTES.TERMS} className="text-emerald-500 hover:text-emerald-400 transition-colors">
                       Terms of Service
@@ -420,13 +418,13 @@ export default function RegisterPage() {
                   fullWidth
                   isLoading={loading}
                   loadingText="Creating account…"
-                  className="bg-[#10B981] hover:bg-[#34D399] text-black font-bold mt-2 shadow-[0_0_20px_rgba(16,185,129,0.2)] hover:shadow-[0_0_30px_rgba(16,185,129,0.4)] transition-all duration-300 h-[50px] rounded-[14px] text-[16px] group"
+                  className="bg-[#10B981] hover:bg-[#34D399] text-black font-bold mt-2 shadow-[0_0_20px_rgba(16,185,129,0.2)] hover:shadow-[0_0_30px_rgba(16,185,129,0.4)] transition-all duration-300 h-[46px] sm:h-[50px] rounded-[14px] text-[15px] sm:text-[16px] group"
                 >
                   Create Account <span className="ml-2 group-hover:translate-x-1 transition-transform">→</span>
                 </Button>
 
                 {/* Divider */}
-                <div className="relative flex items-center py-2">
+                <div className="relative flex items-center py-1">
                   <div className="flex-grow border-t border-white/5"></div>
                   <span className="flex-shrink-0 mx-4 text-xs font-semibold text-white/20 uppercase tracking-widest">OR</span>
                   <div className="flex-grow border-t border-white/5"></div>
@@ -436,7 +434,7 @@ export default function RegisterPage() {
                 <GoogleButton label="Continue with Google" />
               </form>
 
-              <p className="mt-6 text-center text-[14px] text-[#a1a1aa] font-medium">
+              <p className="mt-5 sm:mt-6 text-center text-xs sm:text-[14px] text-[#a1a1aa] font-medium">
                 Already have an account?{" "}
                 <Link
                   href={ROUTES.LOGIN}
@@ -450,19 +448,19 @@ export default function RegisterPage() {
         </div>
 
         {/* BOTTOM ROW (Trust Indicators) */}
-        <div className="mt-auto pt-10 pb-4 w-full flex flex-wrap items-center justify-center gap-x-6 gap-y-4 text-[13px] font-medium text-[#a1a1aa] relative z-20 opacity-90">
-          <div className="flex items-center gap-2.5">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-emerald-500"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg>
+        <div className="mt-auto pt-6 sm:pt-10 pb-4 w-full flex flex-wrap items-center justify-center gap-x-4 sm:gap-x-6 gap-y-3 text-[12px] sm:text-[13px] font-medium text-[#a1a1aa] relative z-20 opacity-90">
+          <div className="flex items-center gap-2">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-emerald-500"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg>
             <span>256-bit Encrypted</span>
           </div>
-          <div className="w-1.5 h-1.5 rounded-full bg-[#27272a]" />
-          <div className="flex items-center gap-2.5">
-            <Lock className="w-4 h-4 text-emerald-500" strokeWidth={2} />
+          <div className="w-1.5 h-1.5 rounded-full bg-[#27272a] hidden sm:block" />
+          <div className="flex items-center gap-2">
+            <Lock className="w-3.5 h-3.5 text-emerald-500" strokeWidth={2} />
             <span>Your Data is Private</span>
           </div>
-          <div className="w-1.5 h-1.5 rounded-full bg-[#27272a]" />
-          <div className="flex items-center gap-2.5">
-            <Users className="w-4 h-4 text-emerald-500" strokeWidth={2} />
+          <div className="w-1.5 h-1.5 rounded-full bg-[#27272a] hidden sm:block" />
+          <div className="flex items-center gap-2">
+            <Users className="w-3.5 h-3.5 text-emerald-500" strokeWidth={2} />
             <span>Trusted by Students</span>
           </div>
         </div>

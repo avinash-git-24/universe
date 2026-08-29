@@ -26,17 +26,17 @@ export default async function MyRequestsPage() {
   const requests = await getStudentRequests(supabase, user.id);
 
   return (
-    <div className="min-h-screen bg-[#080b09] pt-24 pb-12 px-4 text-white selection:bg-emerald-500/30">
-      <div className="max-w-6xl mx-auto space-y-8 relative z-10">
+    <div className="min-h-screen bg-[#080b09] pt-4 sm:pt-8 pb-12 px-3 sm:px-6 text-white selection:bg-emerald-500/30">
+      <div className="max-w-6xl mx-auto space-y-6 sm:space-y-8 relative z-10">
         
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
-            <h1 className="text-4xl font-extrabold tracking-tight text-white flex items-center gap-2">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-white flex items-center gap-2">
               My Requests
-              <span className="text-emerald-400 text-3xl">✦</span>
+              <span className="text-emerald-400 text-2xl sm:text-3xl">✦</span>
             </h1>
-            <p className="text-white/60 mt-1 text-base">View and manage your delivery requests</p>
+            <p className="text-white/60 mt-1 text-xs sm:text-sm lg:text-base">View and manage your delivery requests</p>
           </div>
           
           <div className="flex gap-3 items-center">

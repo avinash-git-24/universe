@@ -66,16 +66,9 @@ export function DashboardCharts({ requests }: DashboardChartsProps) {
   const uniqueYTicks = Array.from(new Set(yAxisTicks)).sort((a, b) => b - a);
 
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "1.8fr 1fr", gap: "1rem" }}>
+    <div className="grid grid-cols-1 lg:grid-cols-[1.8fr_1fr] gap-4">
       {/* Line Chart Card */}
-      <div style={{
-        background: "rgba(10,15,12,0.4)",
-        border: "1px solid rgba(102,255,178,0.1)",
-        borderRadius: "24px",
-        padding: "1.5rem",
-        backdropFilter: "blur(20px)",
-        boxShadow: "0 8px 32px rgba(0,0,0,0.3)"
-      }}>
+      <div className="bg-[#0a0f0c]/40 border border-[#66ffb2]/10 rounded-[20px] sm:rounded-[24px] p-4 sm:p-6 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.3)]">
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem" }}>
           <h3 style={{ color: "#fff", fontWeight: 700, fontSize: "1.05rem" }}>Overview Analytics</h3>
           <div style={{
@@ -155,18 +148,10 @@ export function DashboardCharts({ requests }: DashboardChartsProps) {
       </div>
 
       {/* Donut Chart Card */}
-      <div style={{
-        background: "rgba(10,15,12,0.4)",
-        border: "1px solid rgba(102,255,178,0.1)",
-        borderRadius: "24px",
-        padding: "1.5rem",
-        backdropFilter: "blur(20px)",
-        boxShadow: "0 8px 32px rgba(0,0,0,0.3)",
-        display: "flex", flexDirection: "column"
-      }}>
+      <div className="bg-[#0a0f0c]/40 border border-[#66ffb2]/10 rounded-[20px] sm:rounded-[24px] p-4 sm:p-6 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.3)] flex flex-col">
         <h3 style={{ color: "#fff", fontWeight: 700, fontSize: "1.05rem", marginBottom: "1.5rem" }}>Requests by Status</h3>
         
-        <div style={{ display: "flex", alignItems: "center", gap: "1.5rem", flex: 1 }}>
+        <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 flex-1">
           {/* Donut */}
           <div style={{ position: "relative", width: "130px", height: "130px" }}>
             <svg viewBox="0 0 36 36" style={{ width: "100%", height: "100%", transform: "rotate(-90deg)" }}>

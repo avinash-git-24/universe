@@ -36,31 +36,22 @@ export function DashboardHeader({ displayName }: DashboardHeaderProps) {
   }, []);
 
   return (
-    <div style={{ marginBottom: "1rem" }}>
+    <div className="mb-4">
       {/* Greeting pill */}
-      <div style={{
-        display: "inline-flex", alignItems: "center", gap: "0.4rem",
-        background: "rgba(0,230,118,0.1)", borderRadius: "20px",
-        padding: "0.3rem 0.85rem", marginBottom: "1rem",
-        border: "1px solid rgba(0,230,118,0.2)"
-      }}>
+      <div className="inline-flex items-center gap-1.5 bg-[#00E676]/10 rounded-full px-3.5 py-1 mb-3 sm:mb-4 border border-[#00E676]/20">
         <Sparkles size={13} color="#00E676" />
         <span
           suppressHydrationWarning
-          style={{ color: "#00E676", fontSize: "0.75rem", fontWeight: 700 }}
+          className="text-[#00E676] text-xs font-bold"
         >
           {greeting.text} {greeting.emoji}
         </span>
       </div>
 
-      <h1 style={{
-        color: "#fff", fontWeight: 800,
-        fontSize: "2.2rem",
-        letterSpacing: "-0.02em", lineHeight: 1.15, margin: 0,
-      }}>
-        <span style={{ color: "#00E676" }}>{displayName}</span>!
+      <h1 className="text-white font-extrabold text-2xl sm:text-3xl lg:text-[2.2rem] tracking-tight leading-tight m-0">
+        <span className="text-[#00E676]">{displayName}</span>!
       </h1>
-      <p style={{ color: "rgba(255,255,255,0.6)", marginTop: "0.5rem", fontSize: "0.95rem" }}>
+      <p className="text-white/60 mt-1.5 sm:mt-2 text-xs sm:text-sm lg:text-[0.95rem]">
         Your campus, your deliveries, your UniVerse.
       </p>
     </div>

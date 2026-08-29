@@ -325,91 +325,61 @@ export function ResaleMarketplace() {
   // ─────────────────────────────────────────────────────────────────────────────
 
   return (
-    <div style={{ minHeight: "100vh", paddingTop: "2rem", paddingBottom: "4rem", paddingLeft: "2rem", paddingRight: "2rem" }}>
-      <div style={{ maxWidth: "1400px", margin: "0 auto" }}>
+    <div className="min-h-screen pt-4 sm:pt-8 pb-12 px-3 sm:px-6 lg:px-8">
+      <div className="max-w-[1400px] mx-auto">
 
         {/* ── Page Header ── */}
-        <div style={{ marginBottom: "2rem" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.75rem" }}>
-            <Link href="/dashboard" style={{ color: "rgba(167,184,176,0.6)", fontSize: "0.8rem", textDecoration: "none" }}
-              className="hover:text-[#A7B8B0] transition-colors">
+        <div className="mb-6 sm:mb-8">
+          <div className="flex items-center gap-2 mb-3">
+            <Link href="/dashboard" className="text-[#A7B8B0]/60 hover:text-[#A7B8B0] text-xs no-underline transition-colors">
               Dashboard
             </Link>
-            <span style={{ color: "rgba(167,184,176,0.3)", fontSize: "0.8rem" }}>/</span>
-            <span style={{ color: "rgba(167,184,176,0.8)", fontSize: "0.8rem", fontWeight: 600 }}>UniVerse Resale</span>
+            <span className="text-[#A7B8B0]/30 text-xs">/</span>
+            <span className="text-[#A7B8B0]/80 text-xs font-semibold">UniVerse Resale</span>
           </div>
 
-          <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", flexWrap: "wrap", gap: "1rem" }}>
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
-              <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "0.4rem" }}>
-                <div style={{
-                  width: "36px", height: "36px", borderRadius: "10px",
-                  background: "linear-gradient(135deg, #00C853 0%, #00E676 100%)",
-                  display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
-                }}>
+              <div className="flex items-center gap-2.5 sm:gap-3 mb-1.5">
+                <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-[10px] bg-gradient-to-br from-[#00C853] to-[#00E676] flex items-center justify-center shrink-0">
                   <ShoppingBag size={18} color="#050A07" />
                 </div>
-                <h1 style={{ color: "#fff", fontSize: "1.7rem", fontWeight: 800, margin: 0, letterSpacing: "-0.03em" }}>
+                <h1 className="text-white text-xl sm:text-2xl lg:text-[1.7rem] font-extrabold m-0 tracking-tight">
                   UniVerse Resale
                 </h1>
               </div>
-              <p style={{ color: "rgba(167,184,176,0.7)", fontSize: "0.875rem", margin: 0, paddingLeft: "calc(36px + 0.75rem)" }}>
+              <p className="text-[#A7B8B0]/70 text-xs sm:text-sm m-0 sm:pl-[44px]">
                 Buy and sell useful items within your university community.
               </p>
             </div>
 
-            <div style={{ display: "flex", gap: "0.5rem" }}>
-              <Link href="/dashboard/marketplace/my-listings" style={{ textDecoration: "none" }}>
+            <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+              <Link href="/dashboard/marketplace/my-listings" className="no-underline flex-1 sm:flex-none">
                 <button
-                  style={{
-                    display: "flex", alignItems: "center", gap: "0.5rem",
-                    padding: "0.7rem 1.25rem",
-                    background: "rgba(255,255,255,0.05)",
-                    border: "1px solid rgba(255,255,255,0.1)", borderRadius: "12px",
-                    color: "#fff", fontSize: "0.875rem", fontWeight: 600,
-                    cursor: "pointer", transition: "all 0.2s ease", whiteSpace: "nowrap",
-                  }}
-                  className="hover:bg-[rgba(255,255,255,0.1)]"
+                  className="flex items-center justify-center gap-1.5 px-3 sm:px-4 py-2 sm:py-2.5 bg-white/5 border border-white/10 rounded-xl text-white text-xs sm:text-sm font-semibold cursor-pointer transition-all hover:bg-white/10 w-full whitespace-nowrap"
                   aria-label="View your listings"
                 >
-                  <Package size={16} />
+                  <Package size={15} />
                   My Listings
                 </button>
               </Link>
               {isAuthenticated && (
-                <Link href="/dashboard/marketplace/saved" style={{ textDecoration: "none" }}>
+                <Link href="/dashboard/marketplace/saved" className="no-underline flex-1 sm:flex-none">
                   <button
-                    style={{
-                      display: "flex", alignItems: "center", gap: "0.5rem",
-                      padding: "0.7rem 1.25rem",
-                      background: "rgba(255,255,255,0.05)",
-                      border: "1px solid rgba(255,255,255,0.1)", borderRadius: "12px",
-                      color: "#fff", fontSize: "0.875rem", fontWeight: 600,
-                      cursor: "pointer", transition: "all 0.2s ease", whiteSpace: "nowrap",
-                    }}
-                    className="hover:bg-[rgba(255,255,255,0.1)] hover:text-[#ef4444] hover:border-[#ef4444]"
+                    className="flex items-center justify-center gap-1.5 px-3 sm:px-4 py-2 sm:py-2.5 bg-white/5 border border-white/10 rounded-xl text-white text-xs sm:text-sm font-semibold cursor-pointer transition-all hover:bg-white/10 hover:text-[#ef4444] hover:border-[#ef4444] w-full whitespace-nowrap"
                     aria-label="View saved listings"
                   >
-                    <Heart size={16} />
+                    <Heart size={15} />
                     Saved
                   </button>
                 </Link>
               )}
-              <Link href="/dashboard/marketplace/sell" style={{ textDecoration: "none" }}>
+              <Link href="/dashboard/marketplace/sell" className="no-underline flex-1 sm:flex-none">
                 <button
-                  style={{
-                    display: "flex", alignItems: "center", gap: "0.5rem",
-                    padding: "0.7rem 1.25rem",
-                    background: "linear-gradient(135deg, #00C853 0%, #00E676 100%)",
-                    border: "none", borderRadius: "12px",
-                    color: "#050A07", fontSize: "0.875rem", fontWeight: 800,
-                    cursor: "pointer", boxShadow: "0 4px 20px rgba(0,230,118,0.25)",
-                    transition: "transform 0.2s ease, box-shadow 0.2s ease", whiteSpace: "nowrap",
-                  }}
-                  className="hover:scale-105 hover:shadow-[0_6px_28px_rgba(0,230,118,0.35)]"
+                  className="flex items-center justify-center gap-1.5 px-3.5 sm:px-5 py-2 sm:py-2.5 bg-gradient-to-br from-[#00C853] to-[#00E676] border-none rounded-xl text-[#050A07] text-xs sm:text-sm font-extrabold cursor-pointer shadow-[0_4px_20px_rgba(0,230,118,0.25)] hover:scale-105 transition-transform w-full whitespace-nowrap"
                   aria-label="Sell an item on UniVerse Resale"
                 >
-                  <Plus size={16} />
+                  <Plus size={15} />
                   Sell an Item
                 </button>
               </Link>
@@ -570,7 +540,7 @@ export function ResaleMarketplace() {
         ) : (
           <>
             <div
-              style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: "1.25rem" }}
+              className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5"
               role="list" aria-label="Marketplace listings"
             >
               {data.listings.map((listing) => {

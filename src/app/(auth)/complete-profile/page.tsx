@@ -179,9 +179,9 @@ export default function CompleteProfilePage() {
   return (
     <>
       <AuthBackground />
-      <div className="min-h-dvh flex flex-col items-center justify-center px-4 py-12 sm:px-6">
+      <div className="min-h-dvh flex flex-col items-center justify-center px-3 py-8 sm:px-6 sm:py-12">
         {/* Logo */}
-        <div className="mb-8">
+        <div className="mb-6 sm:mb-8">
           <AuthLogo />
         </div>
 
@@ -191,7 +191,7 @@ export default function CompleteProfilePage() {
           style={{ background: "rgba(255,255,255,0.88)", backdropFilter: "blur(20px)" }}
         >
           {/* Header */}
-          <div className="px-8 pt-8 pb-6 border-b border-[var(--color-border)]">
+          <div className="px-5 sm:px-8 pt-6 sm:pt-8 pb-4 sm:pb-6 border-b border-[var(--color-border)]">
             <p
               className="text-xs font-bold uppercase tracking-[0.1em] text-[var(--color-primary)] mb-1"
               style={{ fontFamily: "var(--font-inter)" }}
@@ -199,29 +199,29 @@ export default function CompleteProfilePage() {
               Step 3 of 3
             </p>
             <h1
-              className="text-2xl font-bold text-[var(--color-text)] tracking-tight"
+              className="text-xl sm:text-2xl font-bold text-[var(--color-text)] tracking-tight"
               style={{ fontFamily: "var(--font-plus-jakarta-sans)" }}
             >
               Complete your profile
             </h1>
             <p
-              className="mt-1.5 text-sm text-[var(--color-text-muted)]"
+              className="mt-1 text-xs sm:text-sm text-[var(--color-text-muted)]"
               style={{ fontFamily: "var(--font-inter)" }}
             >
               Help your community find and recognise you
             </p>
           </div>
 
-          <div className="px-8 py-6">
+          <div className="px-5 sm:px-8 py-5 sm:py-6">
             {done ? (
               <SuccessScreen />
             ) : (
-              <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-5">
+              <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-4 sm:gap-5">
                 {/* Global error */}
                 {errors.form && (
                   <div
                     role="alert"
-                    className="rounded-[var(--radius-md)] px-4 py-3 text-sm bg-[var(--color-error-subtle)] text-[var(--color-error-foreground)] border border-[var(--color-error)]/30"
+                    className="rounded-[var(--radius-md)] px-4 py-3 text-xs sm:text-sm bg-[var(--color-error-subtle)] text-[var(--color-error-foreground)] border border-[var(--color-error)]/30 break-words"
                     style={{ fontFamily: "var(--font-inter)" }}
                   >
                     {errors.form}
@@ -235,12 +235,12 @@ export default function CompleteProfilePage() {
                 <div className="flex flex-col gap-1.5">
                   <label
                     htmlFor="profile-hostel"
-                    className="text-sm font-medium text-[var(--color-text)]"
+                    className="text-xs sm:text-sm font-medium text-[var(--color-text)]"
                     style={{ fontFamily: "var(--font-inter)" }}
                   >
                     Hostel <span className="text-[var(--color-error)] ml-0.5" aria-label="required">*</span>
                   </label>
-                  <div className="grid grid-cols-4 gap-2" role="group" aria-label="Select hostel">
+                  <div className="grid grid-cols-4 gap-1.5 sm:gap-2" role="group" aria-label="Select hostel">
                     {HOSTELS.map((h) => (
                       <button
                         key={h}
@@ -248,7 +248,7 @@ export default function CompleteProfilePage() {
                         aria-pressed={hostel === h}
                         onClick={() => setHostel(h)}
                         className={cn(
-                          "h-10 rounded-[var(--radius-md)] text-sm font-medium transition-all duration-150 border",
+                          "h-9 sm:h-10 rounded-[var(--radius-md)] text-xs sm:text-sm font-medium transition-all duration-150 border",
                           hostel === h
                             ? "bg-[var(--color-primary)] text-white border-[var(--color-primary)] shadow-[var(--shadow-glow-primary)]"
                             : "bg-white text-[var(--color-text-secondary)] border-[var(--color-border)] hover:border-[var(--color-primary)] hover:text-[var(--color-primary)]"

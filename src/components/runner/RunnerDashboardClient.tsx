@@ -200,19 +200,19 @@ export function RunnerDashboardClient({
   return (
     <div className="space-y-8">
       {/* Navigation Tabs */}
-      <div className="flex flex-wrap gap-3 pb-2">
+      <div className="flex flex-wrap gap-2 sm:gap-3 pb-2">
         <button
           onClick={() => setActiveTab("available")}
-          className={`flex items-center px-6 py-3 rounded-full text-sm font-medium transition-all duration-300 border ${
+          className={`flex items-center px-4 sm:px-6 py-2.5 sm:py-3 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 border ${
             activeTab === "available"
               ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.15)]"
               : "bg-white/5 border-white/10 text-white/70 hover:bg-white/10 hover:text-white"
           }`}
         >
-          <Package className="w-4 h-4 mr-2.5" />
-          Available Requests
+          <Package className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-2" />
+          Available
           {pendingRequests.length > 0 && (
-            <span className={`ml-2.5 px-2 py-0.5 rounded-full text-xs font-bold ${activeTab === "available" ? "bg-emerald-500 text-[#0a0f0d]" : "bg-white/20 text-white"}`}>
+            <span className={`ml-2 px-1.5 sm:px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-bold ${activeTab === "available" ? "bg-emerald-500 text-[#0a0f0d]" : "bg-white/20 text-white"}`}>
               {pendingRequests.length}
             </span>
           )}
@@ -220,31 +220,26 @@ export function RunnerDashboardClient({
 
         <button
           onClick={() => setActiveTab("active")}
-          className={`flex items-center px-6 py-3 rounded-full text-sm font-medium transition-all duration-300 border ${
+          className={`flex items-center px-4 sm:px-6 py-2.5 sm:py-3 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 border ${
             activeTab === "active"
               ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.15)]"
               : "bg-white/5 border-white/10 text-white/70 hover:bg-white/10 hover:text-white"
           }`}
         >
-          <Clock className="w-4 h-4 mr-2.5" />
-          My Active Deliveries
-          {activeDeliveries.length > 0 && (
-            <span className={`ml-2.5 px-2 py-0.5 rounded-full text-xs font-bold ${activeTab === "active" ? "bg-emerald-500 text-[#0a0f0d]" : "bg-white/20 text-white"}`}>
-              {activeDeliveries.length}
-            </span>
-          )}
+          <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-2" />
+          Active ({activeDeliveries.length})
         </button>
 
         <button
           onClick={() => setActiveTab("history")}
-          className={`flex items-center px-6 py-3 rounded-full text-sm font-medium transition-all duration-300 border ${
+          className={`flex items-center px-4 sm:px-6 py-2.5 sm:py-3 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 border ${
             activeTab === "history"
               ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.15)]"
               : "bg-white/5 border-white/10 text-white/70 hover:bg-white/10 hover:text-white"
           }`}
         >
-          <History className="w-4 h-4 mr-2.5" />
-          Delivery History
+          <History className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-2" />
+          History
         </button>
       </div>
 

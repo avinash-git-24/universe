@@ -35,7 +35,7 @@ export default async function RequestDetailsPage({ params }: RequestPageProps) {
   }
 
   return (
-    <div className="min-h-screen bg-secondary/30 pt-24 pb-12 px-4">
+    <div className="min-h-screen bg-[#080b09] text-white pt-4 sm:pt-8 pb-12 px-3 sm:px-6">
       <div className="max-w-4xl mx-auto space-y-6">
         
         <div className="flex items-center">

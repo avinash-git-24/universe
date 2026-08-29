@@ -21,6 +21,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import { cn } from "@/lib/utils";
 import type { Database } from "@/types/database";
 
 type InsertRequest = Database["public"]["Tables"]["delivery_requests"]["Insert"];
@@ -237,46 +238,34 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
   ];
 
   return (
-    <div style={{ maxWidth: "800px", margin: "0 auto", width: "100%", display: "flex", flexDirection: "column", alignItems: "center" }}>
+    <div className="max-w-[800px] mx-auto w-full flex flex-col items-center">
       {/* Dynamic Step Indicator */}
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem", marginBottom: "2.5rem", width: "100%", maxWidth: "600px", position: "relative" }}>
+      <div className="flex items-center justify-between sm:justify-center gap-1.5 sm:gap-3 mb-6 sm:mb-10 w-full max-w-[600px] relative px-2">
         {/* Step 1 Indicator */}
         <div
           onClick={() => setStep(1)}
-          style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "0.5rem", zIndex: 1, cursor: "pointer" }}
+          className="flex flex-col items-center gap-1.5 z-10 cursor-pointer"
         >
           <div
-            style={{
-              width: "38px",
-              height: "38px",
-              borderRadius: "50%",
-              background: step > 1 ? "#00E676" : step === 1 ? "#00E676" : "rgba(255,255,255,0.05)",
-              color: step >= 1 ? "#050805" : "rgba(255,255,255,0.4)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontWeight: 800,
-              fontSize: "1rem",
-              border: step === 1 ? "2px solid #66FFB2" : "none",
-              boxShadow: step === 1 ? "0 0 15px rgba(0,230,118,0.5)" : "none",
-              transition: "all 0.3s ease",
-            }}
+            className={cn(
+              "w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center font-extrabold text-sm sm:text-base transition-all duration-300",
+              step >= 1 ? "bg-[#00E676] text-[#050805]" : "bg-white/5 text-white/40",
+              step === 1 ? "ring-4 ring-[#00E676]/30 shadow-[0_0_15px_rgba(0,230,118,0.5)]" : ""
+            )}
           >
-            {step > 1 ? <Check size={18} strokeWidth={3} /> : "1"}
+            {step > 1 ? <Check size={16} strokeWidth={3} /> : "1"}
           </div>
-          <span style={{ color: step >= 1 ? "#fff" : "rgba(255,255,255,0.4)", fontSize: "0.8rem", fontWeight: step === 1 ? 800 : 600 }}>
+          <span className={cn("text-[10px] sm:text-xs font-semibold text-center whitespace-nowrap", step >= 1 ? "text-white" : "text-white/40")}>
             Item Details
           </span>
         </div>
 
         {/* Line 1 -> 2 */}
         <div
-          style={{
-            flex: 1,
-            borderTop: step >= 2 ? "2px solid #00E676" : "2px dashed rgba(255,255,255,0.2)",
-            transform: "translateY(-12px)",
-            transition: "all 0.3s ease",
-          }}
+          className={cn(
+            "flex-1 h-0.5 -mt-4 sm:-mt-5 transition-all duration-300",
+            step >= 2 ? "bg-[#00E676]" : "border-t-2 border-dashed border-white/20"
+          )}
         />
 
         {/* Step 2 Indicator */}
@@ -284,47 +273,31 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
           onClick={() => {
             if (items.length > 0) setStep(2);
           }}
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            gap: "0.5rem",
-            zIndex: 1,
-            cursor: items.length > 0 ? "pointer" : "not-allowed",
-          }}
+          className={cn(
+            "flex flex-col items-center gap-1.5 z-10",
+            items.length > 0 ? "cursor-pointer" : "cursor-not-allowed opacity-70"
+          )}
         >
           <div
-            style={{
-              width: "38px",
-              height: "38px",
-              borderRadius: "50%",
-              background: step > 2 ? "#00E676" : step === 2 ? "#00E676" : "transparent",
-              border: step >= 2 ? "none" : "1px solid rgba(255,255,255,0.2)",
-              color: step >= 2 ? "#050805" : "rgba(255,255,255,0.4)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontWeight: 800,
-              fontSize: "1rem",
-              boxShadow: step === 2 ? "0 0 15px rgba(0,230,118,0.5)" : "none",
-              transition: "all 0.3s ease",
-            }}
+            className={cn(
+              "w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center font-extrabold text-sm sm:text-base transition-all duration-300 border",
+              step >= 2 ? "bg-[#00E676] text-[#050805] border-[#00E676]" : "bg-transparent text-white/40 border-white/20",
+              step === 2 ? "ring-4 ring-[#00E676]/30 shadow-[0_0_15px_rgba(0,230,118,0.5)]" : ""
+            )}
           >
-            {step > 2 ? <Check size={18} strokeWidth={3} /> : "2"}
+            {step > 2 ? <Check size={16} strokeWidth={3} /> : "2"}
           </div>
-          <span style={{ color: step >= 2 ? "#fff" : "rgba(255,255,255,0.4)", fontSize: "0.8rem", fontWeight: step === 2 ? 800 : 500 }}>
+          <span className={cn("text-[10px] sm:text-xs font-semibold text-center whitespace-nowrap", step >= 2 ? "text-white" : "text-white/40")}>
             Delivery Details
           </span>
         </div>
 
         {/* Line 2 -> 3 */}
         <div
-          style={{
-            flex: 1,
-            borderTop: step === 3 ? "2px solid #00E676" : "2px dashed rgba(255,255,255,0.2)",
-            transform: "translateY(-12px)",
-            transition: "all 0.3s ease",
-          }}
+          className={cn(
+            "flex-1 h-0.5 -mt-4 sm:-mt-5 transition-all duration-300",
+            step === 3 ? "bg-[#00E676]" : "border-t-2 border-dashed border-white/20"
+          )}
         />
 
         {/* Step 3 Indicator */}
@@ -332,35 +305,20 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
           onClick={() => {
             if (items.length > 0 && dropoffRoom.trim()) setStep(3);
           }}
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            gap: "0.5rem",
-            zIndex: 1,
-            cursor: items.length > 0 && dropoffRoom.trim() ? "pointer" : "not-allowed",
-          }}
+          className={cn(
+            "flex flex-col items-center gap-1.5 z-10",
+            items.length > 0 && dropoffRoom.trim() ? "cursor-pointer" : "cursor-not-allowed opacity-70"
+          )}
         >
           <div
-            style={{
-              width: "38px",
-              height: "38px",
-              borderRadius: "50%",
-              background: step === 3 ? "#00E676" : "transparent",
-              border: step === 3 ? "none" : "1px solid rgba(255,255,255,0.2)",
-              color: step === 3 ? "#050805" : "rgba(255,255,255,0.4)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontWeight: 800,
-              fontSize: "1rem",
-              boxShadow: step === 3 ? "0 0 15px rgba(0,230,118,0.5)" : "none",
-              transition: "all 0.3s ease",
-            }}
+            className={cn(
+              "w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center font-extrabold text-sm sm:text-base transition-all duration-300 border",
+              step === 3 ? "bg-[#00E676] text-[#050805] border-[#00E676] ring-4 ring-[#00E676]/30 shadow-[0_0_15px_rgba(0,230,118,0.5)]" : "bg-transparent text-white/40 border-white/20"
+            )}
           >
             3
           </div>
-          <span style={{ color: step === 3 ? "#fff" : "rgba(255,255,255,0.4)", fontSize: "0.8rem", fontWeight: step === 3 ? 800 : 500 }}>
+          <span className={cn("text-[10px] sm:text-xs font-semibold text-center whitespace-nowrap", step === 3 ? "text-white" : "text-white/40")}>
             Confirm Request
           </span>
         </div>
@@ -369,68 +327,33 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
       {/* Global Form Error Banner */}
       {formError && (
         <div
-          style={{
-            width: "100%",
-            background: "rgba(239, 68, 68, 0.15)",
-            border: "1px solid rgba(239, 68, 68, 0.4)",
-            borderRadius: "14px",
-            padding: "1rem",
-            color: "#fca5a5",
-            fontSize: "0.9rem",
-            display: "flex",
-            alignItems: "center",
-            gap: "0.75rem",
-            marginBottom: "1.5rem",
-          }}
+          role="alert"
+          className="w-full bg-red-500/15 border border-red-500/40 rounded-xl p-3.5 sm:p-4 text-red-300 text-xs sm:text-sm flex items-center gap-2.5 mb-6 break-words"
         >
-          <AlertCircle size={20} color="#ef4444" />
+          <AlertCircle size={18} className="text-red-400 shrink-0" />
           <span>{formError}</span>
         </div>
       )}
 
       {/* Main Glassmorphic Card */}
-      <div
-        style={{
-          background: "rgba(10,15,12,0.75)",
-          border: "1px solid rgba(102,255,178,0.18)",
-          borderRadius: "24px",
-          padding: "2.25rem",
-          width: "100%",
-          boxShadow: "0 10px 40px rgba(0,0,0,0.5), 0 0 40px rgba(0,230,118,0.05)",
-          backdropFilter: "blur(16px)",
-          display: "flex",
-          flexDirection: "column",
-          gap: "2rem",
-        }}
-      >
+      <div className="bg-[#0a0f0c]/85 border border-[#66ffb2]/20 rounded-[20px] sm:rounded-[24px] p-4 sm:p-8 lg:p-9 w-full shadow-[0_10px_40px_rgba(0,0,0,0.5),0_0_40px_rgba(0,230,118,0.05)] backdrop-blur-xl flex flex-col gap-6 sm:gap-8">
         {/* ================= STEP 1: ITEM DETAILS ================= */}
         {step === 1 && (
           <>
-            <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-              <div
-                style={{
-                  width: "44px",
-                  height: "44px",
-                  borderRadius: "12px",
-                  background: "rgba(0,230,118,0.12)",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  border: "1px solid rgba(0,230,118,0.25)",
-                }}
-              >
-                <Box size={22} color="#00E676" />
+            <div className="flex items-center gap-3 sm:gap-4">
+              <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-[#00E676]/10 flex items-center justify-center border border-[#00E676]/25 shrink-0">
+                <Box size={20} className="text-[#00E676]" />
               </div>
               <div>
-                <h2 style={{ color: "#fff", fontWeight: 800, fontSize: "1.3rem", margin: 0 }}>What do you need?</h2>
-                <p style={{ color: "#A7B8B0", fontSize: "0.85rem", margin: 0, marginTop: "0.2rem" }}>
+                <h2 className="text-white font-extrabold text-lg sm:text-xl m-0 leading-tight">What do you need?</h2>
+                <p className="text-[#A7B8B0] text-xs sm:text-sm m-0 mt-1">
                   Select a category and add the items you want delivered to your room.
                 </p>
               </div>
             </div>
 
-            {/* Categories */}
-            <div style={{ display: "flex", gap: "0.85rem", flexWrap: "wrap", justifyContent: "center" }}>
+            {/* Categories Grid (3 cols on mobile, 6 cols on tablet/desktop) */}
+            <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 sm:gap-3 w-full">
               {categories.map((cat) => {
                 const isActive = currentCategory === cat.label;
                 const IconComp = cat.icon;
@@ -439,39 +362,19 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
                     key={cat.label}
                     type="button"
                     onClick={() => setCurrentCategory(cat.label)}
-                    style={{
-                      position: "relative",
-                      background: isActive ? "rgba(0,230,118,0.12)" : "rgba(255,255,255,0.02)",
-                      border: isActive ? "1.5px solid #00E676" : "1px solid rgba(255,255,255,0.08)",
-                      borderRadius: "16px",
-                      width: "88px",
-                      height: "88px",
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      gap: "0.45rem",
-                      cursor: "pointer",
-                      boxShadow: isActive ? "0 0 20px rgba(0,230,118,0.2)" : "none",
-                      transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
-                    }}
+                    className={cn(
+                      "relative rounded-2xl h-[76px] sm:h-[88px] w-full flex flex-col items-center justify-center gap-1.5 cursor-pointer transition-all duration-200 border",
+                      isActive
+                        ? "bg-[#00E676]/15 border-[#00E676] shadow-[0_0_20px_rgba(0,230,118,0.2)]"
+                        : "bg-white/[0.02] border-white/10 hover:border-white/20"
+                    )}
                   >
-                    <IconComp size={24} color={isActive ? "#00E676" : "#A7B8B0"} strokeWidth={1.75} />
-                    <span style={{ color: isActive ? "#fff" : "#A7B8B0", fontSize: "0.75rem", fontWeight: isActive ? 700 : 500 }}>
+                    <IconComp size={20} color={isActive ? "#00E676" : "#A7B8B0"} strokeWidth={1.75} />
+                    <span className={cn("text-[11px] sm:text-xs", isActive ? "text-white font-bold" : "text-[#A7B8B0] font-medium")}>
                       {cat.label}
                     </span>
                     {isActive && (
-                      <div
-                        style={{
-                          position: "absolute",
-                          bottom: "-5px",
-                          left: "50%",
-                          transform: "translateX(-50%) rotate(45deg)",
-                          width: "8px",
-                          height: "8px",
-                          background: "#00E676",
-                        }}
-                      />
+                      <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 rotate-45 w-2 h-2 bg-[#00E676]" />
                     )}
                   </button>
                 );
@@ -733,36 +636,25 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
         {/* ================= STEP 2: LOGISTICS & REWARD ================= */}
         {step === 2 && (
           <>
-            <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-              <div
-                style={{
-                  width: "44px",
-                  height: "44px",
-                  borderRadius: "12px",
-                  background: "rgba(0,230,118,0.12)",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  border: "1px solid rgba(0,230,118,0.25)",
-                }}
-              >
-                <MapPin size={22} color="#00E676" />
+            <div className="flex items-center gap-3 sm:gap-4">
+              <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-[#00E676]/10 flex items-center justify-center border border-[#00E676]/25 shrink-0">
+                <MapPin size={20} className="text-[#00E676]" />
               </div>
               <div>
-                <h2 style={{ color: "#fff", fontWeight: 800, fontSize: "1.3rem", margin: 0 }}>Logistics & Reward</h2>
-                <p style={{ color: "#A7B8B0", fontSize: "0.85rem", margin: 0, marginTop: "0.2rem" }}>
+                <h2 className="text-white font-extrabold text-lg sm:text-xl m-0 leading-tight">Logistics & Reward</h2>
+                <p className="text-[#A7B8B0] text-xs sm:text-sm m-0 mt-1">
                   Where should the runner pick up your items and deliver them?
                 </p>
               </div>
             </div>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "1.75rem" }}>
+            <div className="flex flex-col gap-5 sm:gap-6">
               {/* Pickup Location */}
-              <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem" }}>
-                <label style={{ color: "#00E676", fontSize: "0.85rem", fontWeight: 700, display: "flex", alignItems: "center", gap: "0.4rem" }}>
-                  <MapPin size={15} /> Select Pickup Location
+              <div className="flex flex-col gap-2">
+                <label className="text-[#00E676] text-xs sm:text-sm font-bold flex items-center gap-1.5">
+                  <MapPin size={14} /> Select Pickup Location
                 </label>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.6rem" }}>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-2.5">
                   {PICKUP_LOCATIONS.map((loc) => {
                     const isSelected = pickupLocation === loc;
                     return (
@@ -770,19 +662,12 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
                         key={loc}
                         type="button"
                         onClick={() => setPickupLocation(loc)}
-                        style={{
-                          background: isSelected ? "rgba(0,230,118,0.15)" : "rgba(0,0,0,0.35)",
-                          border: isSelected ? "1.5px solid #00E676" : "1px solid rgba(255,255,255,0.1)",
-                          color: isSelected ? "#00E676" : "#E8F0EB",
-                          padding: "0.9rem 1.1rem",
-                          borderRadius: "12px",
-                          textAlign: "left",
-                          cursor: "pointer",
-                          fontSize: "0.9rem",
-                          fontWeight: isSelected ? 800 : 500,
-                          boxShadow: isSelected ? "0 0 15px rgba(0,230,118,0.15)" : "none",
-                          transition: "all 0.2s ease",
-                        }}
+                        className={cn(
+                          "p-3 sm:p-3.5 rounded-xl text-left cursor-pointer text-xs sm:text-sm font-medium transition-all duration-150 border",
+                          isSelected
+                            ? "bg-[#00E676]/15 border-[#00E676] text-[#00E676] font-bold shadow-[0_0_15px_rgba(0,230,118,0.15)]"
+                            : "bg-black/35 border-white/10 text-white/90 hover:border-white/20"
+                        )}
                       >
                         {loc}
                       </button>
@@ -792,13 +677,13 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
               </div>
 
               {/* Delivery Details */}
-              <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem", borderTop: "1px solid rgba(255,255,255,0.08)", paddingTop: "1.5rem" }}>
-                <label style={{ color: "#00E676", fontSize: "0.85rem", fontWeight: 700, display: "flex", alignItems: "center", gap: "0.4rem" }}>
-                  <MapPin size={15} /> Delivery Destination (Hostel & Room)
+              <div className="flex flex-col gap-2 border-t border-white/10 pt-4 sm:pt-5">
+                <label className="text-[#00E676] text-xs sm:text-sm font-bold flex items-center gap-1.5">
+                  <MapPin size={14} /> Delivery Destination (Hostel & Room)
                 </label>
 
                 {/* Hostel Selector */}
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.6rem", marginBottom: "0.5rem" }}>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-1">
                   {HOSTELS.map((hostel) => {
                     const isSelected = dropoffHostel === hostel;
                     return (
@@ -806,18 +691,12 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
                         key={hostel}
                         type="button"
                         onClick={() => setDropoffHostel(hostel)}
-                        style={{
-                          background: isSelected ? "rgba(0,230,118,0.15)" : "rgba(0,0,0,0.35)",
-                          border: isSelected ? "1.5px solid #00E676" : "1px solid rgba(255,255,255,0.1)",
-                          color: isSelected ? "#00E676" : "#E8F0EB",
-                          padding: "0.85rem 1.1rem",
-                          borderRadius: "12px",
-                          cursor: "pointer",
-                          fontSize: "0.9rem",
-                          fontWeight: isSelected ? 800 : 500,
-                          boxShadow: isSelected ? "0 0 15px rgba(0,230,118,0.15)" : "none",
-                          transition: "all 0.2s ease",
-                        }}
+                        className={cn(
+                          "py-2.5 sm:py-3 px-2 rounded-xl text-center cursor-pointer text-xs sm:text-sm font-medium transition-all duration-150 border",
+                          isSelected
+                            ? "bg-[#00E676]/15 border-[#00E676] text-[#00E676] font-bold shadow-[0_0_15px_rgba(0,230,118,0.15)]"
+                            : "bg-black/35 border-white/10 text-white/90 hover:border-white/20"
+                        )}
                       >
                         {hostel}
                       </button>
@@ -826,7 +705,7 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
                 </div>
 
                 {/* Room Number Input */}
-                <div style={{ display: "flex", flexDirection: "column", gap: "0.35rem" }}>
+                <div className="flex flex-col gap-1 mt-1">
                   <input
                     type="text"
                     placeholder="Enter Room Number (e.g. 104, B-205)"
@@ -841,19 +720,13 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
                         handleStep2Continue();
                       }
                     }}
-                    style={{
-                      background: "rgba(0,0,0,0.4)",
-                      border: roomError ? "1.5px solid #ef4444" : "1px solid rgba(255,255,255,0.12)",
-                      borderRadius: "12px",
-                      padding: "0.9rem 1.1rem",
-                      color: "#fff",
-                      fontSize: "0.95rem",
-                      outline: "none",
-                      boxShadow: roomError ? "0 0 10px rgba(239,68,68,0.3)" : "none",
-                    }}
+                    className={cn(
+                      "bg-black/40 rounded-xl px-4 py-3 text-white text-sm outline-none border transition-all",
+                      roomError ? "border-red-500 ring-1 ring-red-500" : "border-white/12 focus:border-[#00E676]"
+                    )}
                   />
                   {roomError && (
-                    <span style={{ color: "#ef4444", fontSize: "0.8rem", fontWeight: 600 }}>
+                    <span className="text-red-400 text-xs font-semibold mt-0.5">
                       * Please enter your room number to continue.
                     </span>
                   )}
@@ -861,63 +734,42 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
               </div>
 
               {/* Delivery Reward */}
-              <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem", borderTop: "1px solid rgba(255,255,255,0.08)", paddingTop: "1.5rem" }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                  <label style={{ color: "#00E676", fontSize: "0.85rem", fontWeight: 700, display: "flex", alignItems: "center", gap: "0.4rem" }}>
-                    <Sparkles size={15} /> Delivery Reward for Runner
+              <div className="flex flex-col gap-2 border-t border-white/10 pt-4 sm:pt-5">
+                <div className="flex justify-between items-center">
+                  <label className="text-[#00E676] text-xs sm:text-sm font-bold flex items-center gap-1.5">
+                    <Sparkles size={14} /> Delivery Reward for Runner
                   </label>
-                  <span style={{ color: "#A7B8B0", fontSize: "0.75rem" }}>
+                  <span className="text-[#A7B8B0] text-xs">
                     Suggested: ₹{calculateSuggestedReward()}
                   </span>
                 </div>
 
-                <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      background: "rgba(0,0,0,0.4)",
-                      border: "1px solid rgba(255,255,255,0.12)",
-                      borderRadius: "12px",
-                      padding: "0.4rem 1rem",
-                    }}
-                  >
-                    <span style={{ color: "#00E676", fontSize: "1.3rem", fontWeight: 800, marginRight: "0.4rem" }}>₹</span>
+                <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+                  <div className="flex items-center bg-black/40 border border-white/12 rounded-xl px-3 sm:px-4 py-2">
+                    <span className="text-[#00E676] text-lg font-extrabold mr-1.5">₹</span>
                     <input
                       type="number"
                       min={0}
                       placeholder={calculateSuggestedReward().toString()}
                       value={customReward}
                       onChange={(e) => setCustomReward(e.target.value)}
-                      style={{
-                        background: "transparent",
-                        border: "none",
-                        color: "#fff",
-                        fontSize: "1.1rem",
-                        fontWeight: 800,
-                        width: "90px",
-                        outline: "none",
-                      }}
+                      className="bg-transparent border-none text-white text-base font-extrabold w-20 outline-none"
                     />
                   </div>
 
                   {/* Preset quick buttons */}
-                  <div style={{ display: "flex", gap: "0.5rem" }}>
+                  <div className="flex flex-wrap gap-1.5 sm:gap-2">
                     {[5, 10, 20, 50].map((amt) => (
                       <button
                         key={amt}
                         type="button"
                         onClick={() => setCustomReward(amt.toString())}
-                        style={{
-                          background: currentReward === amt ? "rgba(0,230,118,0.2)" : "rgba(255,255,255,0.05)",
-                          border: currentReward === amt ? "1px solid #00E676" : "1px solid rgba(255,255,255,0.1)",
-                          color: currentReward === amt ? "#00E676" : "#A7B8B0",
-                          borderRadius: "10px",
-                          padding: "0.6rem 0.8rem",
-                          fontSize: "0.85rem",
-                          fontWeight: 700,
-                          cursor: "pointer",
-                        }}
+                        className={cn(
+                          "rounded-xl px-3 py-2 text-xs sm:text-sm font-bold cursor-pointer transition-all border",
+                          currentReward === amt
+                            ? "bg-[#00E676]/20 border-[#00E676] text-[#00E676]"
+                            : "bg-white/5 border-white/10 text-[#A7B8B0] hover:text-white"
+                        )}
                       >
                         ₹{amt}
                       </button>
@@ -927,45 +779,18 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
               </div>
 
               {/* Navigation Buttons */}
-              <div style={{ display: "flex", gap: "1rem", marginTop: "0.5rem" }}>
+              <div className="flex gap-3 mt-2">
                 <button
                   type="button"
                   onClick={() => setStep(1)}
-                  style={{
-                    background: "rgba(255,255,255,0.05)",
-                    border: "1px solid rgba(255,255,255,0.1)",
-                    color: "#fff",
-                    padding: "1rem",
-                    borderRadius: "14px",
-                    cursor: "pointer",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    width: "60px",
-                  }}
+                  className="bg-white/5 border border-white/10 text-white p-3.5 rounded-xl cursor-pointer flex items-center justify-center w-12 shrink-0 hover:bg-white/10"
                 >
                   <ArrowLeft size={18} />
                 </button>
                 <button
                   type="button"
                   onClick={handleStep2Continue}
-                  style={{
-                    flex: 1,
-                    background: "linear-gradient(135deg, #00C853 0%, #00E676 100%)",
-                    color: "#050805",
-                    fontWeight: 800,
-                    fontSize: "1rem",
-                    padding: "1rem",
-                    borderRadius: "14px",
-                    border: "none",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    gap: "0.5rem",
-                    cursor: "pointer",
-                    boxShadow: "0 0 25px rgba(0,230,118,0.35)",
-                    transition: "all 0.2s ease",
-                  }}
+                  className="flex-1 bg-gradient-to-r from-[#00C853] to-[#00E676] text-[#050805] font-extrabold text-sm sm:text-base p-3.5 rounded-xl border-none flex items-center justify-center gap-2 cursor-pointer shadow-[0_0_25px_rgba(0,230,118,0.35)] hover:scale-[1.02] transition-transform"
                 >
                   Continue to Summary <ArrowRight size={18} />
                 </button>

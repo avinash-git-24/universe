@@ -88,7 +88,7 @@ export function MyRequestTimeline({ status, className }: MyRequestTimelineProps)
               </div>
               <span
                 className={cn(
-                  "text-[11px] font-bold text-center leading-none transition-colors",
+                  "text-[9px] sm:text-[11px] font-bold text-center leading-tight max-w-[48px] sm:max-w-none transition-colors",
                   (isCompleted || isCurrent) ? "text-white/90" : "text-white/30"
                 )}
               >
