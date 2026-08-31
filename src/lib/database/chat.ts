@@ -45,9 +45,7 @@ export async function getConversations(
         ),
         messages(
           *
-        ),
-        delivery_request:delivery_requests(*),
-        resale_listing:resale_listings(*)
+        )
       `)
       .in("id", conversationIds)
       .order("updated_at", { ascending: false });
@@ -114,8 +112,6 @@ export async function getConversations(
           other_participant: otherParticipant,
           last_message: sortedMessages[0] || null,
           unread_count: unreadCount,
-          delivery_request: conv.delivery_request || undefined,
-          resale_listing: conv.resale_listing || undefined,
           other_last_read_at: otherRecord?.last_read_at || null,
         } as ConversationWithDetails;
       })
@@ -148,8 +144,7 @@ export async function getConversationById(
         ),
         messages(
           *
-        ),
-        delivery_request:delivery_requests(*)
+        )
       `)
       .eq("id", conversationId)
       .single();
@@ -209,7 +204,6 @@ export async function getConversationById(
       other_participant: otherParticipant,
       last_message: sortedMessages[0] || null,
       unread_count: unreadCount,
-      delivery_request: conv.delivery_request || undefined,
       other_last_read_at: otherRecord?.last_read_at || null,
     } as ConversationWithDetails;
   } catch (err) {
