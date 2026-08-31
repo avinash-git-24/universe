@@ -201,27 +201,45 @@ export async function getOrCreateConversation(
     }
 
     // Fallback: Direct table insert
-    const { data: newConv, error: insertError } = await supabase
-      .from("conversations")
-      .insert({ request_id: trimmedReqId })
-      .select("id")
-      .single();
+    let newConvId: string | null = null;
 
-    if (insertError || !newConv) {
-      console.error("Error creating conversation fallback:", insertError);
-      return null;
+    // Try inserting with request_id first
+    if (trimmedReqId) {
+      const { data: convWithReq } = await supabase
+        .from("conversations")
+        .insert({ request_id: trimmedReqId })
+        .select("id")
+        .single();
+      if (convWithReq?.id) {
+        newConvId = convWithReq.id;
+      }
+    }
+
+    // If no request_id or if insert with request_id failed (e.g. FK constraint)
+    if (!newConvId) {
+      const { data: convWithoutReq, error: insertError } = await supabase
+        .from("conversations")
+        .insert({})
+        .select("id")
+        .single();
+
+      if (insertError || !convWithoutReq) {
+        console.error("Error creating conversation fallback:", insertError);
+        return null;
+      }
+      newConvId = convWithoutReq.id;
     }
 
     // Insert participants (unique list to avoid duplicate keys)
     const uniqueParticipants = Array.from(new Set([userId1, userId2]));
     await supabase.from("conversation_participants").insert(
       uniqueParticipants.map((pid) => ({
-        conversation_id: newConv.id,
+        conversation_id: newConvId!,
         profile_id: pid,
       }))
     );
 
-    return newConv.id;
+    return newConvId;
   } catch (err) {
     console.error("Error in getOrCreateConversation:", err);
     return null;
