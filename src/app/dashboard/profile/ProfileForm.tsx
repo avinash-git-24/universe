@@ -54,14 +54,14 @@ export function ProfileForm({
     const file = e.target.files?.[0];
     if (!file) return;
     
-    // Validate file type and size (2MB limit)
-    const validTypes = ["image/jpeg", "image/png", "image/webp"];
-    if (!validTypes.includes(file.type)) {
-      setError("Please upload a JPG, PNG, or WebP image.");
+    // Validate file type and size (5MB limit)
+    const isImage = (file.type && file.type.startsWith("image/")) || /\.(jpe?g|png|webp|gif|avif|bmp)$/i.test(file.name);
+    if (!isImage) {
+      setError("Please upload an image file (JPG, PNG, WebP).");
       return;
     }
-    if (file.size > 2 * 1024 * 1024) {
-      setError("Image size must be less than 2MB.");
+    if (file.size > 5 * 1024 * 1024) {
+      setError("Image size must be less than 5MB.");
       return;
     }
 
@@ -233,7 +233,7 @@ export function ProfileForm({
                 type="file" 
                 ref={fileInputRef} 
                 onChange={handlePhotoUpload}
-                accept="image/jpeg, image/png, image/webp" 
+                accept="image/*" 
                 style={{ display: "none" }} 
               />
               

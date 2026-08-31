@@ -75,7 +75,7 @@ function PhotoUpload({
         <input
           ref={fileRef}
           type="file"
-          accept="image/jpeg,image/png,image/webp"
+          accept="image/*"
           style={{ display: "none" }}
           onChange={handleFile}
           aria-label="Profile photo file input"
