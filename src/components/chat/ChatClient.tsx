@@ -2,7 +2,11 @@
 
 import { useState, useEffect } from "react";
 import { MessageSquare, Zap } from "lucide-react";
-import { ConversationWithDetails } from "@/lib/database/chat";
+import { 
+  ConversationWithDetails, 
+  getConversationById, 
+  getOrCreateConversation 
+} from "@/lib/database/chat";
 import { ChatList } from "@/components/chat/ChatList";
 import { ChatWindow } from "@/components/chat/ChatWindow";
 import { useSearchParams, useRouter } from "next/navigation";
@@ -42,6 +46,7 @@ export function ChatClient({ userId, initialConversations, activeDeliveries = []
     searchParams.get("id") || (initialConversations.length > 0 ? initialConversations[0].id : null)
   );
   const [onlineUsers, setOnlineUsers] = useState<Set<string>>(new Set());
+  const [startingChatUserId, setStartingChatUserId] = useState<string | null>(null);
 
   // Sync state if server props change
   useEffect(() => {
@@ -57,6 +62,39 @@ export function ChatClient({ userId, initialConversations, activeDeliveries = []
       setActiveConversationId(conversations[0].id);
     }
   }, [searchParams, conversations, activeConversationId]);
+
+  // If activeConversationId is not yet in conversations list, fetch it
+  useEffect(() => {
+    if (!activeConversationId) return;
+    const exists = conversations.some((c) => c.id === activeConversationId);
+    if (!exists) {
+      const supabase = createClient();
+      getConversationById(supabase, activeConversationId, userId).then((conv) => {
+        if (conv) {
+          setConversations((prev) => [conv, ...prev.filter((c) => c.id !== conv.id)]);
+        }
+      });
+    }
+  }, [activeConversationId, conversations, userId]);
+
+  const handleStartChatWithUser = async (otherUserId: string) => {
+    try {
+      setStartingChatUserId(otherUserId);
+      const supabase = createClient();
+      const convId = await getOrCreateConversation(supabase, userId, otherUserId);
+      if (convId) {
+        handleSelect(convId);
+        const conv = await getConversationById(supabase, convId, userId);
+        if (conv) {
+          setConversations((prev) => [conv, ...prev.filter((c) => c.id !== conv.id)]);
+        }
+      }
+    } catch (err) {
+      console.error("Error starting chat:", err);
+    } finally {
+      setStartingChatUserId(null);
+    }
+  };
 
   useEffect(() => {
     const supabase = createClient();
@@ -101,6 +139,7 @@ export function ChatClient({ userId, initialConversations, activeDeliveries = []
           initialConversations={conversations}
           activeConversationId={activeConversationId}
           onSelectConversation={handleSelect}
+          onStartChatWithUser={handleStartChatWithUser}
           onlineUsers={onlineUsers}
           activeDeliveries={activeDeliveries}
         />
@@ -169,13 +208,16 @@ export function ChatClient({ userId, initialConversations, activeDeliveries = []
                         </p>
                       </div>
 
-                      {/* Use <a> tag for server-side getOrCreateConversation flow */}
-                      <a
-                        href={`/dashboard/chat?startWithUserId=${del.otherUserId}`}
-                        className="shrink-0 px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-extrabold text-xs transition-all flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-emerald-950/40 no-underline"
+                      {/* Instant client-side chat trigger */}
+                      <button
+                        type="button"
+                        onClick={() => handleStartChatWithUser(del.otherUserId)}
+                        disabled={startingChatUserId === del.otherUserId}
+                        className="shrink-0 px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-extrabold text-xs transition-all flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-emerald-950/40 border-none disabled:opacity-50"
                       >
-                        <MessageSquare className="w-3.5 h-3.5" /> Message
-                      </a>
+                        <MessageSquare className="w-3.5 h-3.5" />
+                        {startingChatUserId === del.otherUserId ? "Opening..." : "Message"}
+                      </button>
                     </div>
                   ))}
                 </div>

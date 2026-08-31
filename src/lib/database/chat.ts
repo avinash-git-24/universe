@@ -129,6 +129,96 @@ export async function getConversations(
 }
 
 /**
+ * Fetches a single conversation by its ID with full details.
+ */
+export async function getConversationById(
+  supabase: SupabaseClient<Database>,
+  conversationId: string,
+  userId: string
+): Promise<ConversationWithDetails | null> {
+  try {
+    const { data: conv, error: cError } = await supabase
+      .from("conversations")
+      .select(`
+        *,
+        participants:conversation_participants(
+          profile_id,
+          last_read_at,
+          profile:profiles(*)
+        ),
+        messages(
+          *
+        ),
+        delivery_request:delivery_requests(*)
+      `)
+      .eq("id", conversationId)
+      .single();
+
+    if (cError || !conv) {
+      console.error("Error fetching single conversation:", cError);
+      return null;
+    }
+
+    const participantList = (conv.participants || []) as Array<{
+      profile_id: string;
+      last_read_at: string | null;
+      profile?: Profile | null;
+    }>;
+
+    const otherRecord = participantList.find((p) => p.profile_id !== userId) || participantList.find((p) => p.profile_id === userId);
+    const myRecord = participantList.find((p) => p.profile_id === userId);
+
+    let otherParticipant: Profile | null = otherRecord?.profile || null;
+
+    if (!otherParticipant && otherRecord?.profile_id) {
+      const { data: prof } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", otherRecord.profile_id)
+        .single();
+      otherParticipant = prof as Profile | null;
+    }
+
+    if (!otherParticipant) {
+      otherParticipant = {
+        id: otherRecord?.profile_id || "unknown",
+        full_name: "University Student",
+        avatar_url: null,
+        role: "student",
+        enrollment_number: null,
+        account_status: "active",
+        department: null,
+        semester: null,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      } as unknown as Profile;
+    }
+
+    const lastReadAt = myRecord?.last_read_at ? new Date(myRecord.last_read_at) : new Date(0);
+    const rawMessages = (conv.messages || []) as Message[];
+    const sortedMessages = [...rawMessages].sort(
+      (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+    );
+
+    const unreadCount = sortedMessages.filter(
+      (m) => m.sender_id !== userId && new Date(m.created_at) > lastReadAt
+    ).length;
+
+    return {
+      ...conv,
+      other_participant: otherParticipant,
+      last_message: sortedMessages[0] || null,
+      unread_count: unreadCount,
+      delivery_request: conv.delivery_request || undefined,
+      other_last_read_at: otherRecord?.last_read_at || null,
+    } as ConversationWithDetails;
+  } catch (err) {
+    console.error("Error in getConversationById:", err);
+    return null;
+  }
+}
+
+/**
  * Gets or creates a 1-on-1 conversation between two users.
  * KEY RULE: One conversation per unique user pair. If a conversation already
  * exists between userId1 and userId2, we return that — regardless of requestId.

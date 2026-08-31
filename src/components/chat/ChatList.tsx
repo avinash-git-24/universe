@@ -11,6 +11,7 @@ interface ChatListProps {
   initialConversations: ConversationWithDetails[];
   activeConversationId: string | null;
   onSelectConversation: (id: string) => void;
+  onStartChatWithUser?: (otherUserId: string) => void;
   onlineUsers: Set<string>;
   activeDeliveries?: ActiveDeliveryContact[];
 }
@@ -19,6 +20,7 @@ export function ChatList({
   initialConversations,
   activeConversationId,
   onSelectConversation,
+  onStartChatWithUser,
   onlineUsers,
   activeDeliveries = [],
 }: ChatListProps) {
@@ -70,10 +72,11 @@ export function ChatList({
               <span className="text-white/40">{activeDeliveries.length}</span>
             </div>
             {activeDeliveries.map((del) => (
-              <a
+              <button
                 key={del.otherUserId}
-                href={`/dashboard/chat?startWithUserId=${del.otherUserId}`}
-                className="w-full text-left p-2.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 transition-all flex items-center justify-between gap-2 group no-underline"
+                type="button"
+                onClick={() => onStartChatWithUser?.(del.otherUserId)}
+                className="w-full text-left p-2.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 transition-all flex items-center justify-between gap-2 group cursor-pointer"
               >
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-1.5">
@@ -96,7 +99,7 @@ export function ChatList({
                 <span className="shrink-0 text-xs text-emerald-400 font-bold px-2 py-1 rounded-lg bg-emerald-500/20 group-hover:bg-emerald-400 group-hover:text-black transition-all">
                   Chat
                 </span>
-              </a>
+              </button>
             ))}
           </div>
         )}
