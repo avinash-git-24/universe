@@ -4,23 +4,41 @@
  * UniVerse — Complete Profile Page
  *
  * Step 3 of onboarding: sets up hostel, room, bio, preferred language,
- * and profile photo in a stunning cosmic dark theme.
+ * and profile photo in an ultra-luxurious cosmic dark theme.
  */
 
 import { useState, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { Camera, Hash, MessageSquare, Globe, ArrowLeft, CheckCircle2, Sparkles, Loader2, ArrowRight } from "lucide-react";
+import { 
+  Camera, 
+  Hash, 
+  MessageSquare, 
+  Globe, 
+  ArrowLeft, 
+  CheckCircle2, 
+  Sparkles, 
+  Loader2, 
+  ArrowRight,
+  Building,
+  Check
+} from "lucide-react";
 import { AuthLogo } from "@/components/auth/AuthLogo";
+import StarTwinkleOverlay from "@/components/auth/StarTwinkleOverlay";
 import { ROUTES } from "@/constants/routes";
 import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
-const HOSTELS = ["Hostel A", "Hostel B", "Hostel C", "Hostel D"] as const;
-type Hostel = (typeof HOSTELS)[number];
+const HOSTELS = [
+  { id: "Hostel A", label: "Hostel A", block: "Block A" },
+  { id: "Hostel B", label: "Hostel B", block: "Block B" },
+  { id: "Hostel C", label: "Hostel C", block: "Block C" },
+  { id: "Hostel D", label: "Hostel D", block: "Block D" },
+] as const;
+type Hostel = (typeof HOSTELS)[number]["id"];
 
 const LANGUAGES = [
   { value: "en", label: "English" },
@@ -65,13 +83,17 @@ function PhotoUpload({
           onChange={handleFile}
           aria-label="Profile photo file input"
         />
+
+        {/* Ambient Halo Ring */}
+        <div className="absolute -inset-1.5 rounded-full bg-gradient-to-tr from-[#00E676]/30 via-emerald-400/20 to-transparent blur-md opacity-75 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+
         {/* Avatar circle */}
         <div
           className={cn(
-            "w-24 h-24 sm:w-28 sm:h-28 rounded-full border-2 flex items-center justify-center overflow-hidden transition-all duration-300 relative",
+            "w-24 h-24 sm:w-28 sm:h-28 rounded-full border-2 flex items-center justify-center overflow-hidden transition-all duration-300 relative bg-[#060D09]/90",
             preview
-              ? "border-[#00E676] shadow-[0_0_25px_rgba(0,230,118,0.35)]"
-              : "border-dashed border-[#00E676]/40 hover:border-[#00E676] bg-[#050a07]/80 group-hover:shadow-[0_0_20px_rgba(0,230,118,0.25)]"
+              ? "border-[#00E676] shadow-[0_0_30px_rgba(0,230,118,0.4)]"
+              : "border-dashed border-[#00E676]/50 hover:border-[#00E676] shadow-[0_0_20px_rgba(0,230,118,0.15)] group-hover:shadow-[0_0_30px_rgba(0,230,118,0.35)]"
           )}
         >
           {preview ? (
@@ -80,30 +102,35 @@ function PhotoUpload({
               alt="Profile photo preview"
               width={112}
               height={112}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
             />
           ) : (
-            <div className="flex flex-col items-center justify-center text-[#A7B8B0]/60 group-hover:text-[#00E676] transition-colors">
-              <Camera size={30} className="stroke-[1.5]" />
+            <div className="flex flex-col items-center justify-center gap-1 text-[#A7B8B0]/70 group-hover:text-[#00E676] transition-colors">
+              <Camera size={30} className="stroke-[1.6]" />
+              <span className="text-[10px] font-semibold tracking-wider uppercase opacity-80">Photo</span>
             </div>
           )}
 
           {/* Overlay on hover */}
           <div
-            className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center backdrop-blur-xs"
+            className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex flex-col items-center justify-center backdrop-blur-xs gap-1"
             aria-hidden="true"
           >
-            <Camera size={24} className="text-[#00E676]" />
+            <Camera size={22} className="text-[#00E676]" />
+            <span className="text-[10px] text-white font-bold tracking-wide">
+              {preview ? "Change" : "Upload"}
+            </span>
           </div>
         </div>
 
         {/* Small floating badge */}
-        <div className="absolute bottom-0 right-0 w-7 h-7 rounded-full bg-[#00E676] text-[#050A07] flex items-center justify-center shadow-lg border-2 border-[#050A07] group-hover:scale-110 transition-transform">
+        <div className="absolute bottom-0 right-0 w-7 h-7 rounded-full bg-[#00E676] text-[#050A07] flex items-center justify-center shadow-[0_2px_10px_rgba(0,230,118,0.5)] border-2 border-[#050A07] group-hover:scale-110 transition-transform">
           <Camera size={13} className="stroke-[2.5]" />
         </div>
       </label>
-      <p className="text-xs text-[#A7B8B0]/70 font-medium">
-        Click to upload a profile photo <span className="text-[#A7B8B0]/40">(optional)</span>
+      
+      <p className="text-xs text-[#A7B8B0]/70 font-medium text-center">
+        Upload a clear profile photo <span className="text-[#A7B8B0]/40">(optional)</span>
       </p>
     </div>
   );
@@ -113,21 +140,21 @@ function PhotoUpload({
 
 function SuccessScreen() {
   return (
-    <div className="flex flex-col items-center gap-6 py-6 text-center animate-in fade-in zoom-in-95 duration-300">
-      <div className="w-20 h-20 rounded-full bg-[#00E676]/15 border border-[#00E676]/30 flex items-center justify-center shadow-[0_0_30px_rgba(0,230,118,0.3)]">
-        <CheckCircle2 size={42} className="text-[#00E676]" />
+    <div className="flex flex-col items-center gap-6 py-8 text-center animate-in fade-in zoom-in-95 duration-300">
+      <div className="w-20 h-20 rounded-full bg-[#00E676]/15 border border-[#00E676]/30 flex items-center justify-center shadow-[0_0_35px_rgba(0,230,118,0.35)]">
+        <CheckCircle2 size={44} className="text-[#00E676]" />
       </div>
       <div className="space-y-2">
-        <h2 className="text-2xl font-extrabold text-white tracking-tight">
+        <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
           You&apos;re all set! 🎉
         </h2>
         <p className="text-sm text-[#A7B8B0]/80 max-w-xs mx-auto leading-relaxed">
           Your profile is ready. Redirecting you straight to your UniVerse dashboard…
         </p>
       </div>
-      <div className="flex items-center gap-2 text-xs font-semibold text-[#00E676]">
-        <Loader2 size={16} className="animate-spin" />
-        <span>Loading dashboard</span>
+      <div className="flex items-center gap-2.5 text-xs font-bold text-[#00E676] px-4 py-2 rounded-full bg-[#00E676]/10 border border-[#00E676]/20">
+        <Loader2 size={15} className="animate-spin" />
+        <span>Launching dashboard...</span>
       </div>
     </div>
   );
@@ -217,41 +244,53 @@ export default function CompleteProfilePage() {
   }
 
   return (
-    <div className="min-h-[100dvh] w-full flex flex-col items-center justify-center p-4 sm:p-6 lg:p-8 relative overflow-hidden bg-[#02050b] selection:bg-[#00E676]/30">
+    <div className="min-h-screen w-full flex flex-col items-center justify-center p-4 sm:p-6 lg:p-8 relative bg-[#02050b] selection:bg-[#00E676]/30">
       
-      {/* ── Background Cosmic Canvas & Vignette ── */}
+      {/* ── Fixed Cosmic Wallpaper (Seamless Full-Screen) ── */}
       <div 
-        className="fixed inset-0 z-0 pointer-events-none opacity-40"
+        className="fixed inset-0 z-0 pointer-events-none"
         style={{
-          background: "url('/login-bg.jpg') center/cover no-repeat",
-          filter: "brightness(0.85) contrast(1.1)",
+          background: "#02050b url('/login-bg.jpg') center center / cover no-repeat fixed",
+          filter: "brightness(0.95) contrast(1.05)",
         }}
       />
       
-      {/* Glow Orbs */}
-      <div className="fixed top-1/4 -left-32 w-96 h-96 bg-[#00E676]/10 rounded-full blur-[140px] pointer-events-none" />
-      <div className="fixed bottom-1/4 -right-32 w-96 h-96 bg-emerald-500/10 rounded-full blur-[140px] pointer-events-none" />
-      <div className="fixed inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,rgba(2,5,11,0.85)_100%)] pointer-events-none" />
+      {/* Animated Star Twinkle Canvas */}
+      <StarTwinkleOverlay />
+
+      {/* Deep Vignette & Glow Orbs */}
+      <div className="fixed top-1/4 -left-32 w-[500px] h-[500px] bg-[#00E676]/10 rounded-full blur-[160px] pointer-events-none z-0" />
+      <div className="fixed bottom-1/4 -right-32 w-[500px] h-[500px] bg-emerald-500/10 rounded-full blur-[160px] pointer-events-none z-0" />
+      <div className="fixed inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(2,5,11,0.75)_100%)] pointer-events-none z-0" />
 
       {/* ── Main Container ── */}
-      <div className="w-full max-w-lg mx-auto relative z-10 flex flex-col items-center py-6 sm:py-10">
+      <div className="w-full max-w-[500px] mx-auto relative z-10 flex flex-col items-center py-6 sm:py-10">
         
-        {/* Logo */}
-        <div className="mb-6 sm:mb-8 transition-transform hover:scale-105 duration-300">
+        {/* UniVerse Brand Logo */}
+        <div className="mb-6 sm:mb-8 transition-transform duration-300 hover:scale-105">
           <AuthLogo />
         </div>
 
-        {/* Card */}
-        <div className="w-full bg-[#0A0F0C]/85 border border-[#66FFB2]/20 backdrop-blur-2xl rounded-3xl p-6 sm:p-9 shadow-[0_8px_40px_rgba(0,0,0,0.6),0_0_50px_rgba(0,230,118,0.1)] transition-all">
+        {/* Glassmorphic Card */}
+        <div className="w-full bg-[#070D0A]/85 border border-[#00E676]/25 backdrop-blur-2xl rounded-3xl p-6 sm:p-9 shadow-[0_12px_50px_rgba(0,0,0,0.8),0_0_60px_rgba(0,230,118,0.12)] transition-all">
           
-          {/* Header */}
-          <div className="mb-6 sm:mb-8 border-b border-white/5 pb-5 sm:pb-6 text-left">
-            <div className="flex items-center gap-2 mb-3">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#00E676]/15 border border-[#00E676]/30 text-[#00E676] text-[11px] font-extrabold tracking-wider uppercase shadow-[0_0_12px_rgba(0,230,118,0.2)]">
-                <Sparkles size={12} className="fill-[#00E676]" />
-                Step 3 of 3
-              </span>
+          {/* Card Header & Step Progress Bar */}
+          <div className="mb-6 sm:mb-7 border-b border-white/8 pb-5 sm:pb-6 text-left">
+            
+            {/* Step Progress Visual */}
+            <div className="w-full mb-4">
+              <div className="flex items-center justify-between text-[11px] font-bold text-[#A7B8B0]/70 mb-2">
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#00E676]/15 border border-[#00E676]/30 text-[#00E676] font-extrabold uppercase tracking-wider shadow-[0_0_10px_rgba(0,230,118,0.2)]">
+                  <Sparkles size={11} className="fill-[#00E676]" />
+                  Final Step
+                </span>
+                <span className="text-[#00E676] font-mono font-extrabold">Step 3 of 3 • 100%</span>
+              </div>
+              <div className="w-full h-1.5 bg-white/10 rounded-full overflow-hidden">
+                <div className="h-full w-full bg-gradient-to-r from-[#00C853] via-[#00E676] to-[#66FFB2] rounded-full shadow-[0_0_12px_#00E676]" />
+              </div>
             </div>
+
             <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight m-0">
               Complete your profile
             </h1>
@@ -269,7 +308,7 @@ export default function CompleteProfilePage() {
               {errors.form && (
                 <div
                   role="alert"
-                  className="rounded-xl px-4 py-3 text-xs sm:text-sm bg-red-500/10 text-red-400 border border-red-500/20 break-words"
+                  className="rounded-xl px-4 py-3 text-xs sm:text-sm bg-red-500/15 text-red-300 border border-red-500/30 break-words"
                 >
                   {errors.form}
                 </div>
@@ -280,26 +319,35 @@ export default function CompleteProfilePage() {
 
               {/* Hostel Selection */}
               <div className="flex flex-col gap-2">
-                <label className="text-xs sm:text-sm font-semibold text-white tracking-wide">
-                  Hostel <span className="text-[#00E676] ml-0.5">*</span>
-                </label>
+                <div className="flex items-center justify-between">
+                  <label className="text-xs sm:text-sm font-semibold text-white tracking-wide flex items-center gap-1.5">
+                    <Building size={14} className="text-[#00E676]" />
+                    Hostel <span className="text-[#00E676]">*</span>
+                  </label>
+                  {hostel && (
+                    <span className="text-[11px] font-bold text-[#00E676] inline-flex items-center gap-1">
+                      <Check size={12} className="stroke-[3]" /> Selected
+                    </span>
+                  )}
+                </div>
+
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2" role="group" aria-label="Select hostel">
                   {HOSTELS.map((h) => {
-                    const isSelected = hostel === h;
+                    const isSelected = hostel === h.id;
                     return (
                       <button
-                        key={h}
+                        key={h.id}
                         type="button"
                         aria-pressed={isSelected}
-                        onClick={() => setHostel(h)}
+                        onClick={() => setHostel(h.id)}
                         className={cn(
-                          "h-11 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 border cursor-pointer flex items-center justify-center",
+                          "h-11 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 border cursor-pointer flex items-center justify-center relative overflow-hidden",
                           isSelected
-                            ? "bg-[#00E676] text-[#050A07] border-[#00E676] shadow-[0_0_20px_rgba(0,230,118,0.4)] scale-[1.02]"
-                            : "bg-[#050A07]/80 text-[#A7B8B0] border-white/10 hover:border-[#00E676]/40 hover:text-white hover:bg-[#050A07]"
+                            ? "bg-[#00E676] text-[#050A07] border-[#00E676] shadow-[0_0_22px_rgba(0,230,118,0.45)] scale-[1.02]"
+                            : "bg-[#050A07]/80 text-[#A7B8B0] border-white/10 hover:border-[#00E676]/50 hover:text-white hover:bg-[#08120c]"
                         )}
                       >
-                        {h}
+                        {h.label}
                       </button>
                     );
                   })}
@@ -323,16 +371,16 @@ export default function CompleteProfilePage() {
                   <input
                     id="profile-room"
                     type="text"
-                    placeholder="e.g. A204 or B-102"
+                    placeholder="e.g. A-204 or B-102"
                     autoComplete="off"
                     required
                     value={room}
                     onChange={(e) => setRoom(e.target.value)}
                     className={cn(
-                      "w-full h-12 pl-10 pr-4 rounded-xl text-sm font-medium text-white bg-[#050A07]/80 border transition-all duration-200 outline-none placeholder:text-[#A7B8B0]/40",
+                      "w-full h-12 pl-10 pr-4 rounded-xl text-sm font-medium text-white bg-[#050A07]/90 border transition-all duration-200 outline-none placeholder:text-[#A7B8B0]/40",
                       errors.room
                         ? "border-red-500/60 focus:border-red-500 focus:ring-1 focus:ring-red-500"
-                        : "border-white/10 focus:border-[#00E676] focus:ring-1 focus:ring-[#00E676] focus:shadow-[0_0_15px_rgba(0,230,118,0.2)]"
+                        : "border-white/12 focus:border-[#00E676] focus:ring-1 focus:ring-[#00E676] focus:shadow-[0_0_18px_rgba(0,230,118,0.25)]"
                     )}
                   />
                 </div>
@@ -349,7 +397,10 @@ export default function CompleteProfilePage() {
                   <label htmlFor="profile-bio" className="text-xs sm:text-sm font-semibold text-white tracking-wide">
                     Bio <span className="text-[#A7B8B0]/50 font-normal">(Optional)</span>
                   </label>
-                  <span className="text-[11px] text-[#A7B8B0]/50 font-mono">
+                  <span className={cn(
+                    "text-[11px] font-mono",
+                    bio.length >= 140 ? "text-amber-400 font-bold" : "text-[#A7B8B0]/50"
+                  )}>
                     {bio.length}/160
                   </span>
                 </div>
@@ -361,10 +412,10 @@ export default function CompleteProfilePage() {
                     id="profile-bio"
                     rows={3}
                     maxLength={160}
-                    placeholder="Tell your campus peers about yourself, branch, interests…"
+                    placeholder="Tell your campus peers about your department, branch, interests…"
                     value={bio}
                     onChange={(e) => setBio(e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 rounded-xl text-sm font-medium text-white bg-[#050A07]/80 border border-white/10 focus:border-[#00E676] focus:ring-1 focus:ring-[#00E676] focus:shadow-[0_0_15px_rgba(0,230,118,0.2)] transition-all duration-200 outline-none resize-none placeholder:text-[#A7B8B0]/40 leading-relaxed"
+                    className="w-full pl-10 pr-4 py-3 rounded-xl text-sm font-medium text-white bg-[#050A07]/90 border border-white/12 focus:border-[#00E676] focus:ring-1 focus:ring-[#00E676] focus:shadow-[0_0_18px_rgba(0,230,118,0.25)] transition-all duration-200 outline-none resize-none placeholder:text-[#A7B8B0]/40 leading-relaxed"
                   />
                 </div>
               </div>
@@ -382,10 +433,10 @@ export default function CompleteProfilePage() {
                     id="profile-language"
                     value={language}
                     onChange={(e) => setLanguage(e.target.value as Language)}
-                    className="w-full h-12 pl-10 pr-10 rounded-xl text-sm font-medium text-white bg-[#050A07]/80 border border-white/10 focus:border-[#00E676] focus:ring-1 focus:ring-[#00E676] focus:shadow-[0_0_15px_rgba(0,230,118,0.2)] transition-all duration-200 outline-none appearance-none cursor-pointer"
+                    className="w-full h-12 pl-10 pr-10 rounded-xl text-sm font-medium text-white bg-[#050A07]/90 border border-white/12 focus:border-[#00E676] focus:ring-1 focus:ring-[#00E676] focus:shadow-[0_0_18px_rgba(0,230,118,0.25)] transition-all duration-200 outline-none appearance-none cursor-pointer"
                   >
                     {LANGUAGES.map(({ value, label }) => (
-                      <option key={value} value={value} className="bg-[#0A0F0C] text-white py-2">
+                      <option key={value} value={value} className="bg-[#070D0A] text-white py-2">
                         {label}
                       </option>
                     ))}
@@ -403,7 +454,7 @@ export default function CompleteProfilePage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full mt-2 h-13 rounded-xl font-extrabold text-sm sm:text-base bg-gradient-to-r from-[#00C853] via-[#00E676] to-[#00E676] text-[#050A07] shadow-[0_4px_25px_rgba(0,230,118,0.3)] hover:shadow-[0_6px_35px_rgba(0,230,118,0.5)] transition-all duration-200 hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full mt-2 h-13 rounded-xl font-extrabold text-sm sm:text-base bg-gradient-to-r from-[#00C853] via-[#00E676] to-[#00E676] text-[#050A07] shadow-[0_4px_25px_rgba(0,230,118,0.35)] hover:shadow-[0_6px_35px_rgba(0,230,118,0.55)] transition-all duration-200 hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? (
                   <>
@@ -435,4 +486,5 @@ export default function CompleteProfilePage() {
     </div>
   );
 }
+
 
