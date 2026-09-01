@@ -7,7 +7,8 @@ import {
   getRunnerDeliveryHistory 
 } from "@/lib/database/requests";
 import { RunnerDashboardClient } from "@/components/runner/RunnerDashboardClient";
-import { Bike, Sparkles, Bell, ChevronDown } from "lucide-react";
+import { NotificationBell } from "@/components/notifications/NotificationBell";
+import { Bike, Sparkles, ChevronDown } from "lucide-react";
 
 export default async function RunnerDashboardPage() {
   const supabase = await createClient();
@@ -44,10 +45,9 @@ export default async function RunnerDashboardPage() {
           </div>
           
           <div className="flex items-center gap-4">
-            <button className="w-10 h-10 rounded-full flex items-center justify-center text-white/70 hover:text-white hover:bg-white/5 transition-colors relative">
-              <Bell className="w-5 h-5" />
-              <span className="absolute top-2 right-2 w-2 h-2 bg-emerald-500 rounded-full border-2 border-[#0a0f0d]"></span>
-            </button>
+            <div className="w-10 h-10 rounded-full flex items-center justify-center text-white/70 hover:text-white hover:bg-white/5 transition-colors">
+              <NotificationBell />
+            </div>
             <button className="flex items-center gap-2 px-4 py-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 text-sm font-medium hover:bg-emerald-500/20 transition-colors shadow-[0_0_15px_rgba(16,185,129,0.1)]">
               <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]"></span>
               Online
