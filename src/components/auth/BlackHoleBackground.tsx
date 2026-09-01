@@ -167,7 +167,10 @@ function createStarTexture() {
 export default function BlackHoleBackground({ isWarping = false }: { isWarping?: boolean }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const isWarpingRef = useRef(isWarping);
-  isWarpingRef.current = isWarping;
+
+  useEffect(() => {
+    isWarpingRef.current = isWarping;
+  }, [isWarping]);
 
   useEffect(() => {
     const container = containerRef.current;
