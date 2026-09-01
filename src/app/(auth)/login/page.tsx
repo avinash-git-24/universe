@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { ROUTES } from "@/constants/routes";
-import StarTwinkleOverlay from "@/components/auth/StarTwinkleOverlay";
+import BlackHoleBackground from "@/components/auth/BlackHoleBackground";
 
 // ─── Custom Input Field ───────────────────────────────────────────────────────
 function Field({
@@ -122,26 +122,8 @@ function LoginForm() {
       display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
       fontFamily: "'Inter', system-ui, sans-serif", padding: "16px 12px",
     }}>
-      {/* ── Original High-Definition Crisp Static Cosmic Background Wallpaper ── */}
-      <div style={{
-        position: "fixed", inset: 0, zIndex: -2, background: "#02050b"
-      }} />
-      <div style={{
-        position: "fixed", inset: 0, zIndex: -2,
-        background: "url('/login-bg.jpg')",
-        backgroundSize: "cover", backgroundPosition: "center center", backgroundRepeat: "no-repeat",
-        filter: "brightness(0.98) contrast(1.06)",
-      }} />
-
-      {/* Fixed Star Twinkle Canvas Overlay */}
-      <StarTwinkleOverlay />
-
-      {/* Clear Center Vignette Overlay */}
-      <div style={{
-        position: "fixed", inset: 0, zIndex: -1,
-        background: "radial-gradient(circle at center, transparent 35%, rgba(2,5,15,0.55) 100%)",
-        pointerEvents: "none"
-      }} />
+      {/* ── 3D WebGL Gargantua Black Hole Background ── */}
+      <BlackHoleBackground />
 
       <div style={{ position: "relative", zIndex: 1, width: "100%", maxWidth: 480, display: "flex", flexDirection: "column", alignItems: "center" }}>
         {/* ── Logo + tagline ── */}
@@ -164,10 +146,12 @@ function LoginForm() {
         {/* ── Glass Card ── */}
         <div style={{
           width: "100%",
-          background: "rgba(5,12,24,0.85)",
+          background: "rgba(6,12,24,0.76)",
+          backdropFilter: "blur(20px) saturate(130%)",
+          WebkitBackdropFilter: "blur(20px) saturate(130%)",
           border: "1px solid rgba(56,189,248,0.25)",
           borderRadius: 24,
-          boxShadow: "0 24px 60px rgba(0,0,0,0.9)",
+          boxShadow: "0 28px 70px rgba(0,0,0,0.85), inset 0 1px 0 rgba(255,255,255,0.12)",
           overflow: "hidden", position: "relative",
         }}>
           {/* Top gradient line */}
