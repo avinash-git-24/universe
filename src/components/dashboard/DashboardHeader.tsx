@@ -9,13 +9,14 @@ interface DashboardHeaderProps {
 
 function getGreeting(): { text: string; emoji: string } {
   const hours = new Date().getHours();
-  if (hours < 12) {
+  if (hours >= 5 && hours < 12) {
     return { text: "Good morning", emoji: "☀️" };
-  } else if (hours < 17) {
+  } else if (hours >= 12 && hours < 17) {
     return { text: "Good afternoon", emoji: "🌤️" };
-  } else if (hours < 21) {
+  } else if (hours >= 17 && hours < 21) {
     return { text: "Good evening", emoji: "🌆" };
   } else {
+    // 9:00 PM (21:00) to 4:59 AM (04:59) is Night
     return { text: "Good night", emoji: "🌙" };
   }
 }
