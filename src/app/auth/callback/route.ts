@@ -23,13 +23,14 @@ export async function GET(request: NextRequest) {
   const code = searchParams.get("code");
   const token_hash = searchParams.get("token_hash") || searchParams.get("token");
   let type = searchParams.get("type") as EmailOtpType | null;
+  const redirectTo = searchParams.get("redirectTo") || searchParams.get("next");
 
   if (token_hash && !type) {
     type = "signup";
   }
 
   console.log("[Auth Callback] Hit with URL:", request.url);
-  console.log("[Auth Callback] Extracted params ->", { code, token_hash, type });
+  console.log("[Auth Callback] Extracted params ->", { code, token_hash, type, redirectTo });
 
   const supabase = await createClient();
 
@@ -71,8 +72,15 @@ export async function GET(request: NextRequest) {
       if (type === "recovery") {
         return NextResponse.redirect(`${origin}/reset-password`);
       }
-      // Email confirmation flow
-      return NextResponse.redirect(`${origin}/complete-profile`);
+
+      // If user came with an explicit redirectTo param, honour it
+      if (redirectTo && redirectTo !== "/complete-profile") {
+        const dest = redirectTo.startsWith("/") ? redirectTo : `/${redirectTo}`;
+        return NextResponse.redirect(`${origin}${dest}`);
+      }
+
+      // For Google OAuth or returning users, redirect straight to dashboard
+      return NextResponse.redirect(`${origin}/dashboard`);
     } else {
       console.error("[Auth Callback] exchangeCodeForSession ERROR:", error);
       errorMessage = error.message;

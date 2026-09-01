@@ -7,7 +7,7 @@
  * and profile photo with crystal-clear cosmic background matching the login page.
  */
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -197,6 +197,28 @@ export default function CompleteProfilePage() {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<{ hostel?: string; room?: string; form?: string }>({});
   const [done, setDone] = useState(false);
+
+  useEffect(() => {
+    async function loadExistingProfile() {
+      try {
+        const supabase = createClient();
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("avatar_url")
+          .eq("id", user.id)
+          .maybeSingle();
+
+        if (profile?.avatar_url) {
+          setPhoto(profile.avatar_url);
+        }
+      } catch {
+        // fallback
+      }
+    }
+    loadExistingProfile();
+  }, []);
 
   function handlePhotoSelect(url: string, file: File) {
     setPhoto(url);
