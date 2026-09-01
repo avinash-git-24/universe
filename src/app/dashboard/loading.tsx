@@ -1,11 +1,26 @@
-import { Loader2 } from "lucide-react";
-
 export default function DashboardLoading() {
   return (
-    <div className="min-h-screen bg-secondary/30 pt-24 pb-12 px-4 flex flex-col items-center justify-center">
-      <Loader2 className="w-8 h-8 text-primary animate-spin mb-4" />
-      <h2 className="text-xl font-bold tracking-tight text-foreground">Loading Dashboard...</h2>
-      <p className="text-muted-foreground mt-2">Fetching your requests and profile</p>
+    <div className="min-h-screen pt-4 pb-12 px-3 sm:px-6 sm:py-8 lg:p-8 animate-pulse">
+      <div className="max-w-[1400px] mx-auto space-y-6">
+        {/* Top bar skeleton */}
+        <div className="flex justify-end gap-3 mb-6">
+          <div className="w-10 h-10 rounded-xl bg-white/5" />
+          <div className="w-32 h-10 rounded-xl bg-white/5" />
+        </div>
+
+        {/* Stats row skeleton */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="h-28 rounded-2xl bg-white/5 border border-white/5" />
+          ))}
+        </div>
+
+        {/* Main content skeleton */}
+        <div className="grid grid-cols-1 xl:grid-cols-[1fr_340px] gap-6">
+          <div className="h-80 rounded-2xl bg-white/5 border border-white/5" />
+          <div className="h-80 rounded-2xl bg-white/5 border border-white/5" />
+        </div>
+      </div>
     </div>
   );
 }

@@ -28,18 +28,23 @@ const statusMeta: Record<string, { label: string; color: string; bg: string; dot
   cancelled: { label: "Cancelled", color: "#ef4444", bg: "rgba(239,68,68,0.15)", dot: "#ef4444" },
 };
 
+import { createClient } from "@/lib/supabase/server";
+
 export default async function DashboardPage() {
   const { data: { user }, error: authError } = await getUser();
   if (authError || !user) redirect(ROUTES.LOGIN);
 
-  const { data: profile } = await getProfile(user.id);
+  const supabase = await createClient();
 
+  // Parallelize profile and requests fetch for instant response
+  const [profileResult, requests] = await Promise.all([
+    getProfile(user.id),
+    getStudentRequests(supabase, user.id),
+  ]);
+
+  const profile = profileResult.data;
   const displayName =
     profile?.full_name ?? user.email?.split("@")[0] ?? "Student";
-
-  const { createClient } = await import("@/lib/supabase/server");
-  const supabase = await createClient();
-  const requests = await getStudentRequests(supabase, user.id);
 
   const activeRequests = requests.filter(r => !["delivered", "cancelled"].includes(r.status));
   const completedRequests = requests.filter(r => r.status === "delivered");

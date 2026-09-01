@@ -18,14 +18,12 @@ export default async function RunnerDashboardPage() {
     redirect("/login?redirectTo=/dashboard/runner");
   }
 
-  // Fetch pending available requests
-  const pendingRequests = await getPendingRequestsWithItems(supabase);
-
-  // Fetch active deliveries for current runner (accepted, picked_up, in_transit)
-  const activeDeliveries = await getRunnerActiveDeliveries(supabase, user.id);
-
-  // Fetch delivery history for current runner (delivered, cancelled)
-  const deliveryHistory = await getRunnerDeliveryHistory(supabase, user.id);
+  // Fetch all runner dashboard data concurrently in parallel
+  const [pendingRequests, activeDeliveries, deliveryHistory] = await Promise.all([
+    getPendingRequestsWithItems(supabase),
+    getRunnerActiveDeliveries(supabase, user.id),
+    getRunnerDeliveryHistory(supabase, user.id),
+  ]);
 
   return (
     <div className="min-h-screen bg-[#0a0f0d] pt-24 pb-12 px-4">
