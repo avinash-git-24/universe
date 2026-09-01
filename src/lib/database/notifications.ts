@@ -19,7 +19,7 @@ export async function getUserNotifications(
     .limit(limit);
 
   if (error) {
-    console.error("Error fetching notifications:", error);
+    console.error("Error fetching notifications:", error.message || error);
     return [];
   }
 
