@@ -164,8 +164,10 @@ function createStarTexture() {
   return new THREE.CanvasTexture(canvas);
 }
 
-export default function BlackHoleBackground() {
+export default function BlackHoleBackground({ isWarping = false }: { isWarping?: boolean }) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const isWarpingRef = useRef(isWarping);
+  isWarpingRef.current = isWarping;
 
   useEffect(() => {
     const container = containerRef.current;
@@ -241,6 +243,30 @@ export default function BlackHoleBackground() {
     const starMesh = new THREE.Points(starsGeometry, starsMaterial);
     scene.add(starMesh);
 
+    // Web Audio Synthesizer for Warp Whoosh
+    const playWarpAudio = () => {
+      try {
+        const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+        if (!AudioCtx) return;
+        const ctx = new AudioCtx();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = "triangle";
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc.frequency.setValueAtTime(120, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(10, ctx.currentTime + 1.8);
+        gain.gain.setValueAtTime(0.6, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.8);
+
+        osc.start(ctx.currentTime);
+        osc.stop(ctx.currentTime + 1.8);
+      } catch {
+        // audio playback on user gesture fallback
+      }
+    };
+
     // Animation & Parallax variables
     let animationFrameId: number;
     const clock = new THREE.Clock();
@@ -248,9 +274,11 @@ export default function BlackHoleBackground() {
     let targetY = 0;
     let mouseX = 0;
     let mouseY = 0;
+    let warpProgress = 0;
+    let audioPlayed = false;
 
     const handleMouseMove = (e: MouseEvent) => {
-      if (prefersReducedMotion) return;
+      if (prefersReducedMotion || isWarpingRef.current) return;
       targetX = (e.clientX / window.innerWidth) * 2 - 1;
       targetY = -(e.clientY / window.innerHeight) * 2 + 1;
     };
@@ -273,28 +301,58 @@ export default function BlackHoleBackground() {
       animationFrameId = requestAnimationFrame(animate);
       const delta = clock.getDelta();
 
-      uniforms.uTime.value += delta * 1.0;
+      if (isWarpingRef.current) {
+        if (!audioPlayed) {
+          playWarpAudio();
+          audioPlayed = true;
+        }
 
-      // Drift stars towards camera
-      const positions = starMesh.geometry.attributes.position.array as Float32Array;
-      for (let i = 2; i < positions.length; i += 3) {
-        positions[i] += 1.2 * delta;
-        if (positions[i] > camera.position.z) positions[i] = -20;
-      }
-      starMesh.geometry.attributes.position.needsUpdate = true;
+        warpProgress += delta * 0.55; // Reaches 1.0 in ~1.8s
+        const easeWarp = Math.min(1.0, Math.pow(warpProgress, 2.2));
 
-      // Parallax smooth interpolation
-      if (!prefersReducedMotion) {
-        const time = uniforms.uTime.value;
-        const idleX = Math.sin(time * 0.15) * 0.06;
-        const idleY = Math.cos(time * 0.1) * 0.06;
+        // Accelerate Black hole rotation and collapse gravity
+        uniforms.uTime.value += delta * (1.0 + easeWarp * 12.0);
+        uniforms.uStabilize.value = 1.0 - easeWarp * 2.0; // Collapses from 1.0 to -1.0
+        uniforms.uExposure.value = 1.05 + easeWarp * 2.5;
 
-        mouseX += (targetX * 0.12 - mouseX) * 0.05;
-        mouseY += (targetY * 0.12 - mouseY) * 0.05;
+        // Camera flies forward directly through the black hole singularity
+        camera.position.z = 4.0 - easeWarp * 12.0; // from 4.0 down to -8.0
+        camera.position.x *= 0.95;
+        camera.position.y *= 0.95;
+        camera.lookAt(0, 0, -20);
 
-        camera.position.x = idleX + mouseX;
-        camera.position.y = idleY + mouseY;
-        camera.lookAt(0, 0, 0);
+        // Hyperspace star streaks
+        starsMaterial.size = 0.055 + easeWarp * 0.12;
+        const positions = starMesh.geometry.attributes.position.array as Float32Array;
+        for (let i = 2; i < positions.length; i += 3) {
+          positions[i] += (1.2 + easeWarp * 35.0) * delta;
+          if (positions[i] > camera.position.z + 5) positions[i] = camera.position.z - 25;
+        }
+        starMesh.geometry.attributes.position.needsUpdate = true;
+      } else {
+        uniforms.uTime.value += delta * 1.0;
+
+        // Drift stars towards camera
+        const positions = starMesh.geometry.attributes.position.array as Float32Array;
+        for (let i = 2; i < positions.length; i += 3) {
+          positions[i] += 1.2 * delta;
+          if (positions[i] > camera.position.z) positions[i] = -20;
+        }
+        starMesh.geometry.attributes.position.needsUpdate = true;
+
+        // Parallax smooth interpolation
+        if (!prefersReducedMotion) {
+          const time = uniforms.uTime.value;
+          const idleX = Math.sin(time * 0.15) * 0.06;
+          const idleY = Math.cos(time * 0.1) * 0.06;
+
+          mouseX += (targetX * 0.12 - mouseX) * 0.05;
+          mouseY += (targetY * 0.12 - mouseY) * 0.05;
+
+          camera.position.x = idleX + mouseX;
+          camera.position.y = idleY + mouseY;
+          camera.lookAt(0, 0, 0);
+        }
       }
 
       renderer.render(scene, camera);
@@ -364,6 +422,19 @@ export default function BlackHoleBackground() {
           backgroundImage: "url('data:image/svg+xml;utf8,<svg viewBox=\"0 0 200 200\" xmlns=\"http://www.w3.org/2000/svg\"><filter id=\"noiseFilter\"><feTurbulence type=\"fractalNoise\" baseFrequency=\"0.9\" numOctaves=\"3\" stitchTiles=\"stitch\"/></filter><rect width=\"100%\" height=\"100%\" filter=\"url(%23noiseFilter)\"/></svg>')",
           opacity: 0.03,
           pointerEvents: "none",
+        }}
+      />
+
+      {/* Warp Jump Flash Overlay */}
+      <div
+        style={{
+          position: "fixed",
+          inset: 0,
+          zIndex: 99,
+          background: "#ffffff",
+          opacity: isWarping ? 1 : 0,
+          pointerEvents: "none",
+          transition: "opacity 0.25s ease-in 1.9s",
         }}
       />
     </>

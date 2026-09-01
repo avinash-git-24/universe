@@ -97,13 +97,37 @@ function LoginForm() {
   const [showPw, setShowPw] = useState(false);
   const [remember, setRemember] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [isWarping, setIsWarping] = useState(false);
+  const [btnText, setBtnText] = useState("Sign In");
   const urlError = searchParams.get("error");
   const [errors, setErrors] = useState<{ email?: string; password?: string; form?: string }>(() =>
     urlError ? { form: urlError } : {}
   );
 
+  async function triggerWarpAndRedirect(destinationUrl: string) {
+    setIsWarping(true);
+
+    // Text Scramble Animation on Button
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&*";
+    const overrideText = "WARP JUMP";
+    let scrambles = 0;
+    const scrambleInterval = setInterval(() => {
+      setBtnText(Array.from({ length: overrideText.length }).map(() => chars[Math.floor(Math.random() * chars.length)]).join(""));
+      scrambles++;
+      if (scrambles > 10) {
+        clearInterval(scrambleInterval);
+        setBtnText("SYSTEM OVERRIDE");
+      }
+    }, 45);
+
+    setTimeout(() => {
+      window.location.href = destinationUrl;
+    }, 2200);
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (isWarping) return;
     const normalizedEmail = sanitizeEmail(email);
     const errs: typeof errors = {};
     if (!normalizedEmail) errs.email = "Email is required.";
@@ -112,23 +136,30 @@ function LoginForm() {
     else if (password.length < 6) errs.password = "Min 6 characters.";
     if (Object.keys(errs).length) { setErrors(errs); return; }
     setErrors({}); setLoading(true);
+
     const { error } = await createClient().auth.signInWithPassword({ email: normalizedEmail, password });
     if (error) {
       setLoading(false);
       setErrors({ form: error.message.toLowerCase().includes("invalid") ? "Incorrect email or password." : error.message });
       return;
     }
-    window.location.href = searchParams.get("redirectTo") ?? ROUTES.DASHBOARD;
+
+    const redirectTarget = searchParams.get("redirectTo") ?? ROUTES.DASHBOARD;
+    triggerWarpAndRedirect(redirectTarget);
   }
 
   async function handleGoogle() {
-    await createClient().auth.signInWithOAuth({
-      provider: "google",
-      options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
-        queryParams: { prompt: "select_account", hd: "marwadiuniversity.ac.in" },
-      },
-    });
+    if (isWarping) return;
+    setIsWarping(true);
+    setTimeout(async () => {
+      await createClient().auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+          queryParams: { prompt: "select_account", hd: "marwadiuniversity.ac.in" },
+        },
+      });
+    }, 1200);
   }
 
   const emailValid = validateEmail(email);
@@ -141,23 +172,30 @@ function LoginForm() {
       position: "relative", overflow: "hidden",
     }}>
       {/* ── 3D WebGL Gargantua Black Hole Background ── */}
-      <BlackHoleBackground />
+      <BlackHoleBackground isWarping={isWarping} />
 
       {/* ── Futuristic HUD Elements ── */}
-      <div className="hud-tl" style={{ position: "absolute", top: 28, left: 32, fontFamily: "'Space Mono', monospace", fontSize: 10, letterSpacing: "2px", color: "rgba(255,255,255,0.6)", pointerEvents: "none", zIndex: 2 }}>
+      <div className="hud-tl" style={{ position: "absolute", top: 28, left: 32, fontFamily: "'Space Mono', monospace", fontSize: 10, letterSpacing: "2px", color: "rgba(255,255,255,0.6)", pointerEvents: "none", zIndex: 2, opacity: isWarping ? 0 : 1, transition: "opacity 0.4s ease" }}>
         <div style={{ position: "absolute", top: -6, left: -6, width: 10, height: 10, borderLeft: "1px solid rgba(0, 210, 255, 0.6)", borderTop: "1px solid rgba(0, 210, 255, 0.6)" }} />
         <strong style={{ color: "#fff" }}>EVENT HORIZON</strong><br />
         <span style={{ color: "#00d2ff" }}>GRAVITY: STABILIZED</span>
       </div>
 
-      <div className="hud-tr" style={{ position: "absolute", top: 28, right: 32, textAlign: "right", fontFamily: "'Space Mono', monospace", fontSize: 10, letterSpacing: "2px", color: "rgba(255,255,255,0.6)", pointerEvents: "none", zIndex: 2 }}>
+      <div className="hud-tr" style={{ position: "absolute", top: 28, right: 32, textAlign: "right", fontFamily: "'Space Mono', monospace", fontSize: 10, letterSpacing: "2px", color: "rgba(255,255,255,0.6)", pointerEvents: "none", zIndex: 2, opacity: isWarping ? 0 : 1, transition: "opacity 0.4s ease" }}>
         <div style={{ position: "absolute", top: -6, right: -6, width: 10, height: 10, borderRight: "1px solid rgba(0, 210, 255, 0.6)", borderTop: "1px solid rgba(0, 210, 255, 0.6)" }} />
         <strong style={{ color: "#fff" }}>SYSTEM STATUS</strong><br />
         <span style={{ color: "#00d2ff" }}>ONLINE // NOMINAL</span>
       </div>
 
       {/* ── Main Container ── */}
-      <div style={{ position: "relative", zIndex: 5, width: "100%", maxWidth: 450, display: "flex", flexDirection: "column", alignItems: "center" }}>
+      <div style={{
+        position: "relative", zIndex: 5, width: "100%", maxWidth: 450,
+        display: "flex", flexDirection: "column", alignItems: "center",
+        transform: isWarping ? "scale(0) rotate(-10deg)" : "scale(1)",
+        opacity: isWarping ? 0 : 1,
+        transition: "all 0.8s cubic-bezier(0.7, 0, 0.84, 0)",
+        pointerEvents: isWarping ? "none" : "auto",
+      }}>
         
         {/* ── Logo + Tagline ── */}
         <Link href="/" style={{ textDecoration: "none", display: "flex", flexDirection: "column", alignItems: "center", gap: 6, marginBottom: 20 }}>
@@ -277,28 +315,32 @@ function LoginForm() {
             {/* Futuristic Sign In Button */}
             <button
               className="scifi-btn"
-              type="submit" disabled={loading}
+              type="submit" disabled={loading || isWarping}
               style={{
                 width: "100%", marginTop: 6,
                 padding: "14px 20px",
-                background: loading ? "rgba(0, 210, 255, 0.1)" : "transparent",
-                border: "1px solid rgba(255, 255, 255, 0.25)",
+                background: isWarping ? "rgba(0, 210, 255, 0.2)" : loading ? "rgba(0, 210, 255, 0.1)" : "transparent",
+                border: isWarping ? "1px solid #00d2ff" : "1px solid rgba(255, 255, 255, 0.25)",
                 borderRadius: 4,
-                color: "#fff",
+                color: isWarping ? "#00d2ff" : "#fff",
                 fontFamily: "'Space Mono', monospace",
                 letterSpacing: "4px",
                 fontSize: 13,
                 fontWeight: 700,
                 textTransform: "uppercase",
-                cursor: loading ? "not-allowed" : "pointer",
+                cursor: (loading || isWarping) ? "not-allowed" : "pointer",
+                boxShadow: isWarping ? "0 0 25px rgba(0, 210, 255, 0.4)" : "none",
                 transition: "all 0.3s ease",
                 display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
               }}
             >
-              {loading
-                ? <><span>AUTHENTICATING…</span></>
-                : <><span>Sign In</span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" /></svg></>
-              }
+              {isWarping ? (
+                <span>{btnText}</span>
+              ) : loading ? (
+                <><span>AUTHENTICATING…</span></>
+              ) : (
+                <><span>Sign In</span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" /></svg></>
+              )}
             </button>
 
             {/* OR Divider */}
