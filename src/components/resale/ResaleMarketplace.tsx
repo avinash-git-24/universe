@@ -255,7 +255,8 @@ export function ResaleMarketplace() {
           isLoadingMore: false,
           error: null,
         });
-      } catch {
+      } catch (err) {
+        console.error("[ResaleMarketplace] Failed to fetch listings:", err);
         if (cancelled) return;
         setData((prev) => ({ ...prev, isLoading: false, isLoadingMore: false, error: "fetch_failed" }));
       }
