@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, Suspense } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
@@ -98,11 +98,17 @@ function LoginForm() {
   const [remember, setRemember] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isWarping, setIsWarping] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const [btnText, setBtnText] = useState("Sign In");
   const urlError = searchParams.get("error");
   const [errors, setErrors] = useState<{ email?: string; password?: string; form?: string }>(() =>
     urlError ? { form: urlError } : {}
   );
+
+  useEffect(() => {
+    const t = setTimeout(() => setMounted(true), 60);
+    return () => clearTimeout(t);
+  }, []);
 
   async function triggerWarpAndRedirect(destinationUrl: string) {
     setIsWarping(true);
@@ -175,13 +181,13 @@ function LoginForm() {
       <BlackHoleBackground isWarping={isWarping} />
 
       {/* ── Futuristic HUD Elements ── */}
-      <div className="hud-tl" style={{ position: "absolute", top: 28, left: 32, fontFamily: "'Space Mono', monospace", fontSize: 10, letterSpacing: "2px", color: "rgba(255,255,255,0.6)", pointerEvents: "none", zIndex: 2, opacity: isWarping ? 0 : 1, transition: "opacity 0.4s ease" }}>
+      <div className="hud-tl" style={{ position: "absolute", top: 28, left: 32, fontFamily: "'Space Mono', monospace", fontSize: 10, letterSpacing: "2px", color: "rgba(255,255,255,0.6)", pointerEvents: "none", zIndex: 2, opacity: isWarping ? 0 : mounted ? 1 : 0, transition: "opacity 0.8s ease 0.3s" }}>
         <div style={{ position: "absolute", top: -6, left: -6, width: 10, height: 10, borderLeft: "1px solid rgba(0, 210, 255, 0.6)", borderTop: "1px solid rgba(0, 210, 255, 0.6)" }} />
         <strong style={{ color: "#fff" }}>EVENT HORIZON</strong><br />
         <span style={{ color: "#00d2ff" }}>GRAVITY: STABILIZED</span>
       </div>
 
-      <div className="hud-tr" style={{ position: "absolute", top: 28, right: 32, textAlign: "right", fontFamily: "'Space Mono', monospace", fontSize: 10, letterSpacing: "2px", color: "rgba(255,255,255,0.6)", pointerEvents: "none", zIndex: 2, opacity: isWarping ? 0 : 1, transition: "opacity 0.4s ease" }}>
+      <div className="hud-tr" style={{ position: "absolute", top: 28, right: 32, textAlign: "right", fontFamily: "'Space Mono', monospace", fontSize: 10, letterSpacing: "2px", color: "rgba(255,255,255,0.6)", pointerEvents: "none", zIndex: 2, opacity: isWarping ? 0 : mounted ? 1 : 0, transition: "opacity 0.8s ease 0.3s" }}>
         <div style={{ position: "absolute", top: -6, right: -6, width: 10, height: 10, borderRight: "1px solid rgba(0, 210, 255, 0.6)", borderTop: "1px solid rgba(0, 210, 255, 0.6)" }} />
         <strong style={{ color: "#fff" }}>SYSTEM STATUS</strong><br />
         <span style={{ color: "#00d2ff" }}>ONLINE // NOMINAL</span>
@@ -191,9 +197,12 @@ function LoginForm() {
       <div style={{
         position: "relative", zIndex: 5, width: "100%", maxWidth: 450,
         display: "flex", flexDirection: "column", alignItems: "center",
-        transform: isWarping ? "scale(0) rotate(-10deg)" : "scale(1)",
-        opacity: isWarping ? 0 : 1,
-        transition: "all 0.8s cubic-bezier(0.7, 0, 0.84, 0)",
+        transform: isWarping ? "scale(0) rotate(-10deg)" : mounted ? "translateY(0) scale(1)" : "translateY(36px) scale(0.92)",
+        opacity: isWarping ? 0 : mounted ? 1 : 0,
+        filter: isWarping ? "blur(10px)" : mounted ? "blur(0px)" : "blur(12px)",
+        transition: isWarping
+          ? "all 0.8s cubic-bezier(0.7, 0, 0.84, 0)"
+          : "all 1.2s cubic-bezier(0.16, 1, 0.3, 1)",
         pointerEvents: isWarping ? "none" : "auto",
       }}>
         

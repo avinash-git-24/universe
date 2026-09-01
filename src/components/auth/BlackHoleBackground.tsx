@@ -183,7 +183,7 @@ export default function BlackHoleBackground({ isWarping = false }: { isWarping?:
     // Scene setup
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.z = 4;
+    camera.position.z = 7.5;
 
     const renderer = new THREE.WebGLRenderer({
       antialias: !isMobile,
@@ -197,9 +197,9 @@ export default function BlackHoleBackground({ isWarping = false }: { isWarping?:
     // Uniforms
     const uniforms = {
       uTime: { value: 0.0 },
-      uStabilize: { value: 1.0 }, // Smooth stabilized state for login
+      uStabilize: { value: 0.3 }, // Ramps up on intro
       uAspect: { value: window.innerWidth / window.innerHeight },
-      uExposure: { value: 1.05 },
+      uExposure: { value: 0.4 }, // Starts soft and ignites
     };
 
     // Portal mesh
@@ -277,6 +277,7 @@ export default function BlackHoleBackground({ isWarping = false }: { isWarping?:
     let targetY = 0;
     let mouseX = 0;
     let mouseY = 0;
+    let introProgress = 0;
     let warpProgress = 0;
     let audioPlayed = false;
 
@@ -334,6 +335,19 @@ export default function BlackHoleBackground({ isWarping = false }: { isWarping?:
         starMesh.geometry.attributes.position.needsUpdate = true;
       } else {
         uniforms.uTime.value += delta * 1.0;
+
+        // Smooth cinematic opening intro ease-in
+        if (introProgress < 1.0) {
+          introProgress = Math.min(1.0, introProgress + delta * 0.7);
+          const easeIntro = 1.0 - Math.pow(1.0 - introProgress, 3.0); // Cubic ease out
+          camera.position.z = THREE.MathUtils.lerp(7.5, 4.0, easeIntro);
+          uniforms.uExposure.value = THREE.MathUtils.lerp(0.4, 1.05, easeIntro);
+          uniforms.uStabilize.value = THREE.MathUtils.lerp(0.3, 1.0, easeIntro);
+        } else {
+          camera.position.z = 4.0;
+          uniforms.uExposure.value = 1.05;
+          uniforms.uStabilize.value = 1.0;
+        }
 
         // Drift stars towards camera
         const positions = starMesh.geometry.attributes.position.array as Float32Array;
