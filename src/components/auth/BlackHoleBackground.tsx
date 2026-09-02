@@ -107,14 +107,16 @@ const FRAGMENT_SHADER = `
     nebula *= smoothstep(0.0, 0.6, pr); 
     density += nebula;
 
-    // 7. Cinematic Color Grading (Interstellar Palette: amber, copper, bright core)
-    vec3 cDark = vec3(0.18, 0.05, 0.01);      // Deep space amber
-    vec3 cMid = vec3(1.0, 0.45, 0.15);       // Searing copper/orange
-    vec3 cLight = vec3(1.0, 0.95, 0.9);      // Blow-out white
+    // 7. Cinematic Color Grading (UniVerse Emerald & Cyber Cyan Brand Palette)
+    vec3 cDark = vec3(0.01, 0.14, 0.08);      // Deep space emerald shadow
+    vec3 cMid = vec3(0.0, 0.90, 0.46);        // Searing neon emerald (#00E676)
+    vec3 cCyan = vec3(0.0, 0.85, 1.0);        // Electric cyber cyan photon ray
+    vec3 cLight = vec3(0.92, 1.0, 0.96);      // Radiant super-white core
     
     vec3 color = mix(vec3(0.0), cDark, smoothstep(0.0, 0.15, density));
-    color = mix(color, cMid, smoothstep(0.15, 0.4, density));
-    color = mix(color, cLight, smoothstep(0.4, 1.0, density));
+    color = mix(color, cMid, smoothstep(0.15, 0.45, density));
+    color = mix(color, mix(cMid, cCyan, 0.35), smoothstep(0.45, 0.75, density));
+    color = mix(color, cLight, smoothstep(0.75, 1.0, density));
 
     // 8. Doppler Beaming Physics
     // Accretion disk moving towards camera (left side) is brighter
@@ -130,7 +132,7 @@ const FRAGMENT_SHADER = `
     lensedStars *= smoothstep(horizon * 1.05, horizon * 1.5, pr); 
     lensedStars *= smoothstep(0.4, 0.0, density); 
     
-    vec3 starColor = mix(vec3(0.5, 0.8, 1.0), vec3(1.0, 0.7, 0.4), random(floor(starPos) + 1.0));
+    vec3 starColor = mix(vec3(0.0, 0.9, 0.5), vec3(0.3, 0.85, 1.0), random(floor(starPos) + 1.0));
     color += starColor * lensedStars * 3.0 * isVoid;
 
     // Enforce absolute Vantablack inside the Event Horizon
@@ -224,10 +226,10 @@ export default function BlackHoleBackground({ isWarping = false }: { isWarping?:
       posArray[i] = (Math.random() - 0.5) * 30;
       posArray[i + 1] = (Math.random() - 0.5) * 30;
       posArray[i + 2] = (Math.random() - 0.5) * 20;
-      const isWarm = Math.random() > 0.6;
-      colArray[i] = 1.0;
-      colArray[i + 1] = isWarm ? 0.6 + Math.random() * 0.2 : 0.8 + Math.random() * 0.2;
-      colArray[i + 2] = isWarm ? 0.3 + Math.random() * 0.2 : 0.9 + Math.random() * 0.1;
+      const isEmerald = Math.random() > 0.45;
+      colArray[i] = isEmerald ? 0.0 : 0.4;
+      colArray[i + 1] = isEmerald ? 0.9 + Math.random() * 0.1 : 0.85 + Math.random() * 0.15;
+      colArray[i + 2] = isEmerald ? 0.46 + Math.random() * 0.2 : 1.0;
     }
 
     starsGeometry.setAttribute("position", new THREE.BufferAttribute(posArray, 3));
