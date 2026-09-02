@@ -9,6 +9,8 @@ import type { Metadata, Viewport } from "next";
 import { fontClassNames } from "@/lib/fonts";
 import { rootMetadata } from "@/lib/metadata";
 import { AppProviders } from "@/providers/AppProviders";
+import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import "@/app/globals.css";
 
 // ─── Metadata ─────────────────────────────────────────────────────────────────
@@ -71,6 +73,10 @@ export default function RootLayout({
             {children}
           </main>
         </AppProviders>
+
+        {/* Vercel Real-Time Analytics & Speed Insights */}
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
