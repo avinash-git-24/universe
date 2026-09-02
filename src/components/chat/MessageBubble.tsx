@@ -60,14 +60,14 @@ export const MessageBubble = memo(function MessageBubble({
     <>
       <div
         className={`group relative flex flex-col w-full ${isMe ? "items-end" : "items-start"} ${
-          isLastInGroup ? "mb-3" : "mb-1"
+          isLastInGroup ? "mb-2.5" : "mb-1"
         }`}
       >
         {/* Floating Quick Reactions Toolbar (on hover) */}
         <div
-          className={`absolute -top-7 ${
+          className={`absolute -top-8 ${
             isMe ? "right-2" : "left-2"
-          } hidden group-hover:flex items-center gap-0.5 px-2 py-1 rounded-full bg-[#0d1612]/95 border border-emerald-500/20 shadow-xl backdrop-blur-md z-20 animate-in fade-in zoom-in-90 duration-150`}
+          } hidden group-hover:flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#0d1612]/95 border border-emerald-500/30 shadow-[0_8px_20px_rgba(0,0,0,0.5)] backdrop-blur-xl z-20 animate-in fade-in zoom-in-95 duration-150`}
         >
           {POPULAR_REACTIONS.map((emoji) => {
             const hasReacted = currentUserId && reactions[emoji]?.includes(currentUserId);
@@ -76,7 +76,7 @@ export const MessageBubble = memo(function MessageBubble({
                 key={emoji}
                 type="button"
                 onClick={() => handleReactionClick(emoji)}
-                className={`w-6 h-6 flex items-center justify-center text-xs rounded-full hover:scale-125 transition-transform ${
+                className={`w-6 h-6 flex items-center justify-center text-sm rounded-full hover:scale-130 transition-transform ${
                   hasReacted ? "bg-emerald-500/30 ring-1 ring-emerald-400" : "hover:bg-white/10"
                 }`}
                 title={`React with ${emoji}`}
@@ -95,33 +95,33 @@ export const MessageBubble = memo(function MessageBubble({
           </button>
         </div>
 
-        {/* Bubble */}
+        {/* Message Bubble Card */}
         <div
-          className={`relative max-w-[82%] sm:max-w-[70%] p-3 shadow-md transition-all ${
+          className={`relative max-w-[85%] sm:max-w-[72%] px-3.5 py-2 shadow-lg transition-all ${
             isMe
-              ? "bg-gradient-to-br from-[#00E676] to-[#00B44B] text-[#050A07] font-medium shadow-[0_2px_15px_rgba(0,230,118,0.15)]"
-              : "bg-[#121915]/90 text-white/95 border border-white/10 backdrop-blur-md"
+              ? "bg-gradient-to-r from-emerald-600 via-emerald-500 to-teal-500 text-white font-normal shadow-[0_4px_16px_rgba(16,185,129,0.22)] border border-emerald-400/20"
+              : "bg-[#131c17] text-white/95 border border-white/[0.08] backdrop-blur-md shadow-[0_4px_16px_rgba(0,0,0,0.3)]"
           } ${
             isFirstInGroup && isLastInGroup
               ? "rounded-2xl"
               : isMe
               ? isFirstInGroup
-                ? "rounded-2xl rounded-br-md"
+                ? "rounded-2xl rounded-tr-sm"
                 : isLastInGroup
-                ? "rounded-2xl rounded-tr-md"
-                : "rounded-l-2xl rounded-r-md"
+                ? "rounded-2xl rounded-br-sm"
+                : "rounded-l-2xl rounded-r-sm"
               : isFirstInGroup
-              ? "rounded-2xl rounded-bl-md"
+              ? "rounded-2xl rounded-tl-sm"
               : isLastInGroup
-              ? "rounded-2xl rounded-tl-md"
-              : "rounded-r-2xl rounded-l-md"
+              ? "rounded-2xl rounded-bl-sm"
+              : "rounded-r-2xl rounded-l-sm"
           }`}
         >
-          {/* Attached Image */}
+          {/* Shared Image */}
           {message.image_url && (
             <div
-              className={`relative w-[240px] sm:w-[300px] max-w-full aspect-square rounded-xl overflow-hidden cursor-pointer border border-black/10 group/img ${
-                message.content ? "mb-2.5" : ""
+              className={`relative w-[240px] sm:w-[320px] max-w-full aspect-square rounded-xl overflow-hidden cursor-pointer border border-white/10 group/img ${
+                message.content ? "mb-2" : ""
               }`}
               onClick={() => setIsLightboxOpen(true)}
             >
@@ -130,40 +130,44 @@ export const MessageBubble = memo(function MessageBubble({
                 alt="Shared image"
                 fill
                 unoptimized
-                sizes="(max-width: 768px) 240px, 300px"
+                sizes="(max-width: 768px) 240px, 320px"
                 className="object-cover group-hover/img:scale-105 transition-transform duration-300"
               />
-              <div className="absolute inset-0 bg-black/30 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center">
-                <span className="text-xs bg-black/60 text-white px-2.5 py-1 rounded-full backdrop-blur-sm">
-                  Click to Expand
+              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center">
+                <span className="text-xs font-semibold bg-black/70 text-white px-3 py-1 rounded-full backdrop-blur-sm border border-white/20">
+                  🔍 View Full Size
                 </span>
               </div>
             </div>
           )}
 
-          {/* Message Text */}
-          {message.content && (
-            <p className="text-[14.5px] leading-relaxed whitespace-pre-wrap break-words">
-              {message.content}
-            </p>
-          )}
-
-          {/* Timestamp and Checkmark */}
-          <div
-            className={`flex items-center justify-end gap-1.5 mt-1 text-[10px] ${
-              isMe ? "text-[#050A07]/70 font-semibold" : "text-white/40"
-            }`}
-          >
-            <span>{format(new Date(message.created_at), "h:mm a")}</span>
-            {isMe && (
-              <span className="flex items-center ml-0.5" title={`Status: ${message.status}`}>
-                {message.status === "sent" && <Check className="w-3.5 h-3.5 opacity-80" />}
-                {message.status === "delivered" && <CheckCheck className="w-3.5 h-3.5 opacity-90" />}
-                {message.status === "read" && (
-                  <CheckCheck className="w-3.5 h-3.5 text-[#050A07] drop-shadow-[0_0_4px_rgba(5,10,7,0.4)]" />
-                )}
-              </span>
+          {/* Text & Inline Meta Container */}
+          <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5">
+            {message.content && (
+              <p className="text-[14px] leading-relaxed whitespace-pre-wrap break-words flex-1 min-w-[30px] select-text">
+                {message.content}
+              </p>
             )}
+
+            {/* Timestamp & Status Checkmarks */}
+            <div
+              className={`flex items-center gap-1 text-[10px] ml-auto shrink-0 select-none ${
+                isMe ? "text-emerald-100/80 font-medium" : "text-white/40"
+              }`}
+            >
+              <span>{format(new Date(message.created_at), "h:mm a")}</span>
+              {isMe && (
+                <span className="flex items-center ml-0.5">
+                  {message.status === "sent" && <Check className="w-3.5 h-3.5 opacity-80" />}
+                  {message.status === "delivered" && (
+                    <CheckCheck className="w-3.5 h-3.5 opacity-90" />
+                  )}
+                  {message.status === "read" && (
+                    <CheckCheck className="w-3.5 h-3.5 text-white font-bold drop-shadow-[0_0_6px_rgba(255,255,255,0.8)]" />
+                  )}
+                </span>
+              )}
+            </div>
           </div>
         </div>
 
@@ -183,7 +187,7 @@ export const MessageBubble = memo(function MessageBubble({
                   onClick={() => onReact?.(message.id, emoji)}
                   className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold border transition-all ${
                     hasMyReaction
-                      ? "bg-emerald-500/20 border-emerald-500/40 text-emerald-400 shadow-[0_0_10px_rgba(16,185,129,0.2)]"
+                      ? "bg-emerald-500/20 border-emerald-500/50 text-emerald-300 shadow-[0_0_12px_rgba(16,185,129,0.3)]"
                       : "bg-[#0d1410] border-white/10 text-white/80 hover:border-white/20"
                   }`}
                   title={`${users.length} reaction${users.length > 1 ? "s" : ""}`}
@@ -200,19 +204,19 @@ export const MessageBubble = memo(function MessageBubble({
       {/* Lightbox Fullscreen HD Preview Modal */}
       {isLightboxOpen && message.image_url && (
         <div
-          className="fixed inset-0 z-50 bg-[#050A07]/95 backdrop-blur-xl flex items-center justify-center p-4 animate-in fade-in duration-200"
+          className="fixed inset-0 z-50 bg-[#050A07]/95 backdrop-blur-2xl flex items-center justify-center p-4 animate-in fade-in duration-200"
           onClick={() => setIsLightboxOpen(false)}
         >
           <div className="absolute top-6 right-6 flex items-center gap-3 z-50">
             <button
-              className="p-2.5 rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors backdrop-blur-md"
+              className="p-2.5 rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors backdrop-blur-md border border-white/10 shadow-lg"
               onClick={(e) => handleDownload(message.image_url!, e)}
               title="Download image"
             >
               <Download className="w-5 h-5" />
             </button>
             <button
-              className="p-2.5 rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors backdrop-blur-md"
+              className="p-2.5 rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors backdrop-blur-md border border-white/10 shadow-lg"
               onClick={(e) => {
                 e.stopPropagation();
                 setIsLightboxOpen(false);

@@ -16,6 +16,7 @@ import {
   ChevronDown,
   Smile,
   ShieldCheck,
+  CheckCheck,
 } from "lucide-react";
 import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
 import { createClient } from "@/lib/supabase/client";
@@ -321,7 +322,7 @@ export function ChatWindow({ userId, conversation, isOnline }: ChatWindowProps) 
     setMessages((prev) => [...prev, optimisticMsg]);
     scrollToBottom("smooth");
 
-    // 2. Peer Broadcast (0ms latency)
+    // 2. Peer Broadcast (0ms latency to active chat & recipient)
     const activeChannel = supabase.channel(`chat:messages:${conversation.id}`);
     activeChannel.send({
       type: "broadcast",
@@ -482,85 +483,66 @@ export function ChatWindow({ userId, conversation, isOnline }: ChatWindowProps) 
   const otherRole = conversation.other_participant.role === "student" ? "Student" : "Runner";
 
   return (
-    <div className="flex flex-col h-full min-h-0 bg-[#080d0a] relative w-full overflow-hidden">
+    <div className="flex flex-col h-full min-h-0 bg-[#070b09] relative w-full overflow-hidden">
       {/* ── Chat Header ── */}
-      <div className="p-3.5 sm:p-4 border-b border-white/10 flex flex-col md:flex-row md:items-center justify-between gap-3 shadow-md z-20 bg-[#0c130f]/95 backdrop-blur-xl shrink-0">
-        <div className="flex items-center justify-between w-full md:w-auto">
-          <div className="flex items-center gap-3">
-            {/* Avatar with Online Pulse */}
-            <div className="relative">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-emerald-500/20 to-teal-400/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400 font-extrabold text-sm shadow-[0_0_15px_rgba(16,185,129,0.15)]">
-                {conversation.other_participant?.full_name?.charAt(0).toUpperCase() || "U"}
-              </div>
-              <span
-                className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-[#0c130f] ${
-                  isOnline ? "bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.9)]" : "bg-neutral-600"
-                }`}
-              />
+      <div className="p-3 sm:p-3.5 px-4 border-b border-white/[0.08] flex items-center justify-between gap-3 shadow-md z-20 bg-[#0c130f]/90 backdrop-blur-xl shrink-0">
+        <div className="flex items-center gap-3 min-w-0">
+          {/* Avatar with Online Glow */}
+          <div className="relative shrink-0">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-emerald-500/30 to-teal-400/20 border border-emerald-500/40 flex items-center justify-center text-emerald-300 font-black text-sm shadow-[0_0_12px_rgba(16,185,129,0.18)]">
+              {conversation.other_participant?.full_name?.charAt(0).toUpperCase() || "U"}
             </div>
-
-            <div>
-              <div className="flex items-center gap-2">
-                <h2 className="font-bold text-base sm:text-lg text-white">
-                  {conversation.other_participant?.full_name || "University Student"}
-                </h2>
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/25">
-                  {otherRole}
-                </span>
-              </div>
-              <p className="text-xs text-white/50 flex items-center gap-1.5 mt-0.5">
-                {isOnline ? (
-                  <span className="text-emerald-400 font-medium">Active Now</span>
-                ) : (
-                  <span>Offline</span>
-                )}
-              </p>
-            </div>
+            <span
+              className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-[#0c130f] transition-all ${
+                isOnline ? "bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.9)]" : "bg-neutral-600"
+              }`}
+            />
           </div>
 
-          {/* Header Action Controls */}
-          <div className="flex items-center gap-1.5 md:hidden">
-            <button
-              type="button"
-              onClick={() => setShowSearch(!showSearch)}
-              className={`p-2 rounded-lg text-white/60 hover:text-white hover:bg-white/10 transition-colors ${
-                showSearch ? "bg-white/10 text-emerald-400" : ""
-              }`}
-            >
-              <Search className="w-4 h-4" />
-            </button>
-            <button
-              type="button"
-              onClick={() => setSoundEnabled(!soundEnabled)}
-              className="p-2 rounded-lg text-white/60 hover:text-white hover:bg-white/10 transition-colors"
-            >
-              {soundEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4 text-red-400" />}
-            </button>
+          <div className="min-w-0">
+            <div className="flex items-center gap-2">
+              <h2 className="font-extrabold text-sm sm:text-base text-white truncate">
+                {conversation.other_participant?.full_name || "University Student"}
+              </h2>
+              <span className="text-[10px] font-bold px-2 py-0.2 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 shrink-0">
+                {otherRole}
+              </span>
+            </div>
+            <p className="text-[11px] text-white/50 flex items-center gap-1.5 mt-0.5">
+              {isOnline ? (
+                <span className="text-emerald-400 font-semibold flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block animate-ping" />
+                  Active Now
+                </span>
+              ) : (
+                <span>Offline</span>
+              )}
+            </p>
           </div>
         </div>
 
-        {/* Right side Header Extras (Desktop) */}
-        <div className="hidden md:flex items-center gap-2">
+        {/* Right side Action Buttons */}
+        <div className="flex items-center gap-1.5 shrink-0">
           <button
             type="button"
             onClick={() => setShowSearch(!showSearch)}
-            className={`p-2.5 rounded-xl border transition-all flex items-center gap-1.5 text-xs font-medium ${
+            className={`p-2 rounded-xl border transition-all flex items-center gap-1.5 text-xs font-semibold ${
               showSearch
-                ? "bg-emerald-500/15 border-emerald-500/30 text-emerald-400"
-                : "bg-white/5 border-white/10 text-white/60 hover:text-white hover:bg-white/10"
+                ? "bg-emerald-500/20 border-emerald-500/40 text-emerald-300"
+                : "bg-white/[0.04] border-white/10 text-white/70 hover:text-white hover:bg-white/[0.08]"
             }`}
             title="Search in chat"
           >
             <Search className="w-4 h-4" />
-            <span>Search</span>
+            <span className="hidden sm:inline">Search</span>
           </button>
 
           <button
             type="button"
             onClick={() => setSoundEnabled(!soundEnabled)}
-            className={`p-2.5 rounded-xl border transition-all ${
+            className={`p-2 rounded-xl border transition-all ${
               soundEnabled
-                ? "bg-white/5 border-white/10 text-white/70 hover:text-white hover:bg-white/10"
+                ? "bg-white/[0.04] border-white/10 text-white/70 hover:text-white hover:bg-white/[0.08]"
                 : "bg-red-500/10 border-red-500/20 text-red-400"
             }`}
             title={soundEnabled ? "Mute chat sounds" : "Unmute chat sounds"}
@@ -570,22 +552,22 @@ export function ChatWindow({ userId, conversation, isOnline }: ChatWindowProps) 
         </div>
       </div>
 
-      {/* ── Search Input Dropdown (When toggled) ── */}
+      {/* ── Search Input Bar (Dropdown) ── */}
       {showSearch && (
-        <div className="p-3 bg-[#0a100c] border-b border-white/10 flex items-center gap-2 animate-in slide-in-from-top-2 duration-150 z-20">
-          <Search className="w-4 h-4 text-emerald-400 ml-2 shrink-0" />
+        <div className="p-2.5 px-4 bg-[#0a100c] border-b border-white/[0.08] flex items-center gap-2 animate-in slide-in-from-top-2 duration-150 z-20">
+          <Search className="w-4 h-4 text-emerald-400 ml-1 shrink-0" />
           <input
             type="text"
             placeholder="Search messages in this conversation..."
             value={chatSearchQuery}
             onChange={(e) => setChatSearchQuery(e.target.value)}
             autoFocus
-            className="flex-1 bg-transparent text-sm text-white placeholder:text-white/30 focus:outline-none"
+            className="flex-1 bg-transparent text-xs sm:text-sm text-white placeholder:text-white/30 focus:outline-none"
           />
           {chatSearchQuery && (
             <button
               onClick={() => setChatSearchQuery("")}
-              className="text-xs text-white/50 hover:text-white px-2 py-1 rounded bg-white/5"
+              className="text-xs text-white/50 hover:text-white px-2 py-0.5 rounded bg-white/5"
             >
               Clear
             </button>
@@ -604,22 +586,22 @@ export function ChatWindow({ userId, conversation, isOnline }: ChatWindowProps) 
 
       {/* ── Active Delivery Live HUD Banner (Pinned Top) ── */}
       {req && (
-        <div className="px-4 py-2 bg-emerald-950/25 border-b border-emerald-500/20 flex items-center justify-between gap-3 shrink-0 backdrop-blur-sm z-10">
+        <div className="px-4 py-2 bg-emerald-950/30 border-b border-emerald-500/20 flex items-center justify-between gap-3 shrink-0 backdrop-blur-sm z-10">
           <div className="flex items-center gap-2.5 min-w-0">
-            <div className="w-7 h-7 rounded-lg bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0">
+            <div className="w-7 h-7 rounded-lg bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0 shadow-sm">
               <Package className="w-3.5 h-3.5" />
             </div>
             <div className="min-w-0">
               <div className="flex items-center gap-2">
                 <span className="text-xs font-bold text-white truncate">
-                  Req #{req.id.slice(0, 6)}
+                  Delivery #{req.id.slice(0, 6)}
                 </span>
-                <span className="text-[10px] uppercase font-extrabold px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400">
+                <span className="text-[10px] uppercase font-black px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-300">
                   {req.status}
                 </span>
               </div>
-              <p className="text-[11px] text-white/60 truncate flex items-center gap-1">
-                <MapPin className="w-3 h-3 text-emerald-400/70" />
+              <p className="text-[11px] text-white/60 truncate flex items-center gap-1 mt-0.5">
+                <MapPin className="w-3 h-3 text-emerald-400/80 shrink-0" />
                 <span className="truncate">{req.pickup_location}</span>
                 <span className="opacity-40">→</span>
                 <span className="truncate">{req.dropoff_location}</span>
@@ -629,7 +611,7 @@ export function ChatWindow({ userId, conversation, isOnline }: ChatWindowProps) 
 
           <Link
             href={`/dashboard/requests/${req.id}`}
-            className="shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 text-xs font-bold transition-all border border-emerald-500/30 shadow-[0_0_10px_rgba(16,185,129,0.1)]"
+            className="shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 text-xs font-bold transition-all border border-emerald-500/30 shadow-[0_0_12px_rgba(16,185,129,0.15)]"
           >
             <span>Details</span>
             <ExternalLink className="w-3 h-3" />
@@ -639,7 +621,7 @@ export function ChatWindow({ userId, conversation, isOnline }: ChatWindowProps) 
 
       {/* ── Resale Listing Banner (If Marketplace Chat) ── */}
       {conversation.resale_listing && (
-        <div className="px-4 py-2 bg-emerald-950/25 border-b border-emerald-500/20 flex items-center justify-between gap-3 shrink-0 backdrop-blur-sm z-10">
+        <div className="px-4 py-2 bg-emerald-950/30 border-b border-emerald-500/20 flex items-center justify-between gap-3 shrink-0 backdrop-blur-sm z-10">
           <div className="flex items-center gap-2.5 min-w-0">
             <div className="w-7 h-7 rounded-lg bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0">
               <Tag className="w-3.5 h-3.5" />
@@ -648,7 +630,7 @@ export function ChatWindow({ userId, conversation, isOnline }: ChatWindowProps) 
               <span className="text-xs font-bold text-white truncate block">
                 {conversation.resale_listing.title}
               </span>
-              <span className="text-xs font-extrabold text-emerald-400">
+              <span className="text-xs font-black text-emerald-400">
                 ₹{conversation.resale_listing.price}
               </span>
             </div>
@@ -656,7 +638,7 @@ export function ChatWindow({ userId, conversation, isOnline }: ChatWindowProps) 
 
           <Link
             href={`/dashboard/marketplace/${conversation.resale_listing.id}`}
-            className="shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 text-xs font-bold transition-all border border-emerald-500/30"
+            className="shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 text-xs font-bold transition-all border border-emerald-500/30"
           >
             <span>View Item</span>
             <ExternalLink className="w-3 h-3" />
@@ -668,8 +650,11 @@ export function ChatWindow({ userId, conversation, isOnline }: ChatWindowProps) 
       <div
         ref={scrollContainerRef}
         onScroll={handleScroll}
-        className="flex-1 min-h-0 overflow-y-auto p-4 sm:p-6 flex flex-col relative z-0 space-y-1"
+        className="flex-1 min-h-0 overflow-y-auto p-4 sm:p-6 flex flex-col relative z-0 space-y-1 bg-[radial-gradient(#10b9810d_1px,transparent_1px)] [background-size:20px_20px]"
       >
+        {/* Soft Ambient Radial Glow at the top */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_-10%,rgba(16,185,129,0.06),rgba(0,0,0,0))] pointer-events-none" />
+
         {loading ? (
           <div className="flex-1 flex items-center justify-center">
             <LoadingSpinner size="lg" label="Loading conversation..." />
@@ -677,11 +662,11 @@ export function ChatWindow({ userId, conversation, isOnline }: ChatWindowProps) 
         ) : (
           <>
             {filteredMessages.length === 0 ? (
-              <div className="flex-1 flex flex-col items-center justify-center text-center opacity-60">
-                <div className="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mb-3 text-emerald-400 shadow-lg">
+              <div className="flex-1 flex flex-col items-center justify-center text-center opacity-70 my-auto">
+                <div className="w-12 h-12 rounded-2xl bg-white/[0.04] border border-white/10 flex items-center justify-center mb-3 text-emerald-400 shadow-xl backdrop-blur-md">
                   <ShieldCheck className="w-6 h-6" />
                 </div>
-                <p className="text-sm font-bold text-white">End-to-End Encrypted Campus Chat</p>
+                <p className="text-sm font-extrabold text-white">End-to-End Encrypted Campus Chat</p>
                 <p className="text-xs text-white/50 mt-1 max-w-[280px]">
                   Send a message or choose a quick reply below to begin.
                 </p>
@@ -721,8 +706,8 @@ export function ChatWindow({ userId, conversation, isOnline }: ChatWindowProps) 
                   <div key={msg.id} className="w-full">
                     {/* Date Separator Pill */}
                     {showDateHeader && (
-                      <div className="flex items-center justify-center my-4">
-                        <span className="text-[11px] font-bold px-3 py-1 rounded-full bg-white/5 border border-white/10 text-white/60 shadow-sm backdrop-blur-md">
+                      <div className="flex items-center justify-center my-3">
+                        <span className="text-[10.5px] font-bold px-3 py-1 rounded-full bg-[#0d1612]/90 border border-white/10 text-white/70 shadow-sm backdrop-blur-md">
                           {formatDateSeparator(msg.created_at)}
                         </span>
                       </div>
@@ -751,9 +736,9 @@ export function ChatWindow({ userId, conversation, isOnline }: ChatWindowProps) 
 
             {/* Uploading Image Skeleton */}
             {uploadingImage && (
-              <div className="flex flex-col w-full items-end mb-4 animate-in fade-in duration-200">
-                <div className="max-w-[75%] rounded-2xl p-4 bg-[#00E676]/10 border border-[#00E676]/30 flex items-center gap-3">
-                  <Loader2 className="w-4 h-4 text-[#00E676] animate-spin" />
+              <div className="flex flex-col w-full items-end mb-3 animate-in fade-in duration-200">
+                <div className="max-w-[75%] rounded-2xl p-3.5 bg-emerald-500/10 border border-emerald-500/30 flex items-center gap-3 backdrop-blur-md">
+                  <Loader2 className="w-4 h-4 text-emerald-400 animate-spin" />
                   <span className="text-xs text-white/80 font-medium">Encrypting & uploading image...</span>
                 </div>
               </div>
@@ -761,8 +746,8 @@ export function ChatWindow({ userId, conversation, isOnline }: ChatWindowProps) 
 
             {/* Animated Typing Wave Indicator */}
             {otherTyping && (
-              <div className="flex items-center gap-2 px-3 py-2 rounded-2xl bg-white/5 border border-white/10 w-fit mb-2 animate-in fade-in duration-150">
-                <span className="text-xs text-emerald-400 font-medium">{otherRole} is typing</span>
+              <div className="flex items-center gap-2 px-3.5 py-2 rounded-2xl bg-white/[0.06] border border-white/10 w-fit mb-2 animate-in fade-in duration-150 backdrop-blur-md">
+                <span className="text-xs text-emerald-300 font-medium">{otherRole} is typing</span>
                 <div className="flex items-center gap-1">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-bounce [animation-delay:-0.3s]" />
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-bounce [animation-delay:-0.15s]" />
@@ -781,7 +766,7 @@ export function ChatWindow({ userId, conversation, isOnline }: ChatWindowProps) 
         <button
           type="button"
           onClick={() => scrollToBottom("smooth")}
-          className="absolute bottom-28 right-6 z-30 flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-[#0d1612] border border-emerald-500/40 text-emerald-400 font-bold text-xs shadow-2xl hover:scale-105 transition-all backdrop-blur-md animate-in fade-in slide-in-from-bottom-2 duration-150"
+          className="absolute bottom-24 right-6 z-30 flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-[#0d1612]/95 border border-emerald-500/40 text-emerald-400 font-bold text-xs shadow-2xl hover:scale-105 transition-all backdrop-blur-xl animate-in fade-in slide-in-from-bottom-2 duration-150"
         >
           <ChevronDown className="w-4 h-4" />
           {unreadScrolledCount > 0 ? (
@@ -792,12 +777,12 @@ export function ChatWindow({ userId, conversation, isOnline }: ChatWindowProps) 
         </button>
       )}
 
-      {/* ── Input Composer & Quick Replies ── */}
-      <div className="border-t border-white/10 bg-[#0c130f] z-20 shrink-0 relative">
+      {/* ── Input Composer & Quick Replies (Fixed Bottom) ── */}
+      <div className="border-t border-white/[0.08] bg-[#090f0c]/95 backdrop-blur-xl z-20 shrink-0 relative">
         {/* Emoji Keyboard Popover */}
         {showEmojiPicker && (
-          <div className="absolute bottom-full left-4 mb-2 p-3 rounded-2xl bg-[#0e1612] border border-emerald-500/30 shadow-2xl backdrop-blur-xl z-50 w-72 animate-in fade-in zoom-in-95 duration-150">
-            <div className="flex items-center justify-between pb-2 mb-2 border-b border-white/10 text-xs font-bold text-white/70">
+          <div className="absolute bottom-full left-4 mb-2 p-3 rounded-2xl bg-[#0d1612]/95 border border-emerald-500/30 shadow-[0_12px_36px_rgba(0,0,0,0.7)] backdrop-blur-2xl z-50 w-72 animate-in fade-in zoom-in-95 duration-150">
+            <div className="flex items-center justify-between pb-2 mb-2 border-b border-white/10 text-xs font-extrabold text-white/80">
               <span>Quick Emojis</span>
               <button
                 type="button"
@@ -807,7 +792,7 @@ export function ChatWindow({ userId, conversation, isOnline }: ChatWindowProps) 
                 <X className="w-4 h-4" />
               </button>
             </div>
-            <div className="grid grid-cols-6 gap-1.5 max-h-44 overflow-y-auto">
+            <div className="grid grid-cols-6 gap-1.5 max-h-44 overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
               {EMOJI_LIST.map((emoji) => (
                 <button
                   key={emoji}
@@ -826,13 +811,13 @@ export function ChatWindow({ userId, conversation, isOnline }: ChatWindowProps) 
         )}
 
         {/* Campus Quick Replies Pill Strip */}
-        <div className="flex items-center gap-1.5 px-3 sm:px-4 pt-2.5 pb-1 overflow-x-auto no-scrollbar max-w-4xl mx-auto w-full">
+        <div className="flex items-center gap-1.5 px-3 sm:px-4 pt-2 pb-1 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden max-w-4xl mx-auto w-full">
           {CAMPUS_QUICK_REPLIES.map((reply) => (
             <button
               key={reply}
               onClick={() => handleSend(reply)}
               disabled={loading || uploadingImage}
-              className="shrink-0 px-3 py-1.5 rounded-full bg-white/5 hover:bg-emerald-500/15 border border-white/10 hover:border-emerald-500/30 text-xs text-white/80 hover:text-emerald-400 transition-all active:scale-95 disabled:opacity-50"
+              className="shrink-0 px-3 py-1.2 rounded-xl bg-white/[0.04] hover:bg-emerald-500/15 border border-white/[0.08] hover:border-emerald-500/30 text-xs text-white/80 hover:text-emerald-300 font-medium transition-all active:scale-95 disabled:opacity-50 backdrop-blur-sm"
             >
               {reply}
             </button>
@@ -842,7 +827,7 @@ export function ChatWindow({ userId, conversation, isOnline }: ChatWindowProps) 
         {/* Message Input Bar */}
         <form
           onSubmit={onSubmitForm}
-          className="flex gap-2 max-w-4xl mx-auto w-full items-end p-3 pt-2"
+          className="flex gap-2 max-w-4xl mx-auto w-full items-end p-2.5 px-3 sm:px-4"
         >
           <input
             type="file"
@@ -857,28 +842,28 @@ export function ChatWindow({ userId, conversation, isOnline }: ChatWindowProps) 
             type="button"
             onClick={() => fileInputRef.current?.click()}
             disabled={uploadingImage}
-            className="w-[42px] h-[42px] rounded-2xl shrink-0 bg-white/5 hover:bg-white/10 flex items-center justify-center text-white/60 hover:text-white transition-colors disabled:opacity-50 border border-white/10"
+            className="w-[40px] h-[40px] rounded-xl shrink-0 bg-white/[0.04] hover:bg-white/[0.08] flex items-center justify-center text-white/60 hover:text-white transition-colors disabled:opacity-50 border border-white/10"
             title="Attach image"
           >
-            <ImageIcon className="w-5 h-5" />
+            <ImageIcon className="w-4 h-4" />
           </button>
 
           {/* Emoji Popover Trigger */}
           <button
             type="button"
             onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-            className={`w-[42px] h-[42px] rounded-2xl shrink-0 border transition-colors flex items-center justify-center ${
+            className={`w-[40px] h-[40px] rounded-xl shrink-0 border transition-colors flex items-center justify-center ${
               showEmojiPicker
                 ? "bg-emerald-500/20 border-emerald-500/40 text-emerald-400"
-                : "bg-white/5 border-white/10 text-white/60 hover:text-white hover:bg-white/10"
+                : "bg-white/[0.04] border-white/10 text-white/60 hover:text-white hover:bg-white/[0.08]"
             }`}
             title="Open emoji keyboard"
           >
-            <Smile className="w-5 h-5" />
+            <Smile className="w-4 h-4" />
           </button>
 
           {/* Textarea Input */}
-          <div className="flex-1 relative bg-white/5 border border-white/10 rounded-2xl transition-all focus-within:border-emerald-500/50 focus-within:bg-white/10 focus-within:ring-1 focus-within:ring-emerald-500/20">
+          <div className="flex-1 relative bg-white/[0.04] hover:bg-white/[0.06] border border-white/10 rounded-2xl transition-all focus-within:border-emerald-500/50 focus-within:bg-white/[0.08] focus-within:ring-1 focus-within:ring-emerald-500/20">
             <textarea
               ref={textareaRef}
               placeholder="Type a message... (Shift + Enter for new line)"
@@ -886,7 +871,7 @@ export function ChatWindow({ userId, conversation, isOnline }: ChatWindowProps) 
               onChange={onInputChange}
               onKeyDown={onKeyDown}
               disabled={uploadingImage}
-              className="w-full bg-transparent border-none focus:ring-0 resize-none py-2.5 px-4 text-sm text-white placeholder:text-white/30 max-h-[120px] rounded-2xl min-h-[42px] disabled:opacity-50"
+              className="w-full bg-transparent border-none focus:ring-0 resize-none py-2 px-3.5 text-sm text-white placeholder:text-white/30 max-h-[120px] rounded-2xl min-h-[40px] disabled:opacity-50 leading-relaxed"
               rows={1}
             />
           </div>
@@ -895,7 +880,7 @@ export function ChatWindow({ userId, conversation, isOnline }: ChatWindowProps) 
           <button
             type="submit"
             disabled={!newMessage.trim() || uploadingImage}
-            className="w-[42px] h-[42px] rounded-2xl shrink-0 bg-gradient-to-tr from-[#00E676] to-[#00C853] hover:brightness-110 flex items-center justify-center text-[#050A07] transition-all disabled:opacity-40 disabled:cursor-not-allowed shadow-[0_0_15px_rgba(0,230,118,0.25)] active:scale-95"
+            className="w-[40px] h-[40px] rounded-xl shrink-0 bg-gradient-to-tr from-emerald-500 to-teal-500 hover:brightness-110 flex items-center justify-center text-black font-extrabold transition-all disabled:opacity-40 disabled:cursor-not-allowed shadow-[0_0_15px_rgba(16,185,129,0.25)] active:scale-95"
             title="Send message"
           >
             <Send className="w-4 h-4 ml-0.5" />
