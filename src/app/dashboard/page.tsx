@@ -161,18 +161,26 @@ export default async function DashboardPage() {
                             style={{ background: `radial-gradient(150px circle at top right, ${meta.color}15, transparent)` }}
                           />
 
-                          {/* Status badge */}
-                          <div className="flex justify-between items-start mb-3.5 relative z-10">
-                            <span
-                              style={{
-                                color: meta.color,
-                                borderColor: `${meta.color}30`,
-                                background: `rgba(${meta.color === '#F59E0B' ? '245,158,11' : '99,102,241'},0.15)`,
-                              }}
-                              className="text-[11px] font-bold rounded-full px-2.5 py-0.5 border whitespace-nowrap"
-                            >
-                              {meta.label}
-                            </span>
+                          {/* Status & PIN badge */}
+                          <div className="flex justify-between items-center mb-3.5 relative z-10 gap-2">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <span
+                                style={{
+                                  color: meta.color,
+                                  borderColor: `${meta.color}30`,
+                                  background: `rgba(${meta.color === '#F59E0B' ? '245,158,11' : '99,102,241'},0.15)`,
+                                }}
+                                className="text-[11px] font-bold rounded-full px-2.5 py-0.5 border whitespace-nowrap"
+                              >
+                                {meta.label}
+                              </span>
+
+                              {req.delivery_otp && (
+                                <span className="inline-flex items-center gap-1 text-[11px] font-mono font-bold bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 px-2.5 py-0.5 rounded-full shadow-[0_0_10px_rgba(0,230,118,0.15)]" title="Share this PIN with your runner upon delivery">
+                                  🔐 PIN: {req.delivery_otp}
+                                </span>
+                              )}
+                            </div>
                             
                             <div className="bg-[#00E676]/10 text-[#00E676] font-extrabold text-sm sm:text-[15px] rounded-[10px] px-2.5 py-1 border border-[#00E676]/20">
                               ₹{req.delivery_fee}

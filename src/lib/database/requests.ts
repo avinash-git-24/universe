@@ -326,6 +326,34 @@ export async function updateRequestStatus(
   return true;
 }
 
+/**
+ * Verifies 4-digit PIN with database RPC and securely completes delivery.
+ */
+export async function completeDeliveryWithOtp(
+  supabase: SupabaseClient<Database>,
+  requestId: string,
+  otp: string
+): Promise<{ success: boolean; message: string; error?: string }> {
+  try {
+    const { data, error } = await (supabase as any).rpc("verify_and_complete_delivery", {
+      p_request_id: requestId,
+      p_entered_otp: otp.trim(),
+    });
+
+    if (error) {
+      return { success: false, message: error.message || "Failed to verify OTP", error: error.code };
+    }
+
+    if (data && typeof data === "object") {
+      return data as { success: boolean; message: string; error?: string };
+    }
+
+    return { success: true, message: "Delivery completed successfully!" };
+  } catch (err: any) {
+    return { success: false, message: err?.message || "Unexpected verification error", error: "UNKNOWN" };
+  }
+}
+
 export type Profile = Database["public"]["Tables"]["profiles"]["Row"];
 
 export type AssignmentWithRunner = Database["public"]["Tables"]["delivery_assignments"]["Row"] & {

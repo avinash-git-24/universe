@@ -102,6 +102,7 @@ export type Database = {
           created_at: string;
           updated_at: string;
           linked_listing_id: string | null;
+          delivery_otp: string | null;
         };
         Insert: {
           id?: string;
@@ -115,6 +116,7 @@ export type Database = {
           created_at?: string;
           updated_at?: string;
           linked_listing_id?: string | null;
+          delivery_otp?: string | null;
         };
         Update: {
           id?: string;
@@ -128,6 +130,7 @@ export type Database = {
           created_at?: string;
           updated_at?: string;
           linked_listing_id?: string | null;
+          delivery_otp?: string | null;
         };
         Relationships: [];
       };

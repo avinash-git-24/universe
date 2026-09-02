@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { formatDistanceToNow, format } from "date-fns";
-import { MapPin, Package, Clock, IndianRupee, Eye, CheckCircle2, History, Wallet, Star, LayoutGrid, List, Calendar, ArrowRight, Box, ChevronDown, MessageSquare } from "lucide-react";
+import { MapPin, Package, Clock, IndianRupee, Eye, CheckCircle2, History, Wallet, Star, LayoutGrid, List, Calendar, ArrowRight, Box, ChevronDown, MessageSquare, KeyRound, ShieldCheck, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -21,9 +21,11 @@ import { createClient } from "@/lib/supabase/client";
 import { 
   acceptRequest, 
   updateRequestStatus, 
+  completeDeliveryWithOtp,
   RequestWithItems, 
   AssignmentWithRequest 
 } from "@/lib/database/requests";
+import { sounds } from "@/lib/audio";
 import { RequestStatusBadge } from "@/components/request/RequestStatusBadge";
 import type { Database } from "@/types/database";
 
@@ -51,6 +53,12 @@ export function RunnerDashboardClient({
   const [isAccepting, setIsAccepting] = useState<string | null>(null);
   const [isUpdatingStatus, setIsUpdatingStatus] = useState<string | null>(null);
   const [selectedRequest, setSelectedRequest] = useState<RequestWithItems | null>(null);
+
+  // OTP Verification state for completing delivery
+  const [otpModalAssignment, setOtpModalAssignment] = useState<AssignmentWithRequest | null>(null);
+  const [enteredOtp, setEnteredOtp] = useState<string>("");
+  const [otpError, setOtpError] = useState<string | null>(null);
+  const [isVerifyingOtp, setIsVerifyingOtp] = useState<boolean>(false);
   
   // UI State for Grid/List View
   const [isGridView, setIsGridView] = useState(true);
@@ -135,6 +143,17 @@ export function RunnerDashboardClient({
     requestId: string,
     newStatus: Database["public"]["Enums"]["request_status"]
   ) => {
+    // If the runner wants to mark delivered, prompt for student's 4-digit PIN!
+    if (newStatus === "delivered") {
+      const assignment = activeDeliveries.find((a) => a.request.id === requestId);
+      if (assignment) {
+        setOtpModalAssignment(assignment);
+        setEnteredOtp("");
+        setOtpError(null);
+        return;
+      }
+    }
+
     setIsUpdatingStatus(requestId);
     try {
       const supabase = createClient();
@@ -175,6 +194,53 @@ export function RunnerDashboardClient({
       alert("An error occurred updating status.");
     } finally {
       setIsUpdatingStatus(null);
+    }
+  };
+
+  const handleVerifyOtpAndComplete = async () => {
+    if (!otpModalAssignment) return;
+    if (enteredOtp.trim().length !== 4) {
+      setOtpError("Please enter the complete 4-digit PIN.");
+      sounds.playReceive();
+      return;
+    }
+
+    setIsVerifyingOtp(true);
+    setOtpError(null);
+
+    try {
+      const supabase = createClient();
+      const res = await completeDeliveryWithOtp(supabase, otpModalAssignment.request.id, enteredOtp);
+
+      if (!res.success) {
+        setOtpError(res.message || "Invalid PIN. Please ask the student for the code.");
+        sounds.playReceive();
+        return;
+      }
+
+      // Success! Play triumphant chime & move to completed
+      sounds.playOrderAccepted();
+
+      const requestId = otpModalAssignment.request.id;
+      setActiveDeliveries((prev) => prev.filter((a) => a.request.id !== requestId));
+      setDeliveryHistory((prev) => [
+        {
+          ...otpModalAssignment,
+          request: { ...otpModalAssignment.request, status: "delivered" },
+          status: "completed",
+          completed_at: new Date().toISOString(),
+        },
+        ...prev,
+      ]);
+
+      setOtpModalAssignment(null);
+      setEnteredOtp("");
+      setSelectedRequest(null);
+      router.refresh();
+    } catch (err: any) {
+      setOtpError(err?.message || "Verification failed");
+    } finally {
+      setIsVerifyingOtp(false);
     }
   };
 
@@ -710,6 +776,103 @@ export function RunnerDashboardClient({
                   </Button>
                 )}
               </div>
+            </ModalFooter>
+          </ModalContent>
+        )}
+      </Modal>
+
+      {/* ───────────────────────────────────────────────────────────────────────────── */}
+      {/* 4-DIGIT DELIVERY PIN VERIFICATION MODAL */}
+      {/* ───────────────────────────────────────────────────────────────────────────── */}
+      <Modal open={otpModalAssignment !== null} onOpenChange={(open) => !open && !isVerifyingOtp && setOtpModalAssignment(null)}>
+        {otpModalAssignment && (
+          <ModalContent size="md" className="bg-[#0b120e] border border-emerald-500/30 text-white">
+            <ModalHeader>
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400">
+                  <KeyRound className="w-5 h-5" />
+                </div>
+                <div>
+                  <ModalTitle className="text-lg font-bold text-white flex items-center gap-2">
+                    Enter Delivery PIN
+                    <span className="text-[11px] font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
+                      Security Check
+                    </span>
+                  </ModalTitle>
+                  <ModalDescription className="text-zinc-400 text-xs">
+                    Ask the student for their 4-digit handover PIN to confirm delivery.
+                  </ModalDescription>
+                </div>
+              </div>
+            </ModalHeader>
+
+            <ModalBody className="space-y-6 pt-4">
+              <div className="p-3.5 rounded-xl bg-emerald-950/30 border border-emerald-500/20 text-xs text-zinc-300 flex items-start gap-2.5">
+                <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                <div>
+                  <b className="text-white">Student Handover Rule:</b> Do NOT complete this delivery until you have physically handed the order to the student and received their 4-digit PIN.
+                </div>
+              </div>
+
+              {/* 4-Digit Input Form */}
+              <div className="flex flex-col items-center justify-center gap-3">
+                <label className="text-xs font-bold uppercase tracking-widest text-zinc-400">
+                  4-Digit Student PIN
+                </label>
+                <div className="relative">
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    maxLength={4}
+                    value={enteredOtp}
+                    onChange={(e) => {
+                      const val = e.target.value.replace(/\D/g, "").slice(0, 4);
+                      setEnteredOtp(val);
+                      if (otpError) setOtpError(null);
+                    }}
+                    placeholder="• • • •"
+                    autoFocus
+                    className="w-48 h-14 bg-black/60 border-2 border-emerald-500/50 rounded-2xl text-center text-3xl font-mono tracking-[0.6em] text-emerald-400 placeholder:text-zinc-700 focus:outline-none focus:border-emerald-400 focus:ring-4 focus:ring-emerald-500/20 shadow-[0_0_20px_rgba(16,185,129,0.15)] transition-all"
+                  />
+                </div>
+
+                {otpError && (
+                  <p className="text-xs font-semibold text-rose-400 bg-rose-500/10 border border-rose-500/20 px-3 py-1.5 rounded-lg flex items-center gap-1.5">
+                    <span>⚠️</span> {otpError}
+                  </p>
+                )}
+              </div>
+
+              {/* Order quick summary */}
+              <div className="p-3 bg-white/[0.03] border border-white/5 rounded-xl text-xs space-y-1.5">
+                <div className="flex justify-between text-zinc-400">
+                  <span>Order Items:</span>
+                  <span className="text-white font-medium">{otpModalAssignment.request.items.map(i => i.name).join(", ")}</span>
+                </div>
+                <div className="flex justify-between text-zinc-400">
+                  <span>Your Earnings:</span>
+                  <span className="text-emerald-400 font-bold">₹{otpModalAssignment.request.delivery_fee}</span>
+                </div>
+              </div>
+            </ModalBody>
+
+            <ModalFooter className="flex justify-between items-center gap-2 pt-2">
+              <Button
+                variant="ghost"
+                onClick={() => setOtpModalAssignment(null)}
+                disabled={isVerifyingOtp}
+                className="text-zinc-400 hover:text-white"
+              >
+                Cancel
+              </Button>
+
+              <Button
+                onClick={handleVerifyOtpAndComplete}
+                disabled={isVerifyingOtp || enteredOtp.length !== 4}
+                className="bg-emerald-500 hover:bg-emerald-400 text-black font-extrabold px-5 gap-2 shadow-[0_0_15px_rgba(0,230,118,0.3)]"
+              >
+                {isVerifyingOtp ? "Verifying PIN..." : "Verify & Complete Delivery ➔"}
+              </Button>
             </ModalFooter>
           </ModalContent>
         )}

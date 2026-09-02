@@ -277,6 +277,23 @@ export function RequestList({ initialRequests }: RequestListProps) {
                 <RequestTimeline status={selectedRequest.status} />
               </div>
 
+              {/* Handover PIN Banner if Active */}
+              {selectedRequest.delivery_otp && !["delivered", "cancelled"].includes(selectedRequest.status) && (
+                <div className="p-4 rounded-xl bg-emerald-950/40 border border-emerald-500/40 flex items-center justify-between gap-4">
+                  <div className="space-y-0.5">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-400">
+                      🔐 Delivery Handover PIN
+                    </span>
+                    <p className="text-xs text-zinc-300">
+                      Share with runner only when order is received.
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-1.5 font-mono text-lg font-black text-emerald-400 bg-black/60 px-3 py-1 rounded-lg border border-emerald-500/50 shadow-[0_0_10px_rgba(0,230,118,0.2)]">
+                    {selectedRequest.delivery_otp}
+                  </div>
+                </div>
+              )}
+
               {/* Reward & Created Info */}
               <div className="grid grid-cols-2 gap-4 p-3 bg-secondary/20 rounded-lg border">
                 <div>
