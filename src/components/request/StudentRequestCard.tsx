@@ -139,8 +139,20 @@ export const StudentRequestCard = memo(function StudentRequestCard({ request, on
           </div>
         </div>
 
-        {/* RIGHT COLUMN: Action */}
-        <div className="flex items-center justify-between sm:justify-end w-full lg:w-auto shrink-0 gap-2 pt-3 lg:pt-0 border-t lg:border-t-0 border-white/5">
+        {/* RIGHT COLUMN: Action & PIN */}
+        <div className="flex flex-col items-start sm:items-end justify-center w-full lg:w-auto shrink-0 gap-2.5 pt-3 lg:pt-0 border-t lg:border-t-0 border-white/5">
+          {/* Delivery Handover PIN Badge directly above Message Runner */}
+          {request.delivery_otp && !["delivered", "cancelled"].includes(request.status) && (
+            <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-gradient-to-r from-emerald-500/20 via-emerald-500/15 to-emerald-500/20 border border-emerald-500/40 shadow-[0_0_15px_rgba(0,230,118,0.2)]">
+              <span className="text-[10px] font-black uppercase tracking-wider text-emerald-400">
+                🔐 OTP:
+              </span>
+              <span className="font-mono text-sm font-black text-white tracking-widest bg-black/60 px-2 py-0.5 rounded-md border border-emerald-500/40">
+                {request.delivery_otp}
+              </span>
+            </div>
+          )}
+
           {(() => {
             const activeAssignment = request.assignments?.find(
               (a) => a.status === "active" || a.status === "completed"
@@ -153,7 +165,7 @@ export const StudentRequestCard = memo(function StudentRequestCard({ request, on
                   <a
                     href={`/dashboard/chat?requestId=${request.id}&startWithUserId=${runner.id}`}
                     onClick={(e) => e.stopPropagation()}
-                    className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-xs shadow-lg shadow-emerald-950/40 transition-all cursor-pointer z-10 w-full sm:w-auto text-center"
+                    className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-xs shadow-lg shadow-emerald-950/40 transition-all cursor-pointer z-10 w-full sm:w-auto text-center"
                   >
                     💬 Message Runner
                   </a>
