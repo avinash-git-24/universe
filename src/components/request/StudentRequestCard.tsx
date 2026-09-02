@@ -90,8 +90,13 @@ export const StudentRequestCard = memo(function StudentRequestCard({ request, on
                   {formatDistanceToNow(new Date(request.created_at))} ago
                 </div>
               </div>
-              <div>
+              <div className="flex items-center gap-2 flex-wrap">
                 <CardStatusBadge status={request.status} />
+                {request.delivery_otp && !["delivered", "cancelled"].includes(request.status) && (
+                  <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold tracking-wider bg-emerald-500/15 border border-emerald-500/40 text-emerald-400 shadow-[0_0_10px_rgba(0,230,118,0.2)]" title="Share this PIN with your runner upon delivery">
+                    <span>🔐 PIN: {request.delivery_otp}</span>
+                  </div>
+                )}
               </div>
             </div>
           </div>
