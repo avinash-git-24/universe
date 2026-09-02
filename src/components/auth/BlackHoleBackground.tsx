@@ -63,11 +63,7 @@ const FRAGMENT_SHADER = `
     float horizon = 0.15;
     float isVoid = smoothstep(horizon - 0.005, horizon + 0.005, pr);
 
-    // 3. Einstein Photon Sphere (Ultra-bright razor ring around the shadow edge)
-    float photonRingRadius = horizon * 1.05;
-    float photonSphere = exp(-abs(pr - photonRingRadius) * 85.0) * isVoid * 1.8;
-
-    // 4. The Lensed Halo (Back of the Accretion Disk bent over the top/bottom)
+    // 3. The Lensed Halo (Back of the Accretion Disk bent over the top/bottom)
     float haloRadius = horizon * 1.5;
     float haloThickness = abs(pr - haloRadius);
     
@@ -78,7 +74,7 @@ const FRAGMENT_SHADER = `
     float halo = exp(-haloThickness * 40.0) * pinch;
     halo += exp(-haloThickness * 10.0) * 0.4 * pinch;
 
-    // 5. The Front Accretion Disk
+    // 4. The Front Accretion Disk
     float diskY = abs(p.y);
     float diskX = abs(p.x);
     
@@ -93,44 +89,39 @@ const FRAGMENT_SHADER = `
     // Fade out towards the horizontal edges
     frontDisk *= smoothstep(1.3, 0.3, diskX);
 
-    // 6. Texture & Swirling Volumetric Details (FBM Noise + Spiral Arms)
+    // 5. Texture & Volumetric Details (FBM Noise)
+    // Concentric bands for the Halo
     vec2 polar = vec2(atan(p.y, p.x), pr);
-    float spiral = sin(polar.x * 5.0 - uTime * 0.4 + (1.0 / (pr + 0.08)) * 0.7);
-    float nHalo = fbm(vec2(polar.x * 4.0 - uTime * 0.15, pr * 50.0));
-    halo *= (nHalo * 0.5 + spiral * 0.25 + 0.4);
+    float nHalo = fbm(vec2(polar.x * 4.0 - uTime * 0.1, pr * 50.0));
+    halo *= (nHalo * 0.7 + 0.3);
     
     // Horizontal streaks for the Front Disk
     float nDisk = fbm(vec2(p.x * 10.0 - uTime * 0.4, p.y * 100.0));
-    frontDisk *= (nDisk * 0.75 + 0.25);
+    frontDisk *= (nDisk * 0.8 + 0.2);
 
-    // 7. Composition & Cosmic Nebula
-    float density = (halo * isVoid) + frontDisk + photonSphere;
+    // 6. Composition
+    float density = (halo * isVoid) + frontDisk;
 
-    // Deep space emerald nebula caught in the gravitational vortex
-    float nebula = fbm(p * 3.0 + uTime * 0.025) * 0.12;
+    // Add deep space nebula dust caught in the gravity well
+    float nebula = fbm(p * 3.0 + uTime * 0.02) * 0.1;
     nebula *= smoothstep(0.0, 0.6, pr); 
     density += nebula;
 
-    // 8. Cinematic Color Grading (UniVerse Emerald & Cyber Cyan Brand Palette)
-    vec3 cDark = vec3(0.01, 0.16, 0.09);      // Deep space emerald shadow
-    vec3 cMid = vec3(0.0, 0.90, 0.46);        // Searing neon emerald (#00E676)
-    vec3 cCyan = vec3(0.0, 0.85, 1.0);        // Electric cyber cyan (#00d2ff)
-    vec3 cLight = vec3(0.92, 1.0, 0.96);      // Radiant super-white core
+    // 7. Cinematic Color Grading (Interstellar Palette: amber, copper, bright core)
+    vec3 cDark = vec3(0.18, 0.05, 0.01);      // Deep space amber
+    vec3 cMid = vec3(1.0, 0.45, 0.15);       // Searing copper/orange
+    vec3 cLight = vec3(1.0, 0.95, 0.9);      // Blow-out white
     
-    vec3 color = mix(vec3(0.0), cDark, smoothstep(0.0, 0.12, density));
-    color = mix(color, cMid, smoothstep(0.12, 0.42, density));
-    color = mix(color, mix(cMid, cCyan, 0.4), smoothstep(0.42, 0.72, density));
-    color = mix(color, cLight, smoothstep(0.72, 1.0, density));
+    vec3 color = mix(vec3(0.0), cDark, smoothstep(0.0, 0.15, density));
+    color = mix(color, cMid, smoothstep(0.15, 0.4, density));
+    color = mix(color, cLight, smoothstep(0.4, 1.0, density));
 
-    // Boost photon sphere with diamond cyan glow
-    color += cCyan * photonSphere * 0.8;
-
-    // 9. Relativistic Doppler Beaming Physics
-    // Accretion disk moving towards camera (left side) is brighter and bluer
+    // 8. Doppler Beaming Physics
+    // Accretion disk moving towards camera (left side) is brighter
     float doppler = 1.0 - p.x * 0.6;
     color *= mix(1.0, doppler, smoothstep(0.0, 1.0, pr * 2.0));
 
-    // 10. Lensed Background Stars (Generated in-shader for gravity distortion)
+    // 9. Lensed Background Stars (Generated in-shader for gravity distortion)
     vec2 starPos = p * 150.0;
     float starGrid = random(floor(starPos));
     float starShape = smoothstep(0.4, 0.0, length(fract(starPos) - 0.5));
@@ -139,7 +130,7 @@ const FRAGMENT_SHADER = `
     lensedStars *= smoothstep(horizon * 1.05, horizon * 1.5, pr); 
     lensedStars *= smoothstep(0.4, 0.0, density); 
     
-    vec3 starColor = mix(vec3(0.0, 0.9, 0.5), vec3(0.3, 0.85, 1.0), random(floor(starPos) + 1.0));
+    vec3 starColor = mix(vec3(0.5, 0.8, 1.0), vec3(1.0, 0.7, 0.4), random(floor(starPos) + 1.0));
     color += starColor * lensedStars * 3.0 * isVoid;
 
     // Enforce absolute Vantablack inside the Event Horizon
@@ -148,7 +139,7 @@ const FRAGMENT_SHADER = `
     // Global exposure boost
     color *= 1.35 * uExposure;
 
-    // 11. Alpha Blending
+    // 10. Blend with Background
     float alphaMask = smoothstep(1.0, 0.4, pr);
     alphaMask = max(alphaMask, smoothstep(0.1, 0.5, density));
 
@@ -233,10 +224,10 @@ export default function BlackHoleBackground({ isWarping = false }: { isWarping?:
       posArray[i] = (Math.random() - 0.5) * 30;
       posArray[i + 1] = (Math.random() - 0.5) * 30;
       posArray[i + 2] = (Math.random() - 0.5) * 20;
-      const isEmerald = Math.random() > 0.45;
-      colArray[i] = isEmerald ? 0.0 : 0.4;
-      colArray[i + 1] = isEmerald ? 0.9 + Math.random() * 0.1 : 0.85 + Math.random() * 0.15;
-      colArray[i + 2] = isEmerald ? 0.46 + Math.random() * 0.2 : 1.0;
+      const isWarm = Math.random() > 0.6;
+      colArray[i] = 1.0;
+      colArray[i + 1] = isWarm ? 0.6 + Math.random() * 0.2 : 0.8 + Math.random() * 0.2;
+      colArray[i + 2] = isWarm ? 0.3 + Math.random() * 0.2 : 0.9 + Math.random() * 0.1;
     }
 
     starsGeometry.setAttribute("position", new THREE.BufferAttribute(posArray, 3));

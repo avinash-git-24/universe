@@ -35,16 +35,16 @@ function Field({
       <div style={{
         position: "relative", display: "flex", alignItems: "center",
         background: "rgba(0, 0, 0, 0.35)",
-        border: `1px solid ${error ? "rgba(255, 68, 68, 0.6)" : focused ? "#00E676" : "rgba(255, 255, 255, 0.15)"}`,
+        border: `1px solid ${error ? "rgba(255, 68, 68, 0.6)" : focused ? "#00d2ff" : "rgba(255, 255, 255, 0.15)"}`,
         borderRadius: 6,
         boxShadow: focused
-          ? "0 0 20px rgba(0, 230, 118, 0.3), inset 0 0 10px rgba(0, 230, 118, 0.1)"
+          ? "0 0 15px rgba(0, 210, 255, 0.25), inset 0 0 10px rgba(0, 210, 255, 0.1)"
           : error
           ? "0 0 15px rgba(255, 68, 68, 0.2)"
           : "none",
         transition: "all 0.25s ease",
       }}>
-        <span style={{ position: "absolute", left: 14, display: "flex", alignItems: "center", color: focused ? "#00E676" : "rgba(255, 255, 255, 0.45)", pointerEvents: "none", transition: "color 0.2s" }}>
+        <span style={{ position: "absolute", left: 14, display: "flex", alignItems: "center", color: focused ? "#00d2ff" : "rgba(255, 255, 255, 0.45)", pointerEvents: "none", transition: "color 0.2s" }}>
           {leftIcon}
         </span>
         <input
@@ -273,7 +273,7 @@ function LoginForm() {
               error={errors.email}
               leftIcon={<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="4" width="20" height="16" rx="2" /><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" /></svg>}
               rightNode={emailValid ? (
-                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#00E676" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#00d2ff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><polyline points="22 4 12 14.01 9 11.01" />
                 </svg>
               ) : undefined}
@@ -305,8 +305,8 @@ function LoginForm() {
                     width: 15, height: 15, borderRadius: 3, flexShrink: 0,
                     display: "flex", alignItems: "center", justifyContent: "center",
                     cursor: "pointer",
-                    background: remember ? "#00E676" : "rgba(0, 0, 0, 0.4)",
-                    border: `1px solid ${remember ? "#00E676" : "rgba(255, 255, 255, 0.3)"}`,
+                    background: remember ? "#00d2ff" : "rgba(0, 0, 0, 0.4)",
+                    border: `1px solid ${remember ? "#00d2ff" : "rgba(255, 255, 255, 0.3)"}`,
                     transition: "all 0.15s",
                   }}
                 >
@@ -316,7 +316,7 @@ function LoginForm() {
                   Remember me
                 </span>
               </label>
-              <Link href={ROUTES.FORGOT_PASSWORD} style={{ fontSize: 11.5, color: "#00E676", textDecoration: "none", fontFamily: "'Space Mono', monospace", letterSpacing: "1px" }}>
+              <Link href={ROUTES.FORGOT_PASSWORD} style={{ fontSize: 11.5, color: "#00d2ff", textDecoration: "none", fontFamily: "'Space Mono', monospace", letterSpacing: "1px" }}>
                 Forgot password?
               </Link>
             </div>
@@ -328,23 +328,17 @@ function LoginForm() {
               style={{
                 width: "100%", marginTop: 6,
                 padding: "14px 20px",
-                background: isWarping 
-                  ? "rgba(0, 230, 118, 0.35)" 
-                  : loading 
-                  ? "rgba(0, 230, 118, 0.15)" 
-                  : "linear-gradient(135deg, rgba(0, 230, 118, 0.25) 0%, rgba(0, 210, 255, 0.2) 100%)",
-                border: isWarping ? "1px solid #00E676" : "1px solid rgba(0, 230, 118, 0.45)",
-                borderRadius: 6,
-                color: "#fff",
+                background: isWarping ? "rgba(0, 210, 255, 0.2)" : loading ? "rgba(0, 210, 255, 0.1)" : "transparent",
+                border: isWarping ? "1px solid #00d2ff" : "1px solid rgba(255, 255, 255, 0.25)",
+                borderRadius: 4,
+                color: isWarping ? "#00d2ff" : "#fff",
                 fontFamily: "'Space Mono', monospace",
                 letterSpacing: "4px",
                 fontSize: 13,
                 fontWeight: 700,
                 textTransform: "uppercase",
                 cursor: (loading || isWarping) ? "not-allowed" : "pointer",
-                boxShadow: isWarping 
-                  ? "0 0 35px rgba(0, 230, 118, 0.6)" 
-                  : "0 0 20px rgba(0, 230, 118, 0.15), inset 0 0 10px rgba(0, 230, 118, 0.08)",
+                boxShadow: isWarping ? "0 0 25px rgba(0, 210, 255, 0.4)" : "none",
                 transition: "all 0.3s ease",
                 display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
               }}
