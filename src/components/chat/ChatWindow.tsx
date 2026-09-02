@@ -347,25 +347,32 @@ export function ChatWindow({ userId, conversation, isOnline }: ChatWindowProps) 
     }
   };
 
-  // Handle Message Reactions
+  // Handle Message Reactions (Single reaction per user: toggle or switch)
   const handleReact = async (messageId: string, emoji: string) => {
     const targetMsg = messages.find((m) => m.id === messageId);
     if (!targetMsg) return;
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const currentMeta = (targetMsg.metadata as any) || {};
-    const currentReactions: Record<string, string[]> = { ...(currentMeta.reactions || {}) };
-    const userList = new Set(currentReactions[emoji] || []);
+    const oldReactions: Record<string, string[]> = currentMeta.reactions || {};
+    const newReactions: Record<string, string[]> = {};
 
-    if (userList.has(userId)) {
-      userList.delete(userId);
-    } else {
-      userList.add(userId);
+    const alreadyHadThisEmoji = oldReactions[emoji]?.includes(userId);
+
+    // 1. Remove current user from ALL existing reactions on this message
+    for (const [e, users] of Object.entries(oldReactions)) {
+      const filtered = users.filter((uid) => uid !== userId);
+      if (filtered.length > 0) {
+        newReactions[e] = filtered;
+      }
     }
 
-    currentReactions[emoji] = Array.from(userList);
+    // 2. If user didn't already have this emoji, add it as their single reaction
+    if (!alreadyHadThisEmoji) {
+      newReactions[emoji] = [...(newReactions[emoji] || []), userId];
+    }
 
-    const updatedMeta = { ...currentMeta, reactions: currentReactions };
+    const updatedMeta = { ...currentMeta, reactions: newReactions };
 
     // 1. Optimistic local update
     setMessages((prev) =>
@@ -376,7 +383,7 @@ export function ChatWindow({ userId, conversation, isOnline }: ChatWindowProps) 
     supabase.channel(`chat:messages:${conversation.id}`).send({
       type: "broadcast",
       event: "message_reaction",
-      payload: { messageId, reactions: currentReactions },
+      payload: { messageId, reactions: newReactions },
     });
 
     // 3. Persist reaction to database
