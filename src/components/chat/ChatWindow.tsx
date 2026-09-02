@@ -24,6 +24,10 @@ interface ChatWindowProps {
   isOnline: boolean;
 }
 
+function generateTempMessageId(): string {
+  return `temp-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+}
+
 export function ChatWindow({ userId, conversation, isOnline }: ChatWindowProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(true);
@@ -59,7 +63,7 @@ export function ChatWindow({ userId, conversation, isOnline }: ChatWindowProps) 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [conversation.id, userId]);
 
-  // Realtime Subscriptions
+  // Realtime Subscriptions & Multi-Layer Sync
   useEffect(() => {
     const msgChannel = supabase
       .channel(`chat:messages:${conversation.id}`)
@@ -67,8 +71,22 @@ export function ChatWindow({ userId, conversation, isOnline }: ChatWindowProps) 
         "postgres_changes",
         { event: "INSERT", schema: "public", table: "messages", filter: `conversation_id=eq.${conversation.id}` },
         async (payload) => {
-          setMessages((prev) => [...prev, payload.new as Message]);
-          if (payload.new.sender_id !== userId) {
+          const incoming = payload.new as Message;
+          setMessages((prev) => {
+            // If message already exists by real id, ignore duplicate
+            if (prev.some((m) => m.id === incoming.id)) return prev;
+            // If replacing matching temp message
+            const tempIdx = prev.findIndex(
+              (m) => m.id.startsWith("temp-") && m.content === incoming.content && m.sender_id === incoming.sender_id
+            );
+            if (tempIdx !== -1) {
+              const copy = [...prev];
+              copy[tempIdx] = incoming;
+              return copy;
+            }
+            return [...prev, incoming];
+          });
+          if (incoming.sender_id !== userId) {
             await markConversationAsRead(supabase, conversation.id, userId);
           }
         }
@@ -77,9 +95,36 @@ export function ChatWindow({ userId, conversation, isOnline }: ChatWindowProps) 
         "postgres_changes",
         { event: "UPDATE", schema: "public", table: "messages", filter: `conversation_id=eq.${conversation.id}` },
         (payload) => {
-          setMessages((prev) => prev.map((m) => (m.id === payload.new.id ? payload.new as Message : m)));
+          setMessages((prev) => prev.map((m) => (m.id === payload.new.id ? (payload.new as Message) : m)));
         }
       )
+      .on("broadcast", { event: "new_message" }, async (payload) => {
+        const incoming = payload.payload as Message;
+        if (incoming && incoming.sender_id !== userId) {
+          setMessages((prev) => {
+            if (prev.some((m) => m.id === incoming.id)) return prev;
+            return [...prev, incoming];
+          });
+          await markConversationAsRead(supabase, conversation.id, userId);
+        }
+      })
+      .on("broadcast", { event: "message_confirmed" }, (payload) => {
+        const confirmed = payload.payload as Message;
+        if (confirmed) {
+          setMessages((prev) => {
+            if (prev.some((m) => m.id === confirmed.id)) return prev;
+            const tempIdx = prev.findIndex(
+              (m) => m.id.startsWith("temp-") && m.content === confirmed.content && m.sender_id === confirmed.sender_id
+            );
+            if (tempIdx !== -1) {
+              const copy = [...prev];
+              copy[tempIdx] = confirmed;
+              return copy;
+            }
+            return [...prev, confirmed];
+          });
+        }
+      })
       .subscribe();
 
     const typingChannel = supabase
@@ -91,9 +136,27 @@ export function ChatWindow({ userId, conversation, isOnline }: ChatWindowProps) 
       })
       .subscribe();
 
+    // Background Smart Sync Polling (every 3.5s while chat is active)
+    const pollInterval = setInterval(async () => {
+      try {
+        const latest = await getMessages(supabase, conversation.id);
+        if (latest && latest.length > 0) {
+          setMessages((prev) => {
+            const tempMessages = prev.filter((m) => m.id.startsWith("temp-"));
+            const nonTemp = prev.filter((m) => !m.id.startsWith("temp-"));
+            if (latest.length !== nonTemp.length || latest[latest.length - 1]?.id !== nonTemp[nonTemp.length - 1]?.id) {
+              return [...latest, ...tempMessages];
+            }
+            return prev;
+          });
+        }
+      } catch {}
+    }, 3500);
+
     return () => {
       supabase.removeChannel(msgChannel);
       supabase.removeChannel(typingChannel);
+      clearInterval(pollInterval);
     };
   }, [conversation.id, userId, supabase]);
 
@@ -105,13 +168,56 @@ export function ChatWindow({ userId, conversation, isOnline }: ChatWindowProps) 
   const handleSend = async (content: string, imageUrl?: string | null) => {
     if (!content.trim() && !imageUrl) return;
 
+    const trimmedContent = content.trim();
+
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
     }
     setNewMessage("");
     handleTypingChange(false);
-    
-    await sendMessage(supabase, conversation.id, userId, content.trim(), imageUrl);
+
+    // 1. Optimistic UI: Immediately show message in sender's window
+    const tempId = generateTempMessageId();
+    const optimisticMsg: Message = {
+      id: tempId,
+      conversation_id: conversation.id,
+      sender_id: userId,
+      content: trimmedContent,
+      image_url: imageUrl || null,
+      message_type: "text",
+      metadata: null,
+      status: "sent",
+      created_at: new Date().toISOString(),
+    };
+
+    setMessages((prev) => [...prev, optimisticMsg]);
+
+    // 2. Instant Realtime Broadcast to peer with 0ms latency
+    const activeChannel = supabase.channel(`chat:messages:${conversation.id}`);
+    activeChannel.send({
+      type: "broadcast",
+      event: "new_message",
+      payload: optimisticMsg,
+    });
+
+    // 3. Persist to Supabase Database
+    try {
+      const dbMsg = await sendMessage(supabase, conversation.id, userId, trimmedContent, imageUrl);
+      if (dbMsg) {
+        // Replace temp message with confirmed DB row
+        setMessages((prev) => prev.map((m) => (m.id === tempId ? dbMsg : m)));
+        // Broadcast confirmation with real DB ID
+        activeChannel.send({
+          type: "broadcast",
+          event: "message_confirmed",
+          payload: dbMsg,
+        });
+      } else {
+        console.error("[chat] Failed to save message to database");
+      }
+    } catch (err) {
+      console.error("[chat] Exception sending message:", err);
+    }
   };
 
   const onSubmitForm = (e: React.FormEvent) => {
