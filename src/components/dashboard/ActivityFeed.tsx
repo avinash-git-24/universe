@@ -1,6 +1,6 @@
 "use client";
 
-import { CheckCircle2, MessageSquare, Package, AlertCircle } from "lucide-react";
+import { CheckCircle2, MessageSquare, Package, AlertCircle, Bike } from "lucide-react";
 import type { StudentRequestWithDetails } from "@/lib/database/requests";
 import { formatDistanceToNow } from "date-fns";
 
@@ -33,6 +33,19 @@ export function ActivityFeed({ requests }: ActivityFeedProps) {
       color: "#6366f1",
       bg: "rgba(99,102,241,0.15)"
     });
+
+    // Accepted
+    if (req.status === "accepted" || req.status === "picked_up" || req.status === "in_transit" || req.status === "delivered") {
+      activities.push({
+        id: `${req.id}-accepted`,
+        text: (<span>Your request for <b style={{ color: "#00E676", fontWeight: 700 }}>{itemName}</b> was accepted by a runner.</span>),
+        time: formatDistanceToNow(new Date(req.updated_at), { addSuffix: true }),
+        date: new Date(req.updated_at),
+        icon: Bike,
+        color: "#00E676",
+        bg: "rgba(0,230,118,0.15)"
+      });
+    }
 
     // Picked up
     if (req.status === "picked_up" || req.status === "in_transit" || req.status === "delivered") {

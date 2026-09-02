@@ -10,26 +10,20 @@
 import * as React from "react";
 import { AnimatePresence } from "framer-motion";
 import { UIStateProvider } from "@/providers/UIStateProvider";
+import { RealtimeProvider } from "@/providers/RealtimeProvider";
 
 interface AppProvidersProps {
   children: React.ReactNode;
 }
 
-/**
- * Root provider composition.
- *
- * Add providers here as the app grows:
- * - Auth context
- * - React Query / SWR
- * - Toast notifications
- * - Theme provider
- */
 export function AppProviders({ children }: AppProvidersProps) {
   return (
     <UIStateProvider>
-      <AnimatePresence mode="wait" initial={false}>
-        {children}
-      </AnimatePresence>
+      <RealtimeProvider>
+        <AnimatePresence mode="wait" initial={false}>
+          {children}
+        </AnimatePresence>
+      </RealtimeProvider>
     </UIStateProvider>
   );
 }
