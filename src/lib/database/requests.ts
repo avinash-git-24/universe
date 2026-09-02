@@ -62,10 +62,17 @@ export async function createDeliveryRequest(
   requestData: Omit<Database["public"]["Tables"]["delivery_requests"]["Insert"], "requester_id">,
   itemsData: Array<Omit<Database["public"]["Tables"]["request_items"]["Insert"], "request_id">>
 ): Promise<RequestWithItems | null> {
+  // Generate a unique 4-digit security PIN for this specific order
+  const freshOtp = Math.floor(1000 + Math.random() * 9000).toString();
+
   // 1. Insert the request
   const { data: request, error: requestError } = await supabase
     .from("delivery_requests")
-    .insert({ ...requestData, requester_id: requesterId })
+    .insert({
+      ...requestData,
+      requester_id: requesterId,
+      delivery_otp: requestData.delivery_otp || freshOtp,
+    })
     .select()
     .single();
 
