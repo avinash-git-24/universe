@@ -117,12 +117,6 @@ export function RequestList({ initialRequests }: RequestListProps) {
     setCurrentPage(1);
   };
 
-  // Find active assignment & runner for selected modal request
-  const selectedAssignment = selectedRequest?.assignments?.find(
-    (a) => a.status === "active" || a.status === "completed"
-  );
-  const selectedRunner = selectedAssignment?.runner;
-
   return (
     <div className="space-y-6">
       {/* Category Tabs */}
@@ -342,25 +336,42 @@ export function RequestList({ initialRequests }: RequestListProps) {
               )}
 
               {/* Runner Info if assigned */}
-              {selectedRunner && (
-                <div className="p-4 bg-primary/5 rounded-lg border border-primary/20 flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center font-bold text-primary shrink-0">
-                      {selectedRunner.full_name?.charAt(0) || "R"}
-                    </div>
-                    <div>
-                      <p className="font-semibold">{selectedRunner.full_name || `Runner #${selectedRunner.id.substring(0, 6)}`}</p>
-                      <p className="text-xs text-muted-foreground">Assigned Runner</p>
-                    </div>
-                  </div>
+              {(() => {
+                const activeAssignment = selectedRequest.assignments?.find(
+                  (a) => a.status === "active" || a.status === "completed"
+                );
+                const selectedRunner = activeAssignment?.runner;
 
-                  <Link href={`/dashboard/chat?requestId=${selectedRequest.id}&startWithUserId=${selectedRunner.id}`}>
-                    <Button size="sm" className="gap-1.5">
-                      <MessageSquare className="w-4 h-4" /> Message
-                    </Button>
-                  </Link>
-                </div>
-              )}
+                if (!selectedRunner) {
+                  return selectedRequest.status === "pending" ? (
+                    <div className="p-3.5 bg-secondary/20 rounded-lg border border-dashed text-center text-xs text-muted-foreground">
+                      Searching for available campus runners...
+                    </div>
+                  ) : null;
+                }
+
+                return (
+                  <div className="p-4 bg-emerald-500/10 rounded-xl border border-emerald-500/30 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center font-bold text-emerald-400 shrink-0">
+                        {selectedRunner.full_name?.charAt(0) || "R"}
+                      </div>
+                      <div>
+                        <p className="font-bold text-white text-sm">{selectedRunner.full_name || `Runner #${selectedRunner.id.substring(0, 6)}`}</p>
+                        <p className="text-xs text-emerald-400/80 font-medium">
+                          {selectedRequest.status === "delivered" ? "Delivered your order" : "Assigned Campus Runner"}
+                        </p>
+                      </div>
+                    </div>
+
+                    <Link href={`/dashboard/chat?requestId=${selectedRequest.id}&startWithUserId=${selectedRunner.id}`}>
+                      <Button size="sm" className="gap-1.5 bg-emerald-500 hover:bg-emerald-400 text-black font-bold">
+                        <MessageSquare className="w-4 h-4" /> Message
+                      </Button>
+                    </Link>
+                  </div>
+                );
+              })()}
             </ModalBody>
 
             <ModalFooter className="flex justify-between items-center">

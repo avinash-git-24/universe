@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { Package, Bike, CheckCircle2, AlertCircle, ArrowRight, MapPin, Clock, User, Search, Plus } from "lucide-react";
+import { Package, Bike, CheckCircle2, AlertCircle, ArrowRight, MapPin, Clock, User, Search, Plus, MessageSquare } from "lucide-react";
 import { getUser, getProfile } from "@/lib/supabase/queries";
 import { getStudentRequests, type Profile } from "@/lib/database/requests";
 import { ROUTES } from "@/constants/routes";
@@ -144,6 +144,8 @@ export default async function DashboardPage() {
                   activeRequests.slice(0, 2).map((req) => {
                     // map backend status to UI color/text
                     const meta = statusMeta[req.status] || { color: "#F59E0B", label: req.status };
+                    const activeAssignment = req.assignments?.find(a => a.status === "active" || a.status === "completed");
+                    const runner = activeAssignment?.runner;
                     
                     return (
                       <Link key={req.id} href={`/dashboard/requests/${req.id}`} className="no-underline">
@@ -191,12 +193,19 @@ export default async function DashboardPage() {
 
                           {/* Runner info */}
                           <div className="flex items-center justify-between pt-3 border-t border-white/[0.07] relative z-10">
-                            <div className="flex items-center gap-2">
-                              <User size={13} className="text-[#00E676]" />
-                              <span className="text-xs text-white/60">
-                                Runner: <b className="text-white">{req.assignments && req.assignments.length > 0 ? "Assigned" : "Pending"}</b>
+                            <div className="flex items-center gap-2 min-w-0">
+                              <div className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 text-xs font-bold ${runner ? "bg-[#00E676]/20 text-[#00E676] border border-[#00E676]/40" : "bg-white/10 text-white/50"}`}>
+                                {runner?.full_name?.charAt(0) || <User size={12} />}
+                              </div>
+                              <span className="text-xs text-white/60 truncate">
+                                Runner: <b className="text-white">{runner ? runner.full_name : (req.assignments && req.assignments.length > 0 ? "Assigned" : "Finding Runner...")}</b>
                               </span>
                             </div>
+                            {runner && (
+                              <span className="inline-flex items-center gap-1 text-[11px] font-bold text-black bg-[#00E676] px-2.5 py-1 rounded-lg shrink-0 shadow-sm">
+                                <MessageSquare size={11} /> Chat
+                              </span>
+                            )}
                           </div>
                         </div>
                       </Link>
@@ -235,31 +244,36 @@ export default async function DashboardPage() {
                         </td>
                       </tr>
                     ) : (
-                      completedRequests.slice(0, 5).map(req => (
-                        <tr key={req.id} className="border-b border-white/[0.02] hover:bg-white/[0.02] transition-colors">
-                          <td className="p-3 sm:p-4 text-white text-xs sm:text-sm flex items-center gap-2 font-medium">
-                            <div className="w-6 h-7 bg-red-500 rounded flex items-center justify-center text-[10px] font-extrabold shrink-0">
-                              {req.items[0]?.name?.substring(0, 2).toUpperCase() || 'IT'}
-                            </div>
-                            <span className="truncate max-w-[120px]">
-                              {req.items.length > 0 ? req.items[0].name : 'Items'}
-                              {req.items.length > 1 && ` +${req.items.length - 1}`}
-                            </span>
-                          </td>
-                          <td className="p-3 sm:p-4 text-white/80 text-xs sm:text-sm truncate max-w-[120px]">{req.pickup_location}</td>
-                          <td className="p-3 sm:p-4 text-white/80 text-xs sm:text-sm truncate max-w-[120px]">{req.dropoff_location}</td>
-                          <td className="p-3 sm:p-4 text-white/80 text-xs sm:text-sm">{req.assignments && req.assignments.length > 0 ? "Assigned" : "-"}</td>
-                          <td className="p-3 sm:p-4 text-white/60 text-xs sm:text-sm whitespace-nowrap">
-                            {new Date(req.created_at).toLocaleDateString()}
-                          </td>
-                          <td className="p-3 sm:p-4">
-                            <span className="bg-[#00E676]/10 text-[#00E676] text-[11px] font-bold px-2 py-0.5 rounded-[10px] whitespace-nowrap">
-                              Delivered
-                            </span>
-                          </td>
-                          <td className="p-3 sm:p-4 text-white text-xs sm:text-sm font-bold whitespace-nowrap">₹{req.delivery_fee}</td>
-                        </tr>
-                      ))
+                      completedRequests.slice(0, 5).map(req => {
+                        const activeAssignment = req.assignments?.find(a => a.status === "completed" || a.status === "active");
+                        const runner = activeAssignment?.runner;
+
+                        return (
+                          <tr key={req.id} className="border-b border-white/[0.02] hover:bg-white/[0.02] transition-colors">
+                            <td className="p-3 sm:p-4 text-white text-xs sm:text-sm flex items-center gap-2 font-medium">
+                              <div className="w-6 h-7 bg-red-500 rounded flex items-center justify-center text-[10px] font-extrabold shrink-0">
+                                {req.items[0]?.name?.substring(0, 2).toUpperCase() || 'IT'}
+                              </div>
+                              <span className="truncate max-w-[120px]">
+                                {req.items.length > 0 ? req.items[0].name : 'Items'}
+                                {req.items.length > 1 && ` +${req.items.length - 1}`}
+                              </span>
+                            </td>
+                            <td className="p-3 sm:p-4 text-white/80 text-xs sm:text-sm truncate max-w-[120px]">{req.pickup_location}</td>
+                            <td className="p-3 sm:p-4 text-white/80 text-xs sm:text-sm truncate max-w-[120px]">{req.dropoff_location}</td>
+                            <td className="p-3 sm:p-4 text-white/90 text-xs sm:text-sm font-semibold">{runner?.full_name || (req.assignments && req.assignments.length > 0 ? "Assigned" : "-")}</td>
+                            <td className="p-3 sm:p-4 text-white/60 text-xs sm:text-sm whitespace-nowrap">
+                              {new Date(req.created_at).toLocaleDateString()}
+                            </td>
+                            <td className="p-3 sm:p-4">
+                              <span className="bg-[#00E676]/10 text-[#00E676] text-[11px] font-bold px-2 py-0.5 rounded-[10px] whitespace-nowrap">
+                                Delivered
+                              </span>
+                            </td>
+                            <td className="p-3 sm:p-4 text-white text-xs sm:text-sm font-bold whitespace-nowrap">₹{req.delivery_fee}</td>
+                          </tr>
+                        );
+                      })
                     )}
                   </tbody>
                 </table>
