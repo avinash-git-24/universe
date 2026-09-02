@@ -6,7 +6,7 @@ import { Message } from "@/lib/database/chat";
 import { format } from "date-fns";
 import Image from "next/image";
 
-const POPULAR_REACTIONS = ["👍", "❤️", "😂", "🔥", "🚀", "🛵"];
+const POPULAR_REACTIONS = ["👍", "❤️", "😂", "😮", "😡", "🔥", "🚀", "🛵"];
 
 interface MessageBubbleProps {
   message: Message;
