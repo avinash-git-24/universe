@@ -57,7 +57,9 @@ export function ChatClient({ userId, initialConversations, activeDeliveries = []
   const [toasts, setToasts] = useState<InAppToast[]>([]);
 
   const activeIdRef = useRef<string | null>(activeConversationId);
-  activeIdRef.current = activeConversationId;
+  useEffect(() => {
+    activeIdRef.current = activeConversationId;
+  }, [activeConversationId]);
 
   const supabase = createClient();
 

@@ -16,7 +16,6 @@ import {
   ChevronDown,
   Smile,
   ShieldCheck,
-  CheckCheck,
 } from "lucide-react";
 import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
 import { createClient } from "@/lib/supabase/client";
