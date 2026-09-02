@@ -329,6 +329,20 @@ export function ChatWindow({ userId, conversation, isOnline }: ChatWindowProps) 
       payload: optimisticMsg,
     });
 
+    const otherId = conversation.other_participant?.id;
+    if (otherId) {
+      const directChannel = supabase.channel(`user_direct:${otherId}`);
+      directChannel.send({
+        type: "broadcast",
+        event: "incoming_chat",
+        payload: {
+          conversationId: conversation.id,
+          senderName: "New Message",
+          content: trimmedContent || (imageUrl ? "Sent an image 📷" : "New message"),
+        },
+      });
+    }
+
     // 3. Database Persistence
     try {
       const dbMsg = await sendMessage(

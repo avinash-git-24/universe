@@ -139,12 +139,14 @@ export function ChatList({
                   {/* Content */}
                   <div className="flex-1 min-w-0 flex flex-col justify-center">
                     <div className="flex justify-between items-baseline mb-1">
-                      <span className={`font-semibold text-[15px] truncate pr-2 ${isActive ? 'text-[#10b981]' : 'text-white/90'}`}>
+                      <span className={`text-[14.5px] truncate pr-2 ${
+                        isUnread ? 'font-extrabold text-white' : isActive ? 'font-bold text-[#10b981]' : 'font-semibold text-white/90'
+                      }`}>
                         {conv.other_participant?.full_name || "User"}
                       </span>
                       {conv.last_message && (
-                        <span className="text-[11px] text-white/40 shrink-0 font-medium">
-                          {format(new Date(conv.last_message.created_at), "MMM d")}
+                        <span className={`text-[11px] shrink-0 font-medium ${isUnread ? 'text-emerald-400 font-bold' : 'text-white/40'}`}>
+                          {format(new Date(conv.last_message.created_at), "h:mm a")}
                         </span>
                       )}
                     </div>
@@ -156,13 +158,13 @@ export function ChatList({
                     )}
                     
                     <div className="flex items-center justify-between gap-2">
-                      <p className={`text-xs truncate ${isUnread ? 'text-white font-medium' : 'text-white/50'}`}>
+                      <p className={`text-xs truncate ${isUnread ? 'text-emerald-300 font-semibold' : 'text-white/50'}`}>
                         {conv.last_message?.image_url 
                           ? 'Sent an image 📷' 
                           : (conv.last_message?.content || 'No messages yet')}
                       </p>
                       {isUnread && (
-                        <span className="shrink-0 w-5 h-5 rounded-full bg-[#10b981] flex items-center justify-center text-[10px] font-bold text-[#0d1310] shadow-[0_0_10px_rgba(16,185,129,0.3)]">
+                        <span className="shrink-0 min-w-[20px] h-5 px-1.5 rounded-full bg-[#00E676] flex items-center justify-center text-[10px] font-black text-[#050A07] shadow-[0_0_12px_rgba(0,230,118,0.5)] animate-pulse">
                           {conv.unread_count}
                         </span>
                       )}
