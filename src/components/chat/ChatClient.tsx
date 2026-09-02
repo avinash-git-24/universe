@@ -130,10 +130,10 @@ export function ChatClient({ userId, initialConversations, activeDeliveries = []
   };
 
   return (
-    <div className="flex-1 min-h-[600px] w-full rounded-3xl border border-white/20 bg-[#060a08] overflow-hidden flex flex-col md:flex-row shadow-2xl">
+    <div className="flex-1 h-full w-full rounded-2xl sm:rounded-3xl border border-white/10 bg-[#060a08] overflow-hidden flex flex-col md:flex-row shadow-2xl min-h-0">
       
       {/* Sidebar (List) */}
-      <div className={`w-full md:w-[350px] lg:w-[400px] border-b md:border-b-0 md:border-r border-white/20 shrink-0 flex flex-col ${activeConversationId ? 'hidden md:flex' : 'flex'}`}>
+      <div className={`w-full md:w-[320px] lg:w-[380px] border-b md:border-b-0 md:border-r border-white/10 shrink-0 flex flex-col h-full min-h-0 overflow-hidden ${activeConversationId ? 'hidden md:flex' : 'flex'}`}>
         <ChatList 
           userId={userId} 
           initialConversations={conversations}
@@ -146,11 +146,11 @@ export function ChatClient({ userId, initialConversations, activeDeliveries = []
       </div>
 
       {/* Main Area (Window) */}
-      <div className={`flex-1 flex flex-col ${!activeConversationId ? 'hidden md:flex' : 'flex'}`}>
+      <div className={`flex-1 flex flex-col h-full min-h-0 overflow-hidden ${!activeConversationId ? 'hidden md:flex' : 'flex'}`}>
         {activeConversation ? (
-          <div className="w-full flex-1 flex flex-col h-full relative">
+          <div className="w-full flex-1 flex flex-col h-full min-h-0 relative overflow-hidden">
             {/* Mobile Back Button */}
-            <div className="md:hidden p-3 bg-[#0a0f0d] border-b border-white/10 z-20">
+            <div className="md:hidden p-3 bg-[#0a0f0d] border-b border-white/10 z-20 shrink-0">
               <button 
                 onClick={() => handleSelect("")}
                 className="text-sm font-semibold text-[#10b981] flex items-center gap-2"

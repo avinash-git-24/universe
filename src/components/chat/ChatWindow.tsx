@@ -106,6 +106,9 @@ export function ChatWindow({ userId, conversation, isOnline }: ChatWindowProps) 
         setMessages(data);
         setLoading(false);
         await markConversationAsRead(supabase, conversation.id, userId);
+        setTimeout(() => {
+          bottomRef.current?.scrollIntoView({ behavior: "auto" });
+        }, 50);
       }
     }
 
@@ -465,7 +468,7 @@ export function ChatWindow({ userId, conversation, isOnline }: ChatWindowProps) 
   const otherRole = conversation.other_participant.role === "student" ? "Student" : "Runner";
 
   return (
-    <div className="flex flex-col h-full bg-[#080d0a] relative w-full overflow-hidden">
+    <div className="flex flex-col h-full min-h-0 bg-[#080d0a] relative w-full overflow-hidden">
       {/* ── Chat Header ── */}
       <div className="p-3.5 sm:p-4 border-b border-white/10 flex flex-col md:flex-row md:items-center justify-between gap-3 shadow-md z-20 bg-[#0c130f]/95 backdrop-blur-xl shrink-0">
         <div className="flex items-center justify-between w-full md:w-auto">
@@ -651,7 +654,7 @@ export function ChatWindow({ userId, conversation, isOnline }: ChatWindowProps) 
       <div
         ref={scrollContainerRef}
         onScroll={handleScroll}
-        className="flex-1 overflow-y-auto p-4 sm:p-6 flex flex-col relative z-0 space-y-1"
+        className="flex-1 min-h-0 overflow-y-auto p-4 sm:p-6 flex flex-col relative z-0 space-y-1"
       >
         {loading ? (
           <div className="flex-1 flex items-center justify-center">

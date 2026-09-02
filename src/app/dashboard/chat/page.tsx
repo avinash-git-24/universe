@@ -147,13 +147,8 @@ export default async function ChatPage({
   activeDeliveries.push(...contactMap.values());
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] bg-background">
-      <div className="max-w-[1400px] mx-auto pt-4 sm:pt-8 pb-12 px-3 sm:px-6 h-full flex flex-col space-y-4 sm:space-y-6">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">Messages</h1>
-          <p className="text-white/50 text-xs sm:text-sm mt-1">Chat in real-time about your deliveries.</p>
-        </div>
-        
+    <div className="h-[calc(100dvh-60px)] lg:h-screen p-2 sm:p-4 lg:p-6 flex flex-col overflow-hidden">
+      <div className="max-w-[1400px] w-full mx-auto h-full flex flex-col min-h-0">
         <ChatClient
           userId={user.id}
           initialConversations={initialConversations}
