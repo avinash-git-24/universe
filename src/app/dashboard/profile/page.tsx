@@ -38,6 +38,7 @@ export default async function ProfilePage() {
           muted
           loop
           playsInline
+          preload="auto"
           style={{ width: "100vw", height: "100vh", objectFit: "cover", objectPosition: "center" }}
         />
         {/* Subtle dark overlay for readability */}
