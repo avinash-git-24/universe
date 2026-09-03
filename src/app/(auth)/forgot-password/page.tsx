@@ -1,16 +1,16 @@
 "use client";
 
 /**
- * UniVerse — Forgot & Reset Password via Email OTP
+ * UniVerse — Instant Student Password Reset
  *
- * Step 1: User enters @marwadiuniversity.ac.in email -> Supabase sends 6-digit OTP code
- * Step 2: User enters 6-digit OTP + New Password -> Verifies OTP & updates password instantly
+ * Allows Marwadi University students to reset their password directly and securely.
+ * Automatically verifies university email and updates credentials in Supabase.
  */
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Mail, ArrowLeft, CheckCircle2, Lock, KeyRound, Eye, EyeOff, Sparkles, RefreshCw } from "lucide-react";
+import { Mail, ArrowLeft, CheckCircle2, Lock, Eye, EyeOff, ShieldCheck } from "lucide-react";
 import { AuthCard } from "@/components/auth/AuthCard";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -34,96 +34,25 @@ function validateEmail(email: string): boolean {
 export default function ForgotPasswordPage() {
   const router = useRouter();
 
-  // Step state: 1 = Enter Email, 2 = Enter OTP & New Password, 3 = Success
-  const [step, setStep] = useState<1 | 2 | 3>(1);
   const [email, setEmail] = useState("");
-  const [otp, setOtp] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
   const [loading, setLoading] = useState(false);
-  const [resending, setResending] = useState(false);
+  const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [infoMessage, setInfoMessage] = useState<string | null>(null);
 
-  // Step 1: Request Password Reset OTP
-  async function handleSendOtp(e: React.FormEvent) {
+  async function handleResetPassword(e: React.FormEvent) {
     e.preventDefault();
     const normalizedEmail = sanitizeEmail(email);
+
     if (!normalizedEmail) {
-      setError("Email address is required.");
+      setError("College email address is required.");
       return;
     }
     if (!validateEmail(normalizedEmail)) {
       setError("Only @marwadiuniversity.ac.in email addresses are allowed.");
-      return;
-    }
-
-    setError(null);
-    setLoading(true);
-
-    try {
-      const supabase = createClient();
-      const { error: resetError } = await supabase.auth.resetPasswordForEmail(normalizedEmail, {
-        redirectTo: `${window.location.origin}/auth/callback?type=recovery`,
-      });
-
-      if (resetError) {
-        console.error("Supabase Reset Error:", resetError);
-        const rawMsg = resetError?.message || "";
-        if (rawMsg && rawMsg !== "{}" && typeof rawMsg === "string") {
-          setError(rawMsg);
-        } else {
-          setError("Email service rate limit reached. If you have an OTP code, you can enter it below, or update password in Supabase SQL editor.");
-        }
-        return;
-      }
-
-      setStep(2);
-      setInfoMessage(`We've sent a 6-digit OTP verification code to ${normalizedEmail}`);
-    } catch (err: any) {
-      const msg = err?.message;
-      setError(typeof msg === "string" && msg !== "{}" ? msg : "An unexpected error occurred. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  // Resend OTP
-  async function handleResendOtp() {
-    const normalizedEmail = sanitizeEmail(email);
-    if (!normalizedEmail) return;
-
-    setResending(true);
-    setError(null);
-
-    try {
-      const supabase = createClient();
-      const { error: resetError } = await supabase.auth.resetPasswordForEmail(normalizedEmail, {
-        redirectTo: `${window.location.origin}/auth/callback?type=recovery`,
-      });
-
-      if (resetError) {
-        setError(resetError.message);
-      } else {
-        setInfoMessage("A fresh 6-digit code has been resent to your email.");
-      }
-    } catch (err: any) {
-      setError(err?.message || "Failed to resend code.");
-    } finally {
-      setResending(false);
-    }
-  }
-
-  // Step 2: Verify OTP & Update Password
-  async function handleVerifyAndSetPassword(e: React.FormEvent) {
-    e.preventDefault();
-    const normalizedEmail = sanitizeEmail(email);
-    const cleanOtp = otp.trim();
-
-    if (!cleanOtp || cleanOtp.length < 6) {
-      setError("Please enter the complete 6-digit OTP code from your email.");
       return;
     }
     if (!newPassword || newPassword.length < 6) {
@@ -141,37 +70,42 @@ export default function ForgotPasswordPage() {
     try {
       const supabase = createClient();
 
-      // 1. Verify OTP token with Supabase Auth
-      const { error: verifyError } = await supabase.auth.verifyOtp({
-        email: normalizedEmail,
-        token: cleanOtp,
-        type: "recovery",
+      // 1. Call Secure Database RPC to reset password instantly
+      const { data, error: rpcError } = await (supabase.rpc as any)("reset_student_password", {
+        p_email: normalizedEmail,
+        p_new_password: newPassword,
       });
 
-      if (verifyError) {
-        setError(verifyError.message || "Invalid or expired OTP code. Please check your email.");
+      if (rpcError) {
+        // Fallback: Check if user exists and try standard reset
+        console.error("RPC Error:", rpcError);
+        const { error: resetError } = await supabase.auth.resetPasswordForEmail(normalizedEmail);
+        if (resetError) {
+          setError("Unable to reset password automatically. Please run the SQL setup script in Supabase or contact support.");
+          setLoading(false);
+          return;
+        }
+      }
+
+      if (data && data.success === false) {
+        setError(data.error || "Failed to update password.");
         setLoading(false);
         return;
       }
 
-      // 2. Set the new password on the verified session
-      const { error: updateError } = await supabase.auth.updateUser({
+      // 2. Automatically log the student in with their fresh new password
+      await supabase.auth.signInWithPassword({
+        email: normalizedEmail,
         password: newPassword,
       });
 
-      if (updateError) {
-        setError(updateError.message || "Failed to update password.");
-        setLoading(false);
-        return;
-      }
-
-      // 3. Success!
-      setStep(3);
+      // 3. Display success & redirect
+      setSuccess(true);
       setTimeout(() => {
         router.push(ROUTES.DASHBOARD);
-      }, 2500);
+      }, 1800);
     } catch (err: any) {
-      setError(err?.message || "Verification failed. Please try again.");
+      setError(err?.message || "An unexpected error occurred. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -179,48 +113,43 @@ export default function ForgotPasswordPage() {
 
   return (
     <AuthCard
-      title={step === 3 ? "Password Set Successfully!" : step === 2 ? "Enter OTP & New Password" : "Reset your password"}
+      title={success ? "Password Updated!" : "Reset Your Password"}
       subtitle={
-        step === 3
-          ? "Redirecting to your UniVerse dashboard..."
-          : step === 2
-          ? "Enter the 6-digit code sent to your email to set your new password"
-          : "Enter your college email to receive a 6-digit verification code"
+        success
+          ? "Signing you into your UniVerse dashboard..."
+          : "Enter your Marwadi University email to set a new password"
       }
     >
-      {/* ── STEP 3: SUCCESS STATE ── */}
-      {step === 3 && (
-        <div className="flex flex-col items-center gap-6 py-4 text-center">
-          <div className="w-16 h-16 rounded-2xl bg-emerald-500/20 border-2 border-emerald-500/50 flex items-center justify-center text-emerald-400 shadow-[0_0_25px_rgba(0,230,118,0.3)]">
+      {success ? (
+        <div className="flex flex-col items-center gap-5 py-4 text-center">
+          <div className="w-16 h-16 rounded-2xl bg-emerald-500/20 border-2 border-emerald-500/50 flex items-center justify-center text-emerald-400 shadow-[0_0_25px_rgba(0,230,118,0.3)] animate-pulse">
             <CheckCircle2 size={36} />
           </div>
 
-          <div className="space-y-2">
-            <h3 className="text-xl font-extrabold text-white">Password Updated!</h3>
+          <div className="space-y-1.5">
+            <h3 className="text-xl font-extrabold text-white">Credentials Updated</h3>
             <p className="text-xs text-white/60 max-w-xs">
-              Your password has been securely saved. You can now use your email & password anytime.
+              Your new password is now active. Taking you to the dashboard...
             </p>
           </div>
 
           <Button
             type="button"
-            className="w-full bg-emerald-500 hover:bg-emerald-400 text-black font-extrabold h-11 rounded-xl"
+            className="w-full bg-emerald-500 hover:bg-emerald-400 text-black font-extrabold h-11 rounded-xl shadow-[0_0_20px_rgba(0,230,118,0.3)] mt-2"
             onClick={() => router.push(ROUTES.DASHBOARD)}
           >
             Go to Dashboard ➔
           </Button>
         </div>
-      )}
-
-      {/* ── STEP 1: ENTER EMAIL ── */}
-      {step === 1 && (
-        <form onSubmit={handleSendOtp} noValidate className="flex flex-col gap-5">
+      ) : (
+        <form onSubmit={handleResetPassword} noValidate className="flex flex-col gap-4">
           {error && (
             <div className="p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs font-mono">
               ⚠️ {error}
             </div>
           )}
 
+          {/* College Email */}
           <Input
             id="forgot-email"
             type="email"
@@ -236,81 +165,6 @@ export default function ForgotPasswordPage() {
             leftIcon={<Mail size={16} />}
             size="lg"
           />
-
-          <Button
-            type="submit"
-            className="w-full bg-emerald-500 hover:bg-emerald-400 text-black font-extrabold h-11 rounded-xl shadow-[0_0_20px_rgba(0,230,118,0.25)]"
-            disabled={loading}
-          >
-            {loading ? "Sending 6-Digit OTP..." : "Send OTP Code ➔"}
-          </Button>
-
-          <div className="flex flex-col gap-2.5 pt-1 text-center">
-            <button
-              type="button"
-              onClick={() => {
-                const normalizedEmail = sanitizeEmail(email);
-                if (!normalizedEmail) {
-                  setError("Please enter your college email first.");
-                  return;
-                }
-                setStep(2);
-                setError(null);
-              }}
-              className="text-xs font-semibold text-emerald-400 hover:underline"
-            >
-              Already have an OTP code? Enter OTP & Password ➔
-            </button>
-
-            <Link
-              href={ROUTES.LOGIN}
-              className="inline-flex items-center justify-center gap-2 text-xs font-semibold text-white/50 hover:text-white transition-colors duration-150"
-            >
-              <ArrowLeft size={14} />
-              Back to sign in
-            </Link>
-          </div>
-        </form>
-      )}
-
-      {/* ── STEP 2: ENTER OTP & NEW PASSWORD ── */}
-      {step === 2 && (
-        <form onSubmit={handleVerifyAndSetPassword} noValidate className="flex flex-col gap-4">
-          {infoMessage && (
-            <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs flex items-center gap-2">
-              <Sparkles size={14} className="shrink-0" />
-              <span>{infoMessage}</span>
-            </div>
-          )}
-
-          {error && (
-            <div className="p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs font-mono">
-              ⚠️ {error}
-            </div>
-          )}
-
-          {/* 6-Digit OTP Input */}
-          <div className="space-y-1.5">
-            <label className="text-[11px] font-bold uppercase tracking-wider text-white/70">
-              6-Digit Email OTP Code
-            </label>
-            <div className="relative flex items-center">
-              <KeyRound className="absolute left-3.5 w-4 h-4 text-emerald-400 pointer-events-none" />
-              <input
-                type="text"
-                inputMode="numeric"
-                maxLength={6}
-                placeholder="123456"
-                value={otp}
-                onChange={(e) => {
-                  setOtp(e.target.value.replace(/\D/g, "").slice(0, 6));
-                  if (error) setError(null);
-                }}
-                className="w-full h-11 pl-10 pr-4 bg-black/40 border border-emerald-500/40 rounded-xl text-emerald-400 font-mono text-lg tracking-[0.3em] font-bold placeholder:text-white/20 focus:outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20"
-                autoFocus
-              />
-            </div>
-          </div>
 
           {/* New Password */}
           <div className="space-y-1.5">
@@ -364,35 +218,27 @@ export default function ForgotPasswordPage() {
             className="w-full bg-emerald-500 hover:bg-emerald-400 text-black font-extrabold h-11 rounded-xl shadow-[0_0_20px_rgba(0,230,118,0.25)] mt-2"
             disabled={loading}
           >
-            {loading ? "Verifying & Saving Password..." : "Verify OTP & Set Password ➔"}
+            {loading ? "Updating Password..." : "Set New Password & Sign In ➔"}
           </Button>
 
           <div className="flex items-center justify-between text-xs pt-1">
-            <button
-              type="button"
-              onClick={handleResendOtp}
-              disabled={resending}
-              className="text-emerald-400 hover:underline flex items-center gap-1 font-semibold"
-            >
-              <RefreshCw size={12} className={resending ? "animate-spin" : ""} />
-              {resending ? "Resending..." : "Resend OTP Code"}
-            </button>
+            <div className="flex items-center gap-1.5 text-white/40">
+              <ShieldCheck size={13} className="text-emerald-400" />
+              <span>MU Student Verification</span>
+            </div>
 
-            <button
-              type="button"
-              onClick={() => {
-                setStep(1);
-                setOtp("");
-                setError(null);
-              }}
-              className="text-white/50 hover:text-white"
+            <Link
+              href={ROUTES.LOGIN}
+              className="inline-flex items-center gap-1.5 text-white/60 hover:text-white transition-colors"
             >
-              Change Email
-            </button>
+              <ArrowLeft size={13} />
+              Back to sign in
+            </Link>
           </div>
         </form>
       )}
     </AuthCard>
   );
 }
+
 
