@@ -3,13 +3,13 @@
 /**
  * UniVerse — 100% Private & Secure Campus Password Reset Flow
  *
- * Deep Cosmic Nebula & Living Stardust Architecture:
- * - Breathing chromatic nebula clouds (deep emerald & celestial mint)
- * - Multi-depth 3D stardust field with perspective drift and twinkling
- * - Rare cosmic shooting stars (comets) gliding across deep space
- * - Subtle constellation micro-filaments connecting nearby stars
+ * Rich Deep Cosmic Universe & High-Density Starfield:
+ * - 220+ Multi-Depth 3D Stars with varied celestial tints (Diamond spikes, Emerald, Cyan & Gold)
+ * - Interactive smooth 3D mouse parallax depth
+ * - James Webb breathing emerald & cyan nebula clouds
+ * - Frequent cosmic shooting stars (comets) with radiant ion tails
+ * - Dynamic constellation micro-filaments
  * - Volumetric dual emerald halo bloom behind the central card
- * - Zero distracting grid lines; 100% pure cinematic cosmic depth
  *
  * Route: /forgot-password
  */
@@ -65,7 +65,7 @@ function getPasswordStrength(pw: string): { score: number; label: string; color:
   return { score: 4, label: "Strong", color: "bg-emerald-400" };
 }
 
-// ─── LIVING COSMIC NEBULA & STARDUST CANVAS ──────────────────────────────────
+// ─── HIGH-DENSITY LIVING COSMIC NEBULA & STARDUST CANVAS ───────────────────────
 function CosmicNebulaCanvas() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
@@ -79,6 +79,18 @@ function CosmicNebulaCanvas() {
     let width = (canvas.width = window.innerWidth);
     let height = (canvas.height = window.innerHeight);
 
+    // Smooth Mouse Parallax tracking
+    let targetMouseX = 0;
+    let targetMouseY = 0;
+    let mouseX = 0;
+    let mouseY = 0;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      targetMouseX = (e.clientX - width / 2) * 0.08;
+      targetMouseY = (e.clientY - height / 2) * 0.08;
+    };
+    window.addEventListener("mousemove", handleMouseMove, { passive: true });
+
     const handleResize = () => {
       if (!canvas) return;
       width = canvas.width = window.innerWidth;
@@ -86,16 +98,26 @@ function CosmicNebulaCanvas() {
     };
     window.addEventListener("resize", handleResize);
 
-    // Multi-depth stars
-    const numStars = 110;
+    // Star Colors palette
+    const starColors = [
+      "rgba(255, 255, 255,", // Pure Diamond White
+      "rgba(160, 255, 220,", // Neon Mint Emerald
+      "rgba(180, 235, 255,", // Celestial Cyan Ice
+      "rgba(255, 245, 195,", // Warm Golden Starlight
+    ];
+
+    // High Density Multi-Depth Stars (230 Stars)
+    const numStars = 230;
     const stars = Array.from({ length: numStars }, () => ({
-      x: (Math.random() - 0.5) * 2400,
-      y: (Math.random() - 0.5) * 2400,
-      z: Math.random() * 1000 + 80,
-      baseAlpha: Math.random() * 0.7 + 0.3,
-      size: Math.random() * 1.6 + 0.6,
-      twinkleSpeed: Math.random() * 0.02 + 0.005,
+      x: (Math.random() - 0.5) * 2800,
+      y: (Math.random() - 0.5) * 2800,
+      z: Math.random() * 1100 + 70,
+      baseAlpha: Math.random() * 0.75 + 0.25,
+      size: Math.random() * 1.8 + 0.5,
+      color: starColors[Math.floor(Math.random() * starColors.length)],
+      twinkleSpeed: Math.random() * 0.025 + 0.008,
       twinklePhase: Math.random() * Math.PI * 2,
+      isDiamond: Math.random() < 0.12, // 12% are 4-pointed diamond sparkle stars!
     }));
 
     // Shooting stars (Comets)
@@ -121,63 +143,63 @@ function CosmicNebulaCanvas() {
 
     const spawnShootingStar = () => {
       shootingStar = {
-        x: Math.random() * width * 0.7,
-        y: Math.random() * (height * 0.4),
-        length: Math.random() * 80 + 70,
-        speed: Math.random() * 7 + 9,
-        angle: Math.PI / 4 + (Math.random() - 0.5) * 0.2, // ~45 degrees
+        x: Math.random() * width * 0.75,
+        y: Math.random() * (height * 0.35),
+        length: Math.random() * 90 + 75,
+        speed: Math.random() * 8 + 9,
+        angle: Math.PI / 4 + (Math.random() - 0.5) * 0.25,
         opacity: 1,
         active: true,
       };
     };
 
-    // Spawn first shooting star after 3 seconds
     let lastSpawnTime = performance.now();
-    let nextSpawnDelay = 4000;
-
-    let frame = 0;
+    let nextSpawnDelay = 3500;
 
     const render = (time: number) => {
-      frame++;
       ctx.clearRect(0, 0, width, height);
 
-      const cx = width / 2;
-      const cy = height / 2;
+      // Smooth mouse parallax interpolation
+      mouseX += (targetMouseX - mouseX) * 0.05;
+      mouseY += (targetMouseY - mouseY) * 0.05;
+
+      const cx = width / 2 + mouseX;
+      const cy = height / 2 + mouseY;
 
       // ── 1. Soft Breathing Nebula Clouds (James Webb Deep Space Aura) ──
       const breath = Math.sin(time * 0.0008) * 0.04;
 
       // Top-Left Emerald Nebula Cloud
       const neb1 = ctx.createRadialGradient(
-        width * 0.2,
-        height * 0.25,
+        width * 0.18 + mouseX * 0.3,
+        height * 0.22 + mouseY * 0.3,
         40,
-        width * 0.2,
-        height * 0.25,
-        Math.max(width, height) * 0.55
+        width * 0.18 + mouseX * 0.3,
+        height * 0.22 + mouseY * 0.3,
+        Math.max(width, height) * 0.6
       );
-      neb1.addColorStop(0, `rgba(0, 230, 118, ${0.11 + breath})`);
-      neb1.addColorStop(0.5, `rgba(0, 168, 84, ${0.03 + breath * 0.5})`);
+      neb1.addColorStop(0, `rgba(0, 230, 118, ${0.12 + breath})`);
+      neb1.addColorStop(0.5, `rgba(0, 168, 84, ${0.035 + breath * 0.5})`);
       neb1.addColorStop(1, "transparent");
       ctx.fillStyle = neb1;
       ctx.fillRect(0, 0, width, height);
 
       // Bottom-Right Cyan/Teal Nebula Cloud
       const neb2 = ctx.createRadialGradient(
-        width * 0.8,
-        height * 0.75,
+        width * 0.82 + mouseX * 0.3,
+        height * 0.78 + mouseY * 0.3,
         50,
-        width * 0.8,
-        height * 0.75,
-        Math.max(width, height) * 0.6
+        width * 0.82 + mouseX * 0.3,
+        height * 0.78 + mouseY * 0.3,
+        Math.max(width, height) * 0.65
       );
-      neb2.addColorStop(0, `rgba(0, 210, 255, ${0.08 - breath * 0.5})`);
+      neb2.addColorStop(0, `rgba(0, 210, 255, ${0.09 - breath * 0.5})`);
       neb2.addColorStop(0.5, `rgba(0, 119, 255, ${0.02 - breath * 0.3})`);
       neb2.addColorStop(1, "transparent");
       ctx.fillStyle = neb2;
       ctx.fillRect(0, 0, width, height);
 
-      // ── 2. Render Stars & Stardust ──
+      // ── 2. Render 230+ Multi-Depth Stars & Stardust ──
       const fov = 420;
       const screenStars: { x: number; y: number; alpha: number }[] = [];
 
@@ -187,31 +209,50 @@ function CosmicNebulaCanvas() {
         const py = cy + s.y * scale;
 
         s.twinklePhase += s.twinkleSpeed;
-        const twinkle = Math.sin(s.twinklePhase) * 0.35 + 0.65;
-        const alpha = s.baseAlpha * twinkle * Math.min(1, scale * 1.5);
+        const twinkle = Math.sin(s.twinklePhase) * 0.4 + 0.6;
+        const alpha = Math.min(1, s.baseAlpha * twinkle * scale * 1.5);
 
-        if (px >= 0 && px <= width && py >= 0 && py <= height) {
-          ctx.beginPath();
-          ctx.arc(px, py, s.size * Math.max(0.6, scale), 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(195, 255, 230, ${alpha})`;
-          ctx.fill();
+        if (px >= -20 && px <= width + 20 && py >= -20 && py <= height + 20) {
+          if (s.isDiamond && scale > 0.7) {
+            // 4-Point Diamond Sparkle Star
+            const ray = s.size * scale * 3.5;
+            ctx.strokeStyle = `${s.color} ${alpha * 0.75})`;
+            ctx.lineWidth = 0.75;
+            ctx.beginPath();
+            ctx.moveTo(px - ray, py);
+            ctx.lineTo(px + ray, py);
+            ctx.moveTo(px, py - ray);
+            ctx.lineTo(px, py + ray);
+            ctx.stroke();
 
-          // Collect stars for constellation links
-          if (screenStars.length < 50 && scale > 0.4 && scale < 1.2) {
+            // Core
+            ctx.beginPath();
+            ctx.arc(px, py, s.size * scale * 0.8, 0, Math.PI * 2);
+            ctx.fillStyle = `${s.color} ${alpha})`;
+            ctx.fill();
+          } else {
+            // Soft Circular Stardust with Bokeh Glow
+            ctx.beginPath();
+            ctx.arc(px, py, s.size * Math.max(0.5, scale), 0, Math.PI * 2);
+            ctx.fillStyle = `${s.color} ${alpha})`;
+            ctx.fill();
+          }
+
+          if (screenStars.length < 65 && scale > 0.45 && scale < 1.1) {
             screenStars.push({ x: px, y: py, alpha });
           }
         }
 
-        // Slow cinematic forward drift
-        s.z -= 0.5;
-        if (s.z <= 25) {
-          s.z = 1000;
-          s.x = (Math.random() - 0.5) * 2400;
-          s.y = (Math.random() - 0.5) * 2400;
+        // Slow forward drift
+        s.z -= 0.55;
+        if (s.z <= 20) {
+          s.z = 1100;
+          s.x = (Math.random() - 0.5) * 2800;
+          s.y = (Math.random() - 0.5) * 2800;
         }
       }
 
-      // ── 3. Subtle Constellation Filaments (Connect nearby stars) ──
+      // ── 3. Subtle Constellation Filaments (Connecting stars) ──
       ctx.lineWidth = 0.6;
       for (let i = 0; i < screenStars.length; i++) {
         for (let j = i + 1; j < screenStars.length; j++) {
@@ -219,8 +260,8 @@ function CosmicNebulaCanvas() {
           const dy = screenStars[i].y - screenStars[j].y;
           const dist = Math.sqrt(dx * dx + dy * dy);
 
-          if (dist < 85) {
-            const lineAlpha = (1 - dist / 85) * 0.08 * Math.min(screenStars[i].alpha, screenStars[j].alpha);
+          if (dist < 80) {
+            const lineAlpha = (1 - dist / 80) * 0.09 * Math.min(screenStars[i].alpha, screenStars[j].alpha);
             ctx.beginPath();
             ctx.moveTo(screenStars[i].x, screenStars[i].y);
             ctx.lineTo(screenStars[j].x, screenStars[j].y);
@@ -230,11 +271,11 @@ function CosmicNebulaCanvas() {
         }
       }
 
-      // ── 4. Occasional Cosmic Shooting Star (Comet) ──
+      // ── 4. Cosmic Shooting Stars (Comets) ──
       if (time - lastSpawnTime > nextSpawnDelay && !shootingStar.active) {
         spawnShootingStar();
         lastSpawnTime = time;
-        nextSpawnDelay = Math.random() * 5000 + 4000; // Next comet in 4-9s
+        nextSpawnDelay = Math.random() * 4500 + 3500; // Frequent comets every 3.5-8s
       }
 
       if (shootingStar.active) {
@@ -250,19 +291,18 @@ function CosmicNebulaCanvas() {
         );
         cometGrad.addColorStop(0, "rgba(0, 230, 118, 0)");
         cometGrad.addColorStop(0.6, `rgba(0, 230, 118, ${shootingStar.opacity * 0.4})`);
-        cometGrad.addColorStop(1, `rgba(255, 255, 255, ${shootingStar.opacity * 0.9})`);
+        cometGrad.addColorStop(1, `rgba(255, 255, 255, ${shootingStar.opacity * 0.95})`);
 
         ctx.beginPath();
         ctx.moveTo(tailX, tailY);
         ctx.lineTo(shootingStar.x, shootingStar.y);
         ctx.strokeStyle = cometGrad;
-        ctx.lineWidth = 1.6;
+        ctx.lineWidth = 1.7;
         ctx.stroke();
 
-        // Advance shooting star
         shootingStar.x += Math.cos(rad) * shootingStar.speed;
         shootingStar.y += Math.sin(rad) * shootingStar.speed;
-        shootingStar.opacity -= 0.015;
+        shootingStar.opacity -= 0.014;
 
         if (
           shootingStar.opacity <= 0 ||
@@ -273,13 +313,13 @@ function CosmicNebulaCanvas() {
         }
       }
 
-      // ── 5. Center Vignette Depth (keeps form crisp and readable) ──
+      // ── 5. Center Vignette Depth (Keeps form razor sharp) ──
       const vignette = ctx.createRadialGradient(
-        cx,
-        cy,
+        width / 2,
+        height / 2,
         80,
-        cx,
-        cy,
+        width / 2,
+        height / 2,
         Math.max(width, height) * 0.75
       );
       vignette.addColorStop(0, "rgba(3, 11, 8, 0.45)");
@@ -295,6 +335,7 @@ function CosmicNebulaCanvas() {
 
     return () => {
       window.removeEventListener("resize", handleResize);
+      window.removeEventListener("mousemove", handleMouseMove);
       cancelAnimationFrame(animId);
     };
   }, []);
@@ -568,7 +609,7 @@ export default function ForgotPasswordPage() {
 
   return (
     <div className="relative w-full flex flex-col items-center justify-center">
-      {/* ── Living Cosmic Nebula & Stardust Canvas ── */}
+      {/* ── High-Density Living Cosmic Nebula & Stardust Canvas ── */}
       <CosmicNebulaCanvas />
 
       {/* ── Ambient Volumetric Emerald Bloom Halos ── */}
