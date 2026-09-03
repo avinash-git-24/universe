@@ -96,15 +96,18 @@ export function SettingsClient({
     try {
       const { error } = await supabase
         .from("user_settings")
-        .update({
-          notify_request_updates: notifyRequests,
-          notify_delivery_updates: notifyDeliveries,
-          notify_chat_messages: notifyChats,
-          profile_visibility: profileVis,
-          activity_visibility: activityVis,
-          updated_at: new Date().toISOString()
-        })
-        .eq("user_id", userId);
+        .upsert(
+          {
+            user_id: userId,
+            notify_request_updates: notifyRequests,
+            notify_delivery_updates: notifyDeliveries,
+            notify_chat_messages: notifyChats,
+            profile_visibility: profileVis,
+            activity_visibility: activityVis,
+            updated_at: new Date().toISOString(),
+          },
+          { onConflict: "user_id" }
+        );
 
       if (error) throw error;
 
@@ -112,6 +115,7 @@ export function SettingsClient({
       router.refresh();
       setTimeout(() => setSettingsSuccess(false), 3000);
     } catch (err: unknown) {
+      console.error("Settings update error:", err);
       setSettingsError(err instanceof Error ? err.message : "Unable to update your settings. Please try again.");
     } finally {
       setSettingsLoading(false);
