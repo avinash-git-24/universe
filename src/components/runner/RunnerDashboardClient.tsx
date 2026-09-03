@@ -1,19 +1,19 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { formatDistanceToNow, format } from "date-fns";
 import { 
   MapPin, Package, Clock, IndianRupee, Eye, CheckCircle2, History, Wallet, Star, 
   LayoutGrid, List, Calendar, ArrowRight, Box, ChevronDown, MessageSquare, KeyRound, 
-  ShieldCheck, Lock, Bike, Sparkles, Utensils, BookOpen, Laptop, Activity 
+  ShieldCheck, Lock, Bike, Sparkles, Utensils, BookOpen, Laptop, Activity, Search, X, Filter 
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { NotificationBell } from "@/components/notifications/NotificationBell";
-import { cn } from "@/lib/utils";
+import { cn, formatStudentName } from "@/lib/utils";
 import {
   Modal,
   ModalContent,
@@ -100,9 +100,12 @@ export function RunnerDashboardClient({
   const [otpError, setOtpError] = useState<string | null>(null);
   const [isVerifyingOtp, setIsVerifyingOtp] = useState<boolean>(false);
   
-  // UI State for Grid/List View
+  // UI State for Grid/List View & Filters
   const [isGridView, setIsGridView] = useState(true);
   const [isOnline, setIsOnline] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState<"all" | "food" | "academic" | "gadgets">("all");
+  const [sortBy, setSortBy] = useState<"newest" | "oldest" | "highest_pay">("newest");
 
   // Adjust state when initial props change on revalidation (React recommended pattern)
   const [prevPending, setPrevPending] = useState(initialPending);
@@ -299,6 +302,66 @@ export function RunnerDashboardClient({
     }
   };
 
+  // Category counts
+  const foodCount = useMemo(() => {
+    return pendingRequests.filter(
+      (r) => getRunnerCategoryIcon(r.items.map((i) => i.name).join(" ")).label === "Food & Snack"
+    ).length;
+  }, [pendingRequests]);
+
+  const academicCount = useMemo(() => {
+    return pendingRequests.filter(
+      (r) => getRunnerCategoryIcon(r.items.map((i) => i.name).join(" ")).label === "Academic"
+    ).length;
+  }, [pendingRequests]);
+
+  const gadgetCount = useMemo(() => {
+    return pendingRequests.filter(
+      (r) => getRunnerCategoryIcon(r.items.map((i) => i.name).join(" ")).label === "Gadgets"
+    ).length;
+  }, [pendingRequests]);
+
+  // Filtered and sorted available requests
+  const filteredPendingRequests = useMemo(() => {
+    let list = [...pendingRequests];
+
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      list = list.filter((r) => {
+        const itemNames = r.items.map((i) => i.name).join(" ").toLowerCase();
+        return (
+          itemNames.includes(q) ||
+          r.pickup_location.toLowerCase().includes(q) ||
+          r.dropoff_location.toLowerCase().includes(q)
+        );
+      });
+    }
+
+    if (categoryFilter === "food") {
+      list = list.filter(
+        (r) => getRunnerCategoryIcon(r.items.map((i) => i.name).join(" ")).label === "Food & Snack"
+      );
+    } else if (categoryFilter === "academic") {
+      list = list.filter(
+        (r) => getRunnerCategoryIcon(r.items.map((i) => i.name).join(" ")).label === "Academic"
+      );
+    } else if (categoryFilter === "gadgets") {
+      list = list.filter(
+        (r) => getRunnerCategoryIcon(r.items.map((i) => i.name).join(" ")).label === "Gadgets"
+      );
+    }
+
+    if (sortBy === "highest_pay") {
+      list.sort((a, b) => (Number(b.delivery_fee) || 0) - (Number(a.delivery_fee) || 0));
+    } else if (sortBy === "oldest") {
+      list.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+    } else {
+      list.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+    }
+
+    return list;
+  }, [pendingRequests, searchQuery, categoryFilter, sortBy]);
+
   // Calculate total earnings from delivered requests
   const totalEarnings = deliveryHistory
     .filter((h) => h.request.status === "delivered" || h.status === "completed")
@@ -467,48 +530,139 @@ export function RunnerDashboardClient({
       {/* ───────────────────────────────────────────────────────────────────────────── */}
       {activeTab === "available" && (
         <div className="space-y-6">
-          {/* Controls */}
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-            <h2 className="text-xl font-bold tracking-tight text-white">Available Requests ({pendingRequests.length})</h2>
-            
-            <div className="flex items-center gap-3 w-full sm:w-auto">
-              {/* Grid/List Toggle */}
-              <div className="flex items-center bg-[#111614] border border-white/10 rounded-xl p-1">
-                <button 
-                  onClick={() => setIsGridView(true)}
-                  className={`p-2 rounded-lg transition-colors ${isGridView ? "bg-emerald-500/20 text-emerald-400" : "text-white/40 hover:text-white"}`}
-                >
-                  <LayoutGrid className="w-4 h-4" />
-                </button>
-                <button 
-                  onClick={() => setIsGridView(false)}
-                  className={`p-2 rounded-lg transition-colors ${!isGridView ? "bg-emerald-500/20 text-emerald-400" : "text-white/40 hover:text-white"}`}
-                >
-                  <List className="w-4 h-4" />
-                </button>
+          {/* Controls & Search Header */}
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+              <div>
+                <h2 className="text-xl font-bold tracking-tight text-white flex items-center gap-2">
+                  Available Requests
+                  <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-xs font-mono font-bold">
+                    {filteredPendingRequests.length}
+                  </span>
+                </h2>
+                <p className="text-white/40 text-xs mt-0.5">Instant campus pickup requests ready to accept</p>
+              </div>
+              
+              <div className="flex items-center gap-2.5 w-full sm:w-auto">
+                {/* Grid/List Toggle */}
+                <div className="flex items-center bg-[#0d1310] border border-white/10 rounded-xl p-1 shrink-0">
+                  <button 
+                    onClick={() => setIsGridView(true)}
+                    className={`p-1.5 rounded-lg transition-colors cursor-pointer ${isGridView ? "bg-emerald-500/20 text-emerald-400" : "text-white/40 hover:text-white"}`}
+                    title="Grid View"
+                  >
+                    <LayoutGrid className="w-4 h-4" />
+                  </button>
+                  <button 
+                    onClick={() => setIsGridView(false)}
+                    className={`p-1.5 rounded-lg transition-colors cursor-pointer ${!isGridView ? "bg-emerald-500/20 text-emerald-400" : "text-white/40 hover:text-white"}`}
+                    title="List View"
+                  >
+                    <List className="w-4 h-4" />
+                  </button>
+                </div>
+
+                {/* Real Sort Dropdown */}
+                <div className="relative flex-1 sm:flex-initial">
+                  <select
+                    value={sortBy}
+                    onChange={(e) => setSortBy(e.target.value as any)}
+                    className="appearance-none bg-[#0d1310] border border-white/10 text-white/80 text-xs sm:text-sm rounded-xl pl-3.5 pr-9 py-2 outline-none focus:border-emerald-500/50 hover:text-white transition-colors cursor-pointer w-full font-medium"
+                  >
+                    <option value="newest">Sort by: Newest</option>
+                    <option value="oldest">Sort by: Oldest</option>
+                    <option value="highest_pay">Sort by: Highest Pay</option>
+                  </select>
+                  <ChevronDown className="w-3.5 h-3.5 text-white/40 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                </div>
+              </div>
+            </div>
+
+            {/* Search Input & Category Filter Chips */}
+            <div className="flex flex-col md:flex-row gap-3 items-stretch md:items-center">
+              {/* Search Bar */}
+              <div className="relative flex-1">
+                <Search className="w-4 h-4 text-white/40 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search item, pickup, or hostel room..."
+                  className="w-full bg-[#080d0a]/90 border border-white/10 rounded-xl pl-9 pr-8 py-2 text-xs sm:text-sm text-white placeholder-white/40 focus:border-emerald-500/50 outline-none transition-all shadow-inner"
+                />
+                {searchQuery && (
+                  <button
+                    onClick={() => setSearchQuery("")}
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-white/40 hover:text-white p-0.5 rounded-full cursor-pointer"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                )}
               </div>
 
-              {/* Sort Dropdown */}
-              <div className="relative">
-                <select className="appearance-none bg-[#111614] border border-white/10 text-white/70 text-sm rounded-xl pl-4 pr-10 py-2.5 outline-none focus:border-emerald-500/50 hover:text-white transition-colors cursor-pointer w-full sm:w-auto">
-                  <option>Sort by: Newest</option>
-                  <option>Sort by: Oldest</option>
-                  <option>Sort by: Highest Pay</option>
-                </select>
-                <ChevronDown className="w-4 h-4 text-white/40 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+              {/* Category Filter Chips */}
+              <div className="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0 scrollbar-none">
+                {[
+                  { id: "all", label: "All", count: pendingRequests.length },
+                  { id: "food", label: "🍔 Food & Snacks", count: foodCount },
+                  { id: "academic", label: "📚 Academic", count: academicCount },
+                  { id: "gadgets", label: "🔌 Gadgets", count: gadgetCount },
+                ].map((cat) => {
+                  const isActive = categoryFilter === cat.id;
+                  return (
+                    <button
+                      key={cat.id}
+                      type="button"
+                      onClick={() => setCategoryFilter(cat.id as any)}
+                      className={cn(
+                        "px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all flex items-center gap-1.5 cursor-pointer",
+                        isActive
+                          ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 shadow-[0_0_12px_rgba(16,185,129,0.15)]"
+                          : "bg-white/5 border border-white/5 text-white/60 hover:text-white hover:bg-white/10"
+                      )}
+                    >
+                      <span>{cat.label}</span>
+                      <span
+                        className={cn(
+                          "text-[10px] font-mono px-1.5 py-0.2 rounded-full",
+                          isActive ? "bg-emerald-500/30 text-emerald-200" : "bg-white/10 text-white/50"
+                        )}
+                      >
+                        {cat.count}
+                      </span>
+                    </button>
+                  );
+                })}
               </div>
             </div>
           </div>
 
+          {/* Empty State */}
           {pendingRequests.length === 0 ? (
             <div className="bg-[#111614] border border-white/5 rounded-2xl p-12 text-center">
               <Package className="w-12 h-12 mx-auto mb-4 text-white/20" />
               <p className="text-white/60 font-medium">No pending requests available right now.</p>
               <p className="text-xs text-white/40 mt-1">New requests will appear automatically.</p>
             </div>
+          ) : filteredPendingRequests.length === 0 ? (
+            <div className="bg-[#0b120e] border border-white/5 rounded-2xl p-10 text-center space-y-3">
+              <Filter className="w-10 h-10 mx-auto text-emerald-500/30" />
+              <p className="text-white/80 font-semibold text-sm">No requests match your current search or filter.</p>
+              <p className="text-white/40 text-xs">Try selecting "All" or clearing the search query.</p>
+              <button
+                type="button"
+                onClick={() => {
+                  setSearchQuery("");
+                  setCategoryFilter("all");
+                }}
+                className="px-4 py-2 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-xs font-bold hover:bg-emerald-500/25 transition-all cursor-pointer"
+              >
+                Reset Filters
+              </button>
+            </div>
           ) : (
             <div className={`grid gap-5 ${isGridView ? "md:grid-cols-2" : "grid-cols-1"}`}>
-              {pendingRequests.map((req) => {
+              {filteredPendingRequests.map((req) => {
                 const itemNames = req.items.map((i) => i.name).join(", ");
                 const category = getRunnerCategoryIcon(itemNames);
                 const CategoryIcon = category.icon;
@@ -523,9 +677,14 @@ export function RunnerDashboardClient({
 
                     <div className="p-5 relative z-10">
                       <div className="flex justify-between items-center">
-                        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-bold uppercase tracking-wide bg-blue-500/10 border border-blue-500/30 text-blue-400">
-                          <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse" />
-                          Requested
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-bold uppercase tracking-wide bg-blue-500/10 border border-blue-500/30 text-blue-400">
+                            <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse" />
+                            Requested
+                          </div>
+                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/25 text-amber-300 text-[10.5px] font-semibold">
+                            ⚡ Campus Express
+                          </span>
                         </div>
 
                         {/* High-contrast Reward Payout Badge */}
@@ -585,6 +744,12 @@ export function RunnerDashboardClient({
                           </div>
                         </div>
                       </div>
+
+                      {/* Motivator Footer */}
+                      <div className="flex items-center justify-between text-[11px] text-white/40 pt-3 font-mono">
+                        <span className="text-emerald-400/80 font-medium">💚 100% Peer Tips Kept</span>
+                        <span>Direct Handover</span>
+                      </div>
                     </div>
 
                     <div className="p-5 pt-0 flex gap-3 relative z-10">
@@ -597,7 +762,7 @@ export function RunnerDashboardClient({
                       <button
                         onClick={() => handleAccept(req.id)}
                         disabled={isAccepting === req.id}
-                        className="flex-[1.5] flex items-center justify-center gap-2 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-400 hover:from-emerald-400 hover:to-emerald-300 text-black font-bold text-xs sm:text-sm shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:shadow-[0_0_30px_rgba(16,185,129,0.5)] transition-all cursor-pointer disabled:opacity-50 active:scale-[0.98]"
+                        className="flex-[1.5] flex items-center justify-center gap-2 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-400 hover:from-emerald-400 hover:to-emerald-300 text-black font-extrabold text-xs sm:text-sm shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:shadow-[0_0_30px_rgba(16,185,129,0.5)] transition-all cursor-pointer disabled:opacity-50 active:scale-[0.98]"
                       >
                         {isAccepting === req.id ? "Accepting..." : "Accept Request"}
                         <ArrowRight className="w-4 h-4" />
@@ -616,21 +781,28 @@ export function RunnerDashboardClient({
       {/* ───────────────────────────────────────────────────────────────────────────── */}
       {activeTab === "active" && (
         <div className="space-y-6">
-          <div className="flex justify-between items-center">
-            <h2 className="text-xl font-bold tracking-tight text-white">
-              My Active Deliveries ({activeDeliveries.length})
-            </h2>
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+            <div>
+              <h2 className="text-xl font-bold tracking-tight text-white flex items-center gap-2">
+                My Active Deliveries
+                <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-xs font-mono font-bold">
+                  {activeDeliveries.length}
+                </span>
+              </h2>
+              <p className="text-white/40 text-xs mt-0.5">Orders you have accepted and are currently fulfilling</p>
+            </div>
           </div>
 
           {activeDeliveries.length === 0 ? (
-            <div className="bg-[#111614] border border-white/5 rounded-2xl p-12 text-center">
-              <CheckCircle2 className="w-12 h-12 mx-auto mb-4 text-white/20" />
-              <p className="text-white/60 font-medium">You have no active deliveries right now.</p>
+            <div className="bg-[#0b120e] border border-white/5 rounded-2xl p-12 text-center">
+              <CheckCircle2 className="w-12 h-12 mx-auto mb-4 text-emerald-500/30" />
+              <p className="text-white/70 font-semibold text-sm">You have no active deliveries right now.</p>
+              <p className="text-white/40 text-xs mt-1">Accept available orders from the campus feed to start earning.</p>
               <button 
-                className="mt-4 px-6 py-2.5 rounded-xl border border-white/10 text-white hover:bg-white/5 transition-colors font-medium text-sm" 
+                className="mt-5 px-5 py-2.5 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 hover:bg-emerald-500/25 transition-all font-bold text-xs cursor-pointer shadow-[0_0_15px_rgba(16,185,129,0.15)]" 
                 onClick={() => setActiveTab("available")}
               >
-                Browse Available Requests
+                Browse Available Requests ➔
               </button>
             </div>
           ) : (
@@ -638,63 +810,99 @@ export function RunnerDashboardClient({
               {activeDeliveries.map((assignment) => {
                 const req = assignment.request;
                 const action = getNextStatusAction(req.status);
+                const itemNames = req.items.map((i) => i.name).join(", ");
+                const category = getRunnerCategoryIcon(itemNames);
+                const CategoryIcon = category.icon;
 
                 return (
-                  <div key={assignment.id} className="relative overflow-hidden bg-[#0d1310] border border-emerald-500/30 rounded-2xl flex flex-col justify-between hover:border-emerald-500/50 transition-all group shadow-[0_0_15px_rgba(16,185,129,0.05)]">
-                    {/* Subtle right-side glow/icon background */}
-                    <div className="absolute -right-8 -top-8 w-48 h-48 bg-emerald-500/10 rounded-full blur-3xl transition-colors pointer-events-none" />
-                    <div className="absolute right-6 top-1/2 -translate-y-1/2 w-16 h-16 rounded-full border border-emerald-500/20 flex items-center justify-center bg-[#131b17] z-0 opacity-40">
-                      <Box className="w-6 h-6 text-emerald-500/40" />
-                    </div>
+                  <div
+                    key={assignment.id}
+                    className="relative overflow-hidden bg-[#0a100d]/90 border border-emerald-500/30 hover:border-emerald-500/50 rounded-2xl flex flex-col justify-between transition-all group backdrop-blur-xl shadow-[0_0_25px_rgba(16,185,129,0.06)]"
+                  >
+                    {/* Top glowing neon accent */}
+                    <div className="absolute top-0 left-8 right-8 h-[1px] bg-gradient-to-r from-transparent via-emerald-400/40 to-transparent pointer-events-none" />
 
                     <div className="p-5 relative z-10">
-                      <div className="flex justify-between items-start">
+                      <div className="flex justify-between items-center">
                         <RequestStatusBadge status={req.status} />
-                        <span className="text-2xl font-bold text-white flex items-center">
-                          <IndianRupee className="w-5 h-5 mr-0.5 opacity-70" />
-                          {req.delivery_fee}
-                        </span>
-                      </div>
-                      
-                      <h3 className="text-xl font-bold text-white mt-4 truncate">
-                        {req.items.map((i) => i.name).join(", ")}
-                      </h3>
 
-                      <div className="space-y-3 mt-4 text-sm">
-                        <div className="flex items-start">
-                          <MapPin className="w-4 h-4 mr-2 mt-0.5 shrink-0 text-emerald-500" />
-                          <div>
-                            <p className="text-xs text-white/50 font-semibold uppercase">1. Pickup At</p>
-                            <p className="text-white/90">{req.pickup_location}</p>
+                        {/* Glowing Payout */}
+                        <div className="flex items-center gap-1 px-3 py-1 rounded-xl bg-gradient-to-r from-emerald-500/20 via-emerald-500/15 to-emerald-500/20 border border-emerald-500/40 text-emerald-300 font-mono font-black text-base sm:text-lg shadow-[0_0_15px_rgba(16,185,129,0.2)]">
+                          <IndianRupee className="w-4 h-4 text-emerald-400" />
+                          <span>{req.delivery_fee}</span>
+                          <span className="text-[9.5px] font-sans font-bold uppercase tracking-wider text-emerald-400/80 ml-1">
+                            Payout
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="flex items-start gap-3 mt-4">
+                        <div className={cn("w-11 h-11 rounded-xl flex items-center justify-center shrink-0 border", category.bg)}>
+                          <CategoryIcon className="w-5 h-5" />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <h3 className="text-lg sm:text-xl font-bold text-white truncate capitalize group-hover:text-emerald-300 transition-colors">
+                            {itemNames}
+                          </h3>
+                          <div className="flex items-center gap-2 text-xs text-white/50 pt-0.5">
+                            <span className="truncate max-w-[160px]">To: <strong className="text-white/80">{req.dropoff_location}</strong></span>
+                            <span>•</span>
+                            <span className="font-mono text-emerald-400/90 font-medium">In Delivery</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Route Map Connector Visualizer */}
+                      <div className="p-3 rounded-xl bg-[#070b09]/90 border border-white/5 space-y-2 mt-4">
+                        {/* Pickup */}
+                        <div className="flex items-center gap-2.5 text-xs sm:text-sm">
+                          <div className="w-5 h-5 rounded-md bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0">
+                            <MapPin className="w-3 h-3" />
+                          </div>
+                          <div className="flex flex-col min-w-0">
+                            <span className="text-[9px] font-mono uppercase tracking-wider text-white/40 font-bold">1. Pickup Spot</span>
+                            <span className="font-semibold text-white/95 truncate text-xs">{req.pickup_location}</span>
                           </div>
                         </div>
 
-                        <div className="flex items-start">
-                          <MapPin className="w-4 h-4 mr-2 mt-0.5 shrink-0 text-emerald-500" />
-                          <div>
-                            <p className="text-xs text-white/50 font-semibold uppercase">2. Deliver To</p>
-                            <p className="text-white font-medium">{req.dropoff_location}</p>
-                          </div>
+                        {/* Connector Walk Time */}
+                        <div className="flex items-center gap-2 pl-2.5 py-0.5">
+                          <div className="w-[1px] h-3.5 bg-gradient-to-b from-emerald-500/60 to-emerald-500/20" />
+                          <span className="px-2 py-0.5 rounded-full bg-emerald-950/60 border border-emerald-500/20 text-[9.5px] font-mono text-emerald-400/90 flex items-center gap-1.5">
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+                            🚶 Active transit on campus
+                          </span>
                         </div>
 
-                        {req.instructions && (
-                          <div className="p-3 bg-amber-500/10 rounded-lg text-xs text-amber-500 border border-amber-500/20 mt-2">
-                            <strong className="text-amber-400">Note:</strong> {req.instructions}
+                        {/* Dropoff */}
+                        <div className="flex items-center gap-2.5 text-xs sm:text-sm">
+                          <div className="w-5 h-5 rounded-md bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0">
+                            <MapPin className="w-3 h-3" />
                           </div>
-                        )}
+                          <div className="flex flex-col min-w-0">
+                            <span className="text-[9px] font-mono uppercase tracking-wider text-white/40 font-bold">2. Dropoff Spot</span>
+                            <span className="font-semibold text-white/95 truncate text-xs">{req.dropoff_location}</span>
+                          </div>
+                        </div>
                       </div>
+
+                      {req.instructions && (
+                        <div className="p-3 bg-amber-500/10 rounded-xl text-xs text-amber-400 border border-amber-500/20 mt-3">
+                          <strong className="text-amber-300 font-semibold">Student Note:</strong> {req.instructions}
+                        </div>
+                      )}
                     </div>
 
                     <div className="p-5 pt-0 flex flex-wrap gap-2.5 relative z-10">
                       <button
                         onClick={() => setSelectedRequest(req)}
-                        className="flex-1 min-w-[85px] flex items-center justify-center gap-1.5 py-2.5 rounded-xl border border-white/10 text-white/70 hover:text-white hover:bg-white/5 transition-colors font-medium text-xs sm:text-sm"
+                        className="flex-1 min-w-[85px] flex items-center justify-center gap-1.5 py-2.5 rounded-xl border border-white/10 text-white/70 hover:text-white hover:bg-white/5 transition-colors font-medium text-xs sm:text-sm cursor-pointer"
                       >
                         <Eye className="w-4 h-4" /> Details
                       </button>
                       <Link
                         href={`/dashboard/chat?requestId=${req.id}&startWithUserId=${req.requester_id}`}
-                        className="flex-1 min-w-[85px] flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/25 transition-colors font-semibold text-xs sm:text-sm shadow-[0_0_12px_rgba(16,185,129,0.15)]"
+                        className="flex-1 min-w-[85px] flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 hover:bg-emerald-500/25 transition-colors font-semibold text-xs sm:text-sm shadow-[0_0_12px_rgba(16,185,129,0.15)] cursor-pointer"
                       >
                         <MessageSquare className="w-4 h-4" /> Chat
                       </Link>
@@ -702,7 +910,7 @@ export function RunnerDashboardClient({
                         <button
                           onClick={() => handleStatusUpdate(req.id, action.nextStatus)}
                           disabled={isUpdatingStatus === req.id}
-                          className="flex-[1.4] min-w-[125px] flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-[#0a0f0d] font-bold text-xs sm:text-sm transition-colors disabled:opacity-50"
+                          className="flex-[1.4] min-w-[130px] flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-400 hover:from-emerald-400 hover:to-emerald-300 text-black font-extrabold text-xs sm:text-sm shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:shadow-[0_0_30px_rgba(16,185,129,0.5)] transition-all cursor-pointer disabled:opacity-50 active:scale-[0.98]"
                         >
                           {isUpdatingStatus === req.id ? "Updating..." : action.label}
                           <ArrowRight className="w-4 h-4" />
@@ -723,62 +931,85 @@ export function RunnerDashboardClient({
       {activeTab === "history" && (
         <div className="space-y-6">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-            <h2 className="text-xl font-bold tracking-tight text-white">
-              Delivery History ({deliveryHistory.length})
-            </h2>
-            <div className="text-sm font-semibold bg-emerald-500/10 text-emerald-400 px-4 py-2 rounded-full border border-emerald-500/20 flex items-center shadow-[0_0_15px_rgba(16,185,129,0.1)]">
-              Total Earned: <IndianRupee className="w-4 h-4 ml-1 mr-0.5" /> {totalEarnings}
+            <div>
+              <h2 className="text-xl font-bold tracking-tight text-white flex items-center gap-2">
+                Delivery History
+                <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-xs font-mono font-bold">
+                  {deliveryHistory.length}
+                </span>
+              </h2>
+              <p className="text-white/40 text-xs mt-0.5">Completed campus missions and earnings breakdown</p>
+            </div>
+            <div className="text-sm font-semibold bg-emerald-500/10 text-emerald-300 px-4 py-2 rounded-full border border-emerald-500/25 flex items-center shadow-[0_0_20px_rgba(16,185,129,0.15)] font-mono">
+              Total Earned: <IndianRupee className="w-4 h-4 ml-1 mr-0.5 text-emerald-400" /> {totalEarnings}
             </div>
           </div>
 
           {deliveryHistory.length === 0 ? (
-            <div className="bg-[#111614] border border-white/5 rounded-2xl p-12 text-center">
+            <div className="bg-[#0b120e] border border-white/5 rounded-2xl p-12 text-center">
               <History className="w-12 h-12 mx-auto mb-4 text-white/20" />
               <p className="text-white/60 font-medium">No past delivery history yet.</p>
+              <p className="text-xs text-white/40 mt-1">Delivered orders will be archived here with proof of completion.</p>
             </div>
           ) : (
             <div className="grid gap-4">
               {deliveryHistory.map((assignment) => {
                 const req = assignment.request;
                 const isDelivered = req.status === "delivered" || assignment.status === "completed";
+                const itemNames = req.items.map((i) => i.name).join(", ");
+                const category = getRunnerCategoryIcon(itemNames);
+                const CategoryIcon = category.icon;
 
                 return (
-                  <div key={assignment.id} className="bg-[#0d1310] border border-white/5 rounded-2xl p-5 flex flex-col sm:flex-row justify-between sm:items-center gap-5 hover:border-white/10 transition-colors">
-                    <div className="space-y-2 flex-1">
-                      <div className="flex items-center gap-3">
-                        <RequestStatusBadge status={req.status} />
-                        <span className="text-xs text-white/40 flex items-center">
-                          <Clock className="w-3.5 h-3.5 mr-1" />
-                          {assignment.completed_at
-                            ? `Completed ${format(new Date(assignment.completed_at), "MMM d, h:mm a")}`
-                            : `Assigned ${format(new Date(assignment.assigned_at), "MMM d, h:mm a")}`}
-                        </span>
+                  <div
+                    key={assignment.id}
+                    className="bg-[#0a100d]/90 border border-white/10 hover:border-emerald-500/30 rounded-2xl p-5 flex flex-col sm:flex-row justify-between sm:items-center gap-5 transition-all backdrop-blur-xl group"
+                  >
+                    <div className="flex items-start gap-4 flex-1 min-w-0">
+                      <div className={cn("w-11 h-11 rounded-xl flex items-center justify-center shrink-0 border mt-0.5", category.bg)}>
+                        <CategoryIcon className="w-5 h-5" />
                       </div>
-                      <h4 className="font-bold text-lg text-white">
-                        {req.items.map((i) => i.name).join(", ")}
-                      </h4>
-                      <p className="text-sm text-white/50">
-                        From: <span className="font-medium text-white/80">{req.pickup_location}</span> ➔ To:{" "}
-                        <span className="font-medium text-white/80">{req.dropoff_location}</span>
-                      </p>
+                      <div className="space-y-1.5 flex-1 min-w-0">
+                        <div className="flex items-center gap-2.5 flex-wrap">
+                          <RequestStatusBadge status={req.status} />
+                          <span className="text-xs text-white/40 flex items-center font-mono">
+                            <Clock className="w-3.5 h-3.5 mr-1 text-emerald-400/60" />
+                            {assignment.completed_at
+                              ? `Completed ${format(new Date(assignment.completed_at), "MMM d, h:mm a")}`
+                              : `Assigned ${format(new Date(assignment.assigned_at), "MMM d, h:mm a")}`}
+                          </span>
+                        </div>
+                        <h4 className="font-bold text-base sm:text-lg text-white truncate">
+                          {itemNames}
+                        </h4>
+                        <p className="text-xs sm:text-sm text-white/50 truncate">
+                          <span className="font-medium text-white/70">{req.pickup_location}</span> ➔{" "}
+                          <span className="font-medium text-white/90">{req.dropoff_location}</span>
+                        </p>
+                      </div>
                     </div>
 
-                    <div className="flex flex-row sm:flex-col items-center justify-between sm:items-end gap-3 pt-3 sm:pt-0 border-t border-white/5 sm:border-t-0">
+                    <div className="flex flex-row sm:flex-col items-center justify-between sm:items-end gap-3 pt-3 sm:pt-0 border-t border-white/5 sm:border-t-0 shrink-0">
                       <div className="text-left sm:text-right">
-                        <span className={`text-xl font-bold flex items-center sm:justify-end ${isDelivered ? "text-emerald-400" : "text-white/50"}`}>
+                        <span
+                          className={`text-base sm:text-lg font-bold font-mono flex items-center sm:justify-end ${
+                            isDelivered ? "text-emerald-400" : "text-white/40"
+                          }`}
+                        >
+                          {isDelivered ? "+" : ""}
                           <IndianRupee className="w-4 h-4 mr-0.5" />
                           {req.delivery_fee}
                         </span>
-                        <span className="text-xs text-white/40 block mt-0.5">
-                          {isDelivered ? "Earned" : "Cancelled"}
+                        <span className="text-[11px] text-white/40 block mt-0.5 font-sans">
+                          {isDelivered ? "Earned & Settled" : "Cancelled"}
                         </span>
                       </div>
 
                       <button
                         onClick={() => setSelectedRequest(req)}
-                        className="flex items-center justify-center gap-2 px-4 py-2 rounded-xl border border-white/10 text-white/70 hover:text-white hover:bg-white/5 transition-colors font-medium text-sm"
+                        className="flex items-center justify-center gap-1.5 px-3.5 py-1.5 rounded-xl border border-white/10 text-white/70 hover:text-white hover:bg-white/5 transition-colors font-medium text-xs cursor-pointer"
                       >
-                        <Eye className="w-4 h-4" /> Details
+                        <Eye className="w-3.5 h-3.5" /> Details
                       </button>
                     </div>
                   </div>
