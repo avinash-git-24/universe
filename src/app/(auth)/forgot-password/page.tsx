@@ -601,10 +601,10 @@ export default function ForgotPasswordPage() {
               </div>
 
               {/* Recipient Chip Badge */}
-              <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-black/40 border border-white/10 text-xs text-white/60">
+              <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-black/40 border border-white/10 text-xs text-white/60 max-w-full overflow-hidden">
                 <Mail size={13} className="text-emerald-400 shrink-0" />
-                <span className="text-white/40">Sent to:</span>
-                <span className="text-emerald-400 font-mono font-semibold truncate">{email}</span>
+                <span className="text-white/40 shrink-0">Sent to:</span>
+                <span className="text-emerald-400 font-mono text-[11px] truncate min-w-0 font-semibold">{email}</span>
               </div>
 
               {/* 6-Digit Distinct PIN Boxes */}
@@ -624,9 +624,10 @@ export default function ForgotPasswordPage() {
                     value={digit}
                     onChange={(e) => handleOtpChange(index, e.target.value)}
                     onKeyDown={(e) => handleOtpKeyDown(index, e)}
-                    className={`w-11 sm:w-12 h-13 sm:h-14 rounded-xl text-center text-xl sm:text-2xl font-mono font-extrabold transition-all duration-150 outline-none ${
+                    style={{ width: "46px", height: "54px" }}
+                    className={`rounded-xl text-center text-xl sm:text-2xl font-mono font-extrabold transition-all duration-150 outline-none flex-shrink-0 ${
                       digit
-                        ? "bg-emerald-500/15 border-2 border-emerald-400 text-emerald-400 shadow-[0_0_15px_rgba(0,230,118,0.25)]"
+                        ? "bg-emerald-500/15 border-2 border-emerald-400 text-emerald-400 shadow-[0_0_15px_rgba(0,230,118,0.3)]"
                         : "bg-black/50 border border-white/15 text-white focus:border-emerald-400 focus:ring-4 focus:ring-emerald-500/20"
                     }`}
                     autoFocus={index === 0}
