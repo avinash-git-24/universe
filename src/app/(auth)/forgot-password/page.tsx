@@ -3,19 +3,19 @@
 /**
  * UniVerse — 100% Private & Secure Campus Password Reset Flow
  *
- * Universal Responsive Multi-Device Architecture:
- * - Ultra-responsive from 320px (iPhone SE, Foldables) to 4K / Projectors
- * - Fluid PIN boxes: flex-1 adaptive scaling (never overflows on mobile)
- * - Anti-wrapping responsive stepper typography
- * - High-definition Cyber-Grid horizon & multi-layer ambient flares for large screens/projectors
- * - Touch-optimized tap targets (Apple HIG compliant, min 44px)
+ * Immersive 3D Perspective Cyber-Tunnel Grid Architecture:
+ * - 3D Perspective Cyber-Tunnel Grid Canvas (floor, walls, ceiling & concentric depth rings)
+ * - Cosmic stardust nebulae particles floating in 3D space
+ * - Ambient volumetric emerald bloom behind the central verification card
+ * - Corner cyber accents (+) and sleek glassmorphism
+ * - Interactive 6-digit fluid adaptive PIN boxes with paste and auto-advance
  * - 30-Second live countdown timer for Resend OTP
- * - Live MU domain validation & one-click clear button
+ * - End-to-end 3-step flow (Email ➔ 6-PIN Verify ➔ New Password)
  *
  * Route: /forgot-password
  */
 
-import { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
@@ -32,6 +32,7 @@ import {
   Check,
   X,
   ArrowRight,
+  Info,
 } from "lucide-react";
 import { AuthCard } from "@/components/auth/AuthCard";
 import { ROUTES } from "@/constants/routes";
@@ -65,6 +66,165 @@ function getPasswordStrength(pw: string): { score: number; label: string; color:
   return { score: 4, label: "Strong", color: "bg-emerald-400" };
 }
 
+// ─── 3D PERSPECTIVE CYBER-TUNNEL CANVAS ────────────────────────────────────────
+function CyberTunnelCanvas() {
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    let animId: number;
+    let width = (canvas.width = window.innerWidth);
+    let height = (canvas.height = window.innerHeight);
+
+    const handleResize = () => {
+      if (!canvas) return;
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    };
+    window.addEventListener("resize", handleResize);
+
+    // Cosmic stardust particles in 3D
+    const numStars = 65;
+    const stars = Array.from({ length: numStars }, () => ({
+      x: (Math.random() - 0.5) * 2200,
+      y: (Math.random() - 0.5) * 2200,
+      z: Math.random() * 1000 + 100,
+      baseAlpha: Math.random() * 0.6 + 0.3,
+      size: Math.random() * 1.5 + 0.6,
+    }));
+
+    let offset = 0;
+
+    const render = () => {
+      ctx.clearRect(0, 0, width, height);
+
+      const cx = width / 2;
+      const cy = height / 2;
+
+      // 1. Draw Cosmic Stardust
+      for (const s of stars) {
+        const fov = 400;
+        const scale = fov / s.z;
+        const px = cx + s.x * scale;
+        const py = cy + s.y * scale;
+
+        if (px >= 0 && px <= width && py >= 0 && py <= height) {
+          ctx.beginPath();
+          ctx.arc(px, py, s.size * scale, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(180, 255, 220, ${s.baseAlpha * Math.min(1, scale * 1.6)})`;
+          ctx.fill();
+        }
+
+        s.z -= 0.6;
+        if (s.z <= 30) {
+          s.z = 1000;
+          s.x = (Math.random() - 0.5) * 2200;
+          s.y = (Math.random() - 0.5) * 2200;
+        }
+      }
+
+      // 2. Draw Radiating 3D Perspective Grid Lines
+      const numRaysX = 14;
+      const numRaysY = 10;
+
+      // Rays to Top and Bottom
+      for (let i = 0; i <= numRaysX; i++) {
+        const targetX = (width / numRaysX) * i;
+
+        // Top line
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(targetX, 0);
+        ctx.strokeStyle = "rgba(0, 230, 118, 0.2)";
+        ctx.lineWidth = 1;
+        ctx.stroke();
+
+        // Bottom line
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(targetX, height);
+        ctx.strokeStyle = "rgba(0, 230, 118, 0.2)";
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      }
+
+      // Rays to Left and Right
+      for (let j = 0; j <= numRaysY; j++) {
+        const targetY = (height / numRaysY) * j;
+
+        // Left line
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(0, targetY);
+        ctx.strokeStyle = "rgba(0, 230, 118, 0.2)";
+        ctx.lineWidth = 1;
+        ctx.stroke();
+
+        // Right line
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(width, targetY);
+        ctx.strokeStyle = "rgba(0, 230, 118, 0.2)";
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      }
+
+      // 3. Draw Concentric Perspective Tunnel Rings
+      offset = (offset + 0.0018) % 0.1;
+      const numRings = 11;
+
+      for (let i = 0; i < numRings; i++) {
+        const progress = (i / numRings + offset) % 1;
+        if (progress <= 0.02) continue;
+
+        // Power function creates realistic depth perspective
+        const p = Math.pow(progress, 2.3);
+        const rw = width * p;
+        const rh = height * p;
+        const rx = cx - rw / 2;
+        const ry = cy - rh / 2;
+
+        const alpha = Math.min(0.42, progress * 0.45);
+        ctx.beginPath();
+        ctx.rect(rx, ry, rw, rh);
+        ctx.strokeStyle = `rgba(0, 230, 118, ${alpha})`;
+        ctx.lineWidth = progress > 0.6 ? 1.2 : 0.8;
+        ctx.stroke();
+      }
+
+      // 4. Subtle Radial Vignette Fade (Keeps center text razor sharp)
+      const grad = ctx.createRadialGradient(cx, cy, 60, cx, cy, Math.max(width, height) * 0.75);
+      grad.addColorStop(0, "rgba(3, 11, 8, 0.6)");
+      grad.addColorStop(0.45, "rgba(3, 11, 8, 0.25)");
+      grad.addColorStop(1, "rgba(3, 11, 8, 0.85)");
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, width, height);
+
+      animId = requestAnimationFrame(render);
+    };
+
+    render();
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      cancelAnimationFrame(animId);
+    };
+  }, []);
+
+  return (
+    <canvas
+      ref={canvasRef}
+      className="fixed inset-0 w-full h-full pointer-events-none -z-10"
+      style={{ display: "block" }}
+    />
+  );
+}
+
+// ─── MAIN FORGOT PASSWORD PAGE ────────────────────────────────────────────────
 export default function ForgotPasswordPage() {
   const router = useRouter();
 
@@ -324,59 +484,28 @@ export default function ForgotPasswordPage() {
 
   return (
     <div className="relative w-full flex flex-col items-center justify-center">
-      {/* ── Fixed Atmospheric Background Layers (Screen-wide luxury ambiance on Mobile, Laptop, 4K & Projectors) ── */}
+      {/* ── 3D Perspective Cyber-Tunnel Grid Canvas ── */}
+      <CyberTunnelCanvas />
+
+      {/* ── Ambient Volumetric Emerald Bloom Halos ── */}
       <div className="fixed inset-0 pointer-events-none -z-10 overflow-hidden">
-        {/* Crisp Cyber-Grid with Radial Spotlight Vignette */}
+        {/* Central Card Volumetric Backlight Bloom */}
         <div
-          className="absolute inset-0 opacity-[0.06] sm:opacity-[0.075]"
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[550px] h-[550px] rounded-full pointer-events-none"
           style={{
-            backgroundImage: `linear-gradient(to right, #00E676 1px, transparent 1px),
-                              linear-gradient(to bottom, #00E676 1px, transparent 1px)`,
-            backgroundSize: "clamp(36px, 4vw, 56px) clamp(36px, 4vw, 56px)",
-            maskImage:
-              "radial-gradient(ellipse 85% 85% at 50% 45%, black 25%, transparent 90%)",
-            WebkitMaskImage:
-              "radial-gradient(ellipse 85% 85% at 50% 45%, black 25%, transparent 90%)",
+            background:
+              "radial-gradient(circle, rgba(0, 230, 118, 0.18) 0%, rgba(0, 168, 84, 0.04) 50%, transparent 75%)",
+            filter: "blur(90px)",
           }}
         />
 
-        {/* Top Halo behind UniVerse Logo */}
+        {/* Secondary Upper Bloom for Logo Elevation */}
         <div
-          className="absolute top-0 left-1/2 -translate-x-1/2 w-[90vw] max-w-[800px] h-[350px] rounded-full pointer-events-none"
+          className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[380px] h-[380px] rounded-full pointer-events-none"
           style={{
             background:
-              "radial-gradient(ellipse at 50% 25%, rgba(0, 230, 118, 0.18) 0%, rgba(0, 200, 100, 0.05) 50%, transparent 75%)",
-            filter: "blur(clamp(50px, 8vw, 85px))",
-          }}
-        />
-
-        {/* Left Emerald Aurora Plume */}
-        <div
-          className="absolute top-1/4 -left-36 sm:-left-48 w-[500px] sm:w-[700px] h-[500px] sm:h-[700px] rounded-full pointer-events-none"
-          style={{
-            background:
-              "radial-gradient(circle, rgba(0, 230, 118, 0.11) 0%, rgba(0, 168, 84, 0.02) 55%, transparent 75%)",
-            filter: "blur(clamp(60px, 10vw, 100px))",
-          }}
-        />
-
-        {/* Right Cyan Aurora Plume */}
-        <div
-          className="absolute bottom-1/4 -right-36 sm:-right-48 w-[500px] sm:w-[700px] h-[500px] sm:h-[700px] rounded-full pointer-events-none"
-          style={{
-            background:
-              "radial-gradient(circle, rgba(0, 210, 255, 0.09) 0%, rgba(0, 119, 255, 0.02) 55%, transparent 75%)",
-            filter: "blur(clamp(60px, 10vw, 100px))",
-          }}
-        />
-
-        {/* Direct Backlight behind the AuthCard */}
-        <div
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[85vw] max-w-[600px] h-[600px] rounded-full pointer-events-none"
-          style={{
-            background:
-              "radial-gradient(circle, rgba(0, 230, 118, 0.12) 0%, rgba(0, 230, 118, 0.02) 45%, transparent 70%)",
-            filter: "blur(clamp(50px, 7vw, 75px))",
+              "radial-gradient(circle, rgba(0, 210, 255, 0.1) 0%, rgba(0, 230, 118, 0.05) 50%, transparent 75%)",
+            filter: "blur(75px)",
           }}
         />
       </div>
@@ -488,8 +617,8 @@ export default function ForgotPasswordPage() {
 
         {/* ── GLOBAL INFO ALERT ── */}
         {infoMessage && step === 2 && (
-          <div className="mb-4 p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs flex items-center gap-2.5 shadow-[0_0_20px_rgba(0,230,118,0.1)]">
-            <Sparkles size={16} className="shrink-0 text-emerald-400" />
+          <div className="mb-4 p-3 rounded-xl bg-emerald-950/40 border border-emerald-500/30 text-emerald-300 text-xs flex items-center gap-2.5 shadow-[0_0_20px_rgba(0,230,118,0.1)]">
+            <Info size={16} className="shrink-0 text-emerald-400" />
             <span>Check your student Gmail inbox (and Spam folder) for the 6-digit code.</span>
           </div>
         )}
@@ -595,43 +724,48 @@ export default function ForgotPasswordPage() {
                   <KeyRound size={13} className="text-emerald-400" />
                   <span>6-Digit Verification Code</span>
                 </label>
-                <span className="text-[10px] font-mono font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/25 px-2 py-0.5 rounded-full">
+                <span className="text-[10px] font-mono font-bold text-emerald-400 bg-emerald-950/60 border border-emerald-500/30 px-2 py-0.5 rounded-full">
                   6 Digits
                 </span>
               </div>
 
-              {/* Recipient Chip Badge (100% overflow protected on mobile) */}
-              <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-black/40 border border-white/10 text-xs text-white/60 max-w-full overflow-hidden">
+              {/* Recipient Chip Badge */}
+              <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#071712]/90 border border-emerald-500/25 text-xs text-white/70 max-w-full overflow-hidden shadow-[0_0_15px_rgba(0,230,118,0.08)]">
                 <Mail size={13} className="text-emerald-400 shrink-0" />
                 <span className="text-white/40 shrink-0">Sent to:</span>
                 <span className="text-emerald-400 font-mono text-[11px] truncate min-w-0 font-semibold">{email}</span>
               </div>
 
-              {/* 6-Digit Fluid Adaptive PIN Boxes (Scales gracefully from 320px to large screens) */}
+              {/* 6-Digit Fluid Adaptive PIN Boxes */}
               <div
                 className="flex items-center justify-between gap-1.5 sm:gap-2.5 pt-2 pb-1 w-full max-w-full"
                 onPaste={handleOtpPaste}
               >
-                {otpDigits.map((digit, index) => (
-                  <input
-                    key={index}
-                    ref={(el) => {
-                      inputRefs.current[index] = el;
-                    }}
-                    type="text"
-                    inputMode="numeric"
-                    maxLength={1}
-                    value={digit}
-                    onChange={(e) => handleOtpChange(index, e.target.value)}
-                    onKeyDown={(e) => handleOtpKeyDown(index, e)}
-                    className={`flex-1 min-w-0 max-w-[48px] h-12 sm:h-14 rounded-xl text-center text-lg sm:text-2xl font-mono font-extrabold transition-all duration-150 outline-none ${
-                      digit
-                        ? "bg-emerald-500/15 border-2 border-emerald-400 text-emerald-400 shadow-[0_0_15px_rgba(0,230,118,0.3)]"
-                        : "bg-black/50 border border-white/15 text-white focus:border-emerald-400 focus:ring-4 focus:ring-emerald-500/20"
-                    }`}
-                    autoFocus={index === 0}
-                  />
-                ))}
+                {otpDigits.map((digit, index) => {
+                  const isActive = index === otpDigits.findIndex((c) => c === "");
+                  return (
+                    <input
+                      key={index}
+                      ref={(el) => {
+                        inputRefs.current[index] = el;
+                      }}
+                      type="text"
+                      inputMode="numeric"
+                      maxLength={1}
+                      value={digit}
+                      onChange={(e) => handleOtpChange(index, e.target.value)}
+                      onKeyDown={(e) => handleOtpKeyDown(index, e)}
+                      className={`flex-1 min-w-0 max-w-[48px] h-12 sm:h-14 rounded-2xl text-center text-lg sm:text-2xl font-mono font-extrabold transition-all duration-200 outline-none ${
+                        digit
+                          ? "bg-[#081b15]/90 border-2 border-emerald-400 text-emerald-400 shadow-[0_0_18px_rgba(0,230,118,0.35)]"
+                          : isActive
+                          ? "bg-black/60 border-2 border-emerald-400/80 ring-2 ring-emerald-500/30 text-white shadow-[0_0_15px_rgba(0,230,118,0.25)]"
+                          : "bg-black/50 border border-white/15 text-white focus:border-emerald-400 focus:ring-4 focus:ring-emerald-500/20"
+                      }`}
+                      autoFocus={index === 0}
+                    />
+                  );
+                })}
               </div>
 
               <p className="text-[10.5px] sm:text-[11px] text-white/45 text-center">
