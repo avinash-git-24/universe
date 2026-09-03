@@ -4,7 +4,6 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Navbar } from "@/components/home/Navbar";
 import { HeroSection } from "@/components/home/HeroSection";
-import { MarketplaceTeaserSection } from "@/components/home/MarketplaceTeaserSection";
 import { WhyUniverseSection } from "@/components/home/WhyUniverseSection";
 import { HowItWorksSection } from "@/components/home/HowItWorksSection";
 import { FloatingObjects } from "@/components/home/FloatingObjects";
@@ -34,7 +33,6 @@ export default function RootPage() {
     <>
       <Navbar />
       <HeroSection />
-      <MarketplaceTeaserSection />
       <WhyUniverseSection />
       <HowItWorksSection />
       <FloatingObjects />
