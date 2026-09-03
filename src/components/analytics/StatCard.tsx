@@ -15,22 +15,25 @@ interface StatCardProps {
 
 export function StatCard({ title, value, icon, trend, trendLabel, description, isStatusCard }: StatCardProps) {
   return (
-    <div className="relative overflow-hidden bg-[#0d1310] border border-white/5 rounded-2xl flex flex-col justify-between transition-all p-6 shadow-sm">
+    <div className="relative overflow-hidden bg-[#0c1410]/80 backdrop-blur-md border border-white/10 hover:border-emerald-500/30 rounded-2xl flex flex-col justify-between transition-all p-6 shadow-sm hover:shadow-[0_0_24px_rgba(16,185,129,0.12)] group">
+      {/* Corner Ambient Glow */}
+      <div className="absolute -top-12 -right-12 w-28 h-28 bg-emerald-500/5 rounded-full blur-2xl group-hover:bg-emerald-500/10 transition-colors pointer-events-none" />
+
       <div className="flex justify-between items-start relative z-10">
         <div>
-          <h3 className="text-sm font-medium text-white/60 mb-3">{title}</h3>
-          <div className="text-3xl font-bold text-white tracking-tight">{value}</div>
+          <h3 className="text-sm font-medium text-white/60 mb-2">{title}</h3>
+          <div className="text-3xl font-extrabold text-white tracking-tight">{value}</div>
           {description && <p className="text-xs text-white/40 mt-1.5">{description}</p>}
         </div>
-        <div className="w-9 h-9 rounded-full bg-[#10b981]/10 flex items-center justify-center border border-[#10b981]/10 text-[#10b981]">
+        <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20 text-emerald-400 shadow-[0_0_12px_rgba(16,185,129,0.15)] group-hover:scale-105 transition-transform">
           {icon}
         </div>
       </div>
       
       <div className="mt-5 pt-4 border-t border-white/5 relative z-10">
         {isStatusCard ? (
-          <div className="flex items-center text-xs font-medium text-white/50">
-            <CheckCircle2 className="w-3.5 h-3.5 mr-1.5 text-[#10b981]" />
+          <div className="flex items-center text-xs font-semibold text-emerald-400">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 mr-2 inline-block animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
             {trendLabel}
           </div>
         ) : trend !== undefined ? (

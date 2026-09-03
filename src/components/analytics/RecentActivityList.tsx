@@ -44,7 +44,7 @@ export function RecentActivityList({ activities, title = "Recent Activity" }: Re
   };
 
   return (
-    <div className="bg-[#0d1310] border border-white/5 rounded-2xl overflow-hidden relative group flex flex-col h-full w-full">
+    <div className="bg-[#0c1410]/80 backdrop-blur-md border border-white/10 hover:border-emerald-500/25 rounded-2xl overflow-hidden relative group flex flex-col h-full w-full transition-all shadow-sm">
       <div className="p-6 pb-4 border-b border-white/5 relative z-10 flex justify-between items-center">
         <h2 className="text-lg font-bold text-white flex items-center gap-2">
           <Clock className="w-5 h-5 text-emerald-400" />

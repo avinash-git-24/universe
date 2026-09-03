@@ -9,8 +9,9 @@ import {
   YAxis,
   CartesianGrid,
 } from "recharts";
-import { TrendingUp, BarChart2, ChevronDown } from "lucide-react";
+import { TrendingUp, BarChart2, ChevronDown, Plus } from "lucide-react";
 import { useState } from "react";
+import Link from "next/link";
 
 interface VolumeChartProps {
   data: { date: string; amount: number }[];
@@ -46,7 +47,7 @@ export function VolumeChart({ data, title, description }: VolumeChartProps) {
   // For now, we will just use the passed daily data.
   
   return (
-    <div className="bg-[#0d1310] border border-white/5 rounded-2xl overflow-hidden relative group w-full">
+    <div className="bg-[#0c1410]/80 backdrop-blur-md border border-white/10 hover:border-emerald-500/25 rounded-2xl overflow-hidden relative group w-full transition-all shadow-sm">
       <div className="p-6 pb-2 border-b border-white/5 relative z-10 flex justify-between items-start">
         <div>
           <h2 className="text-lg font-bold text-white flex items-center gap-2">
@@ -57,7 +58,7 @@ export function VolumeChart({ data, title, description }: VolumeChartProps) {
         </div>
         <button 
           onClick={() => setAggregation(a => a === "Daily" ? "Weekly" : "Daily")}
-          className="flex items-center gap-2 px-3 py-1.5 bg-white/5 hover:bg-white/10 border border-white/5 rounded-lg text-xs font-medium text-white/70 transition-colors"
+          className="flex items-center gap-2 px-3 py-1.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-xs font-medium text-white/70 transition-colors cursor-pointer"
         >
           {aggregation}
           <ChevronDown className="w-3.5 h-3.5 opacity-50" />
@@ -66,7 +67,7 @@ export function VolumeChart({ data, title, description }: VolumeChartProps) {
       
       <div className="p-6 relative z-10">
         {!hasData ? (
-          <div className="flex flex-col items-center justify-center py-16 text-center h-[350px]">
+          <div className="flex flex-col items-center justify-center py-12 text-center h-[350px]">
             <div className="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center mb-4 border border-white/10">
               <BarChart2 className="w-8 h-8 text-white/20" />
             </div>
@@ -74,10 +75,17 @@ export function VolumeChart({ data, title, description }: VolumeChartProps) {
             <p className="text-sm text-white/40 mt-1 max-w-sm">
               Your spending over the selected time range will appear here once you make requests.
             </p>
+            <Link
+              href="/dashboard/requests/new"
+              className="mt-4 px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-xs transition-all shadow-[0_0_15px_rgba(16,185,129,0.3)] active:scale-95 inline-flex items-center gap-1.5 cursor-pointer"
+            >
+              <Plus className="w-3.5 h-3.5" />
+              <span>Create Delivery Request</span>
+            </Link>
           </div>
         ) : (
-          <div className="h-[350px] w-full">
-            <ResponsiveContainer width="100%" height="100%">
+          <div className="h-[350px] w-full min-w-0 min-h-[350px]">
+            <ResponsiveContainer width="100%" height={350} minWidth={0} minHeight={350}>
               <AreaChart data={data} margin={{ top: 20, right: 10, left: -20, bottom: 0 }}>
                 <defs>
                   <linearGradient id="colorAmount" x1="0" y1="0" x2="0" y2="1">

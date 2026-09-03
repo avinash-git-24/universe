@@ -44,7 +44,7 @@ export function RequestStatusDonut({ data, title, description, total }: RequestS
   }));
 
   return (
-    <div className="bg-[#0d1310] border border-white/5 rounded-2xl overflow-hidden relative group h-full">
+    <div className="bg-[#0c1410]/80 backdrop-blur-md border border-white/10 hover:border-emerald-500/25 rounded-2xl overflow-hidden relative group h-full transition-all shadow-sm">
       <div className="p-6 pb-2 border-b border-white/5 relative z-10 flex justify-between items-start">
         <div>
           <h2 className="text-lg font-bold text-white flex items-center gap-2">
@@ -68,12 +68,12 @@ export function RequestStatusDonut({ data, title, description, total }: RequestS
           </div>
         ) : (
           <div className="flex w-full h-full items-center">
-            <div className="flex-1 h-full relative">
+            <div className="flex-1 h-full min-w-0 min-h-[260px] relative">
               <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
                 <span className="text-3xl font-extrabold text-white">{total}</span>
                 <span className="text-xs font-medium text-white/40 tracking-wider mt-1">Total</span>
               </div>
-              <ResponsiveContainer width="100%" height="100%">
+              <ResponsiveContainer width="100%" height={260} minWidth={0} minHeight={260}>
                 <PieChart>
                   <Pie
                     data={data}

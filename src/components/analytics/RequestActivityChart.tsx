@@ -59,7 +59,7 @@ export function RequestActivityChart({
   const hasData = data && data.some((d) => d.created > 0 || d.completed > 0 || d.cancelled > 0);
 
   return (
-    <div className="bg-[#0d1310] border border-white/5 rounded-2xl overflow-hidden relative group h-full">
+    <div className="bg-[#0c1410]/80 backdrop-blur-md border border-white/10 hover:border-emerald-500/25 rounded-2xl overflow-hidden relative group h-full transition-all shadow-sm">
       <div className="p-6 pb-2 border-b border-white/5 relative z-10 flex justify-between items-start">
         <div>
           <h2 className="text-lg font-bold text-white flex items-center gap-2">
@@ -70,7 +70,7 @@ export function RequestActivityChart({
         </div>
         <button 
           onClick={() => setAggregation(a => a === "Daily" ? "Weekly" : "Daily")}
-          className="flex items-center gap-2 px-3 py-1.5 bg-white/5 hover:bg-white/10 border border-white/5 rounded-lg text-xs font-medium text-white/70 transition-colors"
+          className="flex items-center gap-2 px-3 py-1.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-xs font-medium text-white/70 transition-colors cursor-pointer"
         >
           {aggregation}
           <ChevronDown className="w-3.5 h-3.5 opacity-50" />
@@ -89,8 +89,8 @@ export function RequestActivityChart({
             </p>
           </div>
         ) : (
-          <div className="h-[300px] w-full">
-            <ResponsiveContainer width="100%" height="100%">
+          <div className="h-[300px] w-full min-w-0 min-h-[300px]">
+            <ResponsiveContainer width="100%" height={300} minWidth={0} minHeight={300}>
               <BarChart data={data} margin={{ top: 20, right: 0, left: -20, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.05)" />
                 <XAxis 
@@ -117,9 +117,9 @@ export function RequestActivityChart({
                   iconType="square"
                   wrapperStyle={{ fontSize: '12px', color: 'rgba(255,255,255,0.6)' }}
                 />
-                <Bar dataKey="created" name="Created" fill="#10b981" radius={[2, 2, 0, 0]} maxBarSize={16} />
-                <Bar dataKey="completed" name="Completed" fill="#3b82f6" radius={[2, 2, 0, 0]} maxBarSize={16} />
-                <Bar dataKey="cancelled" name="Cancelled" fill="#ef4444" radius={[2, 2, 0, 0]} maxBarSize={16} />
+                <Bar dataKey="created" name="Created" fill="#10b981" radius={[4, 4, 0, 0]} maxBarSize={20} />
+                <Bar dataKey="completed" name="Completed" fill="#3b82f6" radius={[4, 4, 0, 0]} maxBarSize={20} />
+                <Bar dataKey="cancelled" name="Cancelled" fill="#ef4444" radius={[4, 4, 0, 0]} maxBarSize={20} />
               </BarChart>
             </ResponsiveContainer>
           </div>

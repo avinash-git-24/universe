@@ -72,10 +72,31 @@ export function AnalyticsClientWrapper({ role, initialData }: AnalyticsClientWra
     };
   }, [initialData, previousCutoffDate, cutoffDate]);
 
-  // Aggregate Volume Chart Data
+  // Aggregate Volume Chart Data (uses transactions, falls back to requests delivery_fee if no wallet transactions)
   const volumeChartData = useMemo(() => {
-    return aggregateDailyVolume(filteredData.transactionsData, timeRange);
-  }, [filteredData.transactionsData, timeRange]);
+    const txVolume = aggregateDailyVolume(filteredData.transactionsData, timeRange);
+    const hasTxVolume = txVolume.some(t => t.amount > 0);
+    if (hasTxVolume || role !== "student" || filteredData.requestsData.length === 0) {
+      return txVolume;
+    }
+    // Fallback using request fees so spending trend renders real data
+    const days = Array.from({ length: timeRange }).map((_, i) => {
+      const d = startOfDay(subDays(new Date(), timeRange - 1 - i));
+      return {
+        date: format(d, "MMM dd"),
+        rawDate: d,
+        amount: 0,
+      };
+    });
+    filteredData.requestsData.forEach(r => {
+      const rDate = format(startOfDay(new Date(r.created_at)), "MMM dd");
+      const day = days.find(d => d.date === rDate);
+      if (day) {
+        day.amount += Number(r.delivery_fee) || 0;
+      }
+    });
+    return days;
+  }, [filteredData, timeRange, role]);
 
   // Calculate metrics function
   const calculateMetrics = (dataObj: typeof filteredData, currentRole: typeof role) => {
@@ -86,10 +107,21 @@ export function AnalyticsClientWrapper({ role, initialData }: AnalyticsClientWra
       totalSpent = dataObj.transactionsData
         .filter(t => t.type === "payment")
         .reduce((sum, tx) => sum + Math.abs(tx.amount), 0);
+
+      // Fallback: If wallet payment transactions are 0, use delivery_fee sum
+      if (totalSpent === 0 && dataObj.requestsData.length > 0) {
+        totalSpent = dataObj.requestsData.reduce((sum, r) => sum + (Number(r.delivery_fee) || 0), 0);
+      }
     } else {
       totalEarned = dataObj.transactionsData
         .filter(t => t.type === "earning")
         .reduce((sum, tx) => sum + Math.abs(tx.amount), 0);
+
+      // Fallback for runner: if wallet earnings are 0, sum up completed delivery fees
+      if (totalEarned === 0 && dataObj.assignmentsData.length > 0) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        totalEarned = dataObj.assignmentsData.reduce((sum, a: any) => sum + (Number(a.delivery_requests?.delivery_fee) || 0), 0);
+      }
     }
 
     const totalRequests = currentRole === "student" ? dataObj.requestsData.length : 0;
@@ -108,8 +140,10 @@ export function AnalyticsClientWrapper({ role, initialData }: AnalyticsClientWra
       : (deliveriesCompleted > 0 ? (totalEarned / deliveriesCompleted) : 0);
 
     const amounts = dataObj.transactionsData.map(t => Math.abs(t.amount));
-    const highestCost = amounts.length > 0 ? Math.max(...amounts) : 0;
-    const lowestCost = amounts.length > 0 ? Math.min(...amounts) : 0;
+    const requestFees = dataObj.requestsData.map(r => Number(r.delivery_fee) || 0).filter(f => f > 0);
+    const pool = amounts.length > 0 ? amounts : requestFees;
+    const highestCost = pool.length > 0 ? Math.max(...pool) : 0;
+    const lowestCost = pool.length > 0 ? Math.min(...pool) : 0;
 
     return { totalSpent, totalEarned, totalRequests, deliveriesCompleted, completedRequests, cancelledRequests, avgSpending, highestCost, lowestCost };
   };
@@ -161,17 +195,22 @@ export function AnalyticsClientWrapper({ role, initialData }: AnalyticsClientWra
     ];
   }, [filteredData, role, summaryMetrics]);
 
-  // Compile Recent Activity Feed
+  // Compile Recent Activity Feed with campus routes & fee info
   const recentActivities = useMemo(() => {
     const activities: ActivityEntry[] = [];
     
     if (role === "student") {
       filteredData.requestsData.forEach(r => {
+        const route = r.pickup_location && r.dropoff_location
+          ? `${r.pickup_location} → ${r.dropoff_location}`
+          : "Campus Delivery";
+        const feeBadge = r.delivery_fee ? ` · ₹${r.delivery_fee}` : "";
+
         activities.push({
           id: `req-${r.id}-created`,
           type: "request_created",
           title: "Request Created",
-          description: "Delivery request",
+          description: `📍 ${route}${feeBadge}`,
           date: new Date(r.created_at)
         });
 
@@ -180,7 +219,7 @@ export function AnalyticsClientWrapper({ role, initialData }: AnalyticsClientWra
             id: `req-${r.id}-completed`,
             type: "request_completed",
             title: "Delivery Completed",
-            description: "Delivery request",
+            description: `✅ Delivered to ${r.dropoff_location || "Hostel"}`,
             date: new Date(r.updated_at || r.created_at)
           });
         }
@@ -189,19 +228,24 @@ export function AnalyticsClientWrapper({ role, initialData }: AnalyticsClientWra
             id: `req-${r.id}-cancelled`,
             type: "request_cancelled",
             title: "Request Cancelled",
-            description: "Delivery request",
+            description: `❌ Cancelled: ${route}`,
             date: new Date(r.updated_at || r.created_at)
           });
         }
       });
     } else {
       filteredData.assignmentsData.forEach(a => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const req = (a as any).delivery_requests;
+        const route = req?.pickup_location && req?.dropoff_location
+          ? `${req.pickup_location} → ${req.dropoff_location}`
+          : "Campus Delivery";
         activities.push({
           id: `assign-${a.id}`,
           type: "request_completed",
           title: "Delivery Completed",
-          description: "Successfully delivered request",
-          date: new Date(a.assigned_at)
+          description: `🚴 Delivered: ${route}`,
+          date: new Date(a.assigned_at || (a as any).created_at || new Date())
         });
       });
     }
@@ -210,13 +254,24 @@ export function AnalyticsClientWrapper({ role, initialData }: AnalyticsClientWra
   }, [filteredData, role]);
 
   return (
-    <div className="min-h-screen bg-[#0a0f0d] pt-4 sm:pt-8 pb-12 px-3 sm:px-6 selection:bg-emerald-500/30">
-      <div className="max-w-6xl mx-auto space-y-6">
+    <div className="min-h-screen bg-[#060a08] relative overflow-hidden pt-4 sm:pt-8 pb-12 px-3 sm:px-6 selection:bg-emerald-500/30">
+      {/* Ambient Stardust & Nebula Glows */}
+      <div className="absolute inset-0 bg-[radial-gradient(#10b98110_1px,transparent_1px)] [background-size:24px_24px] pointer-events-none opacity-50" />
+      <div className="absolute -top-40 -left-40 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-1/3 -right-40 w-96 h-96 bg-teal-500/5 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-40 left-1/4 w-96 h-96 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none" />
+
+      <div className="max-w-6xl mx-auto space-y-6 relative z-10">
         
         {/* Page Header & Filters */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 sm:gap-6">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">Analytics & Reports</h1>
+            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white flex items-center gap-2.5">
+              <span>Analytics & Reports</span>
+              <span className="text-xs px-2.5 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 font-bold">
+                Live
+              </span>
+            </h1>
             <p className="text-white/50 mt-1 text-xs sm:text-sm font-medium">
               Track your {role === "student" ? "spending, requests," : "earnings, deliveries,"} and activity.
             </p>
@@ -224,15 +279,15 @@ export function AnalyticsClientWrapper({ role, initialData }: AnalyticsClientWra
           
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 w-full md:w-auto">
             {/* Time Range Filter (Pill style matching reference) */}
-            <div className="flex items-center bg-[#131b17] rounded-full border border-white/5 overflow-hidden w-full sm:w-auto">
+            <div className="flex items-center bg-[#0c1410] rounded-full border border-white/10 p-1 overflow-hidden w-full sm:w-auto shadow-sm">
               {[7, 30, 90].map((days) => (
                 <button
                   key={days}
                   onClick={() => setTimeRange(days as TimeRange)}
-                  className={`flex-1 sm:flex-none px-4 sm:px-5 py-2 text-xs font-medium transition-all ${
+                  className={`flex-1 sm:flex-none px-4 sm:px-5 py-1.5 text-xs font-semibold rounded-full transition-all cursor-pointer ${
                     timeRange === days 
-                    ? "bg-[#10b981] text-[#0a0f0d] font-bold" 
-                    : "text-white/50 hover:text-white hover:bg-white/5"
+                    ? "bg-emerald-500 text-black font-extrabold shadow-[0_0_12px_rgba(16,185,129,0.4)]" 
+                    : "text-white/60 hover:text-white hover:bg-white/5"
                   }`}
                 >
                   {days} Days
