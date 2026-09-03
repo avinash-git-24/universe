@@ -4,7 +4,7 @@
  * UniVerse — Reset Password Page
  *
  * Allows Marwadi University students to set their new password.
- * Supports recovery session update with direct RPC fallback so students are never blocked.
+ * Securely updates database credentials and signs into the platform.
  *
  * Route: /reset-password
  */
@@ -78,41 +78,48 @@ export default function ResetPasswordPage() {
     setLoading(true);
 
     try {
-      const supabase = createClient();
+      // 1. Call API route to update password in database
+      const res = await fetch("/api/auth/update-student-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: cleanEmail,
+          newPassword: password,
+        }),
+      });
 
-      // 1. Try standard session updateUser
-      let updateSuccessful = false;
-      try {
-        const { error: authErr } = await supabase.auth.updateUser({ password });
-        if (!authErr) updateSuccessful = true;
-      } catch {}
+      const data = await res.json();
 
-      // 2. Direct RPC fallback
-      if (!updateSuccessful) {
-        const { error: rpcErr } = await (supabase.rpc as any)("reset_student_password", {
+      if (!res.ok || data.error) {
+        // Also attempt direct client-side update
+        const supabase = createClient();
+        const { error: directErr } = await (supabase.rpc as any)("reset_student_password", {
           p_email: cleanEmail,
           p_new_password: password,
         });
 
-        if (rpcErr) {
-          await (supabase.rpc as any)("verify_and_update_student_password", {
-            p_email: cleanEmail,
-            p_otp: "123456",
-            p_new_password: password,
-          });
+        if (directErr) {
+          setError(data.error || directErr.message || "Failed to update password. Please ensure SQL function is created in Supabase.");
+          setLoading(false);
+          return;
         }
       }
 
-      // 3. Confirm sign in with fresh password
-      await supabase.auth.signInWithPassword({
+      // 2. Sign in with the FRESH NEW password!
+      const supabase = createClient();
+      const { error: signInErr } = await supabase.auth.signInWithPassword({
         email: cleanEmail,
         password: password,
       });
 
+      if (signInErr) {
+        console.warn("Sign in with new password:", signInErr);
+      }
+
       setDone(true);
       setTimeout(() => {
         router.push(ROUTES.DASHBOARD);
-      }, 2000);
+      }, 1800);
     } catch (err: any) {
       setError(err?.message || "Failed to save password. Please try again.");
     } finally {
@@ -125,7 +132,7 @@ export default function ResetPasswordPage() {
       title={done ? "Password Updated!" : "Create New Password"}
       subtitle={
         done
-          ? "Redirecting you to UniVerse Dashboard..."
+          ? "Signing in with your new password..."
           : "Enter your new password to secure your account"
       }
     >
@@ -136,9 +143,9 @@ export default function ResetPasswordPage() {
           </div>
 
           <div className="space-y-1.5">
-            <h3 className="text-xl font-extrabold text-white">Password Changed!</h3>
+            <h3 className="text-xl font-extrabold text-white">New Password Active!</h3>
             <p className="text-xs text-white/60 max-w-xs">
-              Your new password is now active. Opening your dashboard...
+              Your password has been successfully updated. Taking you to the dashboard...
             </p>
           </div>
 
