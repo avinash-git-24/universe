@@ -97,8 +97,6 @@ function CyberTunnelCanvas() {
       size: Math.random() * 1.5 + 0.6,
     }));
 
-    let offset = 0;
-
     const render = () => {
       ctx.clearRect(0, 0, width, height);
 
@@ -127,76 +125,7 @@ function CyberTunnelCanvas() {
         }
       }
 
-      // 2. Draw Radiating 3D Perspective Grid Lines
-      const numRaysX = 14;
-      const numRaysY = 10;
-
-      // Rays to Top and Bottom
-      for (let i = 0; i <= numRaysX; i++) {
-        const targetX = (width / numRaysX) * i;
-
-        // Top line
-        ctx.beginPath();
-        ctx.moveTo(cx, cy);
-        ctx.lineTo(targetX, 0);
-        ctx.strokeStyle = "rgba(0, 230, 118, 0.2)";
-        ctx.lineWidth = 1;
-        ctx.stroke();
-
-        // Bottom line
-        ctx.beginPath();
-        ctx.moveTo(cx, cy);
-        ctx.lineTo(targetX, height);
-        ctx.strokeStyle = "rgba(0, 230, 118, 0.2)";
-        ctx.lineWidth = 1;
-        ctx.stroke();
-      }
-
-      // Rays to Left and Right
-      for (let j = 0; j <= numRaysY; j++) {
-        const targetY = (height / numRaysY) * j;
-
-        // Left line
-        ctx.beginPath();
-        ctx.moveTo(cx, cy);
-        ctx.lineTo(0, targetY);
-        ctx.strokeStyle = "rgba(0, 230, 118, 0.2)";
-        ctx.lineWidth = 1;
-        ctx.stroke();
-
-        // Right line
-        ctx.beginPath();
-        ctx.moveTo(cx, cy);
-        ctx.lineTo(width, targetY);
-        ctx.strokeStyle = "rgba(0, 230, 118, 0.2)";
-        ctx.lineWidth = 1;
-        ctx.stroke();
-      }
-
-      // 3. Draw Concentric Perspective Tunnel Rings
-      offset = (offset + 0.0018) % 0.1;
-      const numRings = 11;
-
-      for (let i = 0; i < numRings; i++) {
-        const progress = (i / numRings + offset) % 1;
-        if (progress <= 0.02) continue;
-
-        // Power function creates realistic depth perspective
-        const p = Math.pow(progress, 2.3);
-        const rw = width * p;
-        const rh = height * p;
-        const rx = cx - rw / 2;
-        const ry = cy - rh / 2;
-
-        const alpha = Math.min(0.42, progress * 0.45);
-        ctx.beginPath();
-        ctx.rect(rx, ry, rw, rh);
-        ctx.strokeStyle = `rgba(0, 230, 118, ${alpha})`;
-        ctx.lineWidth = progress > 0.6 ? 1.2 : 0.8;
-        ctx.stroke();
-      }
-
-      // 4. Subtle Radial Vignette Fade (Keeps center text razor sharp)
+      // 2. Cosmic Stardust Field and Atmospheric Depth (No green grid lines)
       const grad = ctx.createRadialGradient(cx, cy, 60, cx, cy, Math.max(width, height) * 0.75);
       grad.addColorStop(0, "rgba(3, 11, 8, 0.6)");
       grad.addColorStop(0.45, "rgba(3, 11, 8, 0.25)");
