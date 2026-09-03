@@ -69,6 +69,7 @@ function Field({
             paddingRight: rightNode ? 86 : 16,
             letterSpacing: type === "password" ? "0.15em" : "normal",
             fontFamily: "'Inter', sans-serif",
+            caretColor: "#00d2ff",
           }}
         />
         {rightNode && (
@@ -598,6 +599,17 @@ function LoginForm() {
         .scifi-google-btn:hover {
           background: rgba(255, 255, 255, 0.08) !important;
           border-color: rgba(0, 210, 255, 0.4) !important;
+        }
+        .scifi-input,
+        .scifi-input:focus,
+        input[type="password"],
+        input[type="email"],
+        input[type="text"] {
+          caret-color: #00d2ff !important;
+        }
+        .scifi-input::selection {
+          background: rgba(0, 210, 255, 0.4) !important;
+          color: #ffffff !important;
         }
         .scifi-input::placeholder {
           color: rgba(255, 255, 255, 0.25) !important;
