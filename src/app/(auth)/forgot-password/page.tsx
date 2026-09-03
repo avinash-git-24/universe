@@ -1,11 +1,11 @@
 "use client";
 
 /**
- * UniVerse — Facebook/Instagram Style Password Reset Flow
+ * UniVerse — Automated 3-Step Facebook/Instagram Style Password Reset
  *
- * Step 1: Enter Email ➔ Sends 6-digit OTP to student's inbox
+ * Step 1: Enter Email ➔ Sends 6-digit OTP directly to student's Gmail inbox
  * Step 2: Enter 6-Digit Code ➔ Verifies OTP
- * Step 3: Set New Password ➔ (Only shown after code verification)
+ * Step 3: Create New Password ➔ (Only unlocked after code verification)
  * Step 4: Success ➔ Auto signs in and redirects to Dashboard
  */
 
@@ -49,7 +49,7 @@ export default function ForgotPasswordPage() {
   const [error, setError] = useState<string | null>(null);
   const [infoMessage, setInfoMessage] = useState<string | null>(null);
 
-  // ── STEP 1: SEND OTP CODE TO EMAIL ──
+  // ── STEP 1: SEND 6-DIGIT OTP TO GMAIL INBOX ──
   async function handleSendOtp(e: React.FormEvent) {
     e.preventDefault();
     const normalizedEmail = sanitizeEmail(email);
@@ -67,26 +67,25 @@ export default function ForgotPasswordPage() {
     setLoading(true);
 
     try {
-      const supabase = createClient();
-      const { error: resetError } = await supabase.auth.resetPasswordForEmail(normalizedEmail, {
-        redirectTo: `${window.location.origin}/auth/callback?type=recovery`,
+      const res = await fetch("/api/auth/send-recovery-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: normalizedEmail }),
       });
 
-      if (resetError) {
-        console.error("Reset email error:", resetError);
-        const raw = resetError.message || "";
-        if (raw && raw !== "{}" && typeof raw === "string") {
-          setError(raw);
-        } else {
-          setInfoMessage(`We've sent a 6-digit verification code to ${normalizedEmail}`);
-        }
+      const data = await res.json();
+
+      if (!res.ok || data.error) {
+        // Fallback: Check Supabase directly
+        const supabase = createClient();
+        await (supabase.rpc as any)("generate_and_store_recovery_otp", { p_email: normalizedEmail });
       }
 
       setStep(2);
-      setInfoMessage(`A 6-digit security code has been sent to ${normalizedEmail}`);
+      setInfoMessage(`A 6-digit security OTP code has been sent to ${normalizedEmail}`);
     } catch (err: any) {
       setStep(2);
-      setInfoMessage(`Please enter the 6-digit OTP code sent to ${normalizedEmail}`);
+      setInfoMessage(`A 6-digit verification code has been dispatched to ${normalizedEmail}`);
     } finally {
       setLoading(false);
     }
@@ -101,11 +100,12 @@ export default function ForgotPasswordPage() {
     setError(null);
 
     try {
-      const supabase = createClient();
-      await supabase.auth.resetPasswordForEmail(normalizedEmail, {
-        redirectTo: `${window.location.origin}/auth/callback?type=recovery`,
+      await fetch("/api/auth/send-recovery-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: normalizedEmail }),
       });
-      setInfoMessage("A fresh 6-digit code has been resent to your email.");
+      setInfoMessage("A fresh 6-digit OTP code has been sent to your Gmail inbox.");
     } catch (err: any) {
       setError("Failed to resend code. Please try again.");
     } finally {
@@ -120,7 +120,7 @@ export default function ForgotPasswordPage() {
     const cleanOtp = otp.trim();
 
     if (!cleanOtp || cleanOtp.length < 6) {
-      setError("Please enter the complete 6-digit code received on your email.");
+      setError("Please enter the complete 6-digit code received on your Gmail.");
       return;
     }
 
@@ -128,22 +128,21 @@ export default function ForgotPasswordPage() {
     setLoading(true);
 
     try {
-      const supabase = createClient();
-
-      // 1. Verify Secret OTP with Supabase Recovery
-      const { error: verifyError } = await supabase.auth.verifyOtp({
-        email: normalizedEmail,
-        token: cleanOtp,
-        type: "recovery",
+      const res = await fetch("/api/auth/verify-recovery-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: normalizedEmail, otp: cleanOtp }),
       });
 
-      if (verifyError) {
-        setError(verifyError.message || "Invalid or expired 6-digit OTP code. Please check your email inbox.");
+      const data = await res.json();
+
+      if (!res.ok || data.error) {
+        setError(data.error || "Invalid or expired 6-digit OTP code. Please check your inbox.");
         setLoading(false);
         return;
       }
 
-      // 2. Secret OTP Verified! Unlock Step 3 (Set New Password)
+      // OTP is 100% correct! Unlock Step 3 (Set New Password)
       setStep(3);
       setError(null);
     } catch (err: any) {
@@ -157,6 +156,7 @@ export default function ForgotPasswordPage() {
   async function handleSetNewPassword(e: React.FormEvent) {
     e.preventDefault();
     const normalizedEmail = sanitizeEmail(email);
+    const cleanOtp = otp.trim();
 
     if (!newPassword || newPassword.length < 6) {
       setError("Password must be at least 6 characters.");
@@ -171,28 +171,27 @@ export default function ForgotPasswordPage() {
     setLoading(true);
 
     try {
-      const supabase = createClient();
-
-      // 1. Update password on authenticated recovery session
-      const { error: updateError } = await supabase.auth.updateUser({
-        password: newPassword,
+      // 1. Call final password update API
+      const res = await fetch("/api/auth/reset-password-final", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: normalizedEmail,
+          otp: cleanOtp,
+          newPassword: newPassword,
+        }),
       });
 
-      if (updateError) {
-        // Fallback: Use secure DB RPC if available
-        const { error: rpcError } = await (supabase.rpc as any)("reset_student_password", {
-          p_email: normalizedEmail,
-          p_new_password: newPassword,
-        });
+      const data = await res.json();
 
-        if (rpcError) {
-          setError(updateError.message || "Failed to update password.");
-          setLoading(false);
-          return;
-        }
+      if (!res.ok || data.error) {
+        setError(data.error || "Failed to update password.");
+        setLoading(false);
+        return;
       }
 
       // 2. Sign in to confirm session
+      const supabase = createClient();
       await supabase.auth.signInWithPassword({
         email: normalizedEmail,
         password: newPassword,
