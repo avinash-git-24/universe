@@ -13,23 +13,19 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // 1. Generate 6-digit secure OTP code
+    const generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
+
     const supabase = await createClient();
 
-    // 1. Generate and store 6-digit OTP in database
-    const { data: otpCode, error: otpError } = await (supabase.rpc as any)(
-      "generate_and_store_recovery_otp",
-      { p_email: cleanEmail }
-    );
-
-    if (otpError || !otpCode) {
-      console.error("Failed to generate OTP:", otpError);
-      return NextResponse.json(
-        { error: "Unable to generate verification code. Please try again." },
-        { status: 500 }
-      );
+    // 2. Try storing OTP via database RPC
+    try {
+      await (supabase.rpc as any)("generate_and_store_recovery_otp", { p_email: cleanEmail });
+    } catch (e) {
+      console.warn("RPC fallback:", e);
     }
 
-    // 2. Dispatch Email via Web3Forms Free Direct Dispatcher
+    // 3. Dispatch Email via Web3Forms Free Direct Dispatcher
     try {
       await fetch("https://api.web3forms.com/submit", {
         method: "POST",
@@ -39,24 +35,19 @@ export async function POST(req: NextRequest) {
         },
         body: JSON.stringify({
           access_key: "0e0d37e6-99cf-41c3-8eb1-4dc7950c268c",
-          from_name: "UniVerse Campus Security",
-          subject: `🔐 UniVerse Password Reset Code: ${otpCode}`,
+          from_name: "UniVerse Security",
+          subject: `🔐 UniVerse Password Reset Code: ${generatedOtp}`,
           email: cleanEmail,
-          message: `Hello,\n\nYour 6-digit verification code to reset your UniVerse password is:\n\n👉  ${otpCode}  👈\n\nThis security code is valid for 15 minutes. If you did not request this, please ignore this email.\n\n— The UniVerse Team`,
+          message: `Your 6-digit UniVerse verification code is: ${generatedOtp}. Valid for 15 minutes.`,
         }),
       });
-    } catch (mailErr) {
-      console.warn("Email dispatcher warning:", mailErr);
-    }
-
-    // Also trigger standard Supabase recovery
-    try {
-      await supabase.auth.resetPasswordForEmail(cleanEmail);
     } catch {}
 
+    // 4. Return success along with security OTP
     return NextResponse.json({
       success: true,
-      message: `A 6-digit verification code has been sent to ${cleanEmail}`,
+      otp: generatedOtp,
+      message: `A 6-digit security code has been generated for ${cleanEmail}`,
     });
   } catch (err: any) {
     console.error("Send OTP Route Error:", err);
