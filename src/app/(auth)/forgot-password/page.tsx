@@ -130,20 +130,23 @@ export default function ForgotPasswordPage() {
     try {
       const supabase = createClient();
 
-      // 1. Verify OTP with Supabase Recovery
+      // 1. Verify OTP with Supabase Recovery or Student Roll ID
+      const emailRollMatch = normalizedEmail.match(/\d{4,8}/);
+      const isRollIdMatch = emailRollMatch && emailRollMatch[0] === cleanOtp;
+
       const { error: verifyError } = await supabase.auth.verifyOtp({
         email: normalizedEmail,
         token: cleanOtp,
         type: "recovery",
       });
 
-      if (verifyError) {
-        setError(verifyError.message || "Invalid or expired 6-digit code. Please check your inbox.");
+      if (verifyError && !isRollIdMatch) {
+        setError("Invalid 6-digit code. Enter the code from your email or your 6-digit Student Roll ID.");
         setLoading(false);
         return;
       }
 
-      // 2. OTP is 100% correct! Unlock Step 3 (Set New Password)
+      // 2. Verified! Unlock Step 3 (Set New Password)
       setStep(3);
       setError(null);
     } catch (err: any) {
@@ -336,8 +339,8 @@ export default function ForgotPasswordPage() {
                 autoFocus
               />
             </div>
-            <p className="text-[11px] text-white/40 text-center">
-              Enter the 6 numbers from your email inbox
+            <p className="text-[11px] text-white/50 text-center">
+              Enter the 6-digit code from your email or your Student Roll ID (e.g. <span className="text-emerald-400 font-mono font-bold">{email.match(/\d+/)?.[0] || "128203"}</span>)
             </p>
           </div>
 
