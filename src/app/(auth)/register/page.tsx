@@ -159,15 +159,15 @@ export default function RegisterPage() {
     const scrambleInterval = setInterval(() => {
       setBtnText(Array.from({ length: overrideText.length }).map(() => chars[Math.floor(Math.random() * chars.length)]).join(""));
       scrambles++;
-      if (scrambles > 10) {
+      if (scrambles > 5) {
         clearInterval(scrambleInterval);
-        setBtnText("SYSTEM OVERRIDE");
+        setBtnText("WARPING...");
       }
-    }, 45);
+    }, 30);
 
     setTimeout(() => {
       window.location.href = destinationUrl;
-    }, 2200);
+    }, 650);
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -219,7 +219,7 @@ export default function RegisterPage() {
           queryParams: { prompt: "select_account", hd: "marwadiuniversity.ac.in" },
         },
       });
-    }, 1200);
+    }, 400);
   }
 
   return (
@@ -233,13 +233,13 @@ export default function RegisterPage() {
       <BlackHoleBackground isWarping={isWarping} />
 
       {/* ── Futuristic HUD Elements ── */}
-      <div className="hud-tl" style={{ position: "absolute", top: 28, left: 32, fontFamily: "'Space Mono', monospace", fontSize: 10, letterSpacing: "2px", color: "rgba(255,255,255,0.6)", pointerEvents: "none", zIndex: 2, opacity: isWarping ? 0 : mounted ? 1 : 0, transition: "opacity 0.8s ease 0.3s" }}>
+      <div className="hud-tl" style={{ position: "absolute", top: 28, left: 32, fontFamily: "'Space Mono', monospace", fontSize: 10, letterSpacing: "2px", color: "rgba(255,255,255,0.6)", pointerEvents: "none", zIndex: 2, opacity: isWarping ? 0 : mounted ? 1 : 0, transition: "opacity 0.4s ease" }}>
         <div style={{ position: "absolute", top: -6, left: -6, width: 10, height: 10, borderLeft: "1px solid rgba(0, 210, 255, 0.6)", borderTop: "1px solid rgba(0, 210, 255, 0.6)" }} />
         <strong style={{ color: "#fff" }}>EVENT HORIZON</strong><br />
         <span style={{ color: "#00d2ff" }}>GRAVITY: STABILIZED</span>
       </div>
 
-      <div className="hud-tr" style={{ position: "absolute", top: 28, right: 32, textAlign: "right", fontFamily: "'Space Mono', monospace", fontSize: 10, letterSpacing: "2px", color: "rgba(255,255,255,0.6)", pointerEvents: "none", zIndex: 2, opacity: isWarping ? 0 : mounted ? 1 : 0, transition: "opacity 0.8s ease 0.3s" }}>
+      <div className="hud-tr" style={{ position: "absolute", top: 28, right: 32, textAlign: "right", fontFamily: "'Space Mono', monospace", fontSize: 10, letterSpacing: "2px", color: "rgba(255,255,255,0.6)", pointerEvents: "none", zIndex: 2, opacity: isWarping ? 0 : mounted ? 1 : 0, transition: "opacity 0.4s ease" }}>
         <div style={{ position: "absolute", top: -6, right: -6, width: 10, height: 10, borderRight: "1px solid rgba(0, 210, 255, 0.6)", borderTop: "1px solid rgba(0, 210, 255, 0.6)" }} />
         <strong style={{ color: "#fff" }}>SYSTEM STATUS</strong><br />
         <span style={{ color: "#00d2ff" }}>ONLINE // NOMINAL</span>
@@ -253,7 +253,7 @@ export default function RegisterPage() {
         opacity: isWarping ? 0 : mounted ? 1 : 0,
         filter: isWarping ? "blur(10px)" : mounted ? "blur(0px)" : "blur(12px)",
         transition: isWarping
-          ? "all 0.8s cubic-bezier(0.7, 0, 0.84, 0)"
+          ? "all 0.35s cubic-bezier(0.7, 0, 0.84, 0)"
           : "all 1.2s cubic-bezier(0.16, 1, 0.3, 1)",
         pointerEvents: isWarping ? "none" : "auto",
       }}>
