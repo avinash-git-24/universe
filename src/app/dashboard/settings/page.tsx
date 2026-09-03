@@ -42,30 +42,32 @@ export default async function SettingsPage() {
   }
 
   return (
-    <div className="min-h-screen pt-4 sm:pt-8 pb-16 px-3 sm:px-6 relative">
+    <div className="min-h-screen pt-4 sm:pt-8 pb-16 px-3 sm:px-6 relative overflow-hidden bg-[#060a08]">
       {/* Floating particles background (lazy-loaded Three.js) */}
       <div className="absolute inset-0 z-0 pointer-events-none opacity-40 fixed">
         <LazySpaceBackground />
       </div>
 
-      <div style={{ maxWidth: "800px", margin: "0 auto", position: "relative", zIndex: 10 }}>
+      {/* Cosmic ambient radial glows */}
+      <div className="absolute top-0 right-1/4 w-[600px] h-[600px] rounded-full bg-radial from-emerald-500/10 via-transparent to-transparent blur-3xl pointer-events-none" />
+      <div className="absolute bottom-1/4 left-10 w-[500px] h-[500px] rounded-full bg-radial from-teal-500/10 via-transparent to-transparent blur-3xl pointer-events-none" />
+
+      <div className="max-w-[820px] mx-auto relative z-10">
         
         {/* Header */}
         <div className="flex items-center gap-3 sm:gap-4 mb-6 sm:mb-8">
-          <Link href="/dashboard" style={{
-            display: "inline-flex", alignItems: "center", justifyContent: "center",
-            width: "40px", height: "40px", borderRadius: "50%",
-            background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)",
-            color: "#A7B8B0", textDecoration: "none", transition: "all 0.2s"
-          }} className="hover:bg-[rgba(255,255,255,0.1)] hover:text-white shrink-0">
-            <ArrowLeft size={18} />
+          <Link 
+            href="/dashboard" 
+            className="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-white/[0.03] hover:bg-white/[0.08] border border-white/10 text-[#A7B8B0] hover:text-white transition-all group shrink-0"
+          >
+            <ArrowLeft size={18} className="transition-transform group-hover:-translate-x-0.5 text-emerald-400" />
           </Link>
           <div>
-            <h1 className="text-white font-extrabold text-2xl sm:text-3xl m-0 tracking-tight">
-              Settings
+            <h1 className="text-white font-extrabold text-2xl sm:text-3xl m-0 tracking-tight flex items-center gap-2.5">
+              <span>Settings</span>
             </h1>
             <p className="text-white/60 text-xs sm:text-sm m-0 mt-1">
-              Manage your account, security, and preferences.
+              Manage your campus identity, security credentials, and preferences.
             </p>
           </div>
         </div>
