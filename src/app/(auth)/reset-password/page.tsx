@@ -32,7 +32,7 @@ function sanitizeEmail(email: string): string {
 export default function ResetPasswordPage() {
   const router = useRouter();
 
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState("avinash.128203@marwadiuniversity.ac.in");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [showPassword, setShowPassword] = useState(false);
