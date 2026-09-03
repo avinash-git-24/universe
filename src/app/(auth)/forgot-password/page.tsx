@@ -6,15 +6,16 @@
  * Ultra-Luxury Modern Dark Aesthetic:
  * - Radiant Celestial Halo behind UniVerse logo
  * - Dual Aurora flares & high-definition Cyber-Grid horizon
- * - Faint shimmering starfield particles
+ * - 6-Digit Distinct PIN Boxes with auto-advance & paste support
+ * - 30-Second live countdown timer for Resend OTP
+ * - Clean non-overlapping recipient chip
  * - Stepper with active glowing status pills
  * - Shimmer-sweep CTA button with interactive physics
- * - Live MU domain validation & one-click clear button
  *
  * Route: /forgot-password
  */
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
@@ -71,17 +72,87 @@ export default function ForgotPasswordPage() {
   const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
+  const [otpDigits, setOtpDigits] = useState<string[]>(["", "", "", "", "", ""]);
+  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
   const [loading, setLoading] = useState(false);
   const [resending, setResending] = useState(false);
+  const [countdown, setCountdown] = useState(30);
   const [error, setError] = useState<string | null>(null);
   const [infoMessage, setInfoMessage] = useState<string | null>(null);
 
   const isEmailValid = validateEmail(email);
   const pwStrength = getPasswordStrength(newPassword);
+
+  // Countdown timer for resend OTP
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (step === 2 && countdown > 0) {
+      timer = setTimeout(() => setCountdown((prev) => prev - 1), 1000);
+    }
+    return () => clearTimeout(timer);
+  }, [step, countdown]);
+
+  // ── PIN BOX INPUT HANDLERS ──
+  const handleOtpChange = (index: number, val: string) => {
+    const cleaned = val.replace(/\D/g, "");
+    if (!cleaned) {
+      const updated = [...otpDigits];
+      updated[index] = "";
+      setOtpDigits(updated);
+      setOtp(updated.join(""));
+      return;
+    }
+
+    // Multi-char paste in single box
+    if (cleaned.length > 1) {
+      const chars = cleaned.slice(0, 6).split("");
+      const updated = [...otpDigits];
+      chars.forEach((c, idx) => {
+        if (index + idx < 6) updated[index + idx] = c;
+      });
+      setOtpDigits(updated);
+      setOtp(updated.join(""));
+      const nextFocus = Math.min(index + chars.length, 5);
+      inputRefs.current[nextFocus]?.focus();
+      return;
+    }
+
+    const updated = [...otpDigits];
+    updated[index] = cleaned[0];
+    setOtpDigits(updated);
+    setOtp(updated.join(""));
+
+    // Auto advance to next box
+    if (index < 5 && cleaned[0]) {
+      inputRefs.current[index + 1]?.focus();
+    }
+  };
+
+  const handleOtpKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Backspace" && !otpDigits[index] && index > 0) {
+      inputRefs.current[index - 1]?.focus();
+    }
+  };
+
+  const handleOtpPaste = (e: React.ClipboardEvent) => {
+    e.preventDefault();
+    const pasted = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, 6);
+    if (!pasted) return;
+    const chars = pasted.split("");
+    const updated = ["", "", "", "", "", ""];
+    chars.forEach((c, i) => {
+      if (i < 6) updated[i] = c;
+    });
+    setOtpDigits(updated);
+    setOtp(updated.join(""));
+    const nextFocus = Math.min(chars.length, 5);
+    inputRefs.current[nextFocus]?.focus();
+  };
 
   // ── STEP 1: SEND 6-DIGIT SECRET OTP TO GMAIL INBOX ──
   async function handleSendOtp(e: React.FormEvent) {
@@ -116,10 +187,12 @@ export default function ForgotPasswordPage() {
       }
 
       setStep(2);
-      setInfoMessage(`We've sent a 6-digit secret OTP to ${normalizedEmail}. Check your Gmail inbox!`);
+      setCountdown(30);
+      setInfoMessage(`We've sent a 6-digit secret OTP to your Gmail inbox.`);
     } catch {
       setStep(2);
-      setInfoMessage(`A 6-digit verification code has been dispatched to ${normalizedEmail}`);
+      setCountdown(30);
+      setInfoMessage(`A 6-digit verification code has been dispatched to your email.`);
     } finally {
       setLoading(false);
     }
@@ -128,7 +201,7 @@ export default function ForgotPasswordPage() {
   // Resend OTP
   async function handleResendOtp() {
     const normalizedEmail = sanitizeEmail(email);
-    if (!normalizedEmail) return;
+    if (!normalizedEmail || countdown > 0) return;
 
     setResending(true);
     setError(null);
@@ -139,6 +212,7 @@ export default function ForgotPasswordPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: normalizedEmail }),
       });
+      setCountdown(30);
       setInfoMessage("A fresh 6-digit OTP code has been sent to your Gmail inbox.");
     } catch {
       setError("Failed to resend code. Please try again.");
@@ -151,7 +225,7 @@ export default function ForgotPasswordPage() {
   async function handleVerifyOtp(e: React.FormEvent) {
     e.preventDefault();
     const normalizedEmail = sanitizeEmail(email);
-    const cleanOtp = otp.trim();
+    const cleanOtp = (otp || otpDigits.join("")).trim();
 
     if (!cleanOtp || cleanOtp.length < 6) {
       setError("Please enter the complete 6-digit code received on your Gmail.");
@@ -189,7 +263,7 @@ export default function ForgotPasswordPage() {
   async function handleSetNewPassword(e: React.FormEvent) {
     e.preventDefault();
     const normalizedEmail = sanitizeEmail(email);
-    const cleanOtp = otp.trim();
+    const cleanOtp = (otp || otpDigits.join("")).trim();
 
     if (!newPassword || newPassword.length < 6) {
       setError("Password must be at least 6 characters.");
@@ -266,7 +340,7 @@ export default function ForgotPasswordPage() {
           }}
         />
 
-        {/* Top Halo behind UniVerse Logo (Creates Majestic Glow) */}
+        {/* Top Halo behind UniVerse Logo */}
         <div
           className="absolute top-0 left-1/2 -translate-x-1/2 w-[680px] h-[320px] rounded-full pointer-events-none"
           style={{
@@ -323,7 +397,7 @@ export default function ForgotPasswordPage() {
             : step === 3
             ? "Identity verified! Set a strong password to protect your account"
             : step === 2
-            ? `We sent a secret 6-digit OTP code to ${email || "your email"}`
+            ? `Enter the 6-digit verification code sent to your email`
             : "Enter your college email address to receive a secure recovery code"
         }
       >
@@ -415,8 +489,8 @@ export default function ForgotPasswordPage() {
         {/* ── GLOBAL INFO ALERT ── */}
         {infoMessage && step === 2 && (
           <div className="mb-4 p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs flex items-center gap-2.5 shadow-[0_0_20px_rgba(0,230,118,0.1)]">
-            <Sparkles size={15} className="shrink-0 text-emerald-400" />
-            <span>{infoMessage}</span>
+            <Sparkles size={16} className="shrink-0 text-emerald-400" />
+            <span>Check your student Gmail inbox (and Spam folder) for the 6-digit code.</span>
           </div>
         )}
 
@@ -511,45 +585,64 @@ export default function ForgotPasswordPage() {
           </form>
         )}
 
-        {/* ── STEP 2: ENTER 6-DIGIT OTP ── */}
+        {/* ── STEP 2: ENTER 6-DIGIT SEPARATE PIN BOXES ── */}
         {step === 2 && (
           <form onSubmit={handleVerifyOtp} noValidate className="flex flex-col gap-4">
             <div className="space-y-2">
+              {/* Structured Header without overlap */}
               <div className="flex items-center justify-between">
-                <label
-                  htmlFor="otp-input"
-                  className="text-[11px] font-bold uppercase tracking-wider text-white/70"
-                >
-                  Enter 6-Digit Secret OTP
+                <label className="text-[11px] font-bold uppercase tracking-wider text-white/75 flex items-center gap-1.5">
+                  <KeyRound size={13} className="text-emerald-400" />
+                  <span>6-Digit Verification Code</span>
                 </label>
-                <span className="text-[11px] font-mono text-emerald-400 lowercase">{email}</span>
+                <span className="text-[10px] font-mono font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/25 px-2 py-0.5 rounded-full">
+                  6 Digits
+                </span>
               </div>
 
-              <div className="relative flex items-center">
-                <KeyRound className="absolute left-3.5 w-4 h-4 text-emerald-400 pointer-events-none" />
-                <input
-                  id="otp-input"
-                  type="text"
-                  inputMode="numeric"
-                  maxLength={6}
-                  placeholder="• • • • • •"
-                  value={otp}
-                  onChange={(e) => {
-                    setOtp(e.target.value.replace(/\D/g, "").slice(0, 6));
-                    if (error) setError(null);
-                  }}
-                  className="w-full h-14 pl-11 pr-4 bg-black/50 border-2 border-emerald-500/60 rounded-xl text-emerald-400 font-mono text-2xl tracking-[0.45em] font-extrabold placeholder:text-white/20 focus:outline-none focus:border-emerald-400 focus:ring-4 focus:ring-emerald-500/25 transition-all text-center shadow-[inset_0_0_20px_rgba(0,230,118,0.12)]"
-                  autoFocus
-                />
+              {/* Recipient Chip Badge */}
+              <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-black/40 border border-white/10 text-xs text-white/60">
+                <Mail size={13} className="text-emerald-400 shrink-0" />
+                <span className="text-white/40">Sent to:</span>
+                <span className="text-emerald-400 font-mono font-semibold truncate">{email}</span>
               </div>
+
+              {/* 6-Digit Distinct PIN Boxes */}
+              <div
+                className="flex items-center justify-center gap-2 sm:gap-2.5 pt-2 pb-1"
+                onPaste={handleOtpPaste}
+              >
+                {otpDigits.map((digit, index) => (
+                  <input
+                    key={index}
+                    ref={(el) => {
+                      inputRefs.current[index] = el;
+                    }}
+                    type="text"
+                    inputMode="numeric"
+                    maxLength={1}
+                    value={digit}
+                    onChange={(e) => handleOtpChange(index, e.target.value)}
+                    onKeyDown={(e) => handleOtpKeyDown(index, e)}
+                    className={`w-11 sm:w-12 h-13 sm:h-14 rounded-xl text-center text-xl sm:text-2xl font-mono font-extrabold transition-all duration-150 outline-none ${
+                      digit
+                        ? "bg-emerald-500/15 border-2 border-emerald-400 text-emerald-400 shadow-[0_0_15px_rgba(0,230,118,0.25)]"
+                        : "bg-black/50 border border-white/15 text-white focus:border-emerald-400 focus:ring-4 focus:ring-emerald-500/20"
+                    }`}
+                    autoFocus={index === 0}
+                  />
+                ))}
+              </div>
+
               <p className="text-[11px] text-white/45 text-center">
-                Open your Gmail inbox to find your 6-digit verification code
+                Paste or enter the 6-digit code received on your college email
               </p>
             </div>
 
+            {/* Verify CTA Button */}
             <button
               type="submit"
-              disabled={loading || otp.length < 6}
+              disabled={loading || otpDigits.join("").length < 6}
               className="relative group overflow-hidden w-full h-12 rounded-xl bg-gradient-to-r from-emerald-400 via-emerald-500 to-teal-400 text-black font-extrabold text-sm tracking-wide shadow-[0_0_30px_rgba(0,230,118,0.35)] hover:shadow-[0_0_40px_rgba(0,230,118,0.5)] hover:brightness-105 active:scale-[0.99] transition-all duration-200 flex items-center justify-center gap-2 mt-1 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full duration-1000 bg-gradient-to-r from-transparent via-white/35 to-transparent transition-transform pointer-events-none" />
@@ -567,15 +660,24 @@ export default function ForgotPasswordPage() {
               )}
             </button>
 
+            {/* Resend Timer & Change Email */}
             <div className="flex items-center justify-between text-xs pt-1">
               <button
                 type="button"
                 onClick={handleResendOtp}
-                disabled={resending}
-                className="text-emerald-400 hover:text-emerald-300 transition-colors flex items-center gap-1.5 font-semibold cursor-pointer"
+                disabled={resending || countdown > 0}
+                className={`flex items-center gap-1.5 font-semibold transition-colors ${
+                  countdown > 0
+                    ? "text-white/40 cursor-not-allowed"
+                    : "text-emerald-400 hover:text-emerald-300 cursor-pointer"
+                }`}
               >
                 <RefreshCw size={12} className={resending ? "animate-spin" : ""} />
-                {resending ? "Sending..." : "Resend OTP"}
+                {resending
+                  ? "Sending..."
+                  : countdown > 0
+                  ? `Resend code in ${countdown}s`
+                  : "Resend OTP Code"}
               </button>
 
               <button
@@ -583,11 +685,12 @@ export default function ForgotPasswordPage() {
                 onClick={() => {
                   setStep(1);
                   setOtp("");
+                  setOtpDigits(["", "", "", "", "", ""]);
                   setError(null);
                 }}
-                className="text-white/50 hover:text-white transition-colors cursor-pointer"
+                className="text-white/50 hover:text-white transition-colors cursor-pointer flex items-center gap-1"
               >
-                Change Email
+                <span>Change Email</span>
               </button>
             </div>
           </form>
