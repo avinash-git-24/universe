@@ -10,12 +10,15 @@ import BlackHoleBackground from "@/components/auth/BlackHoleBackground";
 // ─── Custom Sci-Fi Input Field ────────────────────────────────────────────────
 function Field({
   id, type, label, placeholder, autoComplete, value, onChange,
-  leftIcon, rightNode, error,
+  leftIcon, rightNode, error, warningNode, onKeyDown, onKeyUp,
 }: {
   id: string; type: string; label: string; placeholder: string;
   autoComplete?: string; value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   leftIcon: React.ReactNode; rightNode?: React.ReactNode; error?: string;
+  warningNode?: React.ReactNode;
+  onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
+  onKeyUp?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
 }) {
   const [focused, setFocused] = useState(false);
   return (
@@ -52,6 +55,7 @@ function Field({
           id={id} type={type} placeholder={placeholder} autoComplete={autoComplete}
           value={value} onChange={onChange}
           onFocus={() => setFocused(true)} onBlur={() => setFocused(false)}
+          onKeyDown={onKeyDown} onKeyUp={onKeyUp}
           style={{
             width: "100%", background: "transparent", border: "none", outline: "none",
             color: "#fff", fontSize: 14.5, padding: "14px 42px",
@@ -60,7 +64,7 @@ function Field({
           }}
         />
         {rightNode && (
-          <span style={{ position: "absolute", right: 14, display: "flex", alignItems: "center" }}>
+          <span style={{ position: "absolute", right: 14, display: "flex", alignItems: "center", gap: 6 }}>
             {rightNode}
           </span>
         )}
@@ -68,6 +72,11 @@ function Field({
       {error && (
         <span style={{ fontSize: 11, color: "#ff6b6b", fontFamily: "'Space Mono', monospace", letterSpacing: "0.5px" }}>
           {error}
+        </span>
+      )}
+      {warningNode && !error && (
+        <span style={{ fontSize: 11, color: "#fbbf24", fontFamily: "'Space Mono', monospace", letterSpacing: "0.5px" }}>
+          {warningNode}
         </span>
       )}
     </div>
@@ -99,16 +108,33 @@ function LoginForm() {
   const [loading, setLoading] = useState(false);
   const [isWarping, setIsWarping] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [shake, setShake] = useState(false);
+  const [capsLockOn, setCapsLockOn] = useState(false);
   const [btnText, setBtnText] = useState("Sign In");
   const urlError = searchParams.get("error");
   const [errors, setErrors] = useState<{ email?: string; password?: string; form?: string }>(() =>
     urlError ? { form: urlError } : {}
   );
 
+  // Mount animation + Remembered Email Loader
   useEffect(() => {
     const t = setTimeout(() => setMounted(true), 60);
+    try {
+      const savedEmail = localStorage.getItem("universe_remembered_email");
+      if (savedEmail) {
+        setEmail(savedEmail);
+        setRemember(true);
+      }
+    } catch {
+      // ignore
+    }
     return () => clearTimeout(t);
   }, []);
+
+  // Caps Lock Keyboard Event Handler
+  const handleKeyActivity = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    setCapsLockOn(e.getModifierState("CapsLock"));
+  };
 
   async function triggerWarpAndRedirect(destinationUrl: string) {
     setIsWarping(true);
@@ -140,14 +166,35 @@ function LoginForm() {
     else if (!validateEmail(normalizedEmail)) errs.email = "Only @marwadiuniversity.ac.in emails are allowed.";
     if (!password) errs.password = "Password is required.";
     else if (password.length < 6) errs.password = "Min 6 characters.";
-    if (Object.keys(errs).length) { setErrors(errs); return; }
-    setErrors({}); setLoading(true);
+    
+    if (Object.keys(errs).length) {
+      setErrors(errs);
+      setShake(true);
+      setTimeout(() => setShake(false), 600);
+      return;
+    }
+    
+    setErrors({});
+    setLoading(true);
 
     const { error } = await createClient().auth.signInWithPassword({ email: normalizedEmail, password });
     if (error) {
       setLoading(false);
       setErrors({ form: error.message.toLowerCase().includes("invalid") ? "Incorrect email or password." : error.message });
+      setShake(true);
+      setTimeout(() => setShake(false), 600);
       return;
+    }
+
+    // Save or clear Remember Me in localStorage
+    try {
+      if (remember) {
+        localStorage.setItem("universe_remembered_email", normalizedEmail);
+      } else {
+        localStorage.removeItem("universe_remembered_email");
+      }
+    } catch {
+      // ignore
     }
 
     const redirectTarget = searchParams.get("redirectTo") ?? ROUTES.DASHBOARD;
@@ -194,17 +241,20 @@ function LoginForm() {
       </div>
 
       {/* ── Main Container ── */}
-      <div style={{
-        position: "relative", zIndex: 5, width: "100%", maxWidth: 450,
-        display: "flex", flexDirection: "column", alignItems: "center",
-        transform: isWarping ? "scale(0) rotate(-10deg)" : mounted ? "translateY(0) scale(1)" : "translateY(36px) scale(0.92)",
-        opacity: isWarping ? 0 : mounted ? 1 : 0,
-        filter: isWarping ? "blur(10px)" : mounted ? "blur(0px)" : "blur(12px)",
-        transition: isWarping
-          ? "all 0.8s cubic-bezier(0.7, 0, 0.84, 0)"
-          : "all 1.2s cubic-bezier(0.16, 1, 0.3, 1)",
-        pointerEvents: isWarping ? "none" : "auto",
-      }}>
+      <div
+        className={shake ? "animate-shake" : ""}
+        style={{
+          position: "relative", zIndex: 5, width: "100%", maxWidth: 450,
+          display: "flex", flexDirection: "column", alignItems: "center",
+          transform: isWarping ? "scale(0) rotate(-10deg)" : mounted ? "translateY(0) scale(1)" : "translateY(36px) scale(0.92)",
+          opacity: isWarping ? 0 : mounted ? 1 : 0,
+          filter: isWarping ? "blur(10px)" : mounted ? "blur(0px)" : "blur(12px)",
+          transition: isWarping
+            ? "all 0.8s cubic-bezier(0.7, 0, 0.84, 0)"
+            : "all 1.2s cubic-bezier(0.16, 1, 0.3, 1)",
+          pointerEvents: isWarping ? "none" : "auto",
+        }}
+      >
         
         {/* ── Logo + Tagline ── */}
         <Link href="/" style={{ textDecoration: "none", display: "flex", flexDirection: "column", alignItems: "center", gap: 6, marginBottom: 20 }}>
@@ -264,27 +314,52 @@ function LoginForm() {
               </div>
             )}
 
-            {/* Email */}
+            {/* Email Field with Quick Clear Button */}
             <Field
               id="email" type="email" label="Email"
               placeholder="avinash.128203@marwadiuniversity.ac.in"
               autoComplete="email" value={email}
-              onChange={e => setEmail(e.target.value)}
+              onChange={e => {
+                setEmail(e.target.value);
+                if (errors.email) setErrors(prev => ({ ...prev, email: undefined }));
+              }}
               error={errors.email}
               leftIcon={<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="4" width="20" height="16" rx="2" /><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" /></svg>}
-              rightNode={emailValid ? (
-                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#00d2ff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><polyline points="22 4 12 14.01 9 11.01" />
-                </svg>
-              ) : undefined}
+              rightNode={
+                <>
+                  {email.length > 0 && (
+                    <button
+                      type="button"
+                      onClick={() => setEmail("")}
+                      style={{ background: "none", border: "none", cursor: "pointer", display: "flex", padding: 0, color: "rgba(255, 255, 255, 0.35)", transition: "color 0.15s" }}
+                      onMouseEnter={e => (e.currentTarget.style.color = "#fff")}
+                      onMouseLeave={e => (e.currentTarget.style.color = "rgba(255, 255, 255, 0.35)")}
+                      title="Clear email"
+                    >
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
+                    </button>
+                  )}
+                  {emailValid && (
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#00d2ff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><polyline points="22 4 12 14.01 9 11.01" />
+                    </svg>
+                  )}
+                </>
+              }
             />
 
-            {/* Password */}
+            {/* Password Field with Caps Lock Detector */}
             <Field
               id="password" type={showPw ? "text" : "password"} label="Password"
               placeholder="Enter password" autoComplete="current-password"
-              value={password} onChange={e => setPassword(e.target.value)}
+              value={password} onChange={e => {
+                setPassword(e.target.value);
+                if (errors.password) setErrors(prev => ({ ...prev, password: undefined }));
+              }}
+              onKeyDown={handleKeyActivity}
+              onKeyUp={handleKeyActivity}
               error={errors.password}
+              warningNode={capsLockOn ? "⇪ Caps Lock is ON" : undefined}
               leftIcon={<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>}
               rightNode={
                 <button type="button" onClick={() => setShowPw(v => !v)} style={{ background: "none", border: "none", cursor: "pointer", display: "flex", padding: 0, color: "rgba(255, 255, 255, 0.45)" }}>
@@ -321,9 +396,9 @@ function LoginForm() {
               </Link>
             </div>
 
-            {/* Futuristic Sign In Button */}
+            {/* Futuristic Sign In Button with Shimmer Sweep */}
             <button
-              className="scifi-btn"
+              className="scifi-btn group overflow-hidden relative"
               type="submit" disabled={loading || isWarping}
               style={{
                 width: "100%", marginTop: 6,
@@ -343,6 +418,19 @@ function LoginForm() {
                 display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
               }}
             >
+              {/* Subtle Interactive Shimmer Sweep */}
+              <div
+                style={{
+                  position: "absolute",
+                  inset: 0,
+                  transform: "translateX(-100%)",
+                  transition: "transform 0.8s ease",
+                  background: "linear-gradient(90deg, transparent, rgba(0, 210, 255, 0.2), transparent)",
+                  pointerEvents: "none",
+                }}
+                className="group-hover:translate-x-full"
+              />
+
               {isWarping ? (
                 <span>{btnText}</span>
               ) : loading ? (

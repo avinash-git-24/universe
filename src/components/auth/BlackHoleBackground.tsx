@@ -377,9 +377,21 @@ export default function BlackHoleBackground({ isWarping = false }: { isWarping?:
 
     animate();
 
+    // Smart Battery & GPU Saver (pause render loop when tab is in background)
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        cancelAnimationFrame(animationFrameId);
+      } else {
+        clock.getDelta();
+        animationFrameId = requestAnimationFrame(animate);
+      }
+    };
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
     // Cleanup
     return () => {
       cancelAnimationFrame(animationFrameId);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("resize", handleResize);
 
