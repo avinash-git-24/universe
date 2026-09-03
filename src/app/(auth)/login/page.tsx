@@ -18,7 +18,6 @@
 import React, { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import Image from "next/image";
 import {
   Zap,
   Mail,
@@ -124,29 +123,26 @@ function LoginForm() {
   }
 
   return (
-    <main className="relative min-h-[100dvh] w-full bg-[#020307] text-slate-100 flex flex-col justify-between items-center p-4 sm:p-6 lg:p-8 overflow-hidden font-sans selection:bg-cyan-500/30 selection:text-cyan-300">
+    <main className="relative min-h-[100dvh] w-full bg-transparent text-slate-100 flex flex-col justify-between items-center p-4 sm:p-6 lg:p-8 overflow-hidden font-sans selection:bg-cyan-500/30 selection:text-cyan-300">
       {/* ========================================================================= */}
       {/* COSMIC ACCRETION DISK & GRAVITATIONAL LENSING BACKGROUND */}
       {/* ========================================================================= */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden select-none -z-10">
+      <div className="fixed inset-0 pointer-events-none overflow-hidden select-none z-0">
         {/* Photorealistic Gargantua Black Hole Wallpaper */}
-        <Image
+        <img
           src="/images/cosmic-black-hole.jpg"
           alt="Gargantua Black Hole Background"
-          fill
-          priority
-          quality={95}
-          className="object-cover object-center scale-[1.03] transform-gpu opacity-95"
+          className="w-full h-full object-cover object-center scale-[1.02] opacity-95"
         />
 
         {/* Distant Starfield Micro-Grid Overlay */}
         <div className="absolute inset-0 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:40px_40px] opacity-[0.08]" />
 
         {/* Ambient Relativistic Doppler Cyan Flare Enhancement on Left */}
-        <div className="absolute top-1/2 left-[15%] -translate-y-1/2 w-[600px] h-[350px] bg-cyan-500/15 rounded-full blur-[100px] pointer-events-none" />
+        <div className="absolute top-1/2 left-[15%] -translate-y-1/2 w-[600px] h-[350px] bg-cyan-500/20 rounded-full blur-[100px] pointer-events-none" />
 
         {/* Golden-Amber Accretion Disk Secondary Atmosphere */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[400px] bg-amber-500/10 rounded-full blur-[120px] pointer-events-none" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[400px] bg-amber-500/15 rounded-full blur-[120px] pointer-events-none" />
 
         {/* Subtle Vignette on edges for high card legibility */}
         <div className="absolute inset-0 bg-gradient-to-t from-[#020307]/80 via-transparent to-[#020307]/70" />
