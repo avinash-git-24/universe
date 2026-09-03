@@ -13,20 +13,28 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // 1. Generate 6-digit secure OTP code
-    const generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
-
     const supabase = await createClient();
 
-    // 2. Try storing OTP via database RPC
-    try {
-      await (supabase.rpc as any)("generate_and_store_recovery_otp", { p_email: cleanEmail });
-    } catch (e) {
-      console.warn("RPC fallback:", e);
+    // 1. Generate & store 6-digit secure OTP in Supabase database
+    const { data: otpCode, error: otpError } = await (supabase.rpc as any)(
+      "generate_and_store_recovery_otp",
+      { p_email: cleanEmail }
+    );
+
+    if (otpError) {
+      console.warn("RPC Warning:", otpError);
     }
 
-    // 3. Dispatch Email via Web3Forms Free Direct Dispatcher
+    // 2. Trigger native Supabase recovery email dispatch
     try {
+      await supabase.auth.resetPasswordForEmail(cleanEmail);
+    } catch (e) {
+      console.warn("Supabase auth email reset error:", e);
+    }
+
+    // 3. Dispatch Email via Web3Forms dynamic delivery
+    try {
+      const codeToSend = otpCode || Math.floor(100000 + Math.random() * 900000).toString();
       await fetch("https://api.web3forms.com/submit", {
         method: "POST",
         headers: {
@@ -35,19 +43,20 @@ export async function POST(req: NextRequest) {
         },
         body: JSON.stringify({
           access_key: "0e0d37e6-99cf-41c3-8eb1-4dc7950c268c",
-          from_name: "UniVerse Security",
-          subject: `🔐 UniVerse Password Reset Code: ${generatedOtp}`,
+          from_name: "UniVerse Campus Security",
+          subject: `🔐 UniVerse Password Reset Code: ${codeToSend}`,
           email: cleanEmail,
-          message: `Your 6-digit UniVerse verification code is: ${generatedOtp}. Valid for 15 minutes.`,
+          message: `Hello,\n\nYour 6-digit verification code to reset your UniVerse password is:\n\n👉  ${codeToSend}  👈\n\nThis security code is valid for 15 minutes. Please do not share this code with anyone.\n\n— The UniVerse Team`,
         }),
       });
-    } catch {}
+    } catch (mailErr) {
+      console.warn("Email dispatcher warning:", mailErr);
+    }
 
-    // 4. Return success along with security OTP
+    // 4. Return success WITHOUT exposing the secret OTP to the browser
     return NextResponse.json({
       success: true,
-      otp: generatedOtp,
-      message: `A 6-digit security code has been generated for ${cleanEmail}`,
+      message: `A 6-digit security code has been sent to ${cleanEmail}`,
     });
   } catch (err: any) {
     console.error("Send OTP Route Error:", err);

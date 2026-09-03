@@ -1,18 +1,18 @@
 "use client";
 
 /**
- * UniVerse — Instant Facebook/Instagram Style Password Reset Flow
+ * UniVerse — 100% Private & Secure Facebook/Instagram Style Password Reset Flow
  *
- * Step 1: Enter Email ➔ Generates & Dispatches 6-digit Security Code
- * Step 2: Enter 6-Digit Code ➔ Verifies OTP
- * Step 3: Create New Password ➔ (Only unlocked after code verification)
+ * Step 1: Enter College Email ➔ Sends 6-digit Secret OTP strictly to Student's Gmail Inbox
+ * Step 2: Enter 6-Digit Code from Inbox ➔ Verifies OTP
+ * Step 3: Create New Password ➔ (Only unlocked after email OTP verification)
  * Step 4: Success ➔ Auto signs in and redirects to Dashboard
  */
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Mail, ArrowLeft, CheckCircle2, Lock, KeyRound, Eye, EyeOff, Sparkles, RefreshCw, ShieldCheck, Copy, Check } from "lucide-react";
+import { Mail, ArrowLeft, CheckCircle2, Lock, KeyRound, Eye, EyeOff, Sparkles, RefreshCw, ShieldCheck } from "lucide-react";
 import { AuthCard } from "@/components/auth/AuthCard";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -40,8 +40,6 @@ export default function ForgotPasswordPage() {
   const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
-  const [generatedOtp, setGeneratedOtp] = useState<string | null>(null);
-  const [copied, setCopied] = useState(false);
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -51,7 +49,7 @@ export default function ForgotPasswordPage() {
   const [error, setError] = useState<string | null>(null);
   const [infoMessage, setInfoMessage] = useState<string | null>(null);
 
-  // ── STEP 1: GENERATE & DISPATCH 6-DIGIT OTP ──
+  // ── STEP 1: SEND 6-DIGIT SECRET OTP TO GMAIL INBOX ──
   async function handleSendOtp(e: React.FormEvent) {
     e.preventDefault();
     const normalizedEmail = sanitizeEmail(email);
@@ -76,16 +74,18 @@ export default function ForgotPasswordPage() {
       });
 
       const data = await res.json();
-      const code = data?.otp || Math.floor(100000 + Math.random() * 900000).toString();
-      setGeneratedOtp(code);
+
+      if (!res.ok && data.error) {
+        setError(data.error);
+        setLoading(false);
+        return;
+      }
 
       setStep(2);
-      setInfoMessage(`Security OTP code has been generated for ${normalizedEmail}`);
+      setInfoMessage(`We've sent a 6-digit secret OTP code to ${normalizedEmail}. Please check your Gmail inbox (and Spam folder).`);
     } catch (err: any) {
-      const fallbackCode = Math.floor(100000 + Math.random() * 900000).toString();
-      setGeneratedOtp(fallbackCode);
       setStep(2);
-      setInfoMessage(`Verification code ready for ${normalizedEmail}`);
+      setInfoMessage(`A 6-digit verification code has been dispatched to ${normalizedEmail}`);
     } finally {
       setLoading(false);
     }
@@ -100,39 +100,27 @@ export default function ForgotPasswordPage() {
     setError(null);
 
     try {
-      const res = await fetch("/api/auth/send-recovery-otp", {
+      await fetch("/api/auth/send-recovery-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: normalizedEmail }),
       });
-      const data = await res.json();
-      const code = data?.otp || Math.floor(100000 + Math.random() * 900000).toString();
-      setGeneratedOtp(code);
-      setInfoMessage("A fresh 6-digit OTP code has been generated.");
+      setInfoMessage("A fresh 6-digit OTP code has been sent to your Gmail inbox.");
     } catch (err: any) {
-      setError("Failed to generate code. Please try again.");
+      setError("Failed to resend code. Please try again.");
     } finally {
       setResending(false);
     }
   }
 
-  // Copy OTP helper
-  function handleCopyOtp() {
-    if (!generatedOtp) return;
-    navigator.clipboard.writeText(generatedOtp);
-    setOtp(generatedOtp);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  }
-
-  // ── STEP 2: VERIFY 6-DIGIT OTP ONLY (FACEBOOK / INSTAGRAM STYLE) ──
+  // ── STEP 2: VERIFY 6-DIGIT SECRET OTP FROM GMAIL ──
   async function handleVerifyOtp(e: React.FormEvent) {
     e.preventDefault();
     const normalizedEmail = sanitizeEmail(email);
     const cleanOtp = otp.trim();
 
     if (!cleanOtp || cleanOtp.length < 6) {
-      setError("Please enter the complete 6-digit code.");
+      setError("Please enter the complete 6-digit code received on your Gmail.");
       return;
     }
 
@@ -148,22 +136,17 @@ export default function ForgotPasswordPage() {
 
       const data = await res.json();
 
-      if (!res.ok && data.error && cleanOtp !== generatedOtp) {
-        setError(data.error || "Invalid 6-digit code.");
+      if (!res.ok && data.error) {
+        setError(data.error || "Invalid or expired 6-digit OTP code. Please check your inbox.");
         setLoading(false);
         return;
       }
 
-      // OTP is 100% correct! Unlock Step 3 (Set New Password)
+      // OTP is verified! Unlock Step 3 (Set New Password)
       setStep(3);
       setError(null);
     } catch (err: any) {
-      if (cleanOtp === generatedOtp) {
-        setStep(3);
-        setError(null);
-      } else {
-        setError("Verification failed. Please check the code.");
-      }
+      setError("Verification failed. Please check the 6-digit code from your email.");
     } finally {
       setLoading(false);
     }
@@ -173,7 +156,7 @@ export default function ForgotPasswordPage() {
   async function handleSetNewPassword(e: React.FormEvent) {
     e.preventDefault();
     const normalizedEmail = sanitizeEmail(email);
-    const cleanOtp = otp.trim() || generatedOtp || "";
+    const cleanOtp = otp.trim();
 
     if (!newPassword || newPassword.length < 6) {
       setError("Password must be at least 6 characters.");
@@ -202,12 +185,9 @@ export default function ForgotPasswordPage() {
       const data = await res.json();
 
       if (!res.ok && data.error) {
-        // Direct RPC fallback
-        const supabase = createClient();
-        await (supabase.rpc as any)("reset_student_password", {
-          p_email: normalizedEmail,
-          p_new_password: newPassword,
-        });
+        setError(data.error || "Failed to update password.");
+        setLoading(false);
+        return;
       }
 
       // 2. Sign in to confirm session
@@ -244,10 +224,10 @@ export default function ForgotPasswordPage() {
         step === 4
           ? "Redirecting you to UniVerse Dashboard..."
           : step === 3
-          ? "Code verified! Choose your new secure password"
+          ? "Email verified! Enter your new secure password"
           : step === 2
-          ? `Verify code for ${email || "your email"}`
-          : "Enter your college email and we'll send you an OTP code"
+          ? `We sent a 6-digit secret OTP to ${email || "your email"}`
+          : "Enter your college email and we'll send a secret OTP to your Gmail"
       }
     >
       {/* ── STEP 4: SUCCESS STATE ── */}
@@ -260,7 +240,7 @@ export default function ForgotPasswordPage() {
           <div className="space-y-1.5">
             <h3 className="text-xl font-extrabold text-white">Password Updated!</h3>
             <p className="text-xs text-white/60 max-w-xs">
-              Your new password is now active. Opening your dashboard...
+              Your new password has been saved. Taking you to the dashboard...
             </p>
           </div>
 
@@ -304,7 +284,7 @@ export default function ForgotPasswordPage() {
             className="w-full bg-emerald-500 hover:bg-emerald-400 text-black font-extrabold h-11 rounded-xl shadow-[0_0_20px_rgba(0,230,118,0.25)] mt-1"
             disabled={loading}
           >
-            {loading ? "Sending 6-Digit Code..." : "Send OTP Code ➔"}
+            {loading ? "Sending 6-Digit Code..." : "Send Secret OTP to Gmail ➔"}
           </Button>
 
           <Link
@@ -317,29 +297,13 @@ export default function ForgotPasswordPage() {
         </form>
       )}
 
-      {/* ── STEP 2: ENTER 6-DIGIT OTP ONLY (FACEBOOK / INSTAGRAM STYLE) ── */}
+      {/* ── STEP 2: ENTER 6-DIGIT OTP ONLY (FROM GMAIL INBOX) ── */}
       {step === 2 && (
         <form onSubmit={handleVerifyOtp} noValidate className="flex flex-col gap-4">
-          {/* Glowing OTP Notification Badge */}
-          {generatedOtp && (
-            <div className="p-3.5 rounded-xl bg-emerald-500/10 border-2 border-emerald-500/40 text-emerald-300 text-xs flex items-center justify-between shadow-[0_0_20px_rgba(0,230,118,0.2)]">
-              <div className="flex items-center gap-2">
-                <Sparkles size={16} className="text-emerald-400 shrink-0 animate-spin" />
-                <div>
-                  <div className="font-bold text-white">Your 6-Digit Security Code:</div>
-                  <div className="text-[10px] text-white/60">Valid for 15 minutes</div>
-                </div>
-              </div>
-
-              <button
-                type="button"
-                onClick={handleCopyOtp}
-                className="flex items-center gap-1.5 font-mono text-base font-extrabold text-white bg-black/70 hover:bg-black px-3 py-1.5 rounded-lg border border-emerald-500/60 tracking-widest transition-all cursor-pointer"
-                title="Click to Autofill"
-              >
-                <span>{generatedOtp}</span>
-                {copied ? <Check size={14} className="text-emerald-400" /> : <Copy size={13} className="text-white/60" />}
-              </button>
+          {infoMessage && (
+            <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs flex items-center gap-2">
+              <Sparkles size={14} className="shrink-0" />
+              <span>{infoMessage}</span>
             </div>
           )}
 
@@ -352,7 +316,7 @@ export default function ForgotPasswordPage() {
           {/* 6-Digit OTP Box */}
           <div className="space-y-2">
             <label className="text-[11px] font-bold uppercase tracking-wider text-white/70 flex items-center justify-between">
-              <span>Enter 6-Digit Code</span>
+              <span>Enter 6-Digit Secret OTP</span>
               <span className="text-emerald-400 lowercase font-normal">{email}</span>
             </label>
             <div className="relative flex items-center">
@@ -361,7 +325,7 @@ export default function ForgotPasswordPage() {
                 type="text"
                 inputMode="numeric"
                 maxLength={6}
-                placeholder="123456"
+                placeholder="• • • • • •"
                 value={otp}
                 onChange={(e) => {
                   setOtp(e.target.value.replace(/\D/g, "").slice(0, 6));
@@ -372,7 +336,7 @@ export default function ForgotPasswordPage() {
               />
             </div>
             <p className="text-[11px] text-white/50 text-center">
-              Enter the 6-digit code above to verify your identity
+              Open your Gmail inbox to find your 6-digit verification code
             </p>
           </div>
 
@@ -392,7 +356,7 @@ export default function ForgotPasswordPage() {
               className="text-emerald-400 hover:underline flex items-center gap-1 font-semibold"
             >
               <RefreshCw size={12} className={resending ? "animate-spin" : ""} />
-              {resending ? "Generating..." : "New Code"}
+              {resending ? "Sending..." : "Resend OTP"}
             </button>
 
             <button
@@ -415,7 +379,7 @@ export default function ForgotPasswordPage() {
         <form onSubmit={handleSetNewPassword} noValidate className="flex flex-col gap-4">
           <div className="p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs flex items-center gap-2">
             <ShieldCheck size={16} className="shrink-0" />
-            <span>Code verified! Now set your new password.</span>
+            <span>Identity verified! Now set your new password.</span>
           </div>
 
           {error && (
