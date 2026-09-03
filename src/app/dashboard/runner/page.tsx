@@ -7,8 +7,12 @@ import {
   getRunnerDeliveryHistory 
 } from "@/lib/database/requests";
 import { RunnerDashboardClient } from "@/components/runner/RunnerDashboardClient";
-import { NotificationBell } from "@/components/notifications/NotificationBell";
-import { Bike, Sparkles, ChevronDown } from "lucide-react";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Runner Dashboard · UniVerse",
+  description: "Deliver on campus and earn money with UniVerse peer delivery.",
+};
 
 export default async function RunnerDashboardPage() {
   const supabase = await createClient();
@@ -26,34 +30,20 @@ export default async function RunnerDashboardPage() {
   ]);
 
   return (
-    <div className="min-h-screen bg-[#0a0f0d] pt-24 pb-12 px-4">
-      <div className="max-w-5xl mx-auto space-y-8">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20 shadow-[0_0_15px_rgba(16,185,129,0.15)]">
-              <Bike className="w-6 h-6 text-emerald-400" />
-            </div>
-            <div>
-              <h1 className="text-3xl font-extrabold tracking-tight text-white">Runner Dashboard</h1>
-              <p className="text-muted-foreground flex items-center gap-1.5 text-sm mt-1">
-                Earn money by delivering on campus. 
-                <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
-              </p>
-            </div>
-          </div>
-          
-          <div className="flex items-center gap-4">
-            <div className="w-10 h-10 rounded-full flex items-center justify-center text-white/70 hover:text-white hover:bg-white/5 transition-colors">
-              <NotificationBell />
-            </div>
-            <button className="flex items-center gap-2 px-4 py-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 text-sm font-medium hover:bg-emerald-500/20 transition-colors shadow-[0_0_15px_rgba(16,185,129,0.1)]">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]"></span>
-              Online
-              <ChevronDown className="w-4 h-4 opacity-70 ml-1" />
-            </button>
-          </div>
-        </div>
-        
+    <div className="relative min-h-screen bg-[#0a0f0d] pt-24 pb-14 px-3 sm:px-6 text-white selection:bg-emerald-500/30 overflow-x-hidden">
+      {/* ── Atmospheric Ambient Cosmic Glow Background ── */}
+      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden select-none">
+        {/* Soft Volumetric Emerald Glow at Top */}
+        <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[850px] h-[500px] bg-gradient-to-b from-emerald-500/10 via-emerald-500/5 to-transparent blur-3xl rounded-full" />
+        {/* Subtle Cyan Relativistic Accent Light */}
+        <div className="absolute top-1/3 -right-48 w-[400px] h-[400px] bg-cyan-500/5 blur-3xl rounded-full" />
+        {/* Distant Cyber Stars / Dust Matrix */}
+        <div className="absolute inset-0 bg-[radial-gradient(#10b981_1px,transparent_1px)] [background-size:48px_48px] opacity-[0.06]" />
+        {/* Deep Space Vignette */}
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#0a0f0d]/60 to-[#0a0f0d]" />
+      </div>
+
+      <div className="max-w-5xl mx-auto relative z-10">
         <RunnerDashboardClient 
           runnerId={user.id} 
           initialPending={pendingRequests} 

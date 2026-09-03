@@ -4,10 +4,16 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { formatDistanceToNow, format } from "date-fns";
-import { MapPin, Package, Clock, IndianRupee, Eye, CheckCircle2, History, Wallet, Star, LayoutGrid, List, Calendar, ArrowRight, Box, ChevronDown, MessageSquare, KeyRound, ShieldCheck, Lock } from "lucide-react";
+import { 
+  MapPin, Package, Clock, IndianRupee, Eye, CheckCircle2, History, Wallet, Star, 
+  LayoutGrid, List, Calendar, ArrowRight, Box, ChevronDown, MessageSquare, KeyRound, 
+  ShieldCheck, Lock, Bike, Sparkles, Utensils, BookOpen, Laptop, Activity 
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { NotificationBell } from "@/components/notifications/NotificationBell";
+import { cn } from "@/lib/utils";
 import {
   Modal,
   ModalContent,
@@ -28,6 +34,40 @@ import {
 import { sounds } from "@/lib/audio";
 import { RequestStatusBadge } from "@/components/request/RequestStatusBadge";
 import type { Database } from "@/types/database";
+
+function getRunnerCategoryIcon(names: string) {
+  const lower = names.toLowerCase();
+  if (
+    /biskut|biscuit|kitkat|chocolate|chips|lays|kurkure|maggi|noodle|coffee|tea|burger|sandwich|food|snack|drink|coke|juice|water|pizza|puff|icecream/.test(
+      lower
+    )
+  ) {
+    return {
+      icon: Utensils,
+      bg: "bg-emerald-950/70 border-emerald-500/35 text-emerald-400 shadow-[inset_0_0_15px_rgba(16,185,129,0.15)]",
+      label: "Food & Snack",
+    };
+  }
+  if (/book|notes|notebook|assignment|pen|pencil|paper|print|photocopy|xerox|folder/.test(lower)) {
+    return {
+      icon: BookOpen,
+      bg: "bg-amber-950/70 border-amber-500/35 text-amber-400 shadow-[inset_0_0_15px_rgba(245,158,11,0.15)]",
+      label: "Academic",
+    };
+  }
+  if (/laptop|phone|charger|cable|earphone|headphone|mouse|keyboard|usb|powerbank/.test(lower)) {
+    return {
+      icon: Laptop,
+      bg: "bg-blue-950/70 border-blue-500/35 text-blue-400 shadow-[inset_0_0_15px_rgba(59,130,246,0.15)]",
+      label: "Gadget",
+    };
+  }
+  return {
+    icon: Package,
+    bg: "bg-[#0a2014] border-emerald-900/40 text-emerald-400 shadow-[inset_0_0_15px_rgba(16,185,129,0.1)]",
+    label: "Parcel",
+  };
+}
 
 interface RunnerDashboardClientProps {
   runnerId: string;
@@ -62,6 +102,7 @@ export function RunnerDashboardClient({
   
   // UI State for Grid/List View
   const [isGridView, setIsGridView] = useState(true);
+  const [isOnline, setIsOnline] = useState(true);
 
   // Adjust state when initial props change on revalidation (React recommended pattern)
   const [prevPending, setPrevPending] = useState(initialPending);
@@ -265,13 +306,60 @@ export function RunnerDashboardClient({
 
   return (
     <div className="space-y-8">
+      {/* ── Page Header with Interactive Status Switcher ── */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div className="flex items-center gap-4">
+          <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center border border-emerald-500/25 shadow-[0_0_20px_rgba(16,185,129,0.2)]">
+            <Bike className="w-6 h-6 text-emerald-400" />
+          </div>
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white flex items-center gap-2">
+              Runner Dashboard
+              <span className="text-emerald-400 text-xl">✦</span>
+            </h1>
+            <p className="text-white/60 flex items-center gap-1.5 text-xs sm:text-sm mt-0.5 font-medium">
+              Deliver on campus, help peers, and earn instant cash.
+              <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-full flex items-center justify-center text-white/70 hover:text-white hover:bg-white/5 transition-colors">
+            <NotificationBell />
+          </div>
+          {/* Interactive Online/Offline Switcher */}
+          <button
+            type="button"
+            onClick={() => setIsOnline((prev) => !prev)}
+            className={cn(
+              "flex items-center gap-2 px-4 py-2 rounded-full border text-xs sm:text-sm font-semibold transition-all cursor-pointer shadow-sm active:scale-95",
+              isOnline
+                ? "border-emerald-500/40 bg-emerald-500/15 text-emerald-300 shadow-[0_0_15px_rgba(16,185,129,0.2)] hover:bg-emerald-500/20"
+                : "border-amber-500/40 bg-amber-500/15 text-amber-300 shadow-[0_0_15px_rgba(245,158,11,0.2)] hover:bg-amber-500/20"
+            )}
+            title="Click to toggle Online/Offline availability"
+          >
+            <span
+              className={cn(
+                "w-2 h-2 rounded-full",
+                isOnline
+                  ? "bg-emerald-400 animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.9)]"
+                  : "bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.9)]"
+              )}
+            />
+            <span>{isOnline ? "Online · Accepting Orders" : "Paused · Studying"}</span>
+          </button>
+        </div>
+      </div>
+
       {/* Navigation Tabs */}
       <div className="flex flex-wrap gap-2 sm:gap-3 pb-2">
         <button
           onClick={() => setActiveTab("available")}
           className={`flex items-center px-4 sm:px-6 py-2.5 sm:py-3 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 border ${
             activeTab === "available"
-              ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.15)]"
+              ? "bg-emerald-500/15 border-emerald-500/40 text-emerald-300 shadow-[0_0_15px_rgba(16,185,129,0.2)]"
               : "bg-white/5 border-white/10 text-white/70 hover:bg-white/10 hover:text-white"
           }`}
         >
@@ -288,7 +376,7 @@ export function RunnerDashboardClient({
           onClick={() => setActiveTab("active")}
           className={`flex items-center px-4 sm:px-6 py-2.5 sm:py-3 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 border ${
             activeTab === "active"
-              ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.15)]"
+              ? "bg-emerald-500/15 border-emerald-500/40 text-emerald-300 shadow-[0_0_15px_rgba(16,185,129,0.2)]"
               : "bg-white/5 border-white/10 text-white/70 hover:bg-white/10 hover:text-white"
           }`}
         >
@@ -300,7 +388,7 @@ export function RunnerDashboardClient({
           onClick={() => setActiveTab("history")}
           className={`flex items-center px-4 sm:px-6 py-2.5 sm:py-3 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 border ${
             activeTab === "history"
-              ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.15)]"
+              ? "bg-emerald-500/15 border-emerald-500/40 text-emerald-300 shadow-[0_0_15px_rgba(16,185,129,0.2)]"
               : "bg-white/5 border-white/10 text-white/70 hover:bg-white/10 hover:text-white"
           }`}
         >
@@ -309,56 +397,67 @@ export function RunnerDashboardClient({
         </button>
       </div>
 
-      {/* Summary Stat Cards */}
+      {/* ── Summary Stat Cards ── */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* Stat 1: Available */}
-        <div className="bg-[#111614] border border-white/5 rounded-2xl p-5 flex items-start gap-4">
-          <div className="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center shrink-0">
-            <Package className="w-5 h-5 text-emerald-400" />
+        {/* Stat 1: Available Requests */}
+        <div className="bg-[#0b120e]/90 border border-white/5 hover:border-emerald-500/25 rounded-2xl p-5 flex items-start gap-4 transition-all backdrop-blur-xl group">
+          <div className="w-11 h-11 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center shrink-0 text-emerald-400 group-hover:scale-105 transition-transform">
+            <Package className="w-5 h-5" />
           </div>
-          <div>
-            <p className="text-sm text-white/60 font-medium">Available Requests</p>
-            <p className="text-2xl font-bold text-white mt-0.5">{pendingRequests.length}</p>
-            <p className="text-xs text-emerald-400 mt-1">New requests ready</p>
-          </div>
-        </div>
-
-        {/* Stat 2: Active */}
-        <div className="bg-[#111614] border border-white/5 rounded-2xl p-5 flex items-start gap-4">
-          <div className="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center shrink-0">
-            <Clock className="w-5 h-5 text-emerald-400" />
-          </div>
-          <div>
-            <p className="text-sm text-white/60 font-medium">Active Deliveries</p>
-            <p className="text-2xl font-bold text-white mt-0.5">{activeDeliveries.length}</p>
-            <p className="text-xs text-white/40 mt-1">In progress</p>
+          <div className="space-y-0.5">
+            <p className="text-xs text-white/50 font-mono uppercase tracking-wider font-bold">Available</p>
+            <p className="text-2xl font-black text-white font-mono">{pendingRequests.length}</p>
+            <p className="text-[11px] text-emerald-400 flex items-center gap-1 font-medium">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              New orders ready
+            </p>
           </div>
         </div>
 
-        {/* Stat 3: Earnings */}
-        <div className="bg-[#111614] border border-white/5 rounded-2xl p-5 flex items-start gap-4">
-          <div className="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center shrink-0">
-            <Wallet className="w-5 h-5 text-emerald-400" />
+        {/* Stat 2: Active Deliveries */}
+        <div className={cn(
+          "bg-[#0b120e]/90 border rounded-2xl p-5 flex items-start gap-4 transition-all backdrop-blur-xl group",
+          activeDeliveries.length > 0 ? "border-emerald-500/30 shadow-[0_0_20px_rgba(16,185,129,0.06)]" : "border-white/5"
+        )}>
+          <div className="w-11 h-11 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center shrink-0 text-emerald-400 group-hover:scale-105 transition-transform">
+            <Clock className="w-5 h-5" />
           </div>
-          <div>
-            <p className="text-sm text-white/60 font-medium">Today&apos;s Earnings</p>
-            <p className="text-2xl font-bold text-white mt-0.5 flex items-center">
-              <IndianRupee className="w-5 h-5 mr-0.5" />
+          <div className="space-y-0.5">
+            <p className="text-xs text-white/50 font-mono uppercase tracking-wider font-bold">Active Deliveries</p>
+            <p className="text-2xl font-black text-white font-mono">{activeDeliveries.length}</p>
+            <p className="text-[11px] text-emerald-400 font-medium">
+              {activeDeliveries.length > 0 ? "● In progress" : "No active missions"}
+            </p>
+          </div>
+        </div>
+
+        {/* Stat 3: Today's Earnings (HERO CARD) */}
+        <div className="bg-gradient-to-br from-[#0c1611] to-[#080d0a] border border-emerald-500/35 hover:border-emerald-400/60 rounded-2xl p-5 flex items-start gap-4 transition-all backdrop-blur-xl shadow-[0_0_25px_rgba(16,185,129,0.08)] group relative overflow-hidden">
+          <div className="absolute -right-6 -bottom-6 w-20 h-20 bg-emerald-500/10 rounded-full blur-xl pointer-events-none" />
+          <div className="w-11 h-11 rounded-xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center shrink-0 text-emerald-300 shadow-[0_0_12px_rgba(16,185,129,0.3)] group-hover:scale-105 transition-transform">
+            <Wallet className="w-5 h-5" />
+          </div>
+          <div className="space-y-0.5 min-w-0">
+            <p className="text-xs text-emerald-400/80 font-mono uppercase tracking-wider font-bold">Total Earnings</p>
+            <p className="text-2xl font-black text-white font-mono flex items-center tracking-tight">
+              <IndianRupee className="w-5 h-5 mr-0.5 text-emerald-400" />
               {totalEarnings}
             </p>
-            <p className="text-xs text-white/40 mt-1">Current earnings</p>
+            <Link href="/dashboard/wallet" className="text-[11px] text-emerald-300 hover:text-emerald-200 font-bold flex items-center gap-0.5 transition-colors">
+              Go to Wallet ➔
+            </Link>
           </div>
         </div>
 
         {/* Stat 4: Rating */}
-        <div className="bg-[#111614] border border-white/5 rounded-2xl p-5 flex items-start gap-4">
-          <div className="w-10 h-10 rounded-lg bg-amber-500/10 flex items-center justify-center shrink-0">
-            <Star className="w-5 h-5 text-amber-400" />
+        <div className="bg-[#0b120e]/90 border border-white/5 hover:border-amber-500/25 rounded-2xl p-5 flex items-start gap-4 transition-all backdrop-blur-xl group">
+          <div className="w-11 h-11 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center shrink-0 text-amber-400 group-hover:scale-105 transition-transform">
+            <Star className="w-5 h-5 fill-amber-400" />
           </div>
-          <div>
-            <p className="text-sm text-white/60 font-medium">Rating</p>
-            <p className="text-2xl font-bold text-white mt-0.5">4.8</p>
-            <p className="text-xs text-white/40 mt-1">Excellent</p>
+          <div className="space-y-0.5">
+            <p className="text-xs text-white/50 font-mono uppercase tracking-wider font-bold">Rating</p>
+            <p className="text-2xl font-black text-white font-mono">4.8</p>
+            <p className="text-[11px] text-amber-300 font-medium">★ Top 5% Runner</p>
           </div>
         </div>
       </div>
@@ -409,71 +508,104 @@ export function RunnerDashboardClient({
             </div>
           ) : (
             <div className={`grid gap-5 ${isGridView ? "md:grid-cols-2" : "grid-cols-1"}`}>
-              {pendingRequests.map((req) => (
-                <div key={req.id} className="relative overflow-hidden bg-[#0d1310] border border-white/5 rounded-2xl flex flex-col justify-between hover:border-emerald-500/30 transition-all group">
-                  {/* Subtle right-side glow/icon background */}
-                  <div className="absolute -right-8 -top-8 w-48 h-48 bg-emerald-500/5 rounded-full blur-3xl group-hover:bg-emerald-500/10 transition-colors pointer-events-none" />
-                  <div className="absolute right-6 top-1/2 -translate-y-1/2 w-16 h-16 rounded-full border border-emerald-500/10 flex items-center justify-center bg-[#131b17] z-0 opacity-40">
-                    <Box className="w-6 h-6 text-emerald-500/40" />
-                  </div>
+              {pendingRequests.map((req) => {
+                const itemNames = req.items.map((i) => i.name).join(", ");
+                const category = getRunnerCategoryIcon(itemNames);
+                const CategoryIcon = category.icon;
 
-                  <div className="p-5 relative z-10">
-                    <div className="flex justify-between items-start">
-                      <div className="bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-semibold px-2.5 py-1 rounded-full">
-                        Requested
-                      </div>
-                      <span className="text-2xl font-bold text-white flex items-center">
-                        <IndianRupee className="w-5 h-5 mr-0.5 opacity-70" />
-                        {req.delivery_fee}
-                      </span>
-                    </div>
+                return (
+                  <div
+                    key={req.id}
+                    className="relative overflow-hidden bg-[#0a100d]/90 border border-white/10 hover:border-emerald-500/40 rounded-2xl flex flex-col justify-between transition-all group backdrop-blur-xl shadow-sm hover:shadow-[0_0_35px_rgba(16,185,129,0.1)]"
+                  >
+                    {/* Subtle top neon rim highlight */}
+                    <div className="absolute top-0 left-8 right-8 h-[1px] bg-gradient-to-r from-transparent via-emerald-400/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
 
-                    <h3 className="text-xl font-bold text-white mt-4 truncate">
-                      {req.items.map((i) => i.name).join(", ")}
-                    </h3>
+                    <div className="p-5 relative z-10">
+                      <div className="flex justify-between items-center">
+                        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-bold uppercase tracking-wide bg-blue-500/10 border border-blue-500/30 text-blue-400">
+                          <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse" />
+                          Requested
+                        </div>
 
-                    <div className="space-y-2 mt-4 text-sm">
-                      <div className="flex items-start">
-                        <MapPin className="w-4 h-4 mr-2 mt-0.5 shrink-0 text-emerald-500" />
-                        <div>
-                          <span className="text-white/50 font-medium">Pickup: </span>
-                          <span className="text-white/90">{req.pickup_location}</span>
+                        {/* High-contrast Reward Payout Badge */}
+                        <div className="flex items-center gap-1 px-3 py-1 rounded-xl bg-gradient-to-r from-emerald-500/20 via-emerald-500/15 to-emerald-500/20 border border-emerald-500/40 text-emerald-300 font-mono font-black text-base sm:text-lg shadow-[0_0_15px_rgba(16,185,129,0.2)]">
+                          <IndianRupee className="w-4 h-4 text-emerald-400" />
+                          <span>{req.delivery_fee}</span>
+                          <span className="text-[9.5px] font-sans font-bold uppercase tracking-wider text-emerald-400/80 ml-1">
+                            Payout
+                          </span>
                         </div>
                       </div>
 
-                      <div className="flex items-start">
-                        <MapPin className="w-4 h-4 mr-2 mt-0.5 shrink-0 text-emerald-500" />
-                        <div>
-                          <span className="text-white/50 font-medium">Dropoff: </span>
-                          <span className="text-white/90">{req.dropoff_location}</span>
+                      <div className="flex items-start gap-3 mt-4">
+                        <div className={cn("w-11 h-11 rounded-xl flex items-center justify-center shrink-0 border", category.bg)}>
+                          <CategoryIcon className="w-5 h-5" />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <h3 className="text-lg sm:text-xl font-bold text-white truncate capitalize group-hover:text-emerald-300 transition-colors">
+                            {itemNames}
+                          </h3>
+                          <div className="flex items-center text-xs text-white/40 pt-0.5">
+                            <Calendar className="w-3.5 h-3.5 mr-1" />
+                            Posted {formatDistanceToNow(new Date(req.created_at))} ago
+                          </div>
                         </div>
                       </div>
 
-                      <div className="flex items-center text-xs text-white/40 pt-1">
-                        <Calendar className="w-3.5 h-3.5 mr-1.5" />
-                        Posted {formatDistanceToNow(new Date(req.created_at))} ago
+                      {/* Route Map Connector Visualizer */}
+                      <div className="p-3 rounded-xl bg-[#070b09]/90 border border-white/5 space-y-2 mt-4">
+                        {/* Pickup */}
+                        <div className="flex items-center gap-2.5 text-xs sm:text-sm">
+                          <div className="w-5 h-5 rounded-md bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0">
+                            <MapPin className="w-3 h-3" />
+                          </div>
+                          <div className="flex flex-col min-w-0">
+                            <span className="text-[9px] font-mono uppercase tracking-wider text-white/40 font-bold">Pickup</span>
+                            <span className="font-semibold text-white/95 truncate text-xs">{req.pickup_location}</span>
+                          </div>
+                        </div>
+
+                        {/* Connector Walk Time */}
+                        <div className="flex items-center gap-2 pl-2.5 py-0.5">
+                          <div className="w-[1px] h-3.5 bg-gradient-to-b from-emerald-500/60 to-emerald-500/20" />
+                          <span className="px-2 py-0.5 rounded-full bg-emerald-950/60 border border-emerald-500/20 text-[9.5px] font-mono text-emerald-400/90">
+                            🚶 ~3-5 min campus walk
+                          </span>
+                        </div>
+
+                        {/* Dropoff */}
+                        <div className="flex items-center gap-2.5 text-xs sm:text-sm">
+                          <div className="w-5 h-5 rounded-md bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0">
+                            <MapPin className="w-3 h-3" />
+                          </div>
+                          <div className="flex flex-col min-w-0">
+                            <span className="text-[9px] font-mono uppercase tracking-wider text-white/40 font-bold">Dropoff</span>
+                            <span className="font-semibold text-white/95 truncate text-xs">{req.dropoff_location}</span>
+                          </div>
+                        </div>
                       </div>
                     </div>
-                  </div>
 
-                  <div className="p-5 pt-0 flex gap-3 relative z-10">
-                    <button
-                      onClick={() => setSelectedRequest(req)}
-                      className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl border border-white/10 text-white/70 hover:text-white hover:bg-white/5 transition-colors font-medium text-sm"
-                    >
-                      <Eye className="w-4 h-4" /> Details
-                    </button>
-                    <button
-                      onClick={() => handleAccept(req.id)}
-                      disabled={isAccepting === req.id}
-                      className="flex-[1.5] flex items-center justify-center gap-2 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-[#0a0f0d] font-bold text-sm transition-colors disabled:opacity-50"
-                    >
-                      {isAccepting === req.id ? "Accepting..." : "Accept Request"}
-                      <ArrowRight className="w-4 h-4" />
-                    </button>
+                    <div className="p-5 pt-0 flex gap-3 relative z-10">
+                      <button
+                        onClick={() => setSelectedRequest(req)}
+                        className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl border border-white/10 text-white/70 hover:text-white hover:bg-white/5 transition-colors font-medium text-xs sm:text-sm cursor-pointer"
+                      >
+                        <Eye className="w-4 h-4" /> Details
+                      </button>
+                      <button
+                        onClick={() => handleAccept(req.id)}
+                        disabled={isAccepting === req.id}
+                        className="flex-[1.5] flex items-center justify-center gap-2 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-400 hover:from-emerald-400 hover:to-emerald-300 text-black font-bold text-xs sm:text-sm shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:shadow-[0_0_30px_rgba(16,185,129,0.5)] transition-all cursor-pointer disabled:opacity-50 active:scale-[0.98]"
+                      >
+                        {isAccepting === req.id ? "Accepting..." : "Accept Request"}
+                        <ArrowRight className="w-4 h-4" />
+                      </button>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>
@@ -657,27 +789,33 @@ export function RunnerDashboardClient({
         </div>
       )}
 
-      {/* Footer Banner */}
-      <div className="bg-[#111614] border border-white/5 rounded-2xl p-5 sm:p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mt-8">
-        <div className="flex items-center gap-4">
-          <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20 shrink-0">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 text-emerald-400">
-              <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
-            </svg>
+      {/* ── Gamified Level & Perks Banner ── */}
+      <div className="bg-gradient-to-r from-[#0c1611] via-[#09110d] to-[#0c1611] border border-emerald-500/25 rounded-2xl p-5 sm:p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mt-8 shadow-[0_0_30px_rgba(16,185,129,0.06)] backdrop-blur-xl">
+        <div className="flex items-start sm:items-center gap-4">
+          <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center border border-emerald-500/30 text-emerald-400 shrink-0 shadow-[0_0_15px_rgba(16,185,129,0.2)]">
+            <Sparkles className="w-6 h-6" />
           </div>
-          <div>
-            <h3 className="font-bold text-white">Deliver more, earn more!</h3>
-            <p className="text-sm text-white/50 mt-0.5">Complete deliveries on time and maintain a good rating to unlock higher earning opportunities.</p>
+          <div className="space-y-1">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-[10px] font-mono font-bold uppercase tracking-wider">
+                Level 2 Campus Runner
+              </span>
+              <span className="text-xs text-white/50">• 4/10 Deliveries to unlock VIP 0% Platform Fee</span>
+            </div>
+            {/* Progress bar */}
+            <div className="w-full max-w-xs h-2 rounded-full bg-white/5 border border-white/10 overflow-hidden mt-1.5">
+              <div className="h-full bg-gradient-to-r from-emerald-500 to-emerald-400 rounded-full w-[40%]" />
+            </div>
           </div>
         </div>
-        <button className="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-white/10 text-emerald-400 hover:bg-white/5 transition-colors font-semibold text-sm shrink-0 w-full sm:w-auto justify-center">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
-            <path d="M18 20V10" />
-            <path d="M12 20V4" />
-            <path d="M6 20v-6" />
-          </svg>
-          View Performance
-        </button>
+
+        <Link
+          href="/dashboard/analytics"
+          className="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-emerald-500/30 bg-emerald-500/10 text-emerald-300 hover:bg-emerald-500/20 hover:border-emerald-400 transition-all font-bold text-xs shrink-0 w-full sm:w-auto justify-center shadow-[0_0_15px_rgba(16,185,129,0.1)]"
+        >
+          <Activity className="w-4 h-4" />
+          View Performance & Tips ➔
+        </Link>
       </div>
 
       {/* ───────────────────────────────────────────────────────────────────────────── */}
