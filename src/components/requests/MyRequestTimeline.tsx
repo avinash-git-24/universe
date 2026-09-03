@@ -73,13 +73,28 @@ export function MyRequestTimeline({ status, className }: MyRequestTimelineProps)
             <div key={stage.id} className="relative flex flex-col items-center z-10 gap-2.5">
               <div
                 className={cn(
-                  "w-6 h-6 rounded-full flex items-center justify-center transition-all duration-300 border-[1.5px]",
+                  "w-6 h-6 rounded-full flex items-center justify-center transition-all duration-300 border-[1.5px] relative",
                   bgColor,
                   ringColor
                 )}
               >
                 {isCurrent ? (
-                  <div className={cn("w-2.5 h-2.5 rounded-full", stage.id === "in_transit" ? "bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.8)]" : "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]")} />
+                  <div className="relative flex items-center justify-center">
+                    <span
+                      className={cn(
+                        "absolute -inset-1 rounded-full animate-ping opacity-60",
+                        stage.id === "in_transit" ? "bg-blue-400" : "bg-emerald-400"
+                      )}
+                    />
+                    <div
+                      className={cn(
+                        "relative w-2.5 h-2.5 rounded-full z-10",
+                        stage.id === "in_transit"
+                          ? "bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.9)]"
+                          : "bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.9)]"
+                      )}
+                    />
+                  </div>
                 ) : isCompleted ? (
                   <CheckCircle2 className={cn("w-4 h-4", iconColor)} />
                 ) : (
