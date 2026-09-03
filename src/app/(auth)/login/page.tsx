@@ -232,7 +232,7 @@ function LoginForm() {
           border: "1px solid rgba(255, 255, 255, 0.12)",
           borderRadius: 12,
           boxShadow: "0 40px 100px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.15)",
-          padding: "32px 36px",
+          padding: "clamp(20px, 5vw, 36px)",
           display: "flex",
           flexDirection: "column",
           gap: 20,

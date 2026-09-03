@@ -90,7 +90,7 @@ export function AuthCard({ title, subtitle, children }: AuthCardProps) {
         />
 
         {/* ── Card Header ── */}
-        <div className="px-5 sm:px-8 pt-6 sm:pt-8 pb-4 sm:pb-6" style={{ position: "relative" }}>
+        <div className="px-4 sm:px-8 pt-6 sm:pt-8 pb-4 sm:pb-6" style={{ position: "relative" }}>
           {/* Sparkle top-left of title area */}
           <div className="mb-2 sm:mb-3">
             <Sparkle size={12} opacity={0.6} />
@@ -117,7 +117,7 @@ export function AuthCard({ title, subtitle, children }: AuthCardProps) {
         </div>
 
         {/* ── Form content ── */}
-        <div className="px-5 sm:px-8 pb-6 sm:pb-8">
+        <div className="px-4 sm:px-8 pb-6 sm:pb-8">
           {children}
         </div>
       </div>
