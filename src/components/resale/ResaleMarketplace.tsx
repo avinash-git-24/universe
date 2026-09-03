@@ -43,16 +43,16 @@ import { ResaleErrorState } from "./ResaleErrorState";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
-const CATEGORY_LABELS: Record<string, string> = {
-  books: "Books",
-  electronics: "Electronics",
-  study_materials: "Study Materials",
-  hostel: "Hostel",
-  sports: "Sports",
-  furniture: "Furniture",
-  clothing: "Clothing",
-  gaming: "Gaming",
-  other: "Other",
+const CATEGORY_META: Record<string, { label: string; icon: string }> = {
+  books: { label: "Books", icon: "📚" },
+  electronics: { label: "Electronics", icon: "💻" },
+  study_materials: { label: "Study Notes", icon: "📝" },
+  hostel: { label: "Hostel Life", icon: "🛏️" },
+  sports: { label: "Sports", icon: "⚽" },
+  furniture: { label: "Furniture", icon: "🪑" },
+  clothing: { label: "Clothing", icon: "👕" },
+  gaming: { label: "Gaming", icon: "🎮" },
+  other: { label: "Other", icon: "✨" },
 };
 
 const CONDITION_LABELS: Record<string, string> = {
@@ -326,8 +326,14 @@ export function ResaleMarketplace() {
   // ─────────────────────────────────────────────────────────────────────────────
 
   return (
-    <div className="min-h-screen pt-4 sm:pt-8 pb-12 px-3 sm:px-6 lg:px-8">
-      <div className="max-w-[1400px] mx-auto">
+    <div className="min-h-screen bg-[#060a08] relative overflow-hidden pt-4 sm:pt-8 pb-12 px-3 sm:px-6 lg:px-8 selection:bg-emerald-500/30">
+      {/* Ambient Stardust & Nebula Glows */}
+      <div className="absolute inset-0 bg-[radial-gradient(#10b98110_1px,transparent_1px)] [background-size:24px_24px] pointer-events-none opacity-50" />
+      <div className="absolute -top-40 -left-40 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-1/3 -right-40 w-96 h-96 bg-teal-500/5 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-40 left-1/3 w-96 h-96 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none" />
+
+      <div className="max-w-[1400px] mx-auto relative z-10">
 
         {/* ── Page Header ── */}
         <div className="mb-6 sm:mb-8">
@@ -336,51 +342,54 @@ export function ResaleMarketplace() {
               Dashboard
             </Link>
             <span className="text-[#A7B8B0]/30 text-xs">/</span>
-            <span className="text-[#A7B8B0]/80 text-xs font-semibold">UniVerse Resale</span>
+            <span className="text-emerald-400/90 text-xs font-semibold">UniVerse Resale</span>
           </div>
 
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
               <div className="flex items-center gap-2.5 sm:gap-3 mb-1.5">
-                <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-[10px] bg-gradient-to-br from-[#00C853] to-[#00E676] flex items-center justify-center shrink-0">
-                  <ShoppingBag size={18} color="#050A07" />
+                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center shrink-0 shadow-[0_0_16px_rgba(16,185,129,0.3)]">
+                  <ShoppingBag size={20} className="text-black stroke-[2.5]" />
                 </div>
-                <h1 className="text-white text-xl sm:text-2xl lg:text-[1.7rem] font-extrabold m-0 tracking-tight">
-                  UniVerse Resale
+                <h1 className="text-white text-xl sm:text-2xl lg:text-[1.75rem] font-extrabold m-0 tracking-tight flex items-center gap-2.5">
+                  <span>UniVerse Resale</span>
+                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 font-bold uppercase tracking-wider">
+                    Campus Marketplace
+                  </span>
                 </h1>
               </div>
-              <p className="text-[#A7B8B0]/70 text-xs sm:text-sm m-0 sm:pl-[44px]">
-                Buy and sell useful items within your university community.
+              <p className="text-[#A7B8B0]/70 text-xs sm:text-sm m-0 sm:pl-[48px]">
+                Buy and sell textbooks, electronics, and hostel essentials within your university.
               </p>
             </div>
 
             <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
               <Link href="/dashboard/marketplace/my-listings" className="no-underline flex-1 sm:flex-none">
                 <button
-                  className="flex items-center justify-center gap-1.5 px-3 sm:px-4 py-2 sm:py-2.5 bg-white/5 border border-white/10 rounded-xl text-white text-xs sm:text-sm font-semibold cursor-pointer transition-all hover:bg-white/10 w-full whitespace-nowrap"
+                  className="flex items-center justify-center gap-1.5 px-3 sm:px-4 py-2 sm:py-2.5 bg-[#0c1410]/80 backdrop-blur-md border border-white/10 rounded-xl text-white text-xs sm:text-sm font-semibold cursor-pointer transition-all hover:bg-white/10 hover:border-white/20 w-full whitespace-nowrap shadow-sm"
                   aria-label="View your listings"
                 >
-                  <Package size={15} />
+                  <Package size={15} className="text-emerald-400" />
                   My Listings
                 </button>
               </Link>
               {isAuthenticated && (
                 <Link href="/dashboard/marketplace/saved" className="no-underline flex-1 sm:flex-none">
                   <button
-                    className="flex items-center justify-center gap-1.5 px-3 sm:px-4 py-2 sm:py-2.5 bg-white/5 border border-white/10 rounded-xl text-white text-xs sm:text-sm font-semibold cursor-pointer transition-all hover:bg-white/10 hover:text-[#ef4444] hover:border-[#ef4444] w-full whitespace-nowrap"
+                    className="flex items-center justify-center gap-1.5 px-3 sm:px-4 py-2 sm:py-2.5 bg-[#0c1410]/80 backdrop-blur-md border border-white/10 rounded-xl text-white text-xs sm:text-sm font-semibold cursor-pointer transition-all hover:bg-white/10 hover:text-red-400 hover:border-red-500/30 w-full whitespace-nowrap shadow-sm"
                     aria-label="View saved listings"
                   >
-                    <Heart size={15} />
+                    <Heart size={15} className="text-red-400" />
                     Saved
                   </button>
                 </Link>
               )}
               <Link href="/dashboard/marketplace/sell" className="no-underline flex-1 sm:flex-none">
                 <button
-                  className="flex items-center justify-center gap-1.5 px-3.5 sm:px-5 py-2 sm:py-2.5 bg-gradient-to-br from-[#00C853] to-[#00E676] border-none rounded-xl text-[#050A07] text-xs sm:text-sm font-extrabold cursor-pointer shadow-[0_4px_20px_rgba(0,230,118,0.25)] hover:scale-105 transition-transform w-full whitespace-nowrap"
+                  className="flex items-center justify-center gap-1.5 px-4 sm:px-5 py-2 sm:py-2.5 bg-gradient-to-r from-emerald-500 via-emerald-400 to-teal-400 border-none rounded-xl text-black text-xs sm:text-sm font-extrabold cursor-pointer shadow-[0_0_20px_rgba(16,185,129,0.35)] hover:scale-105 active:scale-95 transition-all w-full whitespace-nowrap"
                   aria-label="Sell an item on UniVerse Resale"
                 >
-                  <Plus size={15} />
+                  <Plus size={16} className="stroke-[3]" />
                   Sell an Item
                 </button>
               </Link>
@@ -389,38 +398,25 @@ export function ResaleMarketplace() {
         </div>
 
         {/* ── Search Bar ── */}
-        <div style={{ marginBottom: "1.25rem" }}>
-          <div style={{
-            position: "relative", display: "flex", alignItems: "center",
-            background: "rgba(10,15,12,0.6)", border: "1px solid rgba(102,255,178,0.12)",
-            borderRadius: "14px", backdropFilter: "blur(12px)", transition: "border-color 0.2s ease",
-          }} className="focus-within:border-[rgba(0,230,118,0.35)]">
-            <Search size={18} color="rgba(167,184,176,0.5)" style={{ position: "absolute", left: "1.1rem", pointerEvents: "none" }} />
+        <div className="mb-4">
+          <div className="relative flex items-center bg-[#0c1410]/80 border border-white/10 rounded-2xl backdrop-blur-md focus-within:border-emerald-500/50 focus-within:shadow-[0_0_20px_rgba(16,185,129,0.15)] transition-all">
+            <Search className="w-4 h-4 text-emerald-400 absolute left-4 pointer-events-none" />
             <input
               type="search"
               id="marketplace-search"
               aria-label="Search marketplace listings"
-              placeholder="Search books, electronics, furniture and more..."
+              placeholder="Search books, electronics, drafters, kettles, bicycles and more..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              style={{
-                flex: 1, background: "transparent", border: "none", outline: "none",
-                color: "#fff", fontSize: "0.95rem", padding: "0.95rem 1rem 0.95rem 2.8rem", width: "100%",
-              }}
+              className="flex-1 bg-transparent border-none outline-none text-white text-sm py-3.5 pl-11 pr-10 placeholder:text-white/30 w-full"
             />
             {search && (
               <button
                 onClick={() => { setSearch(""); setDebouncedSearch(""); }}
-                style={{
-                  position: "absolute", right: "1rem",
-                  background: "rgba(167,184,176,0.12)", border: "none", borderRadius: "6px",
-                  padding: "4px", cursor: "pointer", display: "flex", alignItems: "center",
-                  color: "rgba(167,184,176,0.7)", transition: "all 0.15s ease",
-                }}
-                className="hover:bg-[rgba(167,184,176,0.2)] hover:text-white"
+                className="absolute right-3.5 p-1 rounded-md bg-white/10 text-white/60 hover:text-white transition-colors cursor-pointer"
                 aria-label="Clear search"
               >
-                <X size={14} />
+                <X className="w-3.5 h-3.5" />
               </button>
             )}
           </div>
@@ -428,14 +424,21 @@ export function ResaleMarketplace() {
 
         {/* ── Category Pills ── */}
         <div
-          style={{ display: "flex", gap: "0.5rem", overflowX: "auto", paddingBottom: "0.25rem", marginBottom: "1.25rem", scrollbarWidth: "none" }}
-          role="tablist" aria-label="Filter by category"
+          className="flex items-center gap-2 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden pb-1 mb-5"
+          role="tablist"
+          aria-label="Filter by category"
         >
-          <CategoryPill label="All" active={category === ""} onClick={() => setCategory("")} />
+          <CategoryPill
+            label="All Items"
+            icon="🌟"
+            active={category === ""}
+            onClick={() => setCategory("")}
+          />
           {VALID_CATEGORIES.map((cat) => (
             <CategoryPill
               key={cat}
-              label={CATEGORY_LABELS[cat] ?? cat}
+              label={CATEGORY_META[cat]?.label ?? cat}
+              icon={CATEGORY_META[cat]?.icon}
               active={category === cat}
               onClick={() => setCategory(cat === category ? "" : cat)}
             />
@@ -537,7 +540,14 @@ export function ResaleMarketplace() {
             setDebouncedSearch((s) => s);
           }} />
         ) : data.listings.length === 0 ? (
-          <ResaleEmptyState isFiltered={hasActiveFilters} onClearFilters={clearFilters} />
+          <ResaleEmptyState
+            isFiltered={hasActiveFilters}
+            onClearFilters={clearFilters}
+            onSelectTag={(tag) => {
+              setSearch(tag);
+              setDebouncedSearch(tag);
+            }}
+          />
         ) : (
           <>
             <div
@@ -597,23 +607,30 @@ export function ResaleMarketplace() {
 
 // ─── Sub-Components ───────────────────────────────────────────────────────────
 
-function CategoryPill({ label, active, onClick }: { label: string; active: boolean; onClick: () => void }) {
+function CategoryPill({
+  label,
+  icon,
+  active,
+  onClick,
+}: {
+  label: string;
+  icon?: string;
+  active: boolean;
+  onClick: () => void;
+}) {
   return (
     <button
       onClick={onClick}
       role="tab"
       aria-selected={active}
-      style={{
-        padding: "0.45rem 1.1rem",
-        background: active ? "rgba(0,230,118,0.12)" : "rgba(10,15,12,0.5)",
-        border: `1px solid ${active ? "rgba(0,230,118,0.4)" : "rgba(102,255,178,0.08)"}`,
-        borderRadius: "100px", color: active ? "#00E676" : "#A7B8B0",
-        fontSize: "0.82rem", fontWeight: active ? 700 : 500,
-        cursor: "pointer", whiteSpace: "nowrap", transition: "all 0.18s ease", flexShrink: 0,
-      }}
-      className={!active ? "hover:border-[rgba(0,230,118,0.2)] hover:text-[#c8e6d4]" : ""}
+      className={`flex items-center gap-1.5 px-3.5 sm:px-4 py-2 rounded-full text-xs font-semibold cursor-pointer transition-all shrink-0 select-none ${
+        active
+          ? "bg-emerald-500/20 border border-emerald-500/50 text-emerald-300 shadow-[0_0_12px_rgba(16,185,129,0.3)]"
+          : "bg-[#0c1410]/80 border border-white/10 text-white/70 hover:text-white hover:border-white/20 hover:bg-white/5"
+      }`}
     >
-      {label}
+      {icon && <span className="text-sm">{icon}</span>}
+      <span>{label}</span>
     </button>
   );
 }
