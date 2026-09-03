@@ -2,9 +2,9 @@
 
 import { useState, useEffect, type ChangeEvent } from "react";
 import { useRouter } from "next/navigation";
-import { ChevronLeft, ChevronRight, ImageIcon, Loader2, Camera, Plus } from "lucide-react";
+import { ChevronLeft, ChevronRight, ImageIcon, Loader2, Camera, Plus, Trash2, Maximize2, X } from "lucide-react";
 import type { ResaleListingImageRow } from "@/lib/database/resale/types";
-import { uploadResaleListingImage } from "@/lib/database/resale/images";
+import { uploadResaleListingImage, deleteResaleListingImage } from "@/lib/database/resale/images";
 import { createClient } from "@/lib/supabase/client";
 
 interface ResaleImageGalleryProps {
@@ -21,6 +21,8 @@ export function ResaleImageGallery({ title, images, signedUrls, isOwner, listing
   const [blobUrls, setBlobUrls] = useState<Record<string, string>>({});
   const [isUploading, setIsUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
+  const [deletingImageId, setDeletingImageId] = useState<string | null>(null);
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -61,6 +63,18 @@ export function ResaleImageGallery({ title, images, signedUrls, isOwner, listing
     };
   }, [signedUrls]);
 
+  // Handle keyboard events in lightbox
+  useEffect(() => {
+    if (!isLightboxOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setIsLightboxOpen(false);
+      else if (e.key === "ArrowLeft") handlePrev();
+      else if (e.key === "ArrowRight") handleNext();
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  });
+
   const getImageUrl = (path: string) => {
     return blobUrls[path] || signedUrls[path] || '';
   };
@@ -85,17 +99,37 @@ export function ResaleImageGallery({ title, images, signedUrls, isOwner, listing
     }
   };
 
+  const handleDeleteImage = async (imageId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!window.confirm("Are you sure you want to remove this photo?")) return;
+    setDeletingImageId(imageId);
+    try {
+      const supabase = createClient();
+      await deleteResaleListingImage(supabase, imageId);
+      if (currentIndex >= validImages.length - 1) {
+        setCurrentIndex(Math.max(0, validImages.length - 2));
+      }
+      router.refresh();
+    } catch (err) {
+      console.error("Failed to delete image:", err);
+      alert("Failed to delete image. Please try again.");
+    } finally {
+      setDeletingImageId(null);
+    }
+  };
+
   // Filter images that have valid signed URLs or storage_path
   const validImages = images.filter((img) => signedUrls[img.storage_path] || img.storage_path);
   const currentImage = validImages[currentIndex];
 
   if (validImages.length === 0) {
     return (
-      <div className="w-full aspect-square md:aspect-[4/3] bg-black/40 border border-[#00E676]/10 rounded-2xl flex flex-col items-center justify-center text-[#A7B8B0]/60 p-6 text-center">
+      <div className="w-full aspect-square md:aspect-[4/3] bg-[#0A0F0C]/80 border border-[#00E676]/15 rounded-2xl flex flex-col items-center justify-center text-[#A7B8B0]/60 p-6 text-center backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.5)]">
         <ImageIcon size={48} className="mb-3 opacity-50 text-emerald-400" />
         <p className="text-sm font-medium text-white/80 m-0">No images available</p>
+        <p className="text-xs text-white/40 m-0 mt-1 mb-4">This listing does not have any photos attached yet.</p>
         {isOwner && listingId && (
-          <div className="mt-4 flex flex-col items-center gap-2">
+          <div className="mt-2 flex flex-col items-center gap-2">
             <label
               htmlFor="gallery-quick-photo-upload"
               className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-400 text-black font-extrabold text-xs cursor-pointer hover:opacity-95 transition-all shadow-[0_0_15px_rgba(16,185,129,0.3)] active:scale-95"
@@ -129,102 +163,197 @@ export function ResaleImageGallery({ title, images, signedUrls, isOwner, listing
   };
 
   return (
-    <div className="flex flex-col gap-4">
-      {/* Main Image */}
-      <div className="relative w-full aspect-square md:aspect-[4/3] bg-black/40 border border-[#00E676]/10 rounded-2xl overflow-hidden group">
-        {getImageUrl(currentImage.storage_path) ? (
-          <img
-            src={getImageUrl(currentImage.storage_path)}
-            alt={`${title} - Image ${currentIndex + 1}`}
-            className="absolute inset-0 w-full h-full object-contain"
-          />
-        ) : (
-          <div className="absolute inset-0 flex items-center justify-center">
-            <Loader2 className="w-8 h-8 animate-spin text-[#00E676]/50" />
-          </div>
-        )}
-
-        {validImages.length > 1 && (
-          <>
-            <button
-              onClick={handlePrev}
-              aria-label="Previous image"
-              className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-black/60 border border-white/10 flex items-center justify-center text-white opacity-75 sm:opacity-0 group-hover:opacity-100 transition-opacity hover:bg-black/80 hover:border-[#00E676]/50 focus-visible:opacity-100"
-            >
-              <ChevronLeft size={20} className="sm:w-6 sm:h-6" />
-            </button>
-            <button
-              onClick={handleNext}
-              aria-label="Next image"
-              className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-black/60 border border-white/10 flex items-center justify-center text-white opacity-75 sm:opacity-0 group-hover:opacity-100 transition-opacity hover:bg-black/80 hover:border-[#00E676]/50 focus-visible:opacity-100"
-            >
-              <ChevronRight size={20} className="sm:w-6 sm:h-6" />
-            </button>
-            <div className="absolute bottom-3 right-3 sm:bottom-4 sm:right-4 bg-black/80 backdrop-blur-md px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-medium text-white/90 border border-white/10">
-              {currentIndex + 1} / {validImages.length}
+    <>
+      <div className="flex flex-col gap-4">
+        {/* Main Image Container */}
+        <div 
+          onClick={() => setIsLightboxOpen(true)}
+          className="relative w-full aspect-square md:aspect-[4/3] bg-[#0A0F0C]/90 border border-white/10 rounded-2xl overflow-hidden group cursor-zoom-in backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.5)] transition-all hover:border-emerald-500/30"
+          title="Click to view fullscreen"
+        >
+          {getImageUrl(currentImage.storage_path) ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={getImageUrl(currentImage.storage_path)}
+              alt={`${title} - Image ${currentIndex + 1}`}
+              className="absolute inset-0 w-full h-full object-contain transition-transform duration-300 group-hover:scale-[1.02]"
+            />
+          ) : (
+            <div className="absolute inset-0 flex items-center justify-center">
+              <Loader2 className="w-8 h-8 animate-spin text-[#00E676]/50" />
             </div>
-          </>
+          )}
+
+          {/* Fullscreen Zoom Hint */}
+          <div className="absolute top-3 right-3 px-2.5 py-1 rounded-lg bg-black/65 hover:bg-black/80 border border-white/15 text-white/90 text-xs flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-md shadow-lg pointer-events-none">
+            <Maximize2 size={13} className="text-emerald-400" />
+            <span>Zoom</span>
+          </div>
+
+          {/* Prev / Next Arrows */}
+          {validImages.length > 1 && (
+            <>
+              <button
+                type="button"
+                onClick={(e) => { e.stopPropagation(); handlePrev(); }}
+                aria-label="Previous image"
+                className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-black/60 border border-white/10 flex items-center justify-center text-white opacity-75 sm:opacity-0 group-hover:opacity-100 transition-opacity hover:bg-black/80 hover:border-[#00E676]/50 focus-visible:opacity-100 cursor-pointer"
+              >
+                <ChevronLeft size={20} className="sm:w-6 sm:h-6" />
+              </button>
+              <button
+                type="button"
+                onClick={(e) => { e.stopPropagation(); handleNext(); }}
+                aria-label="Next image"
+                className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-black/60 border border-white/10 flex items-center justify-center text-white opacity-75 sm:opacity-0 group-hover:opacity-100 transition-opacity hover:bg-black/80 hover:border-[#00E676]/50 focus-visible:opacity-100 cursor-pointer"
+              >
+                <ChevronRight size={20} className="sm:w-6 sm:h-6" />
+              </button>
+              <div className="absolute bottom-3 right-3 sm:bottom-4 sm:right-4 bg-black/80 backdrop-blur-md px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-semibold text-white/90 border border-white/10">
+                {currentIndex + 1} / {validImages.length}
+              </div>
+            </>
+          )}
+        </div>
+
+        {/* Thumbnails Row */}
+        {(validImages.length > 1 || (isOwner && listingId && validImages.length < 6)) && (
+          <div className="flex items-center gap-3 overflow-x-auto pb-2 scrollbar-hide">
+            {validImages.map((img, idx) => {
+              const isSelected = idx === currentIndex;
+              return (
+                <div
+                  key={img.id}
+                  onClick={() => setCurrentIndex(idx)}
+                  className={`group/thumb relative shrink-0 w-20 h-20 rounded-xl overflow-hidden border-2 cursor-pointer transition-all ${
+                    isSelected
+                      ? "border-[#00E676] ring-2 ring-[#00E676]/20 opacity-100"
+                      : "border-transparent opacity-60 hover:opacity-100 hover:border-[#00E676]/50"
+                  }`}
+                >
+                  {getImageUrl(img.storage_path) ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={getImageUrl(img.storage_path)}
+                      alt={`Thumbnail ${idx + 1}`}
+                      className="absolute inset-0 w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/20">
+                      <Loader2 className="w-4 h-4 animate-spin text-[#00E676]/30" />
+                    </div>
+                  )}
+
+                  {/* Owner Delete Button */}
+                  {isOwner && (
+                    <button
+                      type="button"
+                      onClick={(e) => handleDeleteImage(img.id, e)}
+                      disabled={deletingImageId === img.id}
+                      className="absolute top-1 right-1 w-6 h-6 rounded-md bg-black/80 hover:bg-red-500 text-white/70 hover:text-white flex items-center justify-center transition-all z-10 opacity-0 group-hover/thumb:opacity-100 shadow-md cursor-pointer"
+                      title="Delete this photo"
+                      aria-label={`Delete photo ${idx + 1}`}
+                    >
+                      {deletingImageId === img.id ? (
+                        <Loader2 size={12} className="animate-spin" />
+                      ) : (
+                        <Trash2 size={12} />
+                      )}
+                    </button>
+                  )}
+                </div>
+              );
+            })}
+
+            {/* Add More Photos Card for Owner */}
+            {isOwner && listingId && validImages.length < 6 && (
+              <label
+                htmlFor="gallery-add-more-photos"
+                className="relative shrink-0 w-20 h-20 rounded-xl border-2 border-dashed border-emerald-500/40 hover:border-emerald-400 bg-emerald-500/5 hover:bg-emerald-500/10 flex flex-col items-center justify-center text-emerald-400 cursor-pointer transition-all gap-1 text-center"
+                title="Add more photos"
+              >
+                {isUploading ? (
+                  <Loader2 size={18} className="animate-spin" />
+                ) : (
+                  <>
+                    <Plus size={20} />
+                    <span className="text-[10px] font-bold">Add</span>
+                  </>
+                )}
+                <input
+                  id="gallery-add-more-photos"
+                  type="file"
+                  accept="image/*,.jpg,.jpeg,.png,.webp"
+                  className="sr-only"
+                  disabled={isUploading}
+                  onChange={handleQuickUpload}
+                />
+              </label>
+            )}
+          </div>
         )}
       </div>
 
-      {/* Thumbnails */}
-      {(validImages.length > 1 || (isOwner && listingId && validImages.length < 6)) && (
-        <div className="flex items-center gap-3 overflow-x-auto pb-2 scrollbar-hide">
-          {validImages.map((img, idx) => {
-            const isSelected = idx === currentIndex;
-            return (
-              <button
-                key={img.id}
-                onClick={() => setCurrentIndex(idx)}
-                aria-label={`View image ${idx + 1}`}
-                aria-current={isSelected ? "true" : "false"}
-                className={`relative shrink-0 w-20 h-20 rounded-xl overflow-hidden border-2 transition-all ${
-                  isSelected
-                    ? "border-[#00E676] ring-2 ring-[#00E676]/20 opacity-100"
-                    : "border-transparent opacity-60 hover:opacity-100 hover:border-[#00E676]/50"
-                }`}
-              >
-                {getImageUrl(img.storage_path) ? (
-                  <img
-                    src={getImageUrl(img.storage_path)}
-                    alt={`Thumbnail ${idx + 1}`}
-                    className="absolute inset-0 w-full h-full object-cover"
-                  />
-                ) : (
-                  <div className="absolute inset-0 flex items-center justify-center bg-black/20">
-                    <Loader2 className="w-4 h-4 animate-spin text-[#00E676]/30" />
-                  </div>
-                )}
-              </button>
-            );
-          })}
-
-          {isOwner && listingId && validImages.length < 6 && (
-            <label
-              htmlFor="gallery-add-more-photos"
-              className="relative shrink-0 w-20 h-20 rounded-xl border-2 border-dashed border-emerald-500/40 hover:border-emerald-400 bg-emerald-500/5 hover:bg-emerald-500/10 flex flex-col items-center justify-center text-emerald-400 cursor-pointer transition-all gap-1 text-center"
-              title="Add more photos"
+      {/* Lightbox / Fullscreen Zoom Modal */}
+      {isLightboxOpen && (
+        <div 
+          className="fixed inset-0 z-50 bg-black/95 backdrop-blur-xl flex flex-col items-center justify-center p-4 select-none"
+          onClick={() => setIsLightboxOpen(false)}
+        >
+          {/* Top bar */}
+          <div className="absolute top-4 left-4 right-4 flex items-center justify-between z-10">
+            <div className="px-3.5 py-1.5 rounded-full bg-white/10 border border-white/15 text-xs font-semibold text-white/90">
+              {title} · Photo {currentIndex + 1} of {validImages.length}
+            </div>
+            <button
+              type="button"
+              onClick={() => setIsLightboxOpen(false)}
+              className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 border border-white/15 text-white flex items-center justify-center transition-colors cursor-pointer"
+              aria-label="Close fullscreen view"
             >
-              {isUploading ? (
-                <Loader2 size={18} className="animate-spin" />
-              ) : (
-                <>
-                  <Plus size={20} />
-                  <span className="text-[10px] font-bold">Add</span>
-                </>
-              )}
-              <input
-                id="gallery-add-more-photos"
-                type="file"
-                accept="image/*,.jpg,.jpeg,.png,.webp"
-                className="sr-only"
-                disabled={isUploading}
-                onChange={handleQuickUpload}
+              <X size={20} />
+            </button>
+          </div>
+
+          {/* Large Center Image */}
+          <div 
+            className="relative max-w-5xl max-h-[80vh] w-full h-full flex items-center justify-center"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {getImageUrl(currentImage.storage_path) && (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={getImageUrl(currentImage.storage_path)}
+                alt={`${title} - Fullscreen ${currentIndex + 1}`}
+                className="max-w-full max-h-full object-contain rounded-xl shadow-2xl"
               />
-            </label>
+            )}
+          </div>
+
+          {/* Lightbox Arrows */}
+          {validImages.length > 1 && (
+            <>
+              <button
+                type="button"
+                onClick={(e) => { e.stopPropagation(); handlePrev(); }}
+                className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-black/60 hover:bg-black/90 border border-white/15 text-white flex items-center justify-center transition-colors cursor-pointer shadow-xl"
+                aria-label="Previous image"
+              >
+                <ChevronLeft size={26} />
+              </button>
+              <button
+                type="button"
+                onClick={(e) => { e.stopPropagation(); handleNext(); }}
+                className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-black/60 hover:bg-black/90 border border-white/15 text-white flex items-center justify-center transition-colors cursor-pointer shadow-xl"
+                aria-label="Next image"
+              >
+                <ChevronRight size={26} />
+              </button>
+            </>
           )}
         </div>
       )}
-    </div>
+    </>
   );
 }
+

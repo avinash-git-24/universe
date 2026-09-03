@@ -167,8 +167,9 @@ async function ListingContent({ id }: { id: string }) {
     return <ResaleDetailError />;
   }
 
-  // Fetch related active listings
-  const { data: otherListings } = await supabase
+  // Fetch related active listings: first from same seller, fallback to same category or trending campus items
+  let relatedTitle = `More from ${sellerProfile.full_name || "Seller"}`;
+  const { data: rawOtherListings } = await supabase
     .from("resale_listings")
     .select(LISTING_WITH_IMAGES_COLUMNS)
     .eq("seller_id", listing.seller_id)
@@ -177,7 +178,39 @@ async function ListingContent({ id }: { id: string }) {
     .order("created_at", { ascending: false })
     .limit(4);
 
-  const filteredOtherListings = (otherListings || []) as unknown as ResaleListingWithImages[];
+  let finalOtherListings = rawOtherListings || [];
+
+  if (finalOtherListings.length === 0) {
+    const { data: catListings } = await supabase
+      .from("resale_listings")
+      .select(LISTING_WITH_IMAGES_COLUMNS)
+      .eq("category", listing.category)
+      .eq("status", "active")
+      .neq("id", listing.id)
+      .order("created_at", { ascending: false })
+      .limit(4);
+
+    if (catListings && catListings.length > 0) {
+      finalOtherListings = catListings;
+      const formattedCategory = listing.category.charAt(0).toUpperCase() + listing.category.slice(1).replace('_', ' ');
+      relatedTitle = `More in ${formattedCategory}`;
+    } else {
+      const { data: recentListings } = await supabase
+        .from("resale_listings")
+        .select(LISTING_WITH_IMAGES_COLUMNS)
+        .eq("status", "active")
+        .neq("id", listing.id)
+        .order("created_at", { ascending: false })
+        .limit(4);
+
+      if (recentListings && recentListings.length > 0) {
+        finalOtherListings = recentListings;
+        relatedTitle = "Similar Campus Deals";
+      }
+    }
+  }
+
+  const filteredOtherListings = finalOtherListings as unknown as ResaleListingWithImages[];
 
   // Sign URLs for related listings
   const relatedImages = filteredOtherListings.flatMap((l) => l.images);
@@ -190,8 +223,11 @@ async function ListingContent({ id }: { id: string }) {
   }, {} as Record<string, string>);
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] bg-background">
-      <div className="pt-4 sm:pt-8 pb-16 px-3 sm:px-6 lg:px-8">
+    <div className="min-h-[calc(100vh-4rem)] bg-[#060a08] relative overflow-hidden">
+      {/* Background radial glow */}
+      <div className="absolute top-0 right-1/4 w-[500px] h-[500px] rounded-full bg-radial from-emerald-500/10 via-transparent to-transparent blur-3xl pointer-events-none" />
+      <div className="absolute bottom-1/4 left-10 w-[500px] h-[500px] rounded-full bg-radial from-teal-500/10 via-transparent to-transparent blur-3xl pointer-events-none" />
+      <div className="relative pt-4 sm:pt-8 pb-16 px-3 sm:px-6 lg:px-8 max-w-7xl mx-auto">
         <ResaleListingDetail 
           listing={listing} 
           signedUrls={signedUrls} 
@@ -206,6 +242,7 @@ async function ListingContent({ id }: { id: string }) {
           listings={filteredOtherListings} 
           signedUrls={relatedSignedUrls} 
           sellerName={sellerProfile.full_name || "Seller"} 
+          title={relatedTitle}
         />
       </div>
     </div>

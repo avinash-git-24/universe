@@ -7,9 +7,10 @@ interface ResaleRelatedListingsProps {
   listings: ResaleListingWithImages[];
   signedUrls: Record<string, string>;
   sellerName: string;
+  title?: string;
 }
 
-export function ResaleRelatedListings({ listings, signedUrls, sellerName }: ResaleRelatedListingsProps) {
+export function ResaleRelatedListings({ listings, signedUrls, sellerName, title }: ResaleRelatedListingsProps) {
   if (!listings || listings.length === 0) {
     return null; // Don't show an empty section
   }
@@ -17,7 +18,7 @@ export function ResaleRelatedListings({ listings, signedUrls, sellerName }: Resa
   return (
     <div className="mt-16 pt-12 border-t border-white/10">
       <div className="flex items-center justify-between mb-8">
-        <h2 className="text-xl font-bold text-white">More from {sellerName}</h2>
+        <h2 className="text-xl font-bold text-white">{title || `More from ${sellerName}`}</h2>
         <Link 
           href={`/dashboard/marketplace?search=${encodeURIComponent(sellerName)}`}
           className="text-sm font-medium text-[#00E676] hover:text-[#00E676]/80 flex items-center gap-1 transition-colors"
