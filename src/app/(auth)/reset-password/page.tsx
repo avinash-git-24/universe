@@ -132,25 +132,68 @@ export default function ResetPasswordPage() {
   const strength = getPasswordStrength(password);
 
   useEffect(() => {
+    const supabase = createClient();
+
+    const hasRecoveryInUrl =
+      typeof window !== "undefined" &&
+      (window.location.hash.includes("type=recovery") ||
+        window.location.hash.includes("access_token") ||
+        window.location.search.includes("code") ||
+        window.location.search.includes("type=recovery"));
+
+    // 1. Listen for password recovery auth event
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === "PASSWORD_RECOVERY" || session) {
+        setHasValidSession(true);
+        setCheckingSession(false);
+      }
+    });
+
+    // 2. Check active recovery session
     async function checkRecoverySession() {
       try {
-        const supabase = createClient();
-        const { data: { session }, error } = await supabase.auth.getSession();
-        if (error || !session) {
-          setHasValidSession(false);
-          setSessionError("No active recovery session found. Please use the link sent to your email.");
-        } else {
+        const {
+          data: { session },
+          error,
+        } = await supabase.auth.getSession();
+
+        if (session || hasRecoveryInUrl) {
           setHasValidSession(true);
+          setCheckingSession(false);
+        } else {
+          // Grace period for Supabase SPA hash parsing
+          setTimeout(async () => {
+            const {
+              data: { session: retrySession },
+            } = await supabase.auth.getSession();
+
+            if (retrySession || hasRecoveryInUrl) {
+              setHasValidSession(true);
+            } else {
+              setHasValidSession(false);
+              setSessionError("No active recovery session found. Please use the link sent to your email.");
+            }
+            setCheckingSession(false);
+          }, 1000);
         }
       } catch {
-        setHasValidSession(false);
-        setSessionError("Failed to verify reset session. Please try again.");
-      } finally {
+        if (hasRecoveryInUrl) {
+          setHasValidSession(true);
+        } else {
+          setHasValidSession(false);
+          setSessionError("Failed to verify reset session. Please try again.");
+        }
         setCheckingSession(false);
       }
     }
 
     checkRecoverySession();
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
 
   async function handleSubmit(e: React.FormEvent) {
