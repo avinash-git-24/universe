@@ -89,6 +89,30 @@ const CATEGORY_ICONS: Record<ResaleCategory, string> = {
 
 const POPULAR_PRICE_PRESETS = [50, 100, 200, 500, 1000];
 
+const POPULAR_TITLE_STARTERS = [
+  "Casio fx-991EX Calculator",
+  "Engineering Drafter + Sheet Holder",
+  "Electric Kettle 1.5L",
+  "Hostel Study Table Lamp",
+  "Campus Bicycle with Lock",
+  "Engineering Maths Textbook",
+];
+
+const DESCRIPTION_TEMPLATES = [
+  {
+    name: "📚 Book / Notes",
+    text: "Used for 1 semester only. All pages clean and intact, minimal pencil notes. Formula sheet included. Ready for immediate hostel handover.",
+  },
+  {
+    name: "⚡ Gadget / Electronics",
+    text: "100% fully functional and tested. Comes with original charging cable. Battery health is great. Reason for selling: Graduating / upgraded.",
+  },
+  {
+    name: "🛏️ Hostel Essentials",
+    text: "Gently used in hostel room, thoroughly cleaned and in great shape. Available for immediate pickup at hostel block.",
+  },
+];
+
 const POPULAR_CAMPUS_LOCATIONS = [
   "Main Library",
   "Hostel Block D",
@@ -432,6 +456,50 @@ export function SellForm() {
     );
   }
 
+  // ── Compute Listing Strength (0 - 100%) ──
+  const { strengthPct, strengthLabel, strengthColor, strengthTip } = (() => {
+    let score = 0;
+    if (images.length > 0) score += 25;
+    if (images.length >= 3) score += 10;
+    if (title.trim().length >= 8) score += 20;
+    if (category) score += 10;
+    if (condition) score += 10;
+    if (price && parseFloat(price) > 0) score += 15;
+    if (description.trim().length >= 20) score += 5;
+    if (pickupLocation.trim().length >= 3) score += 5;
+
+    score = Math.min(100, score);
+
+    let label = "Getting Started";
+    let color = "bg-amber-400 text-amber-400";
+    if (score >= 80) {
+      label = "Excellent Listing";
+      color = "bg-emerald-400 text-emerald-400";
+    } else if (score >= 50) {
+      label = "Good Progress";
+      color = "bg-blue-400 text-blue-400";
+    }
+
+    let tip = "Add at least 1 photo and title to begin";
+    if (images.length === 0) {
+      tip = "Add at least 1 photo — listings with photos sell 5x faster";
+    } else if (!title.trim()) {
+      tip = "Add a descriptive title mentioning subject, brand, or model";
+    } else if (!category || !condition) {
+      tip = "Select a category and condition";
+    } else if (!price || parseFloat(price) <= 0) {
+      tip = "Set your campus selling price";
+    } else if (images.length < 2) {
+      tip = "Adding 2+ photos gives campus peers extra confidence";
+    } else if (!pickupLocation.trim()) {
+      tip = "Add your hostel or library spot for easy handover";
+    } else {
+      tip = "Your listing looks great and ready to publish!";
+    }
+
+    return { strengthPct: score, strengthLabel: label, strengthColor: color, strengthTip: tip };
+  })();
+
   return (
     <div className="min-h-screen bg-[#060a08] relative overflow-hidden py-4 sm:py-8 pb-24 selection:bg-emerald-500/30">
       {/* Ambient Stardust & Nebula Glows */}
@@ -463,6 +531,27 @@ export function SellForm() {
           </h1>
           <p className="text-[#A7B8B0]/70 text-xs sm:text-sm m-0">
             Turn things you no longer need into value for another student.
+          </p>
+        </div>
+
+        {/* Listing Strength Meter */}
+        <div className="mb-6 p-4 rounded-2xl bg-[#0c1410]/80 border border-white/10 backdrop-blur-md shadow-sm">
+          <div className="flex items-center justify-between gap-2 mb-2">
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-bold text-white/80">Listing Strength:</span>
+              <span className={`text-xs font-extrabold ${strengthColor.split(" ")[1]}`}>{strengthLabel}</span>
+            </div>
+            <span className="text-xs font-mono font-bold text-white/60">{strengthPct}%</span>
+          </div>
+          <div className="w-full h-1.5 rounded-full bg-white/5 overflow-hidden">
+            <div
+              className={`h-full transition-all duration-300 rounded-full ${strengthColor.split(" ")[0]}`}
+              style={{ width: `${strengthPct}%` }}
+            />
+          </div>
+          <p className="text-[11px] text-white/50 mt-2 m-0 flex items-center gap-1.5">
+            <span className="text-emerald-400">💡</span>
+            <span>{strengthTip}</span>
           </p>
         </div>
 
@@ -709,6 +798,20 @@ export function SellForm() {
                   {title.length}/{MAX_TITLE_LEN}
                 </span>
               </div>
+              {/* Quick Title Starters */}
+              <div className="flex items-center gap-1.5 mt-2 flex-wrap">
+                <span className="text-[11px] text-white/40 font-medium">Quick titles:</span>
+                {POPULAR_TITLE_STARTERS.map((starter) => (
+                  <button
+                    key={starter}
+                    type="button"
+                    onClick={() => setTitle(starter)}
+                    className="px-2 py-0.5 rounded-lg bg-white/5 hover:bg-emerald-500/15 border border-white/10 hover:border-emerald-500/30 text-[11px] text-white/70 hover:text-emerald-300 font-medium transition-colors cursor-pointer"
+                  >
+                    + {starter}
+                  </button>
+                ))}
+              </div>
             </FieldGroup>
 
             {/* ── Category ── */}
@@ -866,6 +969,20 @@ export function SellForm() {
 
             {/* ── Description ── */}
             <FieldGroup label="Description — optional" htmlFor="sell-description">
+              {/* Description Quick Templates */}
+              <div className="flex items-center gap-1.5 mb-1.5 flex-wrap">
+                <span className="text-[11px] text-white/40 font-medium">Quick templates:</span>
+                {DESCRIPTION_TEMPLATES.map((tmpl) => (
+                  <button
+                    key={tmpl.name}
+                    type="button"
+                    onClick={() => setDescription(tmpl.text)}
+                    className="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-emerald-500/15 border border-white/10 hover:border-emerald-500/30 text-[11px] text-white/75 hover:text-emerald-300 font-medium transition-colors cursor-pointer"
+                  >
+                    {tmpl.name}
+                  </button>
+                ))}
+              </div>
               <textarea
                 id="sell-description"
                 value={description}
@@ -1001,6 +1118,33 @@ export function SellForm() {
           By publishing, you confirm this item belongs to you and complies with UniVerse community guidelines.
         </p>
       </div>
+      </div>
+
+      {/* ── Mobile Floating Action Bar ── */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 p-3 bg-[#0c1410]/95 backdrop-blur-xl border-t border-white/10 z-40 flex items-center gap-2.5 shadow-[0_-4px_24px_rgba(0,0,0,0.6)]">
+        <button
+          type="button"
+          onClick={() => setShowPreview((v) => !v)}
+          className="flex-1 py-3 px-3 rounded-xl bg-white/5 border border-white/10 text-white text-xs font-bold hover:bg-white/10 transition-colors cursor-pointer flex items-center justify-center gap-1.5"
+        >
+          <Eye className="w-3.5 h-3.5 text-emerald-400" />
+          <span>{showPreview ? "Hide Preview" : "Preview"}</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={handleSubmit}
+          disabled={isSubmitting}
+          aria-label="Publish listing from mobile bar"
+          className={`flex-[2] py-3 px-4 rounded-xl text-black font-black text-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-[0_0_15px_rgba(16,185,129,0.35)] ${
+            isSubmitting
+              ? "bg-emerald-500/50 cursor-not-allowed"
+              : "bg-gradient-to-r from-emerald-500 to-teal-400 active:scale-95"
+          }`}
+        >
+          {isSubmitting && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
+          <span>{isSubmitting ? "Publishing…" : "Publish Now"}</span>
+        </button>
       </div>
     </div>
   );
