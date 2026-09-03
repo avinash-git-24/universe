@@ -6,14 +6,12 @@ import Link from "next/link";
 import { formatDistanceToNow, format } from "date-fns";
 import { 
   MapPin, Package, Clock, IndianRupee, Eye, CheckCircle2, History, Wallet, Star, 
-  LayoutGrid, List, Calendar, ArrowRight, Box, ChevronDown, MessageSquare, KeyRound, 
-  ShieldCheck, Lock, Bike, Sparkles, Utensils, BookOpen, Laptop, Activity, Search, X, Filter 
+  LayoutGrid, List, Calendar, ArrowRight, ChevronDown, MessageSquare, KeyRound, 
+  ShieldCheck, Bike, Sparkles, Utensils, BookOpen, Laptop, Activity, Search, X, Filter 
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { NotificationBell } from "@/components/notifications/NotificationBell";
-import { cn, formatStudentName } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import {
   Modal,
   ModalContent,
@@ -648,7 +646,7 @@ export function RunnerDashboardClient({
             <div className="bg-[#0b120e] border border-white/5 rounded-2xl p-10 text-center space-y-3">
               <Filter className="w-10 h-10 mx-auto text-emerald-500/30" />
               <p className="text-white/80 font-semibold text-sm">No requests match your current search or filter.</p>
-              <p className="text-white/40 text-xs">Try selecting "All" or clearing the search query.</p>
+              <p className="text-white/40 text-xs">Try selecting &quot;All&quot; or clearing the search query.</p>
               <button
                 type="button"
                 onClick={() => {
