@@ -3,13 +3,13 @@
 /**
  * UniVerse — 100% Private & Secure Campus Password Reset Flow
  *
- * Designed with Linear / Stripe tier modern aesthetics:
- * - Subtle Cyber-Grid matrix with dual corner ambient nebula flares
- * - Center card backlight glow for 3D depth
- * - Floating Holographic Key Security Emblem
- * - Live pulsating status indicator in 3-stage progress tracker
- * - Shimmer light sweep on CTA gradient buttons
- * - One-click email clear button & verified domain badges
+ * Ultra-Luxury Modern Dark Aesthetic:
+ * - Radiant Celestial Halo behind UniVerse logo
+ * - Dual Aurora flares & high-definition Cyber-Grid horizon
+ * - Faint shimmering starfield particles
+ * - Stepper with active glowing status pills
+ * - Shimmer-sweep CTA button with interactive physics
+ * - Live MU domain validation & one-click clear button
  *
  * Route: /forgot-password
  */
@@ -30,6 +30,7 @@ import {
   ShieldCheck,
   Check,
   X,
+  ArrowRight,
 } from "lucide-react";
 import { AuthCard } from "@/components/auth/AuthCard";
 import { ROUTES } from "@/constants/routes";
@@ -249,49 +250,59 @@ export default function ForgotPasswordPage() {
 
   return (
     <div className="relative w-full flex flex-col items-center justify-center">
-      {/* ── Fixed Atmospheric Background Layers (Screen-wide luxury ambiance) ── */}
+      {/* ── Fixed Atmospheric Background Layers (Rich, Vibrant & Non-Distracting) ── */}
       <div className="fixed inset-0 pointer-events-none -z-10 overflow-hidden">
-        {/* Subtle Cyber-Grid Pattern with smooth vignette fade */}
+        {/* Crisp Cyber-Grid with Radial Spotlight Vignette */}
         <div
-          className="absolute inset-0 opacity-[0.035]"
+          className="absolute inset-0 opacity-[0.07]"
           style={{
             backgroundImage: `linear-gradient(to right, #00E676 1px, transparent 1px),
                               linear-gradient(to bottom, #00E676 1px, transparent 1px)`,
-            backgroundSize: "48px 48px",
+            backgroundSize: "42px 42px",
             maskImage:
-              "radial-gradient(ellipse 80% 80% at 50% 50%, black 20%, transparent 80%)",
+              "radial-gradient(ellipse 75% 75% at 50% 45%, black 25%, transparent 85%)",
             WebkitMaskImage:
-              "radial-gradient(ellipse 80% 80% at 50% 50%, black 20%, transparent 80%)",
+              "radial-gradient(ellipse 75% 75% at 50% 45%, black 25%, transparent 85%)",
           }}
         />
 
-        {/* Top-Left Ambient Emerald Nebula Flare */}
+        {/* Top Halo behind UniVerse Logo (Creates Majestic Glow) */}
         <div
-          className="absolute -top-36 -left-36 w-[560px] h-[560px] rounded-full"
+          className="absolute top-0 left-1/2 -translate-x-1/2 w-[680px] h-[320px] rounded-full pointer-events-none"
           style={{
             background:
-              "radial-gradient(circle, rgba(0, 230, 118, 0.09) 0%, rgba(0, 168, 84, 0.02) 50%, transparent 75%)",
+              "radial-gradient(ellipse at 50% 30%, rgba(0, 230, 118, 0.18) 0%, rgba(0, 200, 100, 0.05) 50%, transparent 75%)",
+            filter: "blur(70px)",
+          }}
+        />
+
+        {/* Left Emerald Aurora Plume */}
+        <div
+          className="absolute top-1/4 -left-40 w-[600px] h-[600px] rounded-full pointer-events-none"
+          style={{
+            background:
+              "radial-gradient(circle, rgba(0, 230, 118, 0.12) 0%, rgba(0, 168, 84, 0.03) 55%, transparent 75%)",
             filter: "blur(90px)",
           }}
         />
 
-        {/* Bottom-Right Ambient Cyan/Teal Flare */}
+        {/* Right Cyan Aurora Plume */}
         <div
-          className="absolute -bottom-36 -right-36 w-[600px] h-[600px] rounded-full"
+          className="absolute bottom-1/4 -right-40 w-[620px] h-[620px] rounded-full pointer-events-none"
           style={{
             background:
-              "radial-gradient(circle, rgba(0, 210, 255, 0.07) 0%, rgba(0, 119, 255, 0.02) 50%, transparent 75%)",
-            filter: "blur(100px)",
+              "radial-gradient(circle, rgba(0, 210, 255, 0.1) 0%, rgba(0, 119, 255, 0.02) 55%, transparent 75%)",
+            filter: "blur(95px)",
           }}
         />
 
-        {/* Center Card Backlight Glow (Anchors the card in 3D space) */}
+        {/* Direct Backlight behind the AuthCard */}
         <div
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[520px] h-[520px] rounded-full"
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[540px] h-[540px] rounded-full pointer-events-none"
           style={{
             background:
-              "radial-gradient(circle, rgba(0, 230, 118, 0.1) 0%, rgba(0, 230, 118, 0.02) 45%, transparent 70%)",
-            filter: "blur(60px)",
+              "radial-gradient(circle, rgba(0, 230, 118, 0.12) 0%, rgba(0, 230, 118, 0.03) 45%, transparent 70%)",
+            filter: "blur(65px)",
           }}
         />
       </div>
@@ -316,79 +327,76 @@ export default function ForgotPasswordPage() {
             : "Enter your college email address to receive a secure recovery code"
         }
       >
-        {/* ── FLOATING HOLOGRAPHIC SECURITY EMBLEM ── */}
-        <div className="flex justify-center -mt-2 mb-4">
-          <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shadow-[0_0_20px_rgba(0,230,118,0.2)]">
-            <KeyRound size={22} className="text-emerald-400" />
-          </div>
-        </div>
-
-        {/* ── STEP PROGRESS TRACKER WITH LIVE STATUS ── */}
+        {/* ── HIGH-TECH STEP TRACKER WITH ACTIVE STATUS PULSE ── */}
         {step < 4 && (
-          <div className="mb-5 px-1">
-            <div className="flex items-center justify-between text-[11px] font-semibold text-white/50 mb-2">
+          <div className="mb-5 px-0.5">
+            <div className="flex items-center justify-between text-[11px] font-mono tracking-wider text-white/50 mb-2.5">
               <span
-                className={
-                  step >= 1
-                    ? "text-emerald-400 flex items-center gap-1.5 font-bold"
-                    : "flex items-center gap-1.5"
-                }
+                className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md transition-all ${
+                  step === 1
+                    ? "text-emerald-400 bg-emerald-500/15 border border-emerald-500/30 font-bold"
+                    : step > 1
+                    ? "text-emerald-400/80"
+                    : "text-white/40"
+                }`}
               >
                 {step === 1 && (
-                  <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(0,230,118,0.8)] animate-pulse" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(0,230,118,1)] animate-pulse" />
                 )}
                 {step > 1 && <Check size={12} className="text-emerald-400" />}
-                01. Email
+                01. EMAIL
               </span>
 
               <span
-                className={
-                  step >= 2
-                    ? "text-emerald-400 flex items-center gap-1.5 font-bold"
-                    : "flex items-center gap-1.5"
-                }
+                className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md transition-all ${
+                  step === 2
+                    ? "text-emerald-400 bg-emerald-500/15 border border-emerald-500/30 font-bold"
+                    : step > 2
+                    ? "text-emerald-400/80"
+                    : "text-white/40"
+                }`}
               >
                 {step === 2 && (
-                  <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(0,230,118,0.8)] animate-pulse" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(0,230,118,1)] animate-pulse" />
                 )}
                 {step > 2 && <Check size={12} className="text-emerald-400" />}
-                02. Verify
+                02. VERIFY
               </span>
 
               <span
-                className={
-                  step >= 3
-                    ? "text-emerald-400 flex items-center gap-1.5 font-bold"
-                    : "flex items-center gap-1.5"
-                }
+                className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md transition-all ${
+                  step === 3
+                    ? "text-emerald-400 bg-emerald-500/15 border border-emerald-500/30 font-bold"
+                    : "text-white/40"
+                }`}
               >
                 {step === 3 && (
-                  <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(0,230,118,0.8)] animate-pulse" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(0,230,118,1)] animate-pulse" />
                 )}
-                03. Password
+                03. PASSWORD
               </span>
             </div>
 
-            {/* Glowing segmented progress bar */}
-            <div className="grid grid-cols-3 gap-1.5 h-1.5">
+            {/* Glowing Segmented Progress Bar */}
+            <div className="grid grid-cols-3 gap-2 h-1.5">
               <div
                 className={`rounded-full transition-all duration-300 ${
                   step >= 1
-                    ? "bg-emerald-400 shadow-[0_0_10px_rgba(0,230,118,0.5)]"
+                    ? "bg-emerald-400 shadow-[0_0_12px_rgba(0,230,118,0.6)]"
                     : "bg-white/10"
                 }`}
               />
               <div
                 className={`rounded-full transition-all duration-300 ${
                   step >= 2
-                    ? "bg-emerald-400 shadow-[0_0_10px_rgba(0,230,118,0.5)]"
+                    ? "bg-emerald-400 shadow-[0_0_12px_rgba(0,230,118,0.6)]"
                     : "bg-white/10"
                 }`}
               />
               <div
                 className={`rounded-full transition-all duration-300 ${
                   step >= 3
-                    ? "bg-emerald-400 shadow-[0_0_10px_rgba(0,230,118,0.5)]"
+                    ? "bg-emerald-400 shadow-[0_0_12px_rgba(0,230,118,0.6)]"
                     : "bg-white/10"
                 }`}
               />
@@ -419,12 +427,14 @@ export default function ForgotPasswordPage() {
               <div className="flex items-center justify-between">
                 <label
                   htmlFor="forgot-email"
-                  className="text-[11px] font-bold uppercase tracking-wider text-white/70"
+                  className="text-[11px] font-bold uppercase tracking-wider text-white/70 flex items-center gap-1.5"
                 >
-                  College Email Address <span className="text-emerald-400">*</span>
+                  <KeyRound size={13} className="text-emerald-400" />
+                  <span>College Email Address</span>
+                  <span className="text-emerald-400">*</span>
                 </label>
                 {isEmailValid && (
-                  <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/30">
+                  <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/30 shadow-[0_0_10px_rgba(0,230,118,0.2)]">
                     <ShieldCheck size={11} />
                     MU Verified
                   </span>
@@ -444,7 +454,7 @@ export default function ForgotPasswordPage() {
                     setEmail(e.target.value);
                     if (error) setError(null);
                   }}
-                  className="w-full h-12 pl-10 pr-10 bg-black/40 border border-white/15 rounded-xl text-white text-sm placeholder:text-white/30 focus:outline-none focus:border-emerald-400 focus:ring-4 focus:ring-emerald-500/20 transition-all duration-200"
+                  className="w-full h-12 pl-10 pr-10 bg-black/45 border border-white/15 rounded-xl text-white text-sm placeholder:text-white/30 focus:outline-none focus:border-emerald-400 focus:ring-4 focus:ring-emerald-500/20 transition-all duration-200 shadow-[inset_0_1px_3px_rgba(0,0,0,0.4)]"
                 />
                 {email.length > 0 && (
                   <button
@@ -466,14 +476,14 @@ export default function ForgotPasswordPage() {
               </div>
             </div>
 
-            {/* Premium CTA Button with Shimmer Sweep */}
+            {/* Premium CTA Button with Shimmer Sweep & Interactive Arrow */}
             <button
               type="submit"
               disabled={loading}
-              className="relative group overflow-hidden w-full h-12 rounded-xl bg-gradient-to-r from-emerald-400 via-emerald-500 to-teal-400 text-black font-extrabold text-sm tracking-wide shadow-[0_0_25px_rgba(0,230,118,0.3)] hover:shadow-[0_0_35px_rgba(0,230,118,0.45)] hover:brightness-105 active:scale-[0.99] transition-all duration-200 flex items-center justify-center gap-2 mt-1 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+              className="relative group overflow-hidden w-full h-12 rounded-xl bg-gradient-to-r from-emerald-400 via-emerald-500 to-teal-400 text-black font-extrabold text-sm tracking-wide shadow-[0_0_30px_rgba(0,230,118,0.35)] hover:shadow-[0_0_40px_rgba(0,230,118,0.5)] hover:brightness-105 active:scale-[0.99] transition-all duration-200 flex items-center justify-center gap-2 mt-1 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              {/* Shimmer Sweep Animation */}
-              <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full duration-1000 bg-gradient-to-r from-transparent via-white/30 to-transparent transition-transform pointer-events-none" />
+              {/* Shimmer Light Sweep */}
+              <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full duration-1000 bg-gradient-to-r from-transparent via-white/35 to-transparent transition-transform pointer-events-none" />
 
               {loading ? (
                 <>
@@ -481,7 +491,10 @@ export default function ForgotPasswordPage() {
                   <span>Sending Secret Code...</span>
                 </>
               ) : (
-                <span>Send Secret OTP to Gmail ➔</span>
+                <>
+                  <span>Send Secret OTP to Gmail</span>
+                  <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+                </>
               )}
             </button>
 
@@ -525,7 +538,7 @@ export default function ForgotPasswordPage() {
                     setOtp(e.target.value.replace(/\D/g, "").slice(0, 6));
                     if (error) setError(null);
                   }}
-                  className="w-full h-14 pl-11 pr-4 bg-black/50 border-2 border-emerald-500/60 rounded-xl text-emerald-400 font-mono text-2xl tracking-[0.45em] font-extrabold placeholder:text-white/20 focus:outline-none focus:border-emerald-400 focus:ring-4 focus:ring-emerald-500/25 transition-all text-center shadow-[inset_0_0_20px_rgba(0,230,118,0.1)]"
+                  className="w-full h-14 pl-11 pr-4 bg-black/50 border-2 border-emerald-500/60 rounded-xl text-emerald-400 font-mono text-2xl tracking-[0.45em] font-extrabold placeholder:text-white/20 focus:outline-none focus:border-emerald-400 focus:ring-4 focus:ring-emerald-500/25 transition-all text-center shadow-[inset_0_0_20px_rgba(0,230,118,0.12)]"
                   autoFocus
                 />
               </div>
@@ -537,9 +550,9 @@ export default function ForgotPasswordPage() {
             <button
               type="submit"
               disabled={loading || otp.length < 6}
-              className="relative group overflow-hidden w-full h-12 rounded-xl bg-gradient-to-r from-emerald-400 via-emerald-500 to-teal-400 text-black font-extrabold text-sm tracking-wide shadow-[0_0_25px_rgba(0,230,118,0.3)] hover:shadow-[0_0_35px_rgba(0,230,118,0.45)] hover:brightness-105 active:scale-[0.99] transition-all duration-200 flex items-center justify-center gap-2 mt-1 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              className="relative group overflow-hidden w-full h-12 rounded-xl bg-gradient-to-r from-emerald-400 via-emerald-500 to-teal-400 text-black font-extrabold text-sm tracking-wide shadow-[0_0_30px_rgba(0,230,118,0.35)] hover:shadow-[0_0_40px_rgba(0,230,118,0.5)] hover:brightness-105 active:scale-[0.99] transition-all duration-200 flex items-center justify-center gap-2 mt-1 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full duration-1000 bg-gradient-to-r from-transparent via-white/30 to-transparent transition-transform pointer-events-none" />
+              <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full duration-1000 bg-gradient-to-r from-transparent via-white/35 to-transparent transition-transform pointer-events-none" />
 
               {loading ? (
                 <>
@@ -547,7 +560,10 @@ export default function ForgotPasswordPage() {
                   <span>Verifying Code...</span>
                 </>
               ) : (
-                <span>Continue to New Password ➔</span>
+                <>
+                  <span>Continue to New Password</span>
+                  <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+                </>
               )}
             </button>
 
@@ -608,7 +624,7 @@ export default function ForgotPasswordPage() {
                     setNewPassword(e.target.value);
                     if (error) setError(null);
                   }}
-                  className="w-full h-12 pl-10 pr-10 bg-black/40 border border-white/15 rounded-xl text-white text-sm placeholder:text-white/30 focus:outline-none focus:border-emerald-400 focus:ring-4 focus:ring-emerald-500/20 transition-all duration-200"
+                  className="w-full h-12 pl-10 pr-10 bg-black/45 border border-white/15 rounded-xl text-white text-sm placeholder:text-white/30 focus:outline-none focus:border-emerald-400 focus:ring-4 focus:ring-emerald-500/20 transition-all duration-200"
                   autoFocus
                 />
                 <button
@@ -650,7 +666,7 @@ export default function ForgotPasswordPage() {
                     setConfirmPassword(e.target.value);
                     if (error) setError(null);
                   }}
-                  className="w-full h-12 pl-10 pr-4 bg-black/40 border border-white/15 rounded-xl text-white text-sm placeholder:text-white/30 focus:outline-none focus:border-emerald-400 focus:ring-4 focus:ring-emerald-500/20 transition-all duration-200"
+                  className="w-full h-12 pl-10 pr-4 bg-black/45 border border-white/15 rounded-xl text-white text-sm placeholder:text-white/30 focus:outline-none focus:border-emerald-400 focus:ring-4 focus:ring-emerald-500/20 transition-all duration-200"
                 />
               </div>
             </div>
@@ -658,9 +674,9 @@ export default function ForgotPasswordPage() {
             <button
               type="submit"
               disabled={loading}
-              className="relative group overflow-hidden w-full h-12 rounded-xl bg-gradient-to-r from-emerald-400 via-emerald-500 to-teal-400 text-black font-extrabold text-sm tracking-wide shadow-[0_0_25px_rgba(0,230,118,0.3)] hover:shadow-[0_0_35px_rgba(0,230,118,0.45)] hover:brightness-105 active:scale-[0.99] transition-all duration-200 flex items-center justify-center gap-2 mt-2 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+              className="relative group overflow-hidden w-full h-12 rounded-xl bg-gradient-to-r from-emerald-400 via-emerald-500 to-teal-400 text-black font-extrabold text-sm tracking-wide shadow-[0_0_30px_rgba(0,230,118,0.35)] hover:shadow-[0_0_40px_rgba(0,230,118,0.5)] hover:brightness-105 active:scale-[0.99] transition-all duration-200 flex items-center justify-center gap-2 mt-2 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full duration-1000 bg-gradient-to-r from-transparent via-white/30 to-transparent transition-transform pointer-events-none" />
+              <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full duration-1000 bg-gradient-to-r from-transparent via-white/35 to-transparent transition-transform pointer-events-none" />
 
               {loading ? (
                 <>
@@ -668,7 +684,10 @@ export default function ForgotPasswordPage() {
                   <span>Saving Password...</span>
                 </>
               ) : (
-                <span>Save Password & Login ➔</span>
+                <>
+                  <span>Save Password & Login</span>
+                  <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+                </>
               )}
             </button>
           </form>
