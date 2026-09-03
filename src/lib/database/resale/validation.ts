@@ -346,7 +346,19 @@ export function validateImageFile(file: File): {
   mimeType: AllowedImageMimeType;
   sizeBytes: number;
 } {
-  if (!(ALLOWED_IMAGE_MIME_TYPES as readonly string[]).includes(file.type)) {
+  let normalizedType = file.type?.toLowerCase() || "";
+  if (normalizedType === "image/jpg" || normalizedType === "image/pjpeg") {
+    normalizedType = "image/jpeg";
+  } else if (normalizedType === "image/x-png") {
+    normalizedType = "image/png";
+  } else if (!normalizedType && file.name) {
+    const ext = file.name.split(".").pop()?.toLowerCase();
+    if (ext === "jpg" || ext === "jpeg") normalizedType = "image/jpeg";
+    else if (ext === "png") normalizedType = "image/png";
+    else if (ext === "webp") normalizedType = "image/webp";
+  }
+
+  if (!(ALLOWED_IMAGE_MIME_TYPES as readonly string[]).includes(normalizedType)) {
     throw new ResaleServiceError(
       "VALIDATION_ERROR",
       `Unsupported image type: "${file.type}". Allowed types: ${ALLOWED_IMAGE_MIME_TYPES.join(", ")}.`
@@ -359,7 +371,7 @@ export function validateImageFile(file: File): {
     );
   }
   return {
-    mimeType: file.type as AllowedImageMimeType,
+    mimeType: normalizedType as AllowedImageMimeType,
     sizeBytes: file.size,
   };
 }

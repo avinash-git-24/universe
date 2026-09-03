@@ -1,19 +1,26 @@
 "use client";
 
-import { useState, useEffect } from "react";
-
-import { ChevronLeft, ChevronRight, ImageIcon, Loader2 } from "lucide-react";
+import { useState, useEffect, type ChangeEvent } from "react";
+import { useRouter } from "next/navigation";
+import { ChevronLeft, ChevronRight, ImageIcon, Loader2, Camera, Plus } from "lucide-react";
 import type { ResaleListingImageRow } from "@/lib/database/resale/types";
+import { uploadResaleListingImage } from "@/lib/database/resale/images";
+import { createClient } from "@/lib/supabase/client";
 
 interface ResaleImageGalleryProps {
   title: string;
   images: ResaleListingImageRow[];
   signedUrls: Record<string, string>;
+  isOwner?: boolean;
+  listingId?: string;
 }
 
-export function ResaleImageGallery({ title, images, signedUrls }: ResaleImageGalleryProps) {
+export function ResaleImageGallery({ title, images, signedUrls, isOwner, listingId }: ResaleImageGalleryProps) {
+  const router = useRouter();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [blobUrls, setBlobUrls] = useState<Record<string, string>>({});
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
 
   useEffect(() => {
     let active = true;
@@ -55,18 +62,60 @@ export function ResaleImageGallery({ title, images, signedUrls }: ResaleImageGal
   }, [signedUrls]);
 
   const getImageUrl = (path: string) => {
-    return blobUrls[path] || '';
+    return blobUrls[path] || signedUrls[path] || '';
   };
 
-  // Filter images that have valid signed URLs to avoid broken states
-  const validImages = images.filter((img) => signedUrls[img.storage_path]);
+  const handleQuickUpload = async (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !listingId) return;
+
+    setIsUploading(true);
+    setUploadError(null);
+
+    try {
+      const supabase = createClient();
+      await uploadResaleListingImage(supabase, listingId, file, images.length);
+      router.refresh();
+    } catch (err: unknown) {
+      console.error("Failed to upload image:", err);
+      setUploadError(err instanceof Error ? err.message : "Failed to upload image. Please try again.");
+    } finally {
+      setIsUploading(false);
+      e.target.value = "";
+    }
+  };
+
+  // Filter images that have valid signed URLs or storage_path
+  const validImages = images.filter((img) => signedUrls[img.storage_path] || img.storage_path);
   const currentImage = validImages[currentIndex];
 
   if (validImages.length === 0) {
     return (
-      <div className="w-full aspect-square md:aspect-[4/3] bg-black/40 border border-[#00E676]/10 rounded-2xl flex flex-col items-center justify-center text-[#A7B8B0]/60">
-        <ImageIcon size={48} className="mb-4 opacity-50" />
-        <p className="text-sm font-medium">No images available</p>
+      <div className="w-full aspect-square md:aspect-[4/3] bg-black/40 border border-[#00E676]/10 rounded-2xl flex flex-col items-center justify-center text-[#A7B8B0]/60 p-6 text-center">
+        <ImageIcon size={48} className="mb-3 opacity-50 text-emerald-400" />
+        <p className="text-sm font-medium text-white/80 m-0">No images available</p>
+        {isOwner && listingId && (
+          <div className="mt-4 flex flex-col items-center gap-2">
+            <label
+              htmlFor="gallery-quick-photo-upload"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-400 text-black font-extrabold text-xs cursor-pointer hover:opacity-95 transition-all shadow-[0_0_15px_rgba(16,185,129,0.3)] active:scale-95"
+            >
+              {isUploading ? <Loader2 size={16} className="animate-spin" /> : <Camera size={16} />}
+              <span>{isUploading ? "Uploading Photo..." : "Upload Photo for this Listing"}</span>
+            </label>
+            <input
+              id="gallery-quick-photo-upload"
+              type="file"
+              accept="image/*,.jpg,.jpeg,.png,.webp"
+              className="sr-only"
+              disabled={isUploading}
+              onChange={handleQuickUpload}
+            />
+            {uploadError && (
+              <p className="text-red-400 text-xs mt-1">{uploadError}</p>
+            )}
+          </div>
+        )}
       </div>
     );
   }
@@ -119,7 +168,7 @@ export function ResaleImageGallery({ title, images, signedUrls }: ResaleImageGal
       </div>
 
       {/* Thumbnails */}
-      {validImages.length > 1 && (
+      {(validImages.length > 1 || (isOwner && listingId && validImages.length < 6)) && (
         <div className="flex items-center gap-3 overflow-x-auto pb-2 scrollbar-hide">
           {validImages.map((img, idx) => {
             const isSelected = idx === currentIndex;
@@ -149,6 +198,31 @@ export function ResaleImageGallery({ title, images, signedUrls }: ResaleImageGal
               </button>
             );
           })}
+
+          {isOwner && listingId && validImages.length < 6 && (
+            <label
+              htmlFor="gallery-add-more-photos"
+              className="relative shrink-0 w-20 h-20 rounded-xl border-2 border-dashed border-emerald-500/40 hover:border-emerald-400 bg-emerald-500/5 hover:bg-emerald-500/10 flex flex-col items-center justify-center text-emerald-400 cursor-pointer transition-all gap-1 text-center"
+              title="Add more photos"
+            >
+              {isUploading ? (
+                <Loader2 size={18} className="animate-spin" />
+              ) : (
+                <>
+                  <Plus size={20} />
+                  <span className="text-[10px] font-bold">Add</span>
+                </>
+              )}
+              <input
+                id="gallery-add-more-photos"
+                type="file"
+                accept="image/*,.jpg,.jpeg,.png,.webp"
+                className="sr-only"
+                disabled={isUploading}
+                onChange={handleQuickUpload}
+              />
+            </label>
+          )}
         </div>
       )}
     </div>

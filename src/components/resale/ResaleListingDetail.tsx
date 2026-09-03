@@ -103,6 +103,8 @@ export function ResaleListingDetail({
             title={listing.title} 
             images={listing.images} 
             signedUrls={signedUrls} 
+            isOwner={isOwner}
+            listingId={listing.id}
           />
         </div>
 

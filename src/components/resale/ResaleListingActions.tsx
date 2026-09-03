@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { updateResaleListing, deleteResaleListing } from "@/lib/database/resale/listings";
 import { deleteAllListingImages } from "@/lib/database/resale/images";
@@ -113,6 +114,17 @@ export function ResaleListingActions({ listing }: ResaleListingActionsProps) {
         )}
 
         <div className="flex flex-col gap-3">
+          {(listing.status === "active" || listing.status === "reserved") && (
+            <Link href={`/dashboard/marketplace/${listing.id}/edit`} className="w-full">
+              <button
+                type="button"
+                className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-white/5 text-white/90 border border-white/10 hover:bg-white/10 hover:border-emerald-500/30 hover:text-emerald-300 transition-all font-medium cursor-pointer"
+              >
+                <Edit2 size={16} />
+                Edit Listing
+              </button>
+            </Link>
+          )}
 
           {listing.status === "active" && (
             <button

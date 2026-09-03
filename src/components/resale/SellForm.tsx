@@ -54,7 +54,6 @@ import {
   VALID_CATEGORIES,
   VALID_CONDITIONS,
   MAX_IMAGES_PER_LISTING,
-  ALLOWED_IMAGE_MIME_TYPES,
   ResaleServiceError,
   type ResaleCategory,
   type ResaleCondition,
@@ -264,7 +263,7 @@ export function SellForm() {
     e.target.value = "";
   }
 
-  function handleDropZoneDrop(e: DragEvent<HTMLDivElement>) {
+  function handleDropZoneDrop(e: DragEvent<HTMLElement>) {
     e.preventDefault();
     setIsDraggingOver(false);
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
@@ -674,11 +673,11 @@ export function SellForm() {
 
             {/* Drop zone / add button */}
             {images.length < MAX_IMAGES_PER_LISTING && (
-              <div
+              <label
+                htmlFor="image-upload-input"
                 role="button"
                 tabIndex={0}
                 aria-label="Add photos — click or drag and drop"
-                onClick={() => fileInputRef.current?.click()}
                 onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") fileInputRef.current?.click(); }}
                 onDragOver={(e) => { e.preventDefault(); setIsDraggingOver(true); }}
                 onDragLeave={() => setIsDraggingOver(false)}
@@ -715,14 +714,14 @@ export function SellForm() {
                     JPG, PNG, WebP · max 5 MB each
                   </p>
                 </div>
-              </div>
+              </label>
             )}
 
             <input
               ref={fileInputRef}
               type="file"
               id="image-upload-input"
-              accept={ALLOWED_IMAGE_MIME_TYPES.join(",")}
+              accept="image/*,.jpg,.jpeg,.png,.webp"
               multiple
               onChange={handleFileInputChange}
               style={{ display: "none" }}

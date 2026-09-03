@@ -420,10 +420,17 @@ export async function getSignedImageUrls(
     );
   }
 
-  // Map back to image IDs using the original order
-  return images.map((img, i) => ({
-    imageId: img.id,
-    storagePath: img.storage_path,
-    signedUrl: data[i]?.signedUrl ?? "",
-  }));
+  // Map back to image IDs using the original order with fallback
+  return images.map((img, i) => {
+    let signedUrl = data[i]?.signedUrl ?? "";
+    if (!signedUrl && img.storage_path) {
+      const { data: pub } = supabase.storage.from(BUCKET).getPublicUrl(img.storage_path);
+      signedUrl = pub?.publicUrl || "";
+    }
+    return {
+      imageId: img.id,
+      storagePath: img.storage_path,
+      signedUrl,
+    };
+  });
 }

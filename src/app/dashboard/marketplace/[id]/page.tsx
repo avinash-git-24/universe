@@ -62,6 +62,26 @@ async function ListingContent({ id }: { id: string }) {
     return <ResaleDetailError />;
   }
 
+  // Fallback: If PostgREST didn't populate listing.images, fetch directly from resale_listing_images
+  if (!listing.images || listing.images.length === 0) {
+    try {
+      const { data: directImages } = await supabase
+        .from("resale_listing_images")
+        .select("id, listing_id, storage_path, display_order, created_at")
+        .eq("listing_id", listing.id)
+        .order("display_order", { ascending: true })
+        .order("created_at", { ascending: true });
+      if (directImages && directImages.length > 0) {
+        listing = {
+          ...listing,
+          images: directImages,
+        };
+      }
+    } catch (err) {
+      console.error("[ListingDetailPage] Direct image query fallback error:", err);
+    }
+  }
+
   // Check if favorited
   let isFavorited = false;
   try {
