@@ -453,19 +453,6 @@ export default function BlackHoleBackground({ isWarping = false }: { isWarping?:
           pointerEvents: "none",
         }}
       />
-
-      {/* Warp Jump Flash Overlay */}
-      <div
-        style={{
-          position: "fixed",
-          inset: 0,
-          zIndex: 99,
-          background: "#ffffff",
-          opacity: isWarping ? 1 : 0,
-          pointerEvents: "none",
-          transition: "opacity 0.25s ease-in 1.9s",
-        }}
-      />
     </>
   );
 }

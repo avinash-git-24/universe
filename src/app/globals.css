@@ -159,6 +159,7 @@
     -moz-osx-font-smoothing: grayscale;
     overflow-x: hidden;
     max-width: 100vw;
+    background-color: #050a07;
   }
 
   body {
