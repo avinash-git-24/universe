@@ -216,3 +216,54 @@ export const isServer = typeof window === "undefined";
  * Check if code is running in a browser.
  */
 export const isBrowser = !isServer;
+
+// ─── Student Name Sanitizer & Formatter ───────────────────────────────────────
+
+/**
+ * Clean and format student display names.
+ * Strips raw admission/roll prefixes like "3278_", converts ALL-CAPS to Title Case.
+ *
+ * @example
+ * formatStudentName("3278_AVINASH KUMAR")
+ * // returns: { fullName: "Avinash Kumar", firstName: "Avinash", initial: "A", rollPrefix: "3278" }
+ */
+export function formatStudentName(rawName?: string | null): {
+  fullName: string;
+  firstName: string;
+  initial: string;
+  rollPrefix: string | null;
+} {
+  if (!rawName || typeof rawName !== "string") {
+    return { fullName: "Student", firstName: "Student", initial: "S", rollPrefix: null };
+  }
+
+  let cleaned = rawName.trim();
+  let rollPrefix: string | null = null;
+
+  // Match prefixes like 3278_, 128203_, MU123_
+  const prefixMatch = cleaned.match(/^([A-Za-z0-9]+)[_\-\s]+/);
+  if (prefixMatch && /^\d+$/.test(prefixMatch[1])) {
+    rollPrefix = prefixMatch[1];
+    cleaned = cleaned.slice(prefixMatch[0].length).trim();
+  } else if (prefixMatch && prefixMatch[1].length <= 8 && /\d/.test(prefixMatch[1])) {
+    rollPrefix = prefixMatch[1];
+    cleaned = cleaned.slice(prefixMatch[0].length).trim();
+  }
+
+  if (!cleaned) {
+    cleaned = rawName.trim();
+  }
+
+  // Convert to Title Case if all uppercase or all lowercase
+  const words = cleaned.split(/\s+/).map((word) => {
+    if (word.length === 0) return "";
+    return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+  });
+
+  const fullName = words.join(" ");
+  const firstName = words[0] || "Student";
+  const initial = firstName.charAt(0).toUpperCase() || "S";
+
+  return { fullName, firstName, initial, rollPrefix };
+}
+

@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 
 import type { StudentRequestWithDetails } from "@/lib/database/requests";
@@ -9,6 +10,7 @@ interface DashboardChartsProps {
 }
 
 export function DashboardCharts({ requests }: DashboardChartsProps) {
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const total = requests.length;
   
   // Calculate counts
@@ -68,46 +70,54 @@ export function DashboardCharts({ requests }: DashboardChartsProps) {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-[1.8fr_1fr] gap-4">
       {/* Line Chart Card */}
-      <div className="bg-[#0a0f0c]/40 border border-[#66ffb2]/10 rounded-[20px] sm:rounded-[24px] p-4 sm:p-6 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.3)]">
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem" }}>
-          <h3 style={{ color: "#fff", fontWeight: 700, fontSize: "1.05rem" }}>Overview Analytics</h3>
-          <div style={{
-            display: "flex", alignItems: "center", gap: "0.5rem",
-            background: "rgba(255,255,255,0.05)",
-            border: "1px solid rgba(255,255,255,0.1)",
-            borderRadius: "10px", padding: "0.3rem 0.6rem",
-            fontSize: "0.75rem", color: "#A7B8B0", cursor: "pointer"
-          }}>
+      <div className="bg-[#0b120e]/90 border border-white/10 hover:border-emerald-500/30 rounded-2xl sm:rounded-3xl p-5 sm:p-6 backdrop-blur-xl shadow-lg relative overflow-hidden transition-all group">
+        <div className="flex justify-between items-center mb-6">
+          <div>
+            <h3 className="text-white font-bold text-base tracking-tight">Overview Analytics</h3>
+            <p className="text-white/40 text-xs mt-0.5 font-medium">Campus delivery activity this week</p>
+          </div>
+          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/5 border border-white/10 text-[#A7B8B0] text-xs font-semibold hover:text-white transition-colors cursor-pointer">
             This Week <ChevronDown size={14} />
           </div>
         </div>
 
         {/* Custom SVG Line Chart */}
-        <div style={{ position: "relative", height: "180px", width: "100%", marginTop: "1rem" }}>
+        <div className="relative h-[180px] w-full mt-2">
           {/* Y-Axis Labels */}
-          <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, display: "flex", flexDirection: "column", justifyContent: "space-between", color: "rgba(255,255,255,0.4)", fontSize: "0.7rem", paddingBottom: "20px" }}>
+          <div className="absolute left-0 top-0 bottom-0 flex flex-col justify-between text-white/30 text-[11px] font-mono pb-5">
             {uniqueYTicks.map((tick, i) => (
               <span key={i}>{tick}</span>
             ))}
           </div>
 
-          <div style={{ marginLeft: "30px", height: "100%", position: "relative" }}>
+          <div className="ml-8 h-full relative overflow-hidden">
             {/* Grid lines */}
             {[0, 20, 40, 60, 80, 100].map((val, i) => (
-              <div key={val} style={{
-                position: "absolute",
-                bottom: `${(i / 5) * 100}%`,
-                left: 0, right: 0,
-                borderBottom: "1px dashed rgba(255,255,255,0.05)"
-              }} />
+              <div
+                key={val}
+                className="absolute left-0 right-0 border-b border-dashed border-white/5"
+                style={{ bottom: `${(i / 5) * 100}%` }}
+              />
             ))}
 
+            {/* Hover Tooltip Overlay */}
+            {hoveredIndex !== null && (
+              <div
+                className="absolute top-1 z-20 -translate-x-1/2 px-2.5 py-1 rounded-lg bg-emerald-950/90 border border-emerald-500/40 text-emerald-300 text-xs font-mono font-bold shadow-lg pointer-events-none transition-all"
+                style={{
+                  left: `${(hoveredIndex / 6) * 100}%`,
+                }}
+              >
+                {labels[hoveredIndex]}: {last7DaysData[hoveredIndex]} {last7DaysData[hoveredIndex] === 1 ? "order" : "orders"}
+              </div>
+            )}
+
             {/* Chart line and fill */}
-            <svg viewBox="0 0 500 150" style={{ width: "100%", height: "calc(100% - 20px)", overflow: "visible" }} preserveAspectRatio="none">
+            <svg viewBox="0 0 500 150" className="w-full h-[calc(100%-20px)]" preserveAspectRatio="none">
               <defs>
                 <linearGradient id="chartGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#00E676" stopOpacity="0.2" />
-                  <stop offset="100%" stopColor="#00E676" stopOpacity="0" />
+                  <stop offset="0%" stopColor="#10B981" stopOpacity="0.3" />
+                  <stop offset="100%" stopColor="#10B981" stopOpacity="0" />
                 </linearGradient>
               </defs>
               {total === 0 ? (
@@ -115,7 +125,7 @@ export function DashboardCharts({ requests }: DashboardChartsProps) {
                   d="M 0,130 L 500,130"
                   fill="none"
                   stroke="rgba(255,255,255,0.1)"
-                  strokeWidth="2.5"
+                  strokeWidth="2"
                 />
               ) : (
                 <>
@@ -126,21 +136,39 @@ export function DashboardCharts({ requests }: DashboardChartsProps) {
                   <path
                     d={linePath}
                     fill="none"
-                    stroke="#00E676"
+                    stroke="#10B981"
                     strokeWidth="2.5"
-                    style={{ filter: "drop-shadow(0 0 8px rgba(0,230,118,0.5))" }}
+                    style={{ filter: "drop-shadow(0 0 8px rgba(16,185,129,0.5))" }}
                   />
                   {points.map((p, i) => (
-                    <circle key={i} cx={p[0]} cy={p[1]} r="3" fill="#00E676" />
+                    <circle
+                      key={i}
+                      cx={p[0]}
+                      cy={p[1]}
+                      r={hoveredIndex === i ? 6 : 4}
+                      fill={hoveredIndex === i ? "#34D399" : "#10B981"}
+                      stroke="#050A07"
+                      strokeWidth={hoveredIndex === i ? 2 : 1}
+                      className="cursor-pointer transition-all"
+                      onMouseEnter={() => setHoveredIndex(i)}
+                      onMouseLeave={() => setHoveredIndex(null)}
+                    />
                   ))}
                 </>
               )}
             </svg>
 
             {/* X-Axis Labels */}
-            <div style={{ position: "absolute", bottom: "-5px", left: 0, right: 0, display: "flex", justifyContent: "space-between", color: "rgba(255,255,255,0.4)", fontSize: "0.7rem", padding: "0 10px" }}>
+            <div className="absolute bottom-0 left-0 right-0 flex justify-between text-white/40 text-[11px] font-mono px-1">
               {labels.map((l, i) => (
-                <span key={i}>{l}</span>
+                <span
+                  key={i}
+                  className={`cursor-pointer transition-colors ${hoveredIndex === i ? "text-emerald-400 font-bold" : ""}`}
+                  onMouseEnter={() => setHoveredIndex(i)}
+                  onMouseLeave={() => setHoveredIndex(null)}
+                >
+                  {l}
+                </span>
               ))}
             </div>
           </div>
@@ -148,70 +176,85 @@ export function DashboardCharts({ requests }: DashboardChartsProps) {
       </div>
 
       {/* Donut Chart Card */}
-      <div className="bg-[#0a0f0c]/40 border border-[#66ffb2]/10 rounded-[20px] sm:rounded-[24px] p-4 sm:p-6 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.3)] flex flex-col">
-        <h3 style={{ color: "#fff", fontWeight: 700, fontSize: "1.05rem", marginBottom: "1.5rem" }}>Requests by Status</h3>
+      <div className="bg-[#0b120e]/90 border border-white/10 hover:border-emerald-500/30 rounded-2xl sm:rounded-3xl p-5 sm:p-6 backdrop-blur-xl shadow-lg flex flex-col justify-between relative overflow-hidden transition-all group">
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-white font-bold text-base tracking-tight">Requests by Status</h3>
+          <span className="text-xs font-mono font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
+            {total} Total
+          </span>
+        </div>
         
-        <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 flex-1">
+        <div className="flex flex-col sm:flex-row items-center gap-6 flex-1 justify-center py-2">
           {/* Donut */}
-          <div style={{ position: "relative", width: "130px", height: "130px" }}>
-            <svg viewBox="0 0 36 36" style={{ width: "100%", height: "100%", transform: "rotate(-90deg)" }}>
+          <div className="relative w-32 h-32 shrink-0">
+            <svg viewBox="0 0 36 36" className="w-full h-full -rotate-90">
               {total === 0 ? (
                 <path
                   d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                  fill="none" stroke="rgba(255,255,255,0.1)" strokeWidth="3"
+                  fill="none"
+                  stroke="rgba(255,255,255,0.1)"
+                  strokeWidth="3"
                 />
               ) : (
                 <>
                   {/* Completed */}
                   <path
                     d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                    fill="none" stroke="#00E676" strokeWidth="3"
+                    fill="none"
+                    stroke="#10B981"
+                    strokeWidth="3.2"
                     strokeDasharray={`${completedPct}, 100`}
-                    style={{ filter: "drop-shadow(0 0 4px rgba(0,230,118,0.4))" }}
+                    style={{ filter: "drop-shadow(0 0 6px rgba(16,185,129,0.5))" }}
                   />
                   {/* Cancelled */}
                   <path
                     d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                    fill="none" stroke="#ef4444" strokeWidth="3"
-                    strokeDasharray={`${cancelledPct}, 100`} strokeDashoffset={`-${completedPct}`}
+                    fill="none"
+                    stroke="#ef4444"
+                    strokeWidth="3.2"
+                    strokeDasharray={`${cancelledPct}, 100`}
+                    strokeDashoffset={`-${completedPct}`}
                   />
                   {/* In Progress */}
                   <path
                     d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                    fill="none" stroke="#F59E0B" strokeWidth="3"
-                    strokeDasharray={`${inProgressPct}, 100`} strokeDashoffset={`-${completedPct + cancelledPct}`}
+                    fill="none"
+                    stroke="#F59E0B"
+                    strokeWidth="3.2"
+                    strokeDasharray={`${inProgressPct}, 100`}
+                    strokeDashoffset={`-${completedPct + cancelledPct}`}
                   />
                 </>
               )}
             </svg>
-            <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
-              <span style={{ color: "#fff", fontSize: "1.5rem", fontWeight: 800 }}>{total}</span>
-              <span style={{ color: "rgba(255,255,255,0.5)", fontSize: "0.65rem" }}>Total</span>
+            <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+              <span className="text-white text-2xl font-black font-mono tracking-tight">{total}</span>
+              <span className="text-white/40 text-[10px] uppercase font-mono tracking-wider font-bold">Total</span>
             </div>
           </div>
 
           {/* Legend */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "0.8rem", flex: 1 }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "0.75rem" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
-                <div style={{ width: "8px", height: "8px", borderRadius: "50%", background: "#00E676" }} />
-                <span style={{ color: "rgba(255,255,255,0.8)" }}>Completed</span>
+          <div className="flex flex-col gap-2.5 w-full sm:w-auto flex-1 text-xs">
+            <div className="flex justify-between items-center p-2 rounded-lg bg-white/[0.02] border border-white/5">
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.8)]" />
+                <span className="text-white/80 font-medium">Completed</span>
               </div>
-              <span style={{ color: "#fff", fontWeight: 700 }}>{completedPct}%</span>
+              <span className="text-white font-mono font-bold">{completedPct}%</span>
             </div>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "0.75rem" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
-                <div style={{ width: "8px", height: "8px", borderRadius: "50%", background: "#F59E0B" }} />
-                <span style={{ color: "rgba(255,255,255,0.8)" }}>In Progress</span>
+            <div className="flex justify-between items-center p-2 rounded-lg bg-white/[0.02] border border-white/5">
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-amber-400 shadow-[0_0_6px_rgba(251,191,36,0.8)]" />
+                <span className="text-white/80 font-medium">In Progress</span>
               </div>
-              <span style={{ color: "#fff", fontWeight: 700 }}>{inProgressPct}%</span>
+              <span className="text-white font-mono font-bold">{inProgressPct}%</span>
             </div>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "0.75rem" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
-                <div style={{ width: "8px", height: "8px", borderRadius: "50%", background: "#ef4444" }} />
-                <span style={{ color: "rgba(255,255,255,0.8)" }}>Cancelled</span>
+            <div className="flex justify-between items-center p-2 rounded-lg bg-white/[0.02] border border-white/5">
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-red-400" />
+                <span className="text-white/80 font-medium">Cancelled</span>
               </div>
-              <span style={{ color: "#fff", fontWeight: 700 }}>{cancelledPct}%</span>
+              <span className="text-white font-mono font-bold">{cancelledPct}%</span>
             </div>
           </div>
         </div>

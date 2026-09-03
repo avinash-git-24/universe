@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Sparkles } from "lucide-react";
+import { formatStudentName } from "@/lib/utils";
 
 interface DashboardHeaderProps {
   displayName: string;
@@ -23,6 +24,7 @@ function getGreeting(): { text: string; emoji: string } {
 
 export function DashboardHeader({ displayName }: DashboardHeaderProps) {
   const [greeting, setGreeting] = useState(getGreeting);
+  const formatted = formatStudentName(displayName);
 
   useEffect(() => {
     // Set client local time immediately on mount
@@ -39,21 +41,32 @@ export function DashboardHeader({ displayName }: DashboardHeaderProps) {
   return (
     <div className="mb-4">
       {/* Greeting pill */}
-      <div className="inline-flex items-center gap-1.5 bg-[#00E676]/10 rounded-full px-3.5 py-1 mb-3 sm:mb-4 border border-[#00E676]/20">
-        <Sparkles size={13} color="#00E676" />
+      <div className="inline-flex items-center gap-2 bg-emerald-500/10 rounded-full px-3.5 py-1 mb-3 sm:mb-4 border border-emerald-500/25 shadow-[0_0_15px_rgba(16,185,129,0.15)]">
+        <Sparkles size={13} className="text-emerald-400" />
         <span
           suppressHydrationWarning
-          className="text-[#00E676] text-xs font-bold"
+          className="text-emerald-400 text-xs font-bold"
         >
           {greeting.text} {greeting.emoji}
         </span>
+        {formatted.rollPrefix && (
+          <span className="text-[10px] font-mono text-emerald-300/60 pl-1 border-l border-emerald-500/20">
+            ID: {formatted.rollPrefix}
+          </span>
+        )}
       </div>
 
-      <h1 className="text-white font-extrabold text-2xl sm:text-3xl lg:text-[2.2rem] tracking-tight leading-tight m-0">
-        <span className="text-[#00E676]">{displayName}</span>!
+      <h1 className="text-white font-extrabold text-2xl sm:text-3xl lg:text-[2.2rem] tracking-tight leading-tight m-0 flex items-center gap-2 flex-wrap">
+        <span>Welcome back,</span>
+        <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-emerald-300 to-teal-300">
+          {formatted.firstName}
+        </span>
+        <span className="text-2xl">👋</span>
       </h1>
-      <p className="text-white/60 mt-1.5 sm:mt-2 text-xs sm:text-sm lg:text-[0.95rem]">
-        Your campus, your deliveries, your UniVerse.
+      <p className="text-white/60 mt-1.5 sm:mt-2 text-xs sm:text-sm lg:text-[0.95rem] flex items-center gap-1.5 font-medium">
+        <span>Marwadi University</span>
+        <span className="text-emerald-500/50">•</span>
+        <span>Your campus deliveries, your UniVerse.</span>
       </p>
     </div>
   );

@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { Package, Bike, CheckCircle2, AlertCircle, ArrowRight, MapPin, Clock, User, Search, Plus, MessageSquare } from "lucide-react";
+import { Package, Bike, CheckCircle2, AlertCircle, ArrowRight, MapPin, Clock, User, Plus, MessageSquare, Utensils, BookOpen, Laptop, Sparkles } from "lucide-react";
 import { getUser, getProfile } from "@/lib/supabase/queries";
 import { getStudentRequests, type Profile } from "@/lib/database/requests";
 import { ROUTES } from "@/constants/routes";
@@ -13,6 +13,7 @@ import { NotificationBell } from "@/components/notifications/NotificationBell";
 import Link from "next/link";
 import type { Metadata } from "next";
 import LazySpaceBackground from "@/components/auth/LazySpaceBackground";
+import { formatStudentName, cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: "Dashboard · UniVerse",
@@ -27,6 +28,20 @@ const statusMeta: Record<string, { label: string; color: string; bg: string; dot
   delivered: { label: "Delivered", color: "#00E676", bg: "rgba(0,230,118,0.15)", dot: "#00E676" },
   cancelled: { label: "Cancelled", color: "#ef4444", bg: "rgba(239,68,68,0.15)", dot: "#ef4444" },
 };
+
+function getItemCategory(name: string) {
+  const lower = name.toLowerCase();
+  if (lower.includes("kitkat") || lower.includes("lays") || lower.includes("biskut") || lower.includes("biscuit") || lower.includes("snack") || lower.includes("food") || lower.includes("tea") || lower.includes("tiktack")) {
+    return { icon: Utensils, bg: "bg-amber-500/15 text-amber-400 border-amber-500/30" };
+  }
+  if (lower.includes("book") || lower.includes("notes") || lower.includes("print") || lower.includes("pen")) {
+    return { icon: BookOpen, bg: "bg-blue-500/15 text-blue-400 border-blue-500/30" };
+  }
+  if (lower.includes("charger") || lower.includes("cable") || lower.includes("mouse") || lower.includes("laptop")) {
+    return { icon: Laptop, bg: "bg-purple-500/15 text-purple-400 border-purple-500/30" };
+  }
+  return { icon: Package, bg: "bg-emerald-500/15 text-emerald-400 border-emerald-500/30" };
+}
 
 import { createClient } from "@/lib/supabase/server";
 
@@ -78,23 +93,40 @@ export default async function DashboardPage() {
   ];
 
   return (
-    <div className="min-h-screen pt-4 pb-12 px-3 sm:px-6 sm:py-8 lg:p-8 relative">
-      {/* Floating particles background (re-using SpaceBackground) */}
-      <div className="absolute inset-0 z-0 pointer-events-none opacity-40">
-        <LazySpaceBackground />
+    <div className="min-h-screen pt-4 pb-12 px-3 sm:px-6 sm:py-8 lg:p-8 relative overflow-x-hidden">
+      {/* ── Atmospheric Cosmic Background ── */}
+      <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
+        {/* Deep ambient cosmic glow */}
+        <div className="absolute top-[-15%] left-[20%] w-[650px] h-[650px] bg-emerald-500/10 rounded-full blur-[140px]" />
+        <div className="absolute top-[35%] right-[-10%] w-[550px] h-[550px] bg-emerald-600/5 rounded-full blur-[160px]" />
+        <div className="absolute bottom-[-10%] left-[-5%] w-[500px] h-[500px] bg-teal-500/5 rounded-full blur-[140px]" />
+        
+        {/* Subtle stardust cyber-grid */}
+        <div 
+          className="absolute inset-0 opacity-[0.03] pointer-events-none"
+          style={{
+            backgroundImage: `radial-gradient(circle at 1px 1px, #10b981 1px, transparent 0)`,
+            backgroundSize: "32px 32px",
+          }}
+        />
+
+        {/* Floating particles background */}
+        <div className="absolute inset-0 opacity-30">
+          <LazySpaceBackground />
+        </div>
       </div>
 
       <div className="max-w-[1400px] mx-auto relative z-10">
         
         {/* TOP BAR */}
-        <div className="flex justify-between sm:justify-end gap-3 sm:gap-5 mb-4 sm:mb-6 items-center">
+        <div className="flex justify-between sm:justify-end gap-3 sm:gap-4 mb-4 sm:mb-6 items-center">
           {/* Bell */}
-          <div className="relative bg-[#0a0f0c]/40 border border-[#66ffb2]/10 p-2.5 rounded-xl backdrop-blur-md">
+          <div className="relative bg-[#0b120e]/80 border border-white/10 p-2.5 rounded-xl backdrop-blur-md hover:border-emerald-500/30 transition-colors">
             <NotificationBell />
           </div>
-          {/* Button */}
+          {/* New Request Button */}
           <Link href="/request/new" className="no-underline">
-            <button className="flex items-center gap-2 bg-[#00E676] text-black font-extrabold text-xs sm:text-sm rounded-xl px-3.5 sm:px-5 py-2.5 sm:py-3 cursor-pointer shadow-[0_0_15px_rgba(0,230,118,0.3)] hover:scale-105 transition-transform">
+            <button className="flex items-center gap-2 bg-gradient-to-r from-emerald-500 to-emerald-400 hover:from-emerald-400 hover:to-emerald-300 text-black font-extrabold text-xs sm:text-sm rounded-xl px-4 sm:px-5 py-2.5 sm:py-3 cursor-pointer shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:shadow-[0_0_30px_rgba(16,185,129,0.5)] transition-all active:scale-95">
               <Plus size={16} /> New Request
             </button>
           </Link>
@@ -104,7 +136,7 @@ export default async function DashboardPage() {
         <div className="grid grid-cols-1 xl:grid-cols-[1fr_340px] gap-6 items-start">
 
           {/* LEFT: Requests & Charts */}
-          <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-6 min-w-0">
             
             {/* Header */}
             <DashboardHeader displayName={displayName} />
@@ -124,12 +156,12 @@ export default async function DashboardPage() {
               <div className="flex justify-between items-center mb-3 sm:mb-4">
                 <h2 className="font-extrabold text-base sm:text-lg flex items-center gap-2 text-white">
                   Active Deliveries
-                  <span className="bg-[#00E676] text-black text-[11px] sm:text-xs font-extrabold rounded-full px-2 py-0.5">
+                  <span className="bg-emerald-500 text-black text-[11px] sm:text-xs font-extrabold rounded-full px-2 py-0.5">
                     {activeRequests.length}
                   </span>
                 </h2>
                 {activeRequests.length > 0 && (
-                  <Link href="/dashboard/requests" className="no-underline flex items-center gap-1 text-[#00E676] text-xs sm:text-sm font-semibold hover:underline">
+                  <Link href="/dashboard/requests" className="no-underline flex items-center gap-1 text-emerald-400 text-xs sm:text-sm font-semibold hover:underline">
                     View all <ArrowRight size={13} />
                   </Link>
                 )}
@@ -137,23 +169,28 @@ export default async function DashboardPage() {
 
               <div className={`grid ${activeRequests.length > 0 ? "grid-cols-1 md:grid-cols-2" : "grid-cols-1"} gap-3 sm:gap-4`}>
                 {activeRequests.length === 0 ? (
-                  <div className="bg-[#0a0f0c]/40 border border-dashed border-white/10 rounded-[20px] p-8 sm:p-12 text-center text-white/50 text-sm">
+                  <div className="bg-[#0b120e]/60 border border-dashed border-white/10 rounded-2xl sm:rounded-3xl p-8 sm:p-12 text-center text-white/50 text-sm backdrop-blur-xl">
                     No active deliveries right now.
                   </div>
                 ) : (
                   activeRequests.slice(0, 2).map((req) => {
-                    // map backend status to UI color/text
                     const meta = statusMeta[req.status] || { color: "#F59E0B", label: req.status };
                     const activeAssignment = req.assignments?.find(a => a.status === "active" || a.status === "completed");
                     const runner = activeAssignment?.runner;
+                    const runnerCleanName = runner?.full_name
+                      ? formatStudentName(runner.full_name).fullName
+                      : (req.assignments && req.assignments.length > 0 ? "Assigned" : "Finding Runner...");
+                    const runnerInitial = runner?.full_name
+                      ? formatStudentName(runner.full_name).initial
+                      : null;
                     
                     return (
-                      <Link key={req.id} href={`/dashboard/requests/${req.id}`} className="no-underline">
+                      <Link key={req.id} href={`/dashboard/requests/${req.id}`} className="no-underline block">
                         <div
                           style={{
                             borderLeftColor: meta.color,
                           }}
-                          className="bg-[#0a0f0c]/40 border border-white/10 border-l-4 rounded-[20px] p-4 sm:p-5 cursor-pointer transition-all duration-300 backdrop-blur-xl relative overflow-hidden group hover:border-[#00E676]/40 hover:-translate-y-1 hover:shadow-[0_10px_30px_rgba(0,0,0,0.5)]"
+                          className="bg-[#0b120e]/90 border border-white/10 border-l-4 rounded-2xl sm:rounded-3xl p-4 sm:p-5 cursor-pointer transition-all duration-300 backdrop-blur-xl relative overflow-hidden group hover:border-emerald-500/40 hover:-translate-y-1 hover:shadow-[0_10px_35px_rgba(16,185,129,0.1)]"
                         >
                           {/* Glow background on hover */}
                           <div
@@ -168,7 +205,7 @@ export default async function DashboardPage() {
                                 style={{
                                   color: meta.color,
                                   borderColor: `${meta.color}30`,
-                                  background: `rgba(${meta.color === '#F59E0B' ? '245,158,11' : '99,102,241'},0.15)`,
+                                  background: `rgba(${meta.color === '#F59E0B' ? '245,158,11' : '16,185,129'},0.15)`,
                                 }}
                                 className="text-[11px] font-bold rounded-full px-2.5 py-0.5 border whitespace-nowrap"
                               >
@@ -176,13 +213,13 @@ export default async function DashboardPage() {
                               </span>
 
                               {req.delivery_otp && (
-                                <span className="inline-flex items-center gap-1 text-[11px] font-mono font-bold bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 px-2.5 py-0.5 rounded-full shadow-[0_0_10px_rgba(0,230,118,0.15)]" title="Share this PIN with your runner upon delivery">
+                                <span className="inline-flex items-center gap-1.5 text-[11px] font-mono font-bold bg-emerald-500/15 border border-emerald-500/35 text-emerald-300 px-2.5 py-0.5 rounded-full shadow-[0_0_12px_rgba(16,185,129,0.2)]" title="Share this PIN with your runner upon delivery">
                                   🔐 PIN: {req.delivery_otp}
                                 </span>
                               )}
                             </div>
                             
-                            <div className="bg-[#00E676]/10 text-[#00E676] font-extrabold text-sm sm:text-[15px] rounded-[10px] px-2.5 py-1 border border-[#00E676]/20">
+                            <div className="bg-emerald-500/15 text-emerald-300 font-black font-mono text-sm sm:text-base rounded-xl px-2.5 py-1 border border-emerald-500/30">
                               ₹{req.delivery_fee}
                             </div>
                           </div>
@@ -190,11 +227,11 @@ export default async function DashboardPage() {
                           {/* Route info */}
                           <div className="flex flex-col gap-2 mb-3.5 relative z-10">
                             <div className="flex items-center gap-2 text-xs sm:text-sm text-white/60 min-w-0">
-                              <MapPin size={14} className="text-[#00E676] shrink-0" />
+                              <MapPin size={14} className="text-emerald-400 shrink-0" />
                               <span className="truncate"><b className="text-white/85">From:</b> {req.pickup_location}</span>
                             </div>
                             <div className="flex items-center gap-2 text-xs sm:text-sm text-white/60 min-w-0">
-                              <MapPin size={14} className="text-[#6366f1] shrink-0" />
+                              <MapPin size={14} className="text-teal-400 shrink-0" />
                               <span className="truncate"><b className="text-white/85">To:</b> {req.dropoff_location}</span>
                             </div>
                           </div>
@@ -202,15 +239,15 @@ export default async function DashboardPage() {
                           {/* Runner info */}
                           <div className="flex items-center justify-between pt-3 border-t border-white/[0.07] relative z-10">
                             <div className="flex items-center gap-2 min-w-0">
-                              <div className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 text-xs font-bold ${runner ? "bg-[#00E676]/20 text-[#00E676] border border-[#00E676]/40" : "bg-white/10 text-white/50"}`}>
-                                {runner?.full_name?.charAt(0) || <User size={12} />}
+                              <div className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 text-xs font-bold ${runner ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/40" : "bg-white/10 text-white/50"}`}>
+                                {runnerInitial || <User size={12} />}
                               </div>
                               <span className="text-xs text-white/60 truncate">
-                                Runner: <b className="text-white">{runner ? runner.full_name : (req.assignments && req.assignments.length > 0 ? "Assigned" : "Finding Runner...")}</b>
+                                Runner: <b className="text-white">{runnerCleanName}</b>
                               </span>
                             </div>
                             {runner && (
-                              <span className="inline-flex items-center gap-1 text-[11px] font-bold text-black bg-[#00E676] px-2.5 py-1 rounded-lg shrink-0 shadow-sm">
+                              <span className="inline-flex items-center gap-1 text-[11px] font-bold text-black bg-emerald-400 hover:bg-emerald-300 px-2.5 py-1 rounded-lg shrink-0 shadow-sm transition-colors">
                                 <MessageSquare size={11} /> Chat
                               </span>
                             )}
@@ -230,17 +267,17 @@ export default async function DashboardPage() {
                   Recent Completed
                 </h2>
                 {completedRequests.length > 0 && (
-                  <Link href="/dashboard/requests" className="no-underline flex items-center gap-1 text-[#00E676] text-xs sm:text-sm font-semibold hover:underline">
+                  <Link href="/dashboard/requests" className="no-underline flex items-center gap-1 text-emerald-400 text-xs sm:text-sm font-semibold hover:underline">
                     View all <ArrowRight size={13} />
                   </Link>
                 )}
               </div>
-              <div className="bg-[#0a0f0c]/40 border border-[#66ffb2]/10 rounded-[20px] sm:rounded-[24px] p-3 sm:p-4 backdrop-blur-xl overflow-x-auto">
-                <table className="w-full border-collapse text-left min-w-[580px]">
+              <div className="bg-[#0b120e]/90 border border-white/10 hover:border-emerald-500/30 rounded-2xl sm:rounded-3xl p-3 sm:p-5 backdrop-blur-xl shadow-lg overflow-x-auto transition-all">
+                <table className="w-full border-collapse text-left min-w-[640px]">
                   <thead>
                     <tr className="border-b border-white/5">
                       {["Item", "From", "To", "Runner", "Time", "Status", "Price"].map(h => (
-                        <th key={h} className="p-3 sm:p-4 text-[#A7B8B0] font-bold text-xs">{h}</th>
+                        <th key={h} className="p-3.5 sm:p-4 text-[#A7B8B0] font-bold text-xs uppercase tracking-wider font-mono">{h}</th>
                       ))}
                     </tr>
                   </thead>
@@ -255,30 +292,36 @@ export default async function DashboardPage() {
                       completedRequests.slice(0, 5).map(req => {
                         const activeAssignment = req.assignments?.find(a => a.status === "completed" || a.status === "active");
                         const runner = activeAssignment?.runner;
+                        const runnerName = runner?.full_name
+                          ? formatStudentName(runner.full_name).fullName
+                          : (req.assignments && req.assignments.length > 0 ? "Assigned" : "-");
+                        const itemName = req.items[0]?.name || 'Items';
+                        const category = getItemCategory(itemName);
+                        const CategoryIcon = category.icon;
 
                         return (
-                          <tr key={req.id} className="border-b border-white/[0.02] hover:bg-white/[0.02] transition-colors">
-                            <td className="p-3 sm:p-4 text-white text-xs sm:text-sm flex items-center gap-2 font-medium">
-                              <div className="w-6 h-7 bg-red-500 rounded flex items-center justify-center text-[10px] font-extrabold shrink-0">
-                                {req.items[0]?.name?.substring(0, 2).toUpperCase() || 'IT'}
+                          <tr key={req.id} className="border-b border-white/[0.03] hover:bg-white/[0.03] transition-colors group/row">
+                            <td className="p-3.5 sm:p-4 text-white text-xs sm:text-sm flex items-center gap-3 font-medium">
+                              <div className={cn("w-8 h-8 rounded-xl flex items-center justify-center border shrink-0 transition-transform group-hover/row:scale-105", category.bg)}>
+                                <CategoryIcon size={14} />
                               </div>
-                              <span className="truncate max-w-[120px]">
-                                {req.items.length > 0 ? req.items[0].name : 'Items'}
+                              <span className="truncate max-w-[140px] font-semibold text-white">
+                                {itemName}
                                 {req.items.length > 1 && ` +${req.items.length - 1}`}
                               </span>
                             </td>
-                            <td className="p-3 sm:p-4 text-white/80 text-xs sm:text-sm truncate max-w-[120px]">{req.pickup_location}</td>
-                            <td className="p-3 sm:p-4 text-white/80 text-xs sm:text-sm truncate max-w-[120px]">{req.dropoff_location}</td>
-                            <td className="p-3 sm:p-4 text-white/90 text-xs sm:text-sm font-semibold">{runner?.full_name || (req.assignments && req.assignments.length > 0 ? "Assigned" : "-")}</td>
-                            <td className="p-3 sm:p-4 text-white/60 text-xs sm:text-sm whitespace-nowrap">
+                            <td className="p-3.5 sm:p-4 text-white/80 text-xs sm:text-sm max-w-[160px] truncate">{req.pickup_location}</td>
+                            <td className="p-3.5 sm:p-4 text-white/80 text-xs sm:text-sm max-w-[160px] truncate">{req.dropoff_location}</td>
+                            <td className="p-3.5 sm:p-4 text-white/90 text-xs sm:text-sm font-semibold">{runnerName}</td>
+                            <td className="p-3.5 sm:p-4 text-white/50 text-xs sm:text-sm whitespace-nowrap font-mono">
                               {new Date(req.created_at).toLocaleDateString()}
                             </td>
-                            <td className="p-3 sm:p-4">
-                              <span className="bg-[#00E676]/10 text-[#00E676] text-[11px] font-bold px-2 py-0.5 rounded-[10px] whitespace-nowrap">
-                                Delivered
+                            <td className="p-3.5 sm:p-4">
+                              <span className="inline-flex items-center gap-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/25 text-[11px] font-bold px-2.5 py-0.5 rounded-full whitespace-nowrap">
+                                ● Delivered
                               </span>
                             </td>
-                            <td className="p-3 sm:p-4 text-white text-xs sm:text-sm font-bold whitespace-nowrap">₹{req.delivery_fee}</td>
+                            <td className="p-3.5 sm:p-4 text-emerald-300 text-xs sm:text-sm font-black font-mono whitespace-nowrap">₹{req.delivery_fee}</td>
                           </tr>
                         );
                       })

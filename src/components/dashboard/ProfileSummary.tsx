@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { Mail, Phone, Edit } from "lucide-react";
+import { Mail, Phone, Edit, ShieldCheck } from "lucide-react";
 import type { Profile } from "@/lib/database/requests";
+import { formatStudentName } from "@/lib/utils";
 
 interface ProfileSummaryProps {
   profile: Profile;
@@ -10,74 +11,55 @@ interface ProfileSummaryProps {
 }
 
 export function ProfileSummary({ profile, email }: ProfileSummaryProps) {
-  const name = profile?.full_name || email?.split("@")[0] || "Student";
-  const initial = name.charAt(0).toUpperCase();
+  const rawName = profile?.full_name || email?.split("@")[0] || "Student";
+  const formatted = formatStudentName(rawName);
 
   return (
-    <div style={{
-      background: "rgba(10,15,12,0.4)",
-      borderRadius: "24px",
-      padding: "1.5rem",
-      border: "1px solid rgba(102,255,178,0.1)",
-      backdropFilter: "blur(20px)",
-      boxShadow: "0 8px 32px rgba(0,0,0,0.3)",
-      position: "relative",
-      overflow: "hidden",
-      display: "flex", flexDirection: "column", gap: "1.25rem"
-    }}>
-      {/* Subtle top-right glow */}
-      <div style={{
-        position: "absolute", top: "-30px", right: "-30px", width: "100px", height: "100px",
-        background: "radial-gradient(circle, rgba(0,230,118,0.2) 0%, transparent 70%)",
-        borderRadius: "50%"
-      }} />
+    <div className="bg-[#0b120e]/90 border border-white/10 hover:border-emerald-500/30 rounded-2xl sm:rounded-3xl p-5 sm:p-6 backdrop-blur-xl shadow-lg relative overflow-hidden transition-all group">
+      {/* Subtle top-right ambient glow */}
+      <div className="absolute -top-10 -right-10 w-28 h-28 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none" />
 
       {/* Avatar and Name */}
-      <div style={{ display: "flex", alignItems: "center", gap: "1rem", position: "relative", zIndex: 1 }}>
-        <div style={{
-          width: "48px", height: "48px", borderRadius: "50%",
-          background: "#00E676", color: "#000",
-          display: "flex", alignItems: "center", justifyContent: "center",
-          fontWeight: 800, fontSize: "1.2rem",
-          boxShadow: "0 0 15px rgba(0,230,118,0.4)"
-        }}>
-          {initial}
+      <div className="flex items-center gap-3.5 relative z-10">
+        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-400 to-emerald-600 text-black font-extrabold text-xl flex items-center justify-center shadow-[0_0_20px_rgba(16,185,129,0.35)] shrink-0 border border-emerald-300/30">
+          {formatted.initial}
         </div>
-        <div>
-          <h3 style={{ color: "#fff", fontWeight: 800, fontSize: "1rem", marginBottom: "0.25rem" }}>{name}</h3>
-          <div style={{
-            display: "inline-flex", alignItems: "center", gap: "0.3rem",
-            background: "rgba(255,255,255,0.05)", padding: "0.15rem 0.5rem", borderRadius: "10px",
-            border: "1px solid rgba(255,255,255,0.1)"
-          }}>
-            <div style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#00E676" }} />
-            <span style={{ color: "#A7B8B0", fontSize: "0.65rem", fontWeight: 700 }}>Student</span>
+        <div className="min-w-0 flex-1">
+          <h3 className="text-white font-bold text-base truncate tracking-tight">
+            {formatted.fullName}
+          </h3>
+          <div className="flex items-center gap-2 mt-1">
+            <span className="inline-flex items-center gap-1.5 bg-emerald-500/10 border border-emerald-500/25 px-2 py-0.5 rounded-full text-[10px] font-mono font-bold text-emerald-400">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              Verified Student
+            </span>
+            {formatted.rollPrefix && (
+              <span className="text-[10px] font-mono text-white/40">
+                #{formatted.rollPrefix}
+              </span>
+            )}
           </div>
         </div>
       </div>
 
       {/* Contact Info */}
-      <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem", position: "relative", zIndex: 1 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-          <Mail size={14} color="#00E676" />
-          <span style={{ color: "#A7B8B0", fontSize: "0.8rem" }}>{email || "No email provided"}</span>
+      <div className="flex flex-col gap-2.5 mt-5 pt-4 border-t border-white/5 relative z-10 text-xs">
+        <div className="flex items-center gap-2.5 text-white/60 truncate">
+          <Mail size={14} className="text-emerald-400 shrink-0" />
+          <span className="truncate">{email || "No email provided"}</span>
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-          <Phone size={14} color="#00E676" />
-          <span style={{ color: "#A7B8B0", fontSize: "0.8rem" }}>{(profile as Record<string, unknown>)?.phone_number as string | undefined || "Add phone number"}</span>
+        <div className="flex items-center gap-2.5 text-white/60">
+          <Phone size={14} className="text-emerald-400 shrink-0" />
+          <span className="truncate">
+            {((profile as Record<string, unknown>)?.phone_number as string | undefined) || "Add phone number"}
+          </span>
         </div>
       </div>
 
       {/* Edit Profile Button */}
-      <Link href="/dashboard/profile" style={{ textDecoration: "none", position: "relative", zIndex: 1 }}>
-        <button style={{
-          width: "100%",
-          display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem",
-          background: "rgba(0,230,118,0.05)", color: "#00E676", fontWeight: 700, fontSize: "0.85rem",
-          border: "1px solid rgba(0,230,118,0.2)", borderRadius: "12px", padding: "0.6rem", cursor: "pointer",
-          transition: "all 0.2s"
-        }} className="hover:bg-[rgba(0,230,118,0.1)] hover:border-[rgba(0,230,118,0.4)]">
-          <Edit size={14} /> Edit Profile
+      <Link href="/dashboard/profile" className="block mt-4 relative z-10 no-underline">
+        <button className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/25 hover:border-emerald-500/40 text-xs font-bold transition-all cursor-pointer shadow-sm active:scale-[0.98]">
+          <Edit size={13} /> Edit Profile
         </button>
       </Link>
     </div>

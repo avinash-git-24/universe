@@ -13,43 +13,33 @@ export function QuickActions() {
   ];
 
   return (
-    <div style={{
-      background: "rgba(10,15,12,0.4)",
-      borderRadius: "24px",
-      padding: "1.5rem",
-      border: "1px solid rgba(102,255,178,0.1)",
-      backdropFilter: "blur(20px)",
-      boxShadow: "0 8px 32px rgba(0,0,0,0.3)",
-      display: "flex", flexDirection: "column", gap: "1rem"
-    }}>
-      <h3 style={{ color: "#fff", fontWeight: 800, fontSize: "1.05rem", marginBottom: "0.5rem" }}>Quick Actions</h3>
+    <div className="bg-[#0b120e]/90 border border-white/10 hover:border-emerald-500/30 rounded-2xl sm:rounded-3xl p-5 sm:p-6 backdrop-blur-xl shadow-lg flex flex-col gap-4 relative overflow-hidden transition-all group">
+      <div className="absolute -top-10 -right-10 w-28 h-28 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none" />
 
-      <Link href="/request/new" style={{ textDecoration: "none" }}>
-        <button style={{
-          width: "100%",
-          display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem",
-          background: "#00E676", color: "#000", fontWeight: 800, fontSize: "0.85rem",
-          border: "none", borderRadius: "12px", padding: "0.8rem", cursor: "pointer",
-          boxShadow: "0 0 15px rgba(0,230,118,0.3)"
-        }} className="hover:bg-[#00C853] transition-colors">
+      <h3 className="text-white font-bold text-base tracking-tight relative z-10 flex items-center justify-between">
+        <span>Quick Actions</span>
+        <span className="text-emerald-400 text-xs font-mono">✦ Shortcuts</span>
+      </h3>
+
+      <Link href="/request/new" className="no-underline relative z-10 block">
+        <button className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-400 hover:from-emerald-400 hover:to-emerald-300 text-black font-extrabold text-xs sm:text-sm shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:shadow-[0_0_30px_rgba(16,185,129,0.5)] transition-all cursor-pointer active:scale-[0.98]">
           <Plus size={16} /> Create New Request
         </button>
       </Link>
 
-      <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem", marginTop: "0.5rem" }}>
+      <div className="flex flex-col gap-2 relative z-10">
         {actions.map((action, i) => (
-          <Link key={i} href={action.href} style={{ textDecoration: "none" }}>
-            <div style={{
-              display: "flex", justifyContent: "space-between", alignItems: "center",
-              padding: "0.85rem", borderRadius: "12px",
-              background: "rgba(255,255,255,0.02)",
-              transition: "all 0.2s"
-            }} className="hover:bg-[rgba(0,230,118,0.05)] group">
-              <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-                <action.icon size={16} color="#00E676" />
-                <span style={{ color: "#A7B8B0", fontSize: "0.85rem", fontWeight: 600 }} className="group-hover:text-[#00E676]">{action.label}</span>
+          <Link key={i} href={action.href} className="no-underline block">
+            <div className="flex justify-between items-center p-3 rounded-xl bg-white/[0.02] hover:bg-emerald-500/10 border border-white/5 hover:border-emerald-500/30 transition-all group/item cursor-pointer">
+              <div className="flex items-center gap-3">
+                <div className="w-7 h-7 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-400 group-hover/item:scale-110 transition-transform">
+                  <action.icon size={14} />
+                </div>
+                <span className="text-[#A7B8B0] group-hover/item:text-white text-xs sm:text-sm font-semibold transition-colors">
+                  {action.label}
+                </span>
               </div>
-              <ChevronRight size={16} color="rgba(255,255,255,0.2)" className="group-hover:text-[#00E676]" />
+              <ChevronRight size={14} className="text-white/20 group-hover/item:text-emerald-400 group-hover/item:translate-x-0.5 transition-all" />
             </div>
           </Link>
         ))}
