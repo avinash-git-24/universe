@@ -41,6 +41,8 @@ import {
   AlertTriangle,
   Loader2,
   Eye,
+  Sparkles,
+  ShieldCheck,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import {
@@ -72,6 +74,29 @@ const CATEGORY_LABELS: Record<ResaleCategory, string> = {
   gaming: "Gaming",
   other: "Other",
 };
+
+const CATEGORY_ICONS: Record<ResaleCategory, string> = {
+  books: "📚",
+  electronics: "💻",
+  study_materials: "📝",
+  hostel: "🛏️",
+  sports: "⚽",
+  furniture: "🪑",
+  clothing: "👕",
+  gaming: "🎮",
+  other: "✨",
+};
+
+const POPULAR_PRICE_PRESETS = [50, 100, 200, 500, 1000];
+
+const POPULAR_CAMPUS_LOCATIONS = [
+  "Main Library",
+  "Hostel Block D",
+  "Hostel Block B",
+  "Central Canteen",
+  "Engineering Block",
+  "Campus Main Gate",
+];
 
 const CONDITION_LABELS: Record<ResaleCondition, string> = {
   new: "New",
@@ -408,28 +433,38 @@ export function SellForm() {
   }
 
   return (
-    <div className="max-w-[1100px] mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8 pb-20">
+    <div className="min-h-screen bg-[#060a08] relative overflow-hidden py-4 sm:py-8 pb-24 selection:bg-emerald-500/30">
+      {/* Ambient Stardust & Nebula Glows */}
+      <div className="absolute inset-0 bg-[radial-gradient(#10b98110_1px,transparent_1px)] [background-size:24px_24px] pointer-events-none opacity-50" />
+      <div className="absolute -top-40 -left-40 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-1/3 -right-40 w-96 h-96 bg-teal-500/5 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-40 left-1/3 w-96 h-96 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none" />
 
-      {/* ── Back + Header ── */}
-      <div className="mb-6 sm:mb-8">
-        <div className="flex items-center gap-2 mb-3">
-          <Link href="/dashboard/marketplace" className="no-underline">
-            <button className="flex items-center gap-1.5 bg-transparent border-none text-[#A7B8B0]/70 hover:text-white text-xs sm:text-sm font-semibold cursor-pointer py-1 transition-colors"
-              aria-label="Back to UniVerse Resale"
-            >
-              <ArrowLeft size={15} />
-              Back to UniVerse Resale
-            </button>
-          </Link>
+      <div className="max-w-[1100px] mx-auto px-3 sm:px-6 lg:px-8 relative z-10">
+
+        {/* ── Back + Header ── */}
+        <div className="mb-6 sm:mb-8">
+          <div className="flex items-center gap-2 mb-3">
+            <Link href="/dashboard/marketplace" className="no-underline">
+              <button className="flex items-center gap-1.5 bg-transparent border-none text-[#A7B8B0]/70 hover:text-white text-xs sm:text-sm font-semibold cursor-pointer py-1 transition-colors"
+                aria-label="Back to UniVerse Resale"
+              >
+                <ArrowLeft size={15} />
+                Back to UniVerse Resale
+              </button>
+            </Link>
+          </div>
+
+          <h1 className="text-white text-2xl sm:text-3xl font-extrabold m-0 mb-1.5 tracking-tight flex items-center gap-2.5">
+            <span>Sell an Item</span>
+            <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 font-bold uppercase tracking-wider">
+              Student Resale
+            </span>
+          </h1>
+          <p className="text-[#A7B8B0]/70 text-xs sm:text-sm m-0">
+            Turn things you no longer need into value for another student.
+          </p>
         </div>
-
-        <h1 className="text-white text-2xl sm:text-3xl font-extrabold m-0 mb-1.5 tracking-tight">
-          Sell an Item
-        </h1>
-        <p className="text-[#A7B8B0]/70 text-xs sm:text-sm m-0">
-          Turn things you no longer need into value for another student.
-        </p>
-      </div>
 
       {/* ── Global submit error ── */}
       {errors.submit && (
@@ -611,6 +646,39 @@ export function SellForm() {
               </p>
             )}
           </SectionCard>
+
+          {/* Seller Pro-Tips Card */}
+          <div className="mt-5 p-5 rounded-2xl bg-[#0c1410]/80 border border-white/10 backdrop-blur-md shadow-sm">
+            <h3 className="text-sm font-bold text-white flex items-center gap-2 mb-3">
+              <Sparkles className="w-4 h-4 text-emerald-400" />
+              <span>Seller Pro-Tips for Fast Sales</span>
+            </h3>
+            <ul className="space-y-2.5 text-xs text-white/60">
+              <li className="flex items-start gap-2">
+                <span className="text-emerald-400 font-bold">☀️</span>
+                <span><strong className="text-white/80">Good Lighting:</strong> Photos taken in natural desk light get 80% more peer inquiries.</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-emerald-400 font-bold">📐</span>
+                <span><strong className="text-white/80">All Angles:</strong> Show book covers, page edges, or gadget screens turned on.</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-emerald-400 font-bold">🤝</span>
+                <span><strong className="text-white/80">Honesty Wins:</strong> Note any highlights or marks early to build high campus trust.</span>
+              </li>
+            </ul>
+          </div>
+
+          {/* Campus Trust Banner */}
+          <div className="mt-4 p-4 rounded-2xl bg-emerald-500/5 border border-emerald-500/20 backdrop-blur-md flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center shrink-0 text-emerald-400">
+              <ShieldCheck className="w-5 h-5" />
+            </div>
+            <div>
+              <p className="text-xs font-bold text-emerald-300 m-0">Zero Fees · 100% Yours</p>
+              <p className="text-[11px] text-white/50 m-0 mt-0.5">Meet at hostel gates or book a UniVerse runner for room delivery.</p>
+            </div>
+          </div>
         </section>
 
         {/* ════════════════════════════════════════════════════════════════════════
@@ -645,27 +713,21 @@ export function SellForm() {
 
             {/* ── Category ── */}
             <FieldGroup label="Category" htmlFor="sell-category" required error={errors.category}>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5 sm:gap-2">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                 {VALID_CATEGORIES.map((cat) => (
                   <button
                     key={cat}
                     type="button"
                     onClick={() => setCategory(cat)}
                     aria-pressed={category === cat}
-                    style={{
-                      padding: "0.55rem 0.5rem",
-                      borderRadius: "9px",
-                      border: `1px solid ${category === cat ? "#00E676" : "rgba(102,255,178,0.1)"}`,
-                      background: category === cat ? "rgba(0,230,118,0.1)" : "rgba(5,10,7,0.6)",
-                      color: category === cat ? "#00E676" : "#A7B8B0",
-                      fontSize: "0.75rem",
-                      fontWeight: category === cat ? 700 : 500,
-                      cursor: "pointer",
-                      transition: "all 0.15s ease",
-                      textAlign: "center",
-                    }}
+                    className={`flex items-center justify-center gap-1.5 p-2.5 rounded-xl text-xs font-semibold cursor-pointer transition-all border ${
+                      category === cat
+                        ? "bg-emerald-500/20 border-emerald-500/50 text-emerald-300 shadow-[0_0_12px_rgba(16,185,129,0.25)] font-bold"
+                        : "bg-[#090f0c] border-white/10 text-white/70 hover:text-white hover:border-white/20 hover:bg-white/5"
+                    }`}
                   >
-                    {CATEGORY_LABELS[cat]}
+                    <span>{CATEGORY_ICONS[cat]}</span>
+                    <span>{CATEGORY_LABELS[cat]}</span>
                   </button>
                 ))}
               </div>
@@ -676,35 +738,28 @@ export function SellForm() {
 
             {/* ── Condition ── */}
             <FieldGroup label="Condition" htmlFor="sell-condition" required error={errors.condition}>
-              <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
+              <div className="flex flex-col gap-2">
                 {VALID_CONDITIONS.map((cond) => (
                   <button
                     key={cond}
                     type="button"
                     onClick={() => setCondition(cond)}
                     aria-pressed={condition === cond}
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      padding: "0.65rem 0.9rem",
-                      borderRadius: "10px",
-                      border: `1px solid ${condition === cond ? "#00E676" : "rgba(102,255,178,0.1)"}`,
-                      background: condition === cond ? "rgba(0,230,118,0.08)" : "rgba(5,10,7,0.6)",
-                      cursor: "pointer",
-                      transition: "all 0.15s ease",
-                      textAlign: "left",
-                    }}
+                    className={`flex items-center justify-between p-3 rounded-xl border text-left cursor-pointer transition-all ${
+                      condition === cond
+                        ? "bg-emerald-500/15 border-emerald-500/45 shadow-[0_0_12px_rgba(16,185,129,0.2)]"
+                        : "bg-[#090f0c] border-white/10 hover:border-white/20 hover:bg-white/5"
+                    }`}
                   >
                     <span>
-                      <span style={{ display: "block", color: condition === cond ? "#00E676" : "#fff", fontSize: "0.85rem", fontWeight: 700 }}>
+                      <span className={`block text-sm font-bold ${condition === cond ? "text-emerald-300" : "text-white"}`}>
                         {CONDITION_LABELS[cond]}
                       </span>
-                      <span style={{ display: "block", color: "rgba(167,184,176,0.5)", fontSize: "0.72rem" }}>
+                      <span className="block text-xs text-white/50 mt-0.5">
                         {CONDITION_DESCRIPTIONS[cond]}
                       </span>
                     </span>
-                    {condition === cond && <CheckCircle2 size={16} color="#00E676" style={{ flexShrink: 0 }} />}
+                    {condition === cond && <CheckCircle2 size={18} className="text-emerald-400 shrink-0" />}
                   </button>
                 ))}
               </div>
@@ -731,6 +786,20 @@ export function SellForm() {
                     aria-invalid={!!errors.price}
                     style={{ ...inputStyle(!!errors.price), paddingLeft: "1.8rem" }}
                   />
+                </div>
+                {/* Price Presets */}
+                <div className="flex items-center gap-1.5 mt-2 flex-wrap">
+                  <span className="text-[11px] text-white/40 font-medium">Quick presets:</span>
+                  {POPULAR_PRICE_PRESETS.map((preset) => (
+                    <button
+                      key={preset}
+                      type="button"
+                      onClick={() => setPrice(preset.toString())}
+                      className="px-2 py-0.5 rounded-lg bg-white/5 hover:bg-emerald-500/15 border border-white/10 hover:border-emerald-500/30 text-[11px] text-white/70 hover:text-emerald-300 font-medium transition-colors cursor-pointer"
+                    >
+                      ₹{preset}
+                    </button>
+                  ))}
                 </div>
                 {errors.price && <span id="sell-price-err" style={errorTextStyle} role="alert">{errors.price}</span>}
               </FieldGroup>
@@ -832,6 +901,20 @@ export function SellForm() {
                 aria-describedby="sell-pickup-hint"
                 style={inputStyle(!!errors.pickup_location)}
               />
+              {/* Campus Location Quick Chips */}
+              <div className="flex items-center gap-1.5 mt-2 flex-wrap">
+                <span className="text-[11px] text-white/40 font-medium">Quick spots:</span>
+                {POPULAR_CAMPUS_LOCATIONS.map((loc) => (
+                  <button
+                    key={loc}
+                    type="button"
+                    onClick={() => setPickupLocation(loc)}
+                    className="px-2 py-0.5 rounded-lg bg-white/5 hover:bg-emerald-500/15 border border-white/10 hover:border-emerald-500/30 text-[11px] text-white/70 hover:text-emerald-300 font-medium transition-colors cursor-pointer"
+                  >
+                    📍 {loc}
+                  </button>
+                ))}
+              </div>
               <p id="sell-pickup-hint" style={{ color: "rgba(167,184,176,0.4)", fontSize: "0.72rem", marginTop: "0.3rem" }}>
                 Use a general campus location. Avoid sharing private/exact addresses.
               </p>
@@ -895,18 +978,18 @@ export function SellForm() {
           disabled={isSubmitting}
           style={{
             display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem",
-            padding: "0.9rem 2rem",
+            padding: "1rem 2rem",
             background: isSubmitting
               ? "rgba(0,200,83,0.4)"
               : "linear-gradient(135deg, #00C853 0%, #00E676 100%)",
-            border: "none", borderRadius: "14px",
+            border: "none", borderRadius: "16px",
             color: "#050A07", fontSize: "1rem", fontWeight: 800,
             cursor: isSubmitting ? "not-allowed" : "pointer",
-            boxShadow: isSubmitting ? "none" : "0 4px 24px rgba(0,230,118,0.3)",
+            boxShadow: isSubmitting ? "none" : "0 4px 28px rgba(0,230,118,0.35)",
             transition: "all 0.2s ease",
             letterSpacing: "0.01em",
           }}
-          className={!isSubmitting ? "hover:scale-[1.01] hover:shadow-[0_6px_32px_rgba(0,230,118,0.4)]" : ""}
+          className={!isSubmitting ? "hover:scale-[1.01] hover:shadow-[0_6px_32px_rgba(0,230,118,0.45)] active:scale-[0.99]" : ""}
           aria-busy={isSubmitting}
           aria-label={isSubmitting ? "Publishing your listing, please wait" : "Publish your listing"}
         >
@@ -917,6 +1000,7 @@ export function SellForm() {
         <p style={{ textAlign: "center", color: "rgba(167,184,176,0.35)", fontSize: "0.75rem" }}>
           By publishing, you confirm this item belongs to you and complies with UniVerse community guidelines.
         </p>
+      </div>
       </div>
     </div>
   );
@@ -934,19 +1018,14 @@ function SectionCard({
   children: React.ReactNode;
 }) {
   return (
-    <div style={{
-      background: "rgba(10,15,12,0.55)",
-      border: "1px solid rgba(102,255,178,0.08)",
-      borderRadius: "20px",
-      padding: "1.5rem",
-    }}>
-      <h2 style={{ color: "#fff", fontSize: "1rem", fontWeight: 700, margin: "0 0 0.25rem", letterSpacing: "-0.01em" }}>
+    <div className="bg-[#0c1410]/80 backdrop-blur-md border border-white/10 hover:border-emerald-500/20 rounded-2xl p-5 sm:p-6 transition-all shadow-sm">
+      <h2 className="text-white text-base sm:text-lg font-bold m-0 mb-1 tracking-tight">
         {title}
       </h2>
       {subtitle && (
-        <p style={{ color: "rgba(167,184,176,0.5)", fontSize: "0.78rem", margin: "0 0 1.25rem" }}>{subtitle}</p>
+        <p className="text-white/50 text-xs sm:text-sm m-0 mb-5">{subtitle}</p>
       )}
-      <div style={{ marginTop: subtitle ? 0 : "1rem", display: "flex", flexDirection: "column", gap: "1.25rem" }}>
+      <div className={`${subtitle ? "" : "mt-4"} flex flex-col gap-5`}>
         {children}
       </div>
     </div>
