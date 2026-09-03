@@ -5,6 +5,7 @@ import { Search, Zap, X, MessageSquare } from "lucide-react";
 import { ConversationWithDetails } from "@/lib/database/chat";
 import type { ActiveDeliveryContact } from "@/components/chat/ChatClient";
 import { format, isToday, isYesterday } from "date-fns";
+import { formatStudentName } from "@/lib/utils";
 
 interface ChatListProps {
   userId: string;
@@ -106,36 +107,44 @@ export function ChatList({
                 {activeDeliveries.length}
               </span>
             </div>
-            {activeDeliveries.map((del) => (
-              <button
-                key={del.otherUserId}
-                type="button"
-                onClick={() => onStartChatWithUser?.(del.otherUserId)}
-                className="w-full text-left p-2.5 rounded-xl bg-emerald-500/[0.06] hover:bg-emerald-500/15 border border-emerald-500/20 hover:border-emerald-500/40 transition-all flex items-center justify-between gap-2.5 group cursor-pointer"
-              >
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-1.5">
-                    <span className="font-bold text-xs text-white truncate">
-                      {del.otherUser.full_name || "User"}
-                    </span>
-                    <span className="text-[9px] px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-300 font-bold">
-                      {del.isRunner ? "Requester" : "Runner"}
-                    </span>
-                    {del.deliveryCount > 1 && (
-                      <span className="text-[9px] px-1.5 py-0.2 rounded bg-white/10 text-white/60 font-bold">
-                        {del.deliveryCount} orders
+            {activeDeliveries.map((del) => {
+              const nameInfo = formatStudentName(del.otherUser.full_name);
+              return (
+                <button
+                  key={del.otherUserId}
+                  type="button"
+                  onClick={() => onStartChatWithUser?.(del.otherUserId)}
+                  className="w-full text-left p-2.5 rounded-xl bg-emerald-500/[0.06] hover:bg-emerald-500/15 border border-emerald-500/20 hover:border-emerald-500/40 transition-all flex items-center justify-between gap-2.5 group cursor-pointer"
+                >
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <span className="font-bold text-xs text-white truncate">
+                        {nameInfo.fullName}
                       </span>
-                    )}
+                      {nameInfo.rollPrefix && (
+                        <span className="text-[9px] font-mono px-1 py-0.2 rounded bg-white/10 text-white/50">
+                          #{nameInfo.rollPrefix}
+                        </span>
+                      )}
+                      <span className="text-[9px] px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-300 font-bold">
+                        {del.isRunner ? "Requester" : "Runner"}
+                      </span>
+                      {del.deliveryCount > 1 && (
+                        <span className="text-[9px] px-1.5 py-0.2 rounded bg-white/10 text-white/60 font-bold">
+                          {del.deliveryCount} orders
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-[11px] text-white/50 truncate mt-0.5">
+                      {del.latestPickup} → {del.latestDropoff}
+                    </p>
                   </div>
-                  <p className="text-[11px] text-white/50 truncate mt-0.5">
-                    {del.latestPickup} → {del.latestDropoff}
-                  </p>
-                </div>
-                <span className="shrink-0 text-xs text-emerald-400 font-bold px-2.5 py-1 rounded-lg bg-emerald-500/20 group-hover:bg-emerald-400 group-hover:text-black transition-all">
-                  Chat
-                </span>
-              </button>
-            ))}
+                  <span className="shrink-0 text-xs text-emerald-400 font-bold px-2.5 py-1 rounded-lg bg-emerald-500/20 group-hover:bg-emerald-400 group-hover:text-black transition-all">
+                    Chat
+                  </span>
+                </button>
+              );
+            })}
           </div>
         )}
 
@@ -153,6 +162,7 @@ export function ChatList({
               const isOnline = Boolean(
                 conv.other_participant?.id && onlineUsers.has(conv.other_participant.id)
               );
+              const nameInfo = formatStudentName(conv.other_participant?.full_name);
               
               return (
                 <button
@@ -171,7 +181,7 @@ export function ChatList({
                         ? 'bg-gradient-to-tr from-emerald-500 to-teal-400 text-black shadow-md' 
                         : 'bg-gradient-to-br from-white/10 to-white/5 text-white border border-white/10'
                     }`}>
-                      {conv.other_participant?.full_name?.charAt(0).toUpperCase() || '?'}
+                      {nameInfo.initial || '?'}
                     </div>
                     {/* Online Status Indicator */}
                     <div className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-[#090e0b] transition-colors ${
@@ -182,15 +192,22 @@ export function ChatList({
                   {/* Content Snippet */}
                   <div className="flex-1 min-w-0 flex flex-col justify-center">
                     <div className="flex justify-between items-baseline mb-0.5">
-                      <span className={`text-[14px] truncate pr-2 ${
-                        isUnread 
-                          ? 'font-black text-white' 
-                          : isActive 
-                          ? 'font-bold text-emerald-400' 
-                          : 'font-semibold text-white/90'
-                      }`}>
-                        {conv.other_participant?.full_name || "User"}
-                      </span>
+                      <div className="flex items-center gap-1.5 truncate pr-2">
+                        <span className={`text-[14px] truncate ${
+                          isUnread 
+                            ? 'font-black text-white' 
+                            : isActive 
+                            ? 'font-bold text-emerald-400' 
+                            : 'font-semibold text-white/90'
+                        }`}>
+                          {nameInfo.fullName || "University Peer"}
+                        </span>
+                        {nameInfo.rollPrefix && (
+                          <span className="text-[9px] font-mono px-1.5 py-0.2 rounded bg-white/5 text-white/40 border border-white/5 shrink-0">
+                            #{nameInfo.rollPrefix}
+                          </span>
+                        )}
+                      </div>
                       {conv.last_message && (
                         <span className={`text-[10.5px] shrink-0 ${
                           isUnread ? 'text-emerald-400 font-extrabold' : 'text-white/40 font-medium'

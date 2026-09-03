@@ -30,6 +30,7 @@ import {
 import { MessageBubble } from "@/components/chat/MessageBubble";
 import { OfferMessageCard } from "@/components/chat/OfferMessageCard";
 import { sounds } from "@/lib/audio";
+import { formatStudentName } from "@/lib/utils";
 import Link from "next/link";
 import { format, isToday, isYesterday } from "date-fns";
 
@@ -480,6 +481,7 @@ export function ChatWindow({ userId, conversation, isOnline }: ChatWindowProps) 
 
   const req = conversation.delivery_request;
   const otherRole = conversation.other_participant.role === "student" ? "Student" : "Runner";
+  const otherStudent = formatStudentName(conversation.other_participant?.full_name);
 
   return (
     <div className="flex flex-col h-full min-h-0 bg-[#070b09] relative w-full overflow-hidden">
@@ -489,7 +491,7 @@ export function ChatWindow({ userId, conversation, isOnline }: ChatWindowProps) 
           {/* Avatar with Online Glow */}
           <div className="relative shrink-0">
             <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-emerald-500/30 to-teal-400/20 border border-emerald-500/40 flex items-center justify-center text-emerald-300 font-black text-sm shadow-[0_0_12px_rgba(16,185,129,0.18)]">
-              {conversation.other_participant?.full_name?.charAt(0).toUpperCase() || "U"}
+              {otherStudent.initial || "U"}
             </div>
             <span
               className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-[#0c130f] transition-all ${
@@ -499,10 +501,15 @@ export function ChatWindow({ userId, conversation, isOnline }: ChatWindowProps) 
           </div>
 
           <div className="min-w-0">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <h2 className="font-extrabold text-sm sm:text-base text-white truncate">
-                {conversation.other_participant?.full_name || "University Student"}
+                {otherStudent.fullName || "University Student"}
               </h2>
+              {otherStudent.rollPrefix && (
+                <span className="text-[10px] font-mono font-bold px-1.5 py-0.2 rounded bg-white/10 text-white/60">
+                  #{otherStudent.rollPrefix}
+                </span>
+              )}
               <span className="text-[10px] font-bold px-2 py-0.2 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 shrink-0">
                 {otherRole}
               </span>
@@ -585,34 +592,37 @@ export function ChatWindow({ userId, conversation, isOnline }: ChatWindowProps) 
 
       {/* ── Active Delivery Live HUD Banner (Pinned Top) ── */}
       {req && (
-        <div className="px-4 py-2 bg-emerald-950/30 border-b border-emerald-500/20 flex items-center justify-between gap-3 shrink-0 backdrop-blur-sm z-10">
-          <div className="flex items-center gap-2.5 min-w-0">
-            <div className="w-7 h-7 rounded-lg bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0 shadow-sm">
-              <Package className="w-3.5 h-3.5" />
+        <div className="px-4 py-2.5 bg-gradient-to-r from-emerald-950/40 via-[#0a150e]/60 to-emerald-950/40 border-b border-emerald-500/25 flex items-center justify-between gap-3 shrink-0 backdrop-blur-md z-10 shadow-[0_4px_16px_rgba(0,0,0,0.4)]">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="w-8 h-8 rounded-xl bg-emerald-500/15 border border-emerald-500/35 flex items-center justify-center text-emerald-400 shrink-0 shadow-[0_0_12px_rgba(16,185,129,0.2)]">
+              <Package className="w-4 h-4" />
             </div>
             <div className="min-w-0">
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 flex-wrap">
                 <span className="text-xs font-bold text-white truncate">
-                  Delivery #{req.id.slice(0, 6)}
+                  Active Order #{req.id.slice(0, 6)}
                 </span>
-                <span className="text-[10px] uppercase font-black px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-300">
+                <span className="text-[10px] uppercase font-black px-2 py-0.2 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
                   {req.status}
                 </span>
+                <span className="text-[10px] font-mono font-bold text-emerald-400">
+                  ₹{req.delivery_fee}
+                </span>
               </div>
-              <p className="text-[11px] text-white/60 truncate flex items-center gap-1 mt-0.5">
-                <MapPin className="w-3 h-3 text-emerald-400/80 shrink-0" />
+              <p className="text-[11px] text-white/60 truncate flex items-center gap-1.5 mt-0.5 font-medium">
+                <MapPin className="w-3 h-3 text-emerald-400 shrink-0" />
                 <span className="truncate">{req.pickup_location}</span>
-                <span className="opacity-40">→</span>
-                <span className="truncate">{req.dropoff_location}</span>
+                <span className="text-emerald-400/60 font-bold">→</span>
+                <span className="truncate text-white/90">{req.dropoff_location}</span>
               </p>
             </div>
           </div>
 
           <Link
             href={`/dashboard/requests/${req.id}`}
-            className="shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 text-xs font-bold transition-all border border-emerald-500/30 shadow-[0_0_12px_rgba(16,185,129,0.15)]"
+            className="shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 text-xs font-bold transition-all border border-emerald-500/35 shadow-[0_0_12px_rgba(16,185,129,0.15)] cursor-pointer active:scale-95"
           >
-            <span>Details</span>
+            <span>Order Details</span>
             <ExternalLink className="w-3 h-3" />
           </Link>
         </div>
@@ -649,10 +659,12 @@ export function ChatWindow({ userId, conversation, isOnline }: ChatWindowProps) 
       <div
         ref={scrollContainerRef}
         onScroll={handleScroll}
-        className="flex-1 min-h-0 overflow-y-auto p-4 sm:p-6 flex flex-col relative z-0 space-y-1 bg-[radial-gradient(#10b9810d_1px,transparent_1px)] [background-size:20px_20px]"
+        className="flex-1 min-h-0 overflow-y-auto p-4 sm:p-6 flex flex-col relative z-0 space-y-1 bg-[#060a08]"
       >
-        {/* Soft Ambient Radial Glow at the top */}
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_-10%,rgba(16,185,129,0.06),rgba(0,0,0,0))] pointer-events-none" />
+        {/* Ambient Cosmic Stardust & Radial Nebula Glows */}
+        <div className="absolute inset-0 bg-[radial-gradient(#10b98112_1px,transparent_1px)] [background-size:24px_24px] pointer-events-none opacity-60" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_-10%,rgba(16,185,129,0.08),rgba(0,0,0,0))] pointer-events-none" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_80%_80%,rgba(20,184,166,0.04),rgba(0,0,0,0))] pointer-events-none" />
 
         {loading ? (
           <div className="flex-1 flex items-center justify-center">
@@ -810,17 +822,20 @@ export function ChatWindow({ userId, conversation, isOnline }: ChatWindowProps) 
         )}
 
         {/* Campus Quick Replies Pill Strip */}
-        <div className="flex items-center gap-1.5 px-3 sm:px-4 pt-2 pb-1 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden max-w-4xl mx-auto w-full">
-          {CAMPUS_QUICK_REPLIES.map((reply) => (
-            <button
-              key={reply}
-              onClick={() => handleSend(reply)}
-              disabled={loading || uploadingImage}
-              className="shrink-0 px-3 py-1.2 rounded-xl bg-white/[0.04] hover:bg-emerald-500/15 border border-white/[0.08] hover:border-emerald-500/30 text-xs text-white/80 hover:text-emerald-300 font-medium transition-all active:scale-95 disabled:opacity-50 backdrop-blur-sm"
-            >
-              {reply}
-            </button>
-          ))}
+        <div className="relative max-w-4xl mx-auto w-full px-3 sm:px-4 pt-2.5 pb-1">
+          <div className="flex items-center gap-2 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden pr-4 pb-0.5">
+            {CAMPUS_QUICK_REPLIES.map((reply) => (
+              <button
+                key={reply}
+                type="button"
+                onClick={() => handleSend(reply)}
+                disabled={loading || uploadingImage}
+                className="shrink-0 px-3.5 py-1.5 rounded-xl bg-white/[0.05] hover:bg-emerald-500/20 border border-white/10 hover:border-emerald-500/40 text-xs text-white/85 hover:text-emerald-300 font-medium transition-all active:scale-95 disabled:opacity-50 backdrop-blur-sm cursor-pointer shadow-sm"
+              >
+                {reply}
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* Message Input Bar */}

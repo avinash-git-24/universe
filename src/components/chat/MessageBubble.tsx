@@ -97,10 +97,10 @@ export const MessageBubble = memo(function MessageBubble({
 
         {/* Message Bubble Card */}
         <div
-          className={`relative max-w-[85%] sm:max-w-[72%] px-3.5 py-2 shadow-lg transition-all ${
+          className={`relative max-w-[85%] sm:max-w-[72%] px-4 py-2.5 shadow-lg transition-all ${
             isMe
-              ? "bg-gradient-to-r from-emerald-600 via-emerald-500 to-teal-500 text-white font-normal shadow-[0_4px_16px_rgba(16,185,129,0.22)] border border-emerald-400/20"
-              : "bg-[#131c17] text-white/95 border border-white/[0.08] backdrop-blur-md shadow-[0_4px_16px_rgba(0,0,0,0.3)]"
+              ? "bg-gradient-to-r from-emerald-600 via-emerald-500 to-teal-500 text-white font-normal shadow-[0_4px_16px_rgba(16,185,129,0.25)] border border-emerald-400/20"
+              : "bg-[#0e1612] text-white/95 border border-white/10 backdrop-blur-md shadow-[0_4px_16px_rgba(0,0,0,0.35)]"
           } ${
             isFirstInGroup && isLastInGroup
               ? "rounded-2xl"
@@ -120,7 +120,7 @@ export const MessageBubble = memo(function MessageBubble({
           {/* Shared Image */}
           {message.image_url && (
             <div
-              className={`relative w-[240px] sm:w-[320px] max-w-full aspect-square rounded-xl overflow-hidden cursor-pointer border border-white/10 group/img ${
+              className={`relative max-w-[280px] sm:max-w-[360px] max-h-[380px] rounded-xl overflow-hidden cursor-pointer border border-white/10 group/img bg-black/40 flex items-center justify-center ${
                 message.content ? "mb-2" : ""
               }`}
               onClick={() => setIsLightboxOpen(true)}
@@ -128,13 +128,13 @@ export const MessageBubble = memo(function MessageBubble({
               <Image
                 src={message.image_url}
                 alt="Shared image"
-                fill
+                width={400}
+                height={400}
                 unoptimized
-                sizes="(max-width: 768px) 240px, 320px"
-                className="object-cover group-hover/img:scale-105 transition-transform duration-300"
+                className="w-full max-h-[360px] object-contain rounded-xl group-hover/img:scale-[1.02] transition-transform duration-300"
               />
-              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center">
-                <span className="text-xs font-semibold bg-black/70 text-white px-3 py-1 rounded-full backdrop-blur-sm border border-white/20">
+              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
+                <span className="text-xs font-semibold bg-black/80 text-white px-3 py-1 rounded-full backdrop-blur-md border border-white/20 shadow-lg">
                   🔍 View Full Size
                 </span>
               </div>
