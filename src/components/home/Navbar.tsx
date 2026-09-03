@@ -270,13 +270,13 @@ export function Navbar() {
       <div
         className="mx-4 mt-3 rounded-[var(--radius-xl)] pointer-events-auto"
         style={{
-          borderColor: "rgba(16, 185, 129, 0.18)",
-          backgroundColor: "rgba(8, 14, 11, 0.85)",
-          backdropFilter: "blur(20px) saturate(180%)",
-          WebkitBackdropFilter: "blur(20px) saturate(180%)",
-          border: "1px solid rgba(16, 185, 129, 0.18)",
-          boxShadow: "0 10px 32px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.08)",
-          transition: "border-color 0.25s ease, background-color 0.25s ease",
+          borderColor: "rgba(255, 255, 255, 0.1)",
+          backgroundColor: "rgba(10, 10, 10, 0.12)",
+          backdropFilter: "blur(8px) saturate(160%)",
+          WebkitBackdropFilter: "blur(8px) saturate(160%)",
+          border: "1px solid rgba(255, 255, 255, 0.1)",
+          boxShadow: "none",
+          transition: "all 0.3s ease",
         }}
       >
         <div className="relative flex items-center justify-between px-5 py-3">
