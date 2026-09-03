@@ -3,14 +3,13 @@
 /**
  * UniVerse — 100% Private & Secure Campus Password Reset Flow
  *
- * Immersive 3D Perspective Cyber-Tunnel Grid Architecture:
- * - 3D Perspective Cyber-Tunnel Grid Canvas (floor, walls, ceiling & concentric depth rings)
- * - Cosmic stardust nebulae particles floating in 3D space
- * - Ambient volumetric emerald bloom behind the central verification card
- * - Corner cyber accents (+) and sleek glassmorphism
- * - Interactive 6-digit fluid adaptive PIN boxes with paste and auto-advance
- * - 30-Second live countdown timer for Resend OTP
- * - End-to-end 3-step flow (Email ➔ 6-PIN Verify ➔ New Password)
+ * Deep Cosmic Nebula & Living Stardust Architecture:
+ * - Breathing chromatic nebula clouds (deep emerald & celestial mint)
+ * - Multi-depth 3D stardust field with perspective drift and twinkling
+ * - Rare cosmic shooting stars (comets) gliding across deep space
+ * - Subtle constellation micro-filaments connecting nearby stars
+ * - Volumetric dual emerald halo bloom behind the central card
+ * - Zero distracting grid lines; 100% pure cinematic cosmic depth
  *
  * Route: /forgot-password
  */
@@ -66,8 +65,8 @@ function getPasswordStrength(pw: string): { score: number; label: string; color:
   return { score: 4, label: "Strong", color: "bg-emerald-400" };
 }
 
-// ─── 3D PERSPECTIVE CYBER-TUNNEL CANVAS ────────────────────────────────────────
-function CyberTunnelCanvas() {
+// ─── LIVING COSMIC NEBULA & STARDUST CANVAS ──────────────────────────────────
+function CosmicNebulaCanvas() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   useEffect(() => {
@@ -87,56 +86,212 @@ function CyberTunnelCanvas() {
     };
     window.addEventListener("resize", handleResize);
 
-    // Cosmic stardust particles in 3D
-    const numStars = 65;
+    // Multi-depth stars
+    const numStars = 110;
     const stars = Array.from({ length: numStars }, () => ({
-      x: (Math.random() - 0.5) * 2200,
-      y: (Math.random() - 0.5) * 2200,
-      z: Math.random() * 1000 + 100,
-      baseAlpha: Math.random() * 0.6 + 0.3,
-      size: Math.random() * 1.5 + 0.6,
+      x: (Math.random() - 0.5) * 2400,
+      y: (Math.random() - 0.5) * 2400,
+      z: Math.random() * 1000 + 80,
+      baseAlpha: Math.random() * 0.7 + 0.3,
+      size: Math.random() * 1.6 + 0.6,
+      twinkleSpeed: Math.random() * 0.02 + 0.005,
+      twinklePhase: Math.random() * Math.PI * 2,
     }));
 
-    const render = () => {
+    // Shooting stars (Comets)
+    interface ShootingStar {
+      x: number;
+      y: number;
+      length: number;
+      speed: number;
+      angle: number;
+      opacity: number;
+      active: boolean;
+    }
+
+    let shootingStar: ShootingStar = {
+      x: 0,
+      y: 0,
+      length: 0,
+      speed: 0,
+      angle: 0,
+      opacity: 0,
+      active: false,
+    };
+
+    const spawnShootingStar = () => {
+      shootingStar = {
+        x: Math.random() * width * 0.7,
+        y: Math.random() * (height * 0.4),
+        length: Math.random() * 80 + 70,
+        speed: Math.random() * 7 + 9,
+        angle: Math.PI / 4 + (Math.random() - 0.5) * 0.2, // ~45 degrees
+        opacity: 1,
+        active: true,
+      };
+    };
+
+    // Spawn first shooting star after 3 seconds
+    let lastSpawnTime = performance.now();
+    let nextSpawnDelay = 4000;
+
+    let frame = 0;
+
+    const render = (time: number) => {
+      frame++;
       ctx.clearRect(0, 0, width, height);
 
       const cx = width / 2;
       const cy = height / 2;
 
-      // 1. Draw Cosmic Stardust
+      // ── 1. Soft Breathing Nebula Clouds (James Webb Deep Space Aura) ──
+      const breath = Math.sin(time * 0.0008) * 0.04;
+
+      // Top-Left Emerald Nebula Cloud
+      const neb1 = ctx.createRadialGradient(
+        width * 0.2,
+        height * 0.25,
+        40,
+        width * 0.2,
+        height * 0.25,
+        Math.max(width, height) * 0.55
+      );
+      neb1.addColorStop(0, `rgba(0, 230, 118, ${0.11 + breath})`);
+      neb1.addColorStop(0.5, `rgba(0, 168, 84, ${0.03 + breath * 0.5})`);
+      neb1.addColorStop(1, "transparent");
+      ctx.fillStyle = neb1;
+      ctx.fillRect(0, 0, width, height);
+
+      // Bottom-Right Cyan/Teal Nebula Cloud
+      const neb2 = ctx.createRadialGradient(
+        width * 0.8,
+        height * 0.75,
+        50,
+        width * 0.8,
+        height * 0.75,
+        Math.max(width, height) * 0.6
+      );
+      neb2.addColorStop(0, `rgba(0, 210, 255, ${0.08 - breath * 0.5})`);
+      neb2.addColorStop(0.5, `rgba(0, 119, 255, ${0.02 - breath * 0.3})`);
+      neb2.addColorStop(1, "transparent");
+      ctx.fillStyle = neb2;
+      ctx.fillRect(0, 0, width, height);
+
+      // ── 2. Render Stars & Stardust ──
+      const fov = 420;
+      const screenStars: { x: number; y: number; alpha: number }[] = [];
+
       for (const s of stars) {
-        const fov = 400;
         const scale = fov / s.z;
         const px = cx + s.x * scale;
         const py = cy + s.y * scale;
 
+        s.twinklePhase += s.twinkleSpeed;
+        const twinkle = Math.sin(s.twinklePhase) * 0.35 + 0.65;
+        const alpha = s.baseAlpha * twinkle * Math.min(1, scale * 1.5);
+
         if (px >= 0 && px <= width && py >= 0 && py <= height) {
           ctx.beginPath();
-          ctx.arc(px, py, s.size * scale, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(180, 255, 220, ${s.baseAlpha * Math.min(1, scale * 1.6)})`;
+          ctx.arc(px, py, s.size * Math.max(0.6, scale), 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(195, 255, 230, ${alpha})`;
           ctx.fill();
+
+          // Collect stars for constellation links
+          if (screenStars.length < 50 && scale > 0.4 && scale < 1.2) {
+            screenStars.push({ x: px, y: py, alpha });
+          }
         }
 
-        s.z -= 0.6;
-        if (s.z <= 30) {
+        // Slow cinematic forward drift
+        s.z -= 0.5;
+        if (s.z <= 25) {
           s.z = 1000;
-          s.x = (Math.random() - 0.5) * 2200;
-          s.y = (Math.random() - 0.5) * 2200;
+          s.x = (Math.random() - 0.5) * 2400;
+          s.y = (Math.random() - 0.5) * 2400;
         }
       }
 
-      // 2. Cosmic Stardust Field and Atmospheric Depth (No green grid lines)
-      const grad = ctx.createRadialGradient(cx, cy, 60, cx, cy, Math.max(width, height) * 0.75);
-      grad.addColorStop(0, "rgba(3, 11, 8, 0.6)");
-      grad.addColorStop(0.45, "rgba(3, 11, 8, 0.25)");
-      grad.addColorStop(1, "rgba(3, 11, 8, 0.85)");
-      ctx.fillStyle = grad;
+      // ── 3. Subtle Constellation Filaments (Connect nearby stars) ──
+      ctx.lineWidth = 0.6;
+      for (let i = 0; i < screenStars.length; i++) {
+        for (let j = i + 1; j < screenStars.length; j++) {
+          const dx = screenStars[i].x - screenStars[j].x;
+          const dy = screenStars[i].y - screenStars[j].y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+
+          if (dist < 85) {
+            const lineAlpha = (1 - dist / 85) * 0.08 * Math.min(screenStars[i].alpha, screenStars[j].alpha);
+            ctx.beginPath();
+            ctx.moveTo(screenStars[i].x, screenStars[i].y);
+            ctx.lineTo(screenStars[j].x, screenStars[j].y);
+            ctx.strokeStyle = `rgba(0, 230, 118, ${lineAlpha})`;
+            ctx.stroke();
+          }
+        }
+      }
+
+      // ── 4. Occasional Cosmic Shooting Star (Comet) ──
+      if (time - lastSpawnTime > nextSpawnDelay && !shootingStar.active) {
+        spawnShootingStar();
+        lastSpawnTime = time;
+        nextSpawnDelay = Math.random() * 5000 + 4000; // Next comet in 4-9s
+      }
+
+      if (shootingStar.active) {
+        const rad = shootingStar.angle;
+        const tailX = shootingStar.x - Math.cos(rad) * shootingStar.length;
+        const tailY = shootingStar.y - Math.sin(rad) * shootingStar.length;
+
+        const cometGrad = ctx.createLinearGradient(
+          tailX,
+          tailY,
+          shootingStar.x,
+          shootingStar.y
+        );
+        cometGrad.addColorStop(0, "rgba(0, 230, 118, 0)");
+        cometGrad.addColorStop(0.6, `rgba(0, 230, 118, ${shootingStar.opacity * 0.4})`);
+        cometGrad.addColorStop(1, `rgba(255, 255, 255, ${shootingStar.opacity * 0.9})`);
+
+        ctx.beginPath();
+        ctx.moveTo(tailX, tailY);
+        ctx.lineTo(shootingStar.x, shootingStar.y);
+        ctx.strokeStyle = cometGrad;
+        ctx.lineWidth = 1.6;
+        ctx.stroke();
+
+        // Advance shooting star
+        shootingStar.x += Math.cos(rad) * shootingStar.speed;
+        shootingStar.y += Math.sin(rad) * shootingStar.speed;
+        shootingStar.opacity -= 0.015;
+
+        if (
+          shootingStar.opacity <= 0 ||
+          shootingStar.x > width + 100 ||
+          shootingStar.y > height + 100
+        ) {
+          shootingStar.active = false;
+        }
+      }
+
+      // ── 5. Center Vignette Depth (keeps form crisp and readable) ──
+      const vignette = ctx.createRadialGradient(
+        cx,
+        cy,
+        80,
+        cx,
+        cy,
+        Math.max(width, height) * 0.75
+      );
+      vignette.addColorStop(0, "rgba(3, 11, 8, 0.45)");
+      vignette.addColorStop(0.5, "rgba(3, 11, 8, 0.15)");
+      vignette.addColorStop(1, "rgba(3, 11, 8, 0.85)");
+      ctx.fillStyle = vignette;
       ctx.fillRect(0, 0, width, height);
 
       animId = requestAnimationFrame(render);
     };
 
-    render();
+    animId = requestAnimationFrame(render);
 
     return () => {
       window.removeEventListener("resize", handleResize);
@@ -413,28 +568,28 @@ export default function ForgotPasswordPage() {
 
   return (
     <div className="relative w-full flex flex-col items-center justify-center">
-      {/* ── 3D Perspective Cyber-Tunnel Grid Canvas ── */}
-      <CyberTunnelCanvas />
+      {/* ── Living Cosmic Nebula & Stardust Canvas ── */}
+      <CosmicNebulaCanvas />
 
       {/* ── Ambient Volumetric Emerald Bloom Halos ── */}
       <div className="fixed inset-0 pointer-events-none -z-10 overflow-hidden">
         {/* Central Card Volumetric Backlight Bloom */}
         <div
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[550px] h-[550px] rounded-full pointer-events-none"
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[580px] h-[580px] rounded-full pointer-events-none"
           style={{
             background:
-              "radial-gradient(circle, rgba(0, 230, 118, 0.18) 0%, rgba(0, 168, 84, 0.04) 50%, transparent 75%)",
-            filter: "blur(90px)",
+              "radial-gradient(circle, rgba(0, 230, 118, 0.2) 0%, rgba(0, 168, 84, 0.05) 50%, transparent 75%)",
+            filter: "blur(95px)",
           }}
         />
 
         {/* Secondary Upper Bloom for Logo Elevation */}
         <div
-          className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[380px] h-[380px] rounded-full pointer-events-none"
+          className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[420px] h-[420px] rounded-full pointer-events-none"
           style={{
             background:
-              "radial-gradient(circle, rgba(0, 210, 255, 0.1) 0%, rgba(0, 230, 118, 0.05) 50%, transparent 75%)",
-            filter: "blur(75px)",
+              "radial-gradient(circle, rgba(0, 210, 255, 0.12) 0%, rgba(0, 230, 118, 0.06) 50%, transparent 75%)",
+            filter: "blur(80px)",
           }}
         />
       </div>
