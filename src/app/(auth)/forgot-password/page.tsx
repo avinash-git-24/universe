@@ -70,14 +70,21 @@ export default function ForgotPasswordPage() {
       });
 
       if (resetError) {
-        setError(resetError.message || "Failed to send reset code. Please try again.");
+        console.error("Supabase Reset Error:", resetError);
+        const rawMsg = resetError?.message || "";
+        if (rawMsg && rawMsg !== "{}" && typeof rawMsg === "string") {
+          setError(rawMsg);
+        } else {
+          setError("Email service rate limit reached. If you have an OTP code, you can enter it below, or update password in Supabase SQL editor.");
+        }
         return;
       }
 
       setStep(2);
       setInfoMessage(`We've sent a 6-digit OTP verification code to ${normalizedEmail}`);
     } catch (err: any) {
-      setError(err?.message || "An unexpected error occurred.");
+      const msg = err?.message;
+      setError(typeof msg === "string" && msg !== "{}" ? msg : "An unexpected error occurred. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -238,13 +245,31 @@ export default function ForgotPasswordPage() {
             {loading ? "Sending 6-Digit OTP..." : "Send OTP Code ➔"}
           </Button>
 
-          <Link
-            href={ROUTES.LOGIN}
-            className="inline-flex items-center justify-center gap-2 text-xs font-semibold text-white/50 hover:text-white transition-colors duration-150 mt-1"
-          >
-            <ArrowLeft size={14} />
-            Back to sign in
-          </Link>
+          <div className="flex flex-col gap-2.5 pt-1 text-center">
+            <button
+              type="button"
+              onClick={() => {
+                const normalizedEmail = sanitizeEmail(email);
+                if (!normalizedEmail) {
+                  setError("Please enter your college email first.");
+                  return;
+                }
+                setStep(2);
+                setError(null);
+              }}
+              className="text-xs font-semibold text-emerald-400 hover:underline"
+            >
+              Already have an OTP code? Enter OTP & Password ➔
+            </button>
+
+            <Link
+              href={ROUTES.LOGIN}
+              className="inline-flex items-center justify-center gap-2 text-xs font-semibold text-white/50 hover:text-white transition-colors duration-150"
+            >
+              <ArrowLeft size={14} />
+              Back to sign in
+            </Link>
+          </div>
         </form>
       )}
 
