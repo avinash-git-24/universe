@@ -10,7 +10,6 @@
  */
 
 import type { Metadata } from "next";
-import LazySpaceBackground from "@/components/auth/LazySpaceBackground";
 
 export const metadata: Metadata = {
   title: {
@@ -26,15 +25,13 @@ export default function AuthLayout({
   children: React.ReactNode;
 }) {
   return (
-    // This outer div owns the dark background — completely covering the body's
-    // default light color set in the root layout.
     <div
       className="min-h-[100dvh] bg-[#070A08] flex flex-col items-center justify-center py-6 sm:py-12 px-3 sm:px-6 relative overflow-x-hidden"
     >
-      {/* Space background — absolute so it fills this container */}
-      <LazySpaceBackground />
+      {/* Subtle ambient cosmic background glow */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[350px] bg-emerald-500/5 blur-[120px] rounded-full pointer-events-none" />
 
-      {/* Page content — sits above the space background */}
+      {/* Page content */}
       <div className="relative z-10 w-full flex flex-col items-center max-w-full">
         {children}
       </div>

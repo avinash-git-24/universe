@@ -59,9 +59,12 @@ const nextConfig: NextConfig = {
     ];
   },
 
-  // ─── Experimental ─────────────────────────────────────────────────────────
   experimental: {
-    optimizePackageImports: ["lucide-react", "framer-motion"],
+    optimizePackageImports: [
+      "lucide-react",
+      "framer-motion",
+      "@supabase/supabase-js",
+    ],
   },
 };
 

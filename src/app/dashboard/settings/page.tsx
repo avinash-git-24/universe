@@ -3,7 +3,6 @@ import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { ROUTES } from "@/constants/routes";
 import { SettingsClient } from "./SettingsClient";
-import LazySpaceBackground from "@/components/auth/LazySpaceBackground";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { Metadata } from "next";
@@ -43,10 +42,14 @@ export default async function SettingsPage() {
 
   return (
     <div className="min-h-screen pt-4 sm:pt-8 pb-16 px-3 sm:px-6 relative overflow-hidden bg-[#060a08]">
-      {/* Floating particles background (lazy-loaded Three.js) */}
-      <div className="absolute inset-0 z-0 pointer-events-none opacity-40 fixed">
-        <LazySpaceBackground />
-      </div>
+      {/* Lightweight CSS stardust particles */}
+      <div
+        className="absolute inset-0 z-0 pointer-events-none opacity-20"
+        style={{
+          backgroundImage: `radial-gradient(1px 1px at 25px 35px, #00E676, rgba(0,0,0,0)), radial-gradient(1.5px 1.5px at 160px 190px, #ffffff, rgba(0,0,0,0))`,
+          backgroundSize: "320px 320px",
+        }}
+      />
 
       {/* Cosmic ambient radial glows */}
       <div className="absolute top-0 right-1/4 w-[600px] h-[600px] rounded-full bg-radial from-emerald-500/10 via-transparent to-transparent blur-3xl pointer-events-none" />
