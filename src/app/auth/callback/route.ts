@@ -29,70 +29,75 @@ export async function GET(request: NextRequest) {
     type = "signup";
   }
 
-  console.log("[Auth Callback] Hit with URL:", request.url);
-  console.log("[Auth Callback] Extracted params ->", { code, token_hash, type, redirectTo });
-
   const supabase = await createClient();
 
-  let errorMessage = "auth_callback_failed";
-
   if (token_hash && type) {
-    console.log("[Auth Callback] Attempting verifyOtp", { type, token_hash });
     const { error } = await supabase.auth.verifyOtp({
       type,
       token_hash,
     });
 
     if (!error) {
-      console.log("[Auth Callback] verifyOtp SUCCESS");
       if (type === "recovery") {
         return NextResponse.redirect(`${origin}/reset-password`);
       }
       return NextResponse.redirect(`${origin}/complete-profile`);
-    } else {
-      console.error("[Auth Callback] verifyOtp ERROR:", error);
-      errorMessage = error.message;
     }
   } else if (code) {
-    console.log("[Auth Callback] Attempting exchangeCodeForSession");
     const { error, data } = await supabase.auth.exchangeCodeForSession(code);
 
     if (!error) {
-      console.log("[Auth Callback] exchangeCodeForSession SUCCESS");
-      
       // Enforce marwadiuniversity.ac.in domain for OAuth
       const email = data?.user?.email || "";
       if (!email.endsWith("@marwadiuniversity.ac.in")) {
-        console.warn("[Auth Callback] Unauthorized domain blocked:", email);
         await supabase.auth.signOut();
-        return NextResponse.redirect(`${origin}/login?error=${encodeURIComponent("Only @marwadiuniversity.ac.in emails are allowed.")}`);
+        return NextResponse.redirect(
+          `${origin}/login?error=${encodeURIComponent("Only @marwadiuniversity.ac.in emails are allowed.")}`
+        );
       }
 
       // Password reset flow
-      if (type === "recovery") {
+      if (type === "recovery" || searchParams.get("type") === "recovery") {
         return NextResponse.redirect(`${origin}/reset-password`);
       }
 
-      // If user came with an explicit redirectTo param, honour it
       if (redirectTo && redirectTo !== "/complete-profile") {
         const dest = redirectTo.startsWith("/") ? redirectTo : `/${redirectTo}`;
         return NextResponse.redirect(`${origin}${dest}`);
       }
 
-      // For Google OAuth or returning users, redirect straight to dashboard
       return NextResponse.redirect(`${origin}/dashboard`);
-    } else {
-      console.error("[Auth Callback] exchangeCodeForSession ERROR:", error);
-      errorMessage = error.message;
     }
-  } else {
-    // Neither token_hash nor code is present.
-    // This happens if the URL uses a hash fragment (implicit flow) or is missing parameters.
-    errorMessage = "No auth code or token hash found in URL";
   }
 
-  // Something went wrong — redirect to login with an error param
-  return NextResponse.redirect(
-    `${origin}/login?error=${encodeURIComponent(errorMessage)}`
-  );
+  // Handle client-side hash fragments (#access_token=...&type=recovery)
+  const clientBridgeHtml = `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>UniVerse Security</title>
+</head>
+<body style="background:#090d16;color:#10b981;display:flex;align-items:center;justify-content:center;height:100vh;font-family:sans-serif;">
+  <div style="text-align:center;">
+    <div style="width:36px;height:36px;border:3px solid rgba(16,185,129,0.3);border-top:3px solid #10b981;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 16px;"></div>
+    <p style="font-size:14px;letter-spacing:1px;">Verifying session...</p>
+  </div>
+  <style>@keyframes spin { 0% { transform:rotate(0deg); } 100% { transform:rotate(360deg); } }</style>
+  <script>
+    const hash = window.location.hash || '';
+    const search = window.location.search || '';
+    if (hash.includes('type=recovery') || search.includes('type=recovery')) {
+      window.location.href = '/reset-password' + hash;
+    } else if (hash.includes('access_token')) {
+      window.location.href = '/dashboard' + hash;
+    } else {
+      window.location.href = '/login';
+    }
+  </script>
+</body>
+</html>`;
+
+  return new NextResponse(clientBridgeHtml, {
+    headers: { "Content-Type": "text/html" },
+  });
 }
