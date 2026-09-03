@@ -48,7 +48,6 @@ export default function ResetPasswordPage() {
         if (session?.user?.email) {
           setEmail(session.user.email);
         } else {
-          // Check query params if any
           const params = new URLSearchParams(window.location.search);
           const qEmail = params.get("email");
           if (qEmail) setEmail(qEmail);
@@ -96,7 +95,6 @@ export default function ResetPasswordPage() {
         });
 
         if (rpcErr) {
-          // Try verify_and_update_student_password
           await (supabase.rpc as any)("verify_and_update_student_password", {
             p_email: cleanEmail,
             p_otp: "123456",
@@ -153,7 +151,7 @@ export default function ResetPasswordPage() {
           </Button>
         </div>
       ) : (
-        <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-4">
+        <form onSubmit={handleSubmit} noValidate autoComplete="off" className="flex flex-col gap-4">
           {error && (
             <div className="p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs font-mono">
               ⚠️ {error}
@@ -163,6 +161,7 @@ export default function ResetPasswordPage() {
           {/* College Email */}
           <Input
             id="reset-email"
+            name="user_email_field"
             type="email"
             label="College Email Address"
             placeholder="avinash.128203@marwadiuniversity.ac.in"
@@ -185,8 +184,11 @@ export default function ResetPasswordPage() {
             <div className="relative flex items-center">
               <Lock className="absolute left-3.5 w-4 h-4 text-white/40 pointer-events-none" />
               <input
+                id="user-new-password"
+                name="new_password_unique"
                 type={showPassword ? "text" : "password"}
                 placeholder="At least 6 characters"
+                autoComplete="new-password"
                 value={password}
                 onChange={(e) => {
                   setPassword(e.target.value);
@@ -198,7 +200,7 @@ export default function ResetPasswordPage() {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 text-white/40 hover:text-white p-1"
+                className="absolute right-3 text-white/40 hover:text-white p-1 cursor-pointer"
               >
                 {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
               </button>
@@ -213,8 +215,11 @@ export default function ResetPasswordPage() {
             <div className="relative flex items-center">
               <Lock className="absolute left-3.5 w-4 h-4 text-white/40 pointer-events-none" />
               <input
+                id="user-confirm-password"
+                name="confirm_password_unique"
                 type={showPassword ? "text" : "password"}
                 placeholder="Repeat new password"
+                autoComplete="new-password"
                 value={confirm}
                 onChange={(e) => {
                   setConfirm(e.target.value);
@@ -227,7 +232,7 @@ export default function ResetPasswordPage() {
 
           <Button
             type="submit"
-            className="w-full bg-emerald-500 hover:bg-emerald-400 text-black font-extrabold h-11 rounded-xl shadow-[0_0_20px_rgba(0,230,118,0.25)] mt-2"
+            className="w-full bg-emerald-500 hover:bg-emerald-400 text-black font-extrabold h-11 rounded-xl shadow-[0_0_20px_rgba(0,230,118,0.25)] mt-2 cursor-pointer"
             disabled={loading}
           >
             {loading ? "Updating Password..." : "Update Password & Sign In ➔"}
