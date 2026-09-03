@@ -1,6 +1,6 @@
--- ==============================================================================
--- UniVerse: Direct Student Password Reset RPC
--- ==============================================================================
+-- Migration: Reset Student Password Function with pgcrypto extension support
+
+create extension if not exists "pgcrypto" with schema extensions;
 
 create or replace function public.reset_student_password(
   p_email text,
@@ -9,7 +9,7 @@ create or replace function public.reset_student_password(
 returns jsonb
 language plpgsql
 security definer
-set search_path = public, auth
+set search_path = public, auth, extensions
 as $$
 declare
   v_user_id uuid;
@@ -38,16 +38,7 @@ begin
   where id = v_user_id;
 
   return jsonb_build_object('success', true, 'message', 'Password updated successfully!');
-exception when others then
-  update auth.users
-  set encrypted_password = crypt(p_new_password, gen_salt('bf')),
-      email_confirmed_at = coalesce(email_confirmed_at, now()),
-      updated_at = now()
-  where lower(email) = v_clean_email;
-
-  return jsonb_build_object('success', true, 'message', 'Password updated successfully!');
 end;
 $$;
 
 grant execute on function public.reset_student_password(text, text) to anon, authenticated, service_role;
-notify pgrst, 'reload schema';
