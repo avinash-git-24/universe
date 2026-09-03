@@ -11,6 +11,7 @@ import BlackHoleBackground from "@/components/auth/BlackHoleBackground";
 function Field({
   id, type, label, placeholder, autoComplete, value, onChange,
   leftIcon, rightNode, error, warningNode, onKeyDown, onKeyUp,
+  headerRight,
 }: {
   id: string; type: string; label: string; placeholder: string;
   autoComplete?: string; value: string;
@@ -19,22 +20,26 @@ function Field({
   warningNode?: React.ReactNode;
   onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
   onKeyUp?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
+  headerRight?: React.ReactNode;
 }) {
   const [focused, setFocused] = useState(false);
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
-      <label
-        htmlFor={id}
-        style={{
-          fontSize: 10.5,
-          fontFamily: "'Space Mono', monospace",
-          letterSpacing: "2px",
-          color: "rgba(255, 255, 255, 0.65)",
-          textTransform: "uppercase",
-        }}
-      >
-        {label}
-      </label>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", minHeight: 18 }}>
+        <label
+          htmlFor={id}
+          style={{
+            fontSize: 10.5,
+            fontFamily: "'Space Mono', monospace",
+            letterSpacing: "2px",
+            color: "rgba(255, 255, 255, 0.65)",
+            textTransform: "uppercase",
+          }}
+        >
+          {label}
+        </label>
+        {headerRight}
+      </div>
       <div style={{
         position: "relative", display: "flex", alignItems: "center",
         background: "rgba(0, 0, 0, 0.35)",
@@ -58,13 +63,16 @@ function Field({
           onKeyDown={onKeyDown} onKeyUp={onKeyUp}
           style={{
             width: "100%", background: "transparent", border: "none", outline: "none",
-            color: "#fff", fontSize: 14.5, padding: "14px 42px",
+            color: "#fff", fontSize: 14.5, 
+            paddingTop: 14, paddingBottom: 14,
+            paddingLeft: 42,
+            paddingRight: rightNode ? 86 : 16,
             letterSpacing: type === "password" ? "0.15em" : "normal",
             fontFamily: "'Inter', sans-serif",
           }}
         />
         {rightNode && (
-          <span style={{ position: "absolute", right: 14, display: "flex", alignItems: "center", gap: 6 }}>
+          <span style={{ position: "absolute", right: 12, display: "flex", alignItems: "center", gap: 6 }}>
             {rightNode}
           </span>
         )}
@@ -348,7 +356,7 @@ function LoginForm() {
               }
             />
 
-            {/* Password Field with Caps Lock Detector */}
+            {/* Password Field with Clear Button, Caps Lock Detector & Eye Toggle */}
             <Field
               id="password" type={showPw ? "text" : "password"} label="Password"
               placeholder="Enter password" autoComplete="current-password"
@@ -360,14 +368,95 @@ function LoginForm() {
               onKeyUp={handleKeyActivity}
               error={errors.password}
               warningNode={capsLockOn ? "⇪ Caps Lock is ON" : undefined}
+              headerRight={
+                password.length > 0 ? (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setPassword("");
+                      if (errors.password) setErrors(prev => ({ ...prev, password: undefined }));
+                      const el = document.getElementById("password");
+                      if (el) el.focus();
+                    }}
+                    style={{
+                      background: "none", border: "none", cursor: "pointer",
+                      fontSize: 10, fontFamily: "'Space Mono', monospace",
+                      color: "#00d2ff", letterSpacing: "1px", textTransform: "uppercase",
+                      display: "flex", alignItems: "center", gap: 3,
+                      opacity: 0.85, transition: "opacity 0.15s", padding: 0,
+                    }}
+                    className="hover:opacity-100"
+                    title="Clear password to type a new password"
+                  >
+                    <span>✕ Clear / New Password</span>
+                  </button>
+                ) : undefined
+              }
               leftIcon={<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>}
               rightNode={
-                <button type="button" onClick={() => setShowPw(v => !v)} style={{ background: "none", border: "none", cursor: "pointer", display: "flex", padding: 0, color: "rgba(255, 255, 255, 0.45)" }}>
-                  {showPw
-                    ? <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94" /><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19" /><line x1="1" y1="1" x2="23" y2="23" /></svg>
-                    : <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12" cy="12" r="3" /></svg>
-                  }
-                </button>
+                <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                  {password.length > 0 && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setPassword("");
+                        if (errors.password) setErrors(prev => ({ ...prev, password: undefined }));
+                        const el = document.getElementById("password");
+                        if (el) el.focus();
+                      }}
+                      style={{
+                        background: "rgba(255, 255, 255, 0.08)",
+                        border: "1px solid rgba(255, 255, 255, 0.2)",
+                        borderRadius: 4,
+                        padding: "2px 6px",
+                        cursor: "pointer",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 3,
+                        color: "rgba(255, 255, 255, 0.75)",
+                        fontSize: 9.5,
+                        fontFamily: "'Space Mono', monospace",
+                        letterSpacing: "0.5px",
+                        transition: "all 0.15s ease",
+                      }}
+                      onMouseEnter={e => {
+                        e.currentTarget.style.color = "#00d2ff";
+                        e.currentTarget.style.borderColor = "#00d2ff";
+                        e.currentTarget.style.background = "rgba(0, 210, 255, 0.15)";
+                      }}
+                      onMouseLeave={e => {
+                        e.currentTarget.style.color = "rgba(255, 255, 255, 0.75)";
+                        e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.2)";
+                        e.currentTarget.style.background = "rgba(255, 255, 255, 0.08)";
+                      }}
+                      title="Clear password / Enter new password"
+                    >
+                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+                      </svg>
+                      <span>CLEAR</span>
+                    </button>
+                  )}
+
+                  <button 
+                    type="button" 
+                    onClick={() => setShowPw(v => !v)} 
+                    style={{ 
+                      background: "none", border: "none", cursor: "pointer", 
+                      display: "flex", alignItems: "center", padding: 2, 
+                      color: showPw ? "#00d2ff" : "rgba(255, 255, 255, 0.45)",
+                      transition: "color 0.15s",
+                    }}
+                    onMouseEnter={e => (e.currentTarget.style.color = "#00d2ff")}
+                    onMouseLeave={e => (e.currentTarget.style.color = showPw ? "#00d2ff" : "rgba(255, 255, 255, 0.45)")}
+                    title={showPw ? "Hide password" : "Show password"}
+                  >
+                    {showPw
+                      ? <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94" /><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19" /><line x1="1" y1="1" x2="23" y2="23" /></svg>
+                      : <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12" cy="12" r="3" /></svg>
+                    }
+                  </button>
+                </div>
               }
             />
 
