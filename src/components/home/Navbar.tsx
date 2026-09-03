@@ -277,31 +277,9 @@ function MobileMenu({
 // ─── Main Navbar ──────────────────────────────────────────────────────────────
 
 export function Navbar() {
-  const [scrolled, setScrolled]   = useState(false);
-  const [menuOpen, setMenuOpen]   = useState(false);
-  const [hasUser, setHasUser]     = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [hasUser, setHasUser] = useState(false);
   const supabase = createClient();
-
-  useEffect(() => {
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      setHasUser(!!user);
-    });
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setHasUser(!!session?.user);
-    });
-
-    return () => subscription.unsubscribe();
-  }, [supabase]);
-
-  const handleScroll = useCallback(() => {
-    setScrolled(window.scrollY > 20);
-  }, []);
-
-  useEffect(() => {
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [handleScroll]);
 
   // Close mobile menu on resize to desktop
   useEffect(() => {
@@ -313,41 +291,30 @@ export function Navbar() {
   return (
     <motion.header
       role="banner"
-      className="fixed top-0 left-0 right-0 z-[var(--z-sticky)]"
+      className="absolute top-0 left-0 right-0 z-[var(--z-sticky)]"
       initial={{ y: -80, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
     >
-      <motion.div
+      <div
         className="mx-4 mt-3 rounded-[var(--radius-xl)]"
-        animate={{
-          borderColor: scrolled ? "rgba(255,255,255,0.18)" : "rgba(255,255,255,0.1)",
-          backgroundColor: scrolled
-            ? "rgba(255,255,255,0.82)"
-            : "rgba(10,10,10,0.12)",
-          boxShadow: scrolled
-            ? "0 4px 24px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04)"
-            : "none",
-        }}
         style={{
-          backdropFilter: scrolled ? "blur(20px) saturate(180%)" : "blur(4px)",
-          WebkitBackdropFilter: scrolled ? "blur(20px) saturate(180%)" : "blur(4px)",
-          border: "1px solid",
-          transition: "all 0.3s ease",
+          borderColor: "rgba(255,255,255,0.12)",
+          backgroundColor: "rgba(10, 15, 12, 0.45)",
+          backdropFilter: "blur(14px) saturate(180%)",
+          WebkitBackdropFilter: "blur(14px) saturate(180%)",
+          border: "1px solid rgba(255,255,255,0.12)",
+          boxShadow: "0 8px 32px rgba(0,0,0,0.3)",
         }}
       >
         <div className="relative flex items-center justify-between px-5 py-3">
-          <Logo scrolled={scrolled} />
-          <NavLinks scrolled={scrolled} />
-          <NavCTAs scrolled={scrolled} hasUser={hasUser} />
+          <Logo scrolled={false} />
+          <NavLinks scrolled={false} />
+          <NavCTAs scrolled={false} hasUser={hasUser} />
 
           {/* Hamburger */}
           <motion.button
-            className={cn(
-              "md:hidden flex items-center justify-center w-9 h-9 rounded-[var(--radius-md)]",
-              "transition-colors duration-200",
-              scrolled ? "text-[var(--color-text)] hover:bg-[var(--color-bg-subtle)]" : "text-white hover:bg-white/15"
-            )}
+            className="md:hidden flex items-center justify-center w-9 h-9 rounded-[var(--radius-md)] text-white hover:bg-white/15 transition-colors duration-200"
             onClick={() => setMenuOpen((o) => !o)}
             whileTap={{ scale: 0.92 }}
             aria-label={menuOpen ? "Close menu" : "Open menu"}
@@ -366,7 +333,7 @@ export function Navbar() {
             </AnimatePresence>
           </motion.button>
         </div>
-      </motion.div>
+      </div>
 
       {/* Mobile menu */}
       <MobileMenu open={menuOpen} onClose={() => setMenuOpen(false)} hasUser={hasUser} />
