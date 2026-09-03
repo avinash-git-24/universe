@@ -155,15 +155,10 @@ export default function RegisterPage() {
 
   async function triggerWarpAndRedirect(destinationUrl: string) {
     setIsWarping(true);
-    setBtnText("REDIRECTING...");
+    setBtnText("ENTERING...");
 
-    // Immediate instant client-side push
+    router.refresh();
     router.push(destinationUrl);
-
-    // Rapid fallback if client router push takes more than 300ms
-    setTimeout(() => {
-      window.location.href = destinationUrl;
-    }, 300);
   }
 
   async function handleSubmit(e: React.FormEvent) {

@@ -86,22 +86,19 @@ export function Sidebar() {
         .eq("profile_id", userId);
 
       if (participants && participants.length > 0) {
-        let totalUnread = 0;
-        
-        for (const p of participants) {
-          const lastRead = p.last_read_at ? new Date(p.last_read_at).toISOString() : new Date(0).toISOString();
-          const { count, error } = await supabase
-            .from("messages")
-            .select("*", { count: 'exact', head: true })
-            .eq("conversation_id", p.conversation_id)
-            .neq("sender_id", userId)
-            .gt("created_at", lastRead);
-            
-          if (!error && count) {
-            totalUnread += count;
-          }
-        }
-        setUnreadCount(totalUnread);
+        const counts = await Promise.all(
+          participants.map(async (p) => {
+            const lastRead = p.last_read_at ? new Date(p.last_read_at).toISOString() : new Date(0).toISOString();
+            const { count, error } = await supabase
+              .from("messages")
+              .select("*", { count: "exact", head: true })
+              .eq("conversation_id", p.conversation_id)
+              .neq("sender_id", userId)
+              .gt("created_at", lastRead);
+            return !error && count ? count : 0;
+          })
+        );
+        setUnreadCount(counts.reduce((acc, c) => acc + c, 0));
       }
     }
 

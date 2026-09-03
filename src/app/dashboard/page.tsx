@@ -12,7 +12,6 @@ import { DashboardCharts } from "@/components/dashboard/DashboardCharts";
 import { NotificationBell } from "@/components/notifications/NotificationBell";
 import Link from "next/link";
 import type { Metadata } from "next";
-import LazySpaceBackground from "@/components/auth/LazySpaceBackground";
 import { formatStudentName, cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
@@ -51,13 +50,13 @@ export default async function DashboardPage() {
 
   const supabase = await createClient();
 
-  // Parallelize profile and requests fetch for instant response
+  // Fast parallel fetch with resilient fallback
   const [profileResult, requests] = await Promise.all([
-    getProfile(user.id),
-    getStudentRequests(supabase, user.id),
+    getProfile(user.id).catch(() => ({ data: null })),
+    getStudentRequests(supabase, user.id).catch(() => []),
   ]);
 
-  const profile = profileResult.data;
+  const profile = profileResult?.data;
   const displayName =
     profile?.full_name ?? user.email?.split("@")[0] ?? "Student";
 
@@ -110,10 +109,14 @@ export default async function DashboardPage() {
           }}
         />
 
-        {/* Floating particles background */}
-        <div className="absolute inset-0 opacity-30">
-          <LazySpaceBackground />
-        </div>
+        {/* Floating lightweight cosmic stardust particles (CSS GPU accelerated) */}
+        <div
+          className="absolute inset-0 opacity-20 pointer-events-none"
+          style={{
+            backgroundImage: `radial-gradient(1px 1px at 20px 30px, #00E676, rgba(0,0,0,0)), radial-gradient(1.5px 1.5px at 150px 180px, #ffffff, rgba(0,0,0,0)), radial-gradient(1px 1px at 300px 90px, #00d2ff, rgba(0,0,0,0))`,
+            backgroundSize: "320px 320px",
+          }}
+        />
       </div>
 
       <div className="max-w-[1400px] mx-auto relative z-10">
