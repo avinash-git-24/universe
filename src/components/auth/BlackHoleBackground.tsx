@@ -403,7 +403,7 @@ export default function BlackHoleBackground({ isWarping = false }: { isWarping?:
         style={{
           position: "fixed",
           inset: 0,
-          zIndex: -3,
+          zIndex: 0,
           background: "#000002",
         }}
       />
@@ -414,7 +414,7 @@ export default function BlackHoleBackground({ isWarping = false }: { isWarping?:
         style={{
           position: "fixed",
           inset: 0,
-          zIndex: -2,
+          zIndex: 1,
           pointerEvents: "none",
         }}
       />
@@ -424,7 +424,7 @@ export default function BlackHoleBackground({ isWarping = false }: { isWarping?:
         style={{
           position: "fixed",
           inset: 0,
-          zIndex: -1,
+          zIndex: 2,
           background: "radial-gradient(circle at center, transparent 35%, rgba(0, 2, 8, 0.65) 100%)",
           pointerEvents: "none",
         }}
@@ -435,7 +435,7 @@ export default function BlackHoleBackground({ isWarping = false }: { isWarping?:
         style={{
           position: "fixed",
           inset: 0,
-          zIndex: -1,
+          zIndex: 2,
           backgroundImage: "url('data:image/svg+xml;utf8,<svg viewBox=\"0 0 200 200\" xmlns=\"http://www.w3.org/2000/svg\"><filter id=\"noiseFilter\"><feTurbulence type=\"fractalNoise\" baseFrequency=\"0.9\" numOctaves=\"3\" stitchTiles=\"stitch\"/></filter><rect width=\"100%\" height=\"100%\" filter=\"url(%23noiseFilter)\"/></svg>')",
           opacity: 0.03,
           pointerEvents: "none",

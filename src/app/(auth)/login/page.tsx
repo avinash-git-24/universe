@@ -3,19 +3,19 @@
 /**
  * UniVerse — Cosmic Black Hole Sign-In Screen
  *
- * Replicates the photorealistic deep-space black hole accretion disk aesthetic:
- * - High-resolution photorealistic Gargantua black hole background
+ * Combines the photorealistic Stitch design with the previous real-time 3D animations:
+ * - 3D WebGL Gargantua Black Hole Background (Three.js real-time shader with parallax & starfield)
+ * - Mount entrance animation: smooth cubic-bezier float-in and un-blur
  * - Top telemetry HUD indicators ([EVENT HORIZON // GRAVITY: STABILIZED] & [SYSTEM STATUS // ONLINE // NOMINAL])
- * - Sleek frosted glassmorphic card with ambient cyan rim glow
- * - Verified college email badge
- * - Password visibility toggle
+ * - Sleek frosted glassmorphic card with ambient cyan rim glow & corner cyber accents
+ * - Verified college email badge & password visibility toggle
+ * - Hyper-speed Warp Jump exit transition upon successful sign-in (card suction + text scramble + flash)
  * - Full Supabase authentication & Google OAuth integration
- * - Trust & security badges footer
  *
  * Route: /login
  */
 
-import React, { useState, Suspense } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import {
@@ -32,6 +32,7 @@ import {
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { ROUTES } from "@/constants/routes";
+import BlackHoleBackground from "@/components/auth/BlackHoleBackground";
 
 const MU_EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@marwadiuniversity\.ac\.in$/i;
 
@@ -56,12 +57,49 @@ function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
   const [loading, setLoading] = useState(false);
+  const [isWarping, setIsWarping] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const [btnText, setBtnText] = useState("SIGN IN");
   const [error, setError] = useState<string | null>(null);
 
   const isEmailValid = validateEmail(email);
 
+  // Smooth entrance transition on mount
+  useEffect(() => {
+    const timer = setTimeout(() => setMounted(true), 60);
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Warp Jump Exit Animation
+  async function triggerWarpAndRedirect(destinationUrl: string) {
+    setIsWarping(true);
+
+    // Scramble Button Text Animation
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&*";
+    const overrideText = "WARP JUMP";
+    let scrambles = 0;
+    const scrambleInterval = setInterval(() => {
+      setBtnText(
+        Array.from({ length: overrideText.length })
+          .map(() => chars[Math.floor(Math.random() * chars.length)])
+          .join("")
+      );
+      scrambles++;
+      if (scrambles > 10) {
+        clearInterval(scrambleInterval);
+        setBtnText("SYSTEM OVERRIDE");
+      }
+    }, 45);
+
+    setTimeout(() => {
+      window.location.href = destinationUrl;
+    }, 2200);
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (isWarping) return;
+
     const normalizedEmail = sanitizeEmail(email);
 
     if (!normalizedEmail) {
@@ -98,7 +136,7 @@ function LoginForm() {
       }
 
       const destination = searchParams.get("redirectTo") ?? ROUTES.DASHBOARD;
-      router.push(destination);
+      triggerWarpAndRedirect(destination);
     } catch {
       setError("Failed to authenticate. Please check your connection.");
       setLoading(false);
@@ -106,52 +144,40 @@ function LoginForm() {
   }
 
   async function handleGoogleSignIn() {
+    if (isWarping) return;
     try {
-      setLoading(true);
-      const supabase = createClient();
-      await supabase.auth.signInWithOAuth({
-        provider: "google",
-        options: {
-          redirectTo: `${window.location.origin}/auth/callback?redirectTo=/dashboard`,
-          queryParams: { prompt: "select_account", hd: "marwadiuniversity.ac.in" },
-        },
-      });
+      setIsWarping(true);
+      setTimeout(async () => {
+        const supabase = createClient();
+        await supabase.auth.signInWithOAuth({
+          provider: "google",
+          options: {
+            redirectTo: `${window.location.origin}/auth/callback?redirectTo=/dashboard`,
+            queryParams: { prompt: "select_account", hd: "marwadiuniversity.ac.in" },
+          },
+        });
+      }, 1200);
     } catch {
       setError("Failed to initialize Google login.");
-      setLoading(false);
+      setIsWarping(false);
     }
   }
 
   return (
     <main className="relative min-h-[100dvh] w-full bg-transparent text-slate-100 flex flex-col justify-between items-center p-4 sm:p-6 lg:p-8 overflow-hidden font-sans selection:bg-cyan-500/30 selection:text-cyan-300">
-      {/* ========================================================================= */}
-      {/* COSMIC ACCRETION DISK & GRAVITATIONAL LENSING BACKGROUND */}
-      {/* ========================================================================= */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden select-none z-0">
-        {/* Photorealistic Gargantua Black Hole Wallpaper */}
-        <img
-          src="/images/cosmic-black-hole.jpg"
-          alt="Gargantua Black Hole Background"
-          className="w-full h-full object-cover object-center scale-[1.02] opacity-95"
-        />
-
-        {/* Distant Starfield Micro-Grid Overlay */}
-        <div className="absolute inset-0 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:40px_40px] opacity-[0.08]" />
-
-        {/* Ambient Relativistic Doppler Cyan Flare Enhancement on Left */}
-        <div className="absolute top-1/2 left-[15%] -translate-y-1/2 w-[600px] h-[350px] bg-cyan-500/20 rounded-full blur-[100px] pointer-events-none" />
-
-        {/* Golden-Amber Accretion Disk Secondary Atmosphere */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[400px] bg-amber-500/15 rounded-full blur-[120px] pointer-events-none" />
-
-        {/* Subtle Vignette on edges for high card legibility */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#020307]/80 via-transparent to-[#020307]/70" />
-      </div>
+      {/* ── 3D WebGL Gargantua Black Hole Real-Time Interactive Canvas ── */}
+      <BlackHoleBackground isWarping={isWarping} />
 
       {/* ========================================================================= */}
-      {/* TOP TELEMETRY HUD BAR */}
+      {/* TOP TELEMETRY HUD BAR (Animated Mount & Fade) */}
       {/* ========================================================================= */}
-      <header className="relative z-10 w-full max-w-7xl flex items-center justify-between text-[11px] sm:text-xs font-mono tracking-widest text-cyan-400/80 uppercase pt-2 sm:pt-0">
+      <header
+        className="relative z-10 w-full max-w-7xl flex items-center justify-between text-[11px] sm:text-xs font-mono tracking-widest text-cyan-400/80 uppercase pt-2 sm:pt-0 transition-opacity duration-700"
+        style={{
+          opacity: isWarping ? 0 : mounted ? 1 : 0,
+          transitionDelay: "0.3s",
+        }}
+      >
         {/* Left Telemetry */}
         <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-black/45 border border-cyan-500/25 backdrop-blur-md shadow-[0_0_15px_rgba(6,182,212,0.15)]">
           <span className="text-cyan-400 font-bold">[</span>
@@ -173,9 +199,24 @@ function LoginForm() {
       </header>
 
       {/* ========================================================================= */}
-      {/* BRAND & CENTRAL GLASSMORPHIC CARD */}
+      {/* BRAND & CENTRAL GLASSMORPHIC CARD (With Mount Entrance & Warp Jump Suction) */}
       {/* ========================================================================= */}
-      <div className="relative z-10 w-full flex flex-col items-center my-auto py-6">
+      <div
+        className="relative z-10 w-full flex flex-col items-center my-auto py-6"
+        style={{
+          transform: isWarping
+            ? "scale(0) rotate(-10deg)"
+            : mounted
+            ? "translateY(0) scale(1)"
+            : "translateY(36px) scale(0.92)",
+          opacity: isWarping ? 0 : mounted ? 1 : 0,
+          filter: isWarping ? "blur(10px)" : mounted ? "blur(0px)" : "blur(12px)",
+          transition: isWarping
+            ? "all 0.8s cubic-bezier(0.7, 0, 0.84, 0)"
+            : "all 1.2s cubic-bezier(0.16, 1, 0.3, 1)",
+          pointerEvents: isWarping ? "none" : "auto",
+        }}
+      >
         {/* UniVerse Brand Identity */}
         <div className="flex flex-col items-center text-center mb-5 sm:mb-6">
           <Link
@@ -294,13 +335,15 @@ function LoginForm() {
               </Link>
             </div>
 
-            {/* Primary Action Button */}
+            {/* Primary Action Button with Dynamic Scramble Animation */}
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || isWarping}
               className="w-full group flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-bold text-xs sm:text-sm tracking-wide transition-all duration-200 bg-gradient-to-r from-cyan-500 via-sky-400 to-cyan-400 text-slate-950 shadow-[0_0_25px_rgba(6,182,212,0.4)] hover:shadow-[0_0_35px_rgba(6,182,212,0.65)] hover:brightness-105 active:scale-[0.99] disabled:opacity-50 cursor-pointer"
             >
-              {loading ? (
+              {isWarping ? (
+                <span className="font-mono tracking-widest">{btnText}</span>
+              ) : loading ? (
                 <>
                   <div className="w-4 h-4 border-2 border-slate-950 border-t-transparent rounded-full animate-spin" />
                   <span>AUTHENTICATING...</span>
@@ -325,7 +368,7 @@ function LoginForm() {
             <button
               type="button"
               onClick={handleGoogleSignIn}
-              disabled={loading}
+              disabled={loading || isWarping}
               className="w-full flex items-center justify-center gap-2.5 py-2.5 px-4 rounded-xl bg-slate-900/70 hover:bg-slate-800/80 border border-slate-800 hover:border-slate-700 text-xs font-medium text-slate-200 transition-all duration-150 cursor-pointer disabled:opacity-50"
             >
               <svg className="w-4 h-4" viewBox="0 0 24 24">
@@ -379,7 +422,12 @@ function LoginForm() {
       {/* ========================================================================= */}
       {/* BOTTOM TRUST & SECURITY BADGES */}
       {/* ========================================================================= */}
-      <footer className="relative z-10 flex flex-wrap items-center justify-center gap-2 sm:gap-4 text-[10px] sm:text-xs text-slate-400 font-mono uppercase tracking-wider py-2">
+      <footer
+        className="relative z-10 flex flex-wrap items-center justify-center gap-2 sm:gap-4 text-[10px] sm:text-xs text-slate-400 font-mono uppercase tracking-wider py-2 transition-opacity duration-700"
+        style={{
+          opacity: isWarping ? 0 : mounted ? 1 : 0,
+        }}
+      >
         <div className="flex items-center gap-1.5">
           <ShieldCheck className="w-3.5 h-3.5 text-cyan-400" />
           <span>256-BIT ENCRYPTED</span>
