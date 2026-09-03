@@ -311,8 +311,8 @@ export default function BlackHoleBackground({ isWarping = false }: { isWarping?:
           audioPlayed = true;
         }
 
-        warpProgress += delta * 1.8; // Reaches 1.0 in ~0.55s
-        const easeWarp = Math.min(1.0, Math.pow(warpProgress, 1.8));
+        warpProgress += delta * 5.0; // Reaches 1.0 in ~0.2s
+        const easeWarp = Math.min(1.0, Math.pow(warpProgress, 1.4));
 
         // Accelerate Black hole rotation and collapse gravity
         uniforms.uTime.value += delta * (1.0 + easeWarp * 12.0);

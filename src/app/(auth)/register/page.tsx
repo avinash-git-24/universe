@@ -8,6 +8,7 @@
  */
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ROUTES } from "@/constants/routes";
 import { createClient } from "@/lib/supabase/client";
@@ -131,6 +132,7 @@ export default function RegisterPage() {
   const [confirm, setConfirm] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const router = useRouter();
   const [agreed, setAgreed] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isWarping, setIsWarping] = useState(false);
@@ -139,9 +141,10 @@ export default function RegisterPage() {
   const [errors, setErrors] = useState<FormErrors>({});
 
   useEffect(() => {
+    router.prefetch("/dashboard");
     const t = setTimeout(() => setMounted(true), 60);
     return () => clearTimeout(t);
-  }, []);
+  }, [router]);
 
   // Gravitational Password Stability calculation
   const passStrength = Math.min(100, (password.length * 8) + (/[A-Z]/.test(password) ? 15 : 0) + (/[0-9]/.test(password) ? 15 : 0) + (/[^A-Za-z0-9]/.test(password) ? 20 : 0));
@@ -152,22 +155,15 @@ export default function RegisterPage() {
 
   async function triggerWarpAndRedirect(destinationUrl: string) {
     setIsWarping(true);
+    setBtnText("REDIRECTING...");
 
-    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&*";
-    const overrideText = "WARP JUMP";
-    let scrambles = 0;
-    const scrambleInterval = setInterval(() => {
-      setBtnText(Array.from({ length: overrideText.length }).map(() => chars[Math.floor(Math.random() * chars.length)]).join(""));
-      scrambles++;
-      if (scrambles > 5) {
-        clearInterval(scrambleInterval);
-        setBtnText("WARPING...");
-      }
-    }, 30);
+    // Immediate instant client-side push
+    router.push(destinationUrl);
 
+    // Rapid fallback if client router push takes more than 300ms
     setTimeout(() => {
       window.location.href = destinationUrl;
-    }, 650);
+    }, 300);
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -253,7 +249,7 @@ export default function RegisterPage() {
         opacity: isWarping ? 0 : mounted ? 1 : 0,
         filter: isWarping ? "blur(10px)" : mounted ? "blur(0px)" : "blur(12px)",
         transition: isWarping
-          ? "all 0.35s cubic-bezier(0.7, 0, 0.84, 0)"
+          ? "all 0.18s cubic-bezier(0.7, 0, 0.84, 0)"
           : "all 1.2s cubic-bezier(0.16, 1, 0.3, 1)",
         pointerEvents: isWarping ? "none" : "auto",
       }}>

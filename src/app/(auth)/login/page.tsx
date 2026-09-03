@@ -125,8 +125,9 @@ function LoginForm() {
     urlError ? { form: urlError } : {}
   );
 
-  // Mount animation + Remembered Email Loader
+  // Mount animation + Remembered Email Loader + Dashboard Prefetch
   useEffect(() => {
+    router.prefetch(ROUTES.DASHBOARD);
     const t = setTimeout(() => setMounted(true), 60);
     try {
       const savedEmail = localStorage.getItem("universe_remembered_email");
@@ -138,7 +139,7 @@ function LoginForm() {
       // ignore
     }
     return () => clearTimeout(t);
-  }, []);
+  }, [router]);
 
   // Caps Lock Keyboard Event Handler
   const handleKeyActivity = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -147,23 +148,15 @@ function LoginForm() {
 
   async function triggerWarpAndRedirect(destinationUrl: string) {
     setIsWarping(true);
+    setBtnText("REDIRECTING...");
 
-    // Text Scramble Animation on Button
-    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&*";
-    const overrideText = "WARP JUMP";
-    let scrambles = 0;
-    const scrambleInterval = setInterval(() => {
-      setBtnText(Array.from({ length: overrideText.length }).map(() => chars[Math.floor(Math.random() * chars.length)]).join(""));
-      scrambles++;
-      if (scrambles > 5) {
-        clearInterval(scrambleInterval);
-        setBtnText("WARPING...");
-      }
-    }, 30);
+    // Immediate instant client-side push
+    router.push(destinationUrl);
 
+    // Rapid fallback if client router push takes more than 300ms
     setTimeout(() => {
       window.location.href = destinationUrl;
-    }, 650);
+    }, 300);
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -259,7 +252,7 @@ function LoginForm() {
           opacity: isWarping ? 0 : mounted ? 1 : 0,
           filter: isWarping ? "blur(10px)" : mounted ? "blur(0px)" : "blur(12px)",
           transition: isWarping
-            ? "all 0.35s cubic-bezier(0.7, 0, 0.84, 0)"
+            ? "all 0.18s cubic-bezier(0.7, 0, 0.84, 0)"
             : "all 1.2s cubic-bezier(0.16, 1, 0.3, 1)",
           pointerEvents: isWarping ? "none" : "auto",
         }}
