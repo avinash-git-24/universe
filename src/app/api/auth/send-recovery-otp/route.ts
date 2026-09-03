@@ -25,9 +25,12 @@ export async function POST(req: NextRequest) {
       console.warn("RPC Warning:", otpError);
     }
 
-    // 2. Trigger native Supabase recovery email dispatch
+    // 2. Trigger native Supabase recovery email dispatch with explicit callback redirectTo
+    const origin = req.headers.get("origin") || req.nextUrl.origin || "https://universe-brown-seven.vercel.app";
     try {
-      await supabase.auth.resetPasswordForEmail(cleanEmail);
+      await supabase.auth.resetPasswordForEmail(cleanEmail, {
+        redirectTo: `${origin}/auth/callback?type=recovery`,
+      });
     } catch (e) {
       console.warn("Supabase auth email reset error:", e);
     }
@@ -53,10 +56,10 @@ export async function POST(req: NextRequest) {
       console.warn("Email dispatcher warning:", mailErr);
     }
 
-    // 4. Return success WITHOUT exposing the secret OTP to the browser
+    // 4. Return success
     return NextResponse.json({
       success: true,
-      message: `A 6-digit security code has been sent to ${cleanEmail}`,
+      message: `A password reset link has been sent to ${cleanEmail}`,
     });
   } catch (err: any) {
     console.error("Send OTP Route Error:", err);
