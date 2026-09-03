@@ -1,39 +1,37 @@
 "use client";
 
 /**
- * UniVerse — Navbar
+ * UniVerse — Smart Cosmic Navbar
  *
- * Transparent on load → blurred glass on scroll.
- * Responsive: links on desktop, hamburger on mobile.
+ * - Auto-Hides when scrolling down for clean, distraction-free reading.
+ * - Smoothly slides back in when scrolling up for quick access to Dashboard/Links.
+ * - Always deep dark cosmic glass (never turns white).
+ * - Real-time Supabase auth tracking for Dashboard & Logout buttons.
  */
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Zap } from "lucide-react";
+import { Menu, X, Zap, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ROUTES } from "@/constants/routes";
 import { createClient } from "@/lib/supabase/client";
 import { LogoutButton } from "@/components/auth/LogoutButton";
 
 const NAV_LINKS = [
-  { label: "Home",         href: "/" },
-  { label: "About",        href: "/about" },
-  { label: "How It Works", href: "#how-it-works" },
+  { label: "Home", href: "/" },
+  { label: "About", href: "/about" },
+  { label: "How It Works", href: "/#how-it-works" },
 ] as const;
 
 // ─── Logo ─────────────────────────────────────────────────────────────────────
 
-function Logo({ scrolled }: { scrolled: boolean }) {
+function Logo() {
   return (
     <Link href="/" className="flex items-center gap-2.5 group" aria-label="UniVerse — Home">
       {/* Mark */}
       <motion.div
-        className={cn(
-          "w-9 h-9 rounded-[10px] flex items-center justify-center flex-shrink-0",
-          "transition-all duration-300",
-          "group-hover:scale-105"
-        )}
+        className="w-9 h-9 rounded-[10px] flex items-center justify-center flex-shrink-0 transition-all duration-300 group-hover:scale-105 shadow-md shadow-emerald-500/20"
         style={{ background: "linear-gradient(135deg, #10B981 0%, #059669 100%)" }}
         whileTap={{ scale: 0.95 }}
       >
@@ -42,13 +40,9 @@ function Logo({ scrolled }: { scrolled: boolean }) {
 
       {/* Wordmark */}
       <span
-        className={cn(
-          "text-xl font-extrabold tracking-tight transition-colors duration-300",
-          "font-[family-name:var(--font-plus-jakarta-sans)]",
-          scrolled ? "text-[var(--color-text)]" : "text-white"
-        )}
+        className="text-xl font-extrabold tracking-tight text-white transition-colors duration-300 font-[family-name:var(--font-plus-jakarta-sans)]"
       >
-        Uni<span className="text-[var(--color-primary)]">Verse</span>
+        Uni<span className="text-emerald-400">Verse</span>
       </span>
     </Link>
   );
@@ -56,7 +50,7 @@ function Logo({ scrolled }: { scrolled: boolean }) {
 
 // ─── Desktop Nav Links ────────────────────────────────────────────────────────
 
-function NavLinks({ scrolled }: { scrolled: boolean }) {
+function NavLinks() {
   return (
     <nav aria-label="Main navigation">
       <ul className="hidden md:flex items-center gap-1" role="list">
@@ -64,17 +58,7 @@ function NavLinks({ scrolled }: { scrolled: boolean }) {
           <li key={label}>
             <Link
               href={href}
-              className={cn(
-                "relative px-4 py-2 text-sm font-medium rounded-[var(--radius-md)]",
-                "font-[family-name:var(--font-inter)]",
-                "transition-colors duration-200",
-                "after:absolute after:bottom-1 after:left-4 after:right-4",
-                "after:h-0.5 after:bg-[var(--color-primary)] after:scale-x-0",
-                "hover:after:scale-x-100 after:transition-transform after:duration-200",
-                scrolled
-                  ? "text-[var(--color-text-secondary)] hover:text-[var(--color-text)] hover:bg-[var(--color-bg-subtle)]"
-                  : "text-white/80 hover:text-white hover:bg-white/10"
-              )}
+              className="relative px-4 py-2 text-sm font-medium rounded-lg font-[family-name:var(--font-inter)] transition-colors duration-200 text-white/80 hover:text-white hover:bg-white/10"
             >
               {label}
             </Link>
@@ -87,52 +71,32 @@ function NavLinks({ scrolled }: { scrolled: boolean }) {
 
 // ─── CTA Buttons ──────────────────────────────────────────────────────────────
 
-function NavCTAs({ scrolled, hasUser }: { scrolled: boolean; hasUser: boolean }) {
+function NavCTAs({ hasUser }: { hasUser: boolean }) {
   if (hasUser) {
     return (
-      <div className="hidden md:flex items-center gap-3">
+      <div className="hidden md:flex items-center gap-2.5">
         <Link
           href={ROUTES.DASHBOARD}
-          className={cn(
-            "px-4 py-2 text-sm font-semibold rounded-[var(--radius-md)]",
-            "font-[family-name:var(--font-inter)]",
-            "transition-all duration-200",
-            scrolled
-              ? "text-[var(--color-text-secondary)] hover:text-[var(--color-text)] hover:bg-[var(--color-bg-subtle)]"
-              : "text-white/80 hover:text-white hover:bg-white/10"
-          )}
+          className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-bold rounded-xl bg-gradient-to-r from-emerald-400 to-teal-400 text-black shadow-md shadow-emerald-500/20 hover:shadow-emerald-500/40 hover:scale-105 active:scale-95 transition-all duration-200"
         >
-          Dashboard
+          <span>Dashboard</span>
+          <ArrowRight size={13} strokeWidth={2.5} />
         </Link>
-        <LogoutButton 
-          variant="ghost" 
+        <LogoutButton
+          variant="ghost"
           showIcon={false}
-          className={cn(
-            "px-4 py-2 text-sm font-semibold h-auto rounded-[var(--radius-md)]",
-            "font-[family-name:var(--font-inter)]",
-            "transition-all duration-200",
-            scrolled 
-              ? "bg-transparent border-[var(--color-border)] text-[var(--color-text-secondary)] hover:text-[var(--color-text)] hover:bg-[var(--color-bg-subtle)]"
-              : "bg-transparent border-white/20 text-white/80 hover:text-white hover:bg-white/10"
-          )} 
+          className="px-3 py-2 text-xs font-semibold h-auto rounded-xl bg-transparent border border-white/15 text-white/70 hover:text-red-400 hover:border-red-500/30 hover:bg-red-500/10 transition-all duration-200"
         />
       </div>
     );
   }
 
   return (
-    <div className="hidden md:flex items-center gap-3">
+    <div className="hidden md:flex items-center gap-2.5">
       {/* Login — ghost */}
       <Link
         href={ROUTES.LOGIN}
-        className={cn(
-          "px-4 py-2 text-sm font-semibold rounded-[var(--radius-md)]",
-          "font-[family-name:var(--font-inter)]",
-          "transition-all duration-200",
-          scrolled
-            ? "text-[var(--color-text-secondary)] hover:text-[var(--color-text)] hover:bg-[var(--color-bg-subtle)]"
-            : "text-white/80 hover:text-white hover:bg-white/10"
-        )}
+        className="px-4 py-2 text-xs font-semibold rounded-xl text-white/80 hover:text-white hover:bg-white/10 transition-all duration-200"
       >
         Login
       </Link>
@@ -141,16 +105,7 @@ function NavCTAs({ scrolled, hasUser }: { scrolled: boolean; hasUser: boolean })
       <motion.div whileTap={{ scale: 0.97 }}>
         <Link
           href={ROUTES.REGISTER}
-          className={cn(
-            "inline-flex items-center gap-1.5 px-5 py-2.5",
-            "text-sm font-semibold rounded-[var(--radius-md)]",
-            "font-[family-name:var(--font-inter)]",
-            "bg-[var(--color-primary)] text-white",
-            "hover:bg-[var(--color-primary-hover)]",
-            "shadow-[var(--shadow-sm)] hover:shadow-[var(--shadow-md)]",
-            "transition-all duration-200 hover:-translate-y-px",
-            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2"
-          )}
+          className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-bold rounded-xl bg-gradient-to-r from-emerald-400 to-teal-400 text-black shadow-md shadow-emerald-500/20 hover:shadow-emerald-500/40 hover:scale-105 active:scale-95 transition-all duration-200"
         >
           Sign Up
         </Link>
@@ -178,16 +133,11 @@ function MobileMenu({
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: -8, scale: 0.97 }}
           transition={{ duration: 0.2, ease: "easeOut" }}
-          className={cn(
-            "absolute top-full left-4 right-4 mt-2 md:hidden",
-            "rounded-[var(--radius-xl)] overflow-hidden",
-            "border border-white/15",
-            "shadow-[var(--shadow-2xl)]",
-          )}
+          className="absolute top-full left-4 right-4 mt-2 md:hidden rounded-2xl overflow-hidden border border-emerald-500/20 shadow-2xl z-50"
           style={{
-            background: "rgba(255,255,255,0.88)",
-            backdropFilter: "blur(20px) saturate(200%)",
-            WebkitBackdropFilter: "blur(20px) saturate(200%)",
+            background: "rgba(8, 14, 11, 0.95)",
+            backdropFilter: "blur(24px) saturate(200%)",
+            WebkitBackdropFilter: "blur(24px) saturate(200%)",
           }}
         >
           <nav aria-label="Mobile navigation" className="p-3">
@@ -197,13 +147,7 @@ function MobileMenu({
                   <Link
                     href={href}
                     onClick={onClose}
-                    className={cn(
-                      "block px-4 py-3 text-sm font-medium",
-                      "text-[var(--color-text)] rounded-[var(--radius-md)]",
-                      "hover:bg-[var(--color-bg-subtle)]",
-                      "font-[family-name:var(--font-inter)]",
-                      "transition-colors duration-150"
-                    )}
+                    className="block px-4 py-3 text-sm font-medium text-white/80 rounded-xl hover:bg-white/10 font-[family-name:var(--font-inter)] transition-colors duration-150"
                   >
                     {label}
                   </Link>
@@ -212,7 +156,7 @@ function MobileMenu({
             </ul>
 
             {/* Divider */}
-            <div className="my-2 border-t border-[var(--color-border)]"/>
+            <div className="my-2 border-t border-white/10" />
 
             {/* Auth */}
             <div className="flex flex-col gap-2 p-1">
@@ -221,19 +165,13 @@ function MobileMenu({
                   <Link
                     href={ROUTES.DASHBOARD}
                     onClick={onClose}
-                    className={cn(
-                      "block px-4 py-3 text-sm font-semibold text-center",
-                      "text-[var(--color-text-secondary)] rounded-[var(--radius-md)]",
-                      "hover:bg-[var(--color-bg-subtle)]",
-                      "font-[family-name:var(--font-inter)]",
-                      "transition-colors duration-150"
-                    )}
+                    className="block px-4 py-3 text-sm font-bold text-center bg-gradient-to-r from-emerald-400 to-teal-400 text-black rounded-xl shadow-md shadow-emerald-500/20"
                   >
-                    Dashboard
+                    Dashboard →
                   </Link>
-                  <LogoutButton 
+                  <LogoutButton
                     variant="ghost"
-                    className="w-full justify-center px-4 py-3 h-auto text-sm font-semibold text-[var(--color-text-secondary)] rounded-[var(--radius-md)] hover:bg-[var(--color-bg-subtle)] transition-colors duration-150"
+                    className="w-full justify-center px-4 py-2.5 h-auto text-xs font-semibold text-white/60 hover:text-red-400 hover:bg-red-500/10 rounded-xl transition-colors duration-150"
                   />
                 </>
               ) : (
@@ -241,26 +179,14 @@ function MobileMenu({
                   <Link
                     href={ROUTES.LOGIN}
                     onClick={onClose}
-                    className={cn(
-                      "block px-4 py-3 text-sm font-semibold text-center",
-                      "text-[var(--color-text-secondary)] rounded-[var(--radius-md)]",
-                      "hover:bg-[var(--color-bg-subtle)]",
-                      "font-[family-name:var(--font-inter)]",
-                      "transition-colors duration-150"
-                    )}
+                    className="block px-4 py-2.5 text-sm font-semibold text-center text-white/80 rounded-xl hover:bg-white/10 border border-white/10 transition-colors duration-150"
                   >
                     Login
                   </Link>
                   <Link
                     href={ROUTES.REGISTER}
                     onClick={onClose}
-                    className={cn(
-                      "block px-4 py-3 text-sm font-semibold text-center",
-                      "bg-[var(--color-primary)] text-white rounded-[var(--radius-md)]",
-                      "hover:bg-[var(--color-primary-hover)]",
-                      "font-[family-name:var(--font-inter)]",
-                      "transition-colors duration-150"
-                    )}
+                    className="block px-4 py-2.5 text-sm font-bold text-center bg-gradient-to-r from-emerald-400 to-teal-400 text-black rounded-xl shadow-md shadow-emerald-500/20 transition-colors duration-150"
                   >
                     Sign Up — It&apos;s Free
                   </Link>
@@ -279,11 +205,53 @@ function MobileMenu({
 export function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [hasUser, setHasUser] = useState(false);
+  const [visible, setVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
   const supabase = createClient();
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      setHasUser(!!user);
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setHasUser(!!session?.user);
+    });
+
+    return () => subscription.unsubscribe();
+  }, [supabase]);
+
+  // Smart Auto-Hide on Scroll Down / Reveal on Scroll Up
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+
+      // Always show at top of page
+      if (currentScrollY <= 40) {
+        setVisible(true);
+      } else if (currentScrollY > lastScrollY && currentScrollY > 70) {
+        // Scrolling DOWN -> Hide navbar smoothly
+        setVisible(false);
+        setMenuOpen(false);
+      } else if (currentScrollY < lastScrollY) {
+        // Scrolling UP -> Reveal navbar smoothly
+        setVisible(true);
+      }
+
+      setLastScrollY(currentScrollY);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [lastScrollY]);
 
   // Close mobile menu on resize to desktop
   useEffect(() => {
-    const onResize = () => { if (window.innerWidth >= 768) setMenuOpen(false); };
+    const onResize = () => {
+      if (window.innerWidth >= 768) setMenuOpen(false);
+    };
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);
   }, []);
@@ -291,26 +259,30 @@ export function Navbar() {
   return (
     <motion.header
       role="banner"
-      className="absolute top-0 left-0 right-0 z-[var(--z-sticky)]"
+      className="fixed top-0 left-0 right-0 z-[var(--z-sticky)] pointer-events-none"
       initial={{ y: -80, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
+      animate={{
+        y: visible ? 0 : -90,
+        opacity: visible ? 1 : 0,
+      }}
+      transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
     >
       <div
-        className="mx-4 mt-3 rounded-[var(--radius-xl)]"
+        className="mx-4 mt-3 rounded-[var(--radius-xl)] pointer-events-auto"
         style={{
-          borderColor: "rgba(255,255,255,0.12)",
-          backgroundColor: "rgba(10, 15, 12, 0.45)",
-          backdropFilter: "blur(14px) saturate(180%)",
-          WebkitBackdropFilter: "blur(14px) saturate(180%)",
-          border: "1px solid rgba(255,255,255,0.12)",
-          boxShadow: "0 8px 32px rgba(0,0,0,0.3)",
+          borderColor: "rgba(16, 185, 129, 0.18)",
+          backgroundColor: "rgba(8, 14, 11, 0.85)",
+          backdropFilter: "blur(20px) saturate(180%)",
+          WebkitBackdropFilter: "blur(20px) saturate(180%)",
+          border: "1px solid rgba(16, 185, 129, 0.18)",
+          boxShadow: "0 10px 32px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.08)",
+          transition: "border-color 0.25s ease, background-color 0.25s ease",
         }}
       >
         <div className="relative flex items-center justify-between px-5 py-3">
-          <Logo scrolled={false} />
-          <NavLinks scrolled={false} />
-          <NavCTAs scrolled={false} hasUser={hasUser} />
+          <Logo />
+          <NavLinks />
+          <NavCTAs hasUser={hasUser} />
 
           {/* Hamburger */}
           <motion.button
@@ -322,11 +294,23 @@ export function Navbar() {
           >
             <AnimatePresence mode="wait" initial={false}>
               {menuOpen ? (
-                <motion.span key="x" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }} transition={{ duration: 0.15 }}>
+                <motion.span
+                  key="x"
+                  initial={{ rotate: -90, opacity: 0 }}
+                  animate={{ rotate: 0, opacity: 1 }}
+                  exit={{ rotate: 90, opacity: 0 }}
+                  transition={{ duration: 0.15 }}
+                >
                   <X size={20} />
                 </motion.span>
               ) : (
-                <motion.span key="menu" initial={{ rotate: 90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: -90, opacity: 0 }} transition={{ duration: 0.15 }}>
+                <motion.span
+                  key="menu"
+                  initial={{ rotate: 90, opacity: 0 }}
+                  animate={{ rotate: 0, opacity: 1 }}
+                  exit={{ rotate: -90, opacity: 0 }}
+                  transition={{ duration: 0.15 }}
+                >
                   <Menu size={20} />
                 </motion.span>
               )}
@@ -336,7 +320,9 @@ export function Navbar() {
       </div>
 
       {/* Mobile menu */}
-      <MobileMenu open={menuOpen} onClose={() => setMenuOpen(false)} hasUser={hasUser} />
+      <div className="pointer-events-auto">
+        <MobileMenu open={menuOpen} onClose={() => setMenuOpen(false)} hasUser={hasUser} />
+      </div>
     </motion.header>
   );
 }
