@@ -26,13 +26,13 @@ export default async function ChatPage({
   const { startWithUserId, requestId } = await searchParams;
 
   if (startWithUserId) {
-    // Attempt to ensure a conversation exists
+    // Attempt to ensure a conversation exists on the server
     const convId = await getOrCreateConversation(supabase, user.id, startWithUserId, requestId || null);
     if (convId) {
       redirect(`/dashboard/chat?id=${convId}`);
-    } else {
-      redirect("/dashboard/chat");
     }
+    // If convId could not be resolved on server, do not redirect to blank /dashboard/chat!
+    // Let page render — ChatClient will resolve it via /api/chat/conversation.
   }
 
   const initialConversations = await getConversations(supabase, user.id);

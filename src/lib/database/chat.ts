@@ -269,25 +269,62 @@ export async function getOrCreateConversation(
       }
     }
 
-    // 2. No existing conversation — create one
-    // Try RPC first (handles RLS via SECURITY DEFINER)
+    // 2. No existing conversation — try master RPC get_or_create_delivery_conversation
     try {
-      const { data: rpcConvId, error: rpcError } = await supabase.rpc("create_delivery_conversation", {
-        p_other_user_id: userId2,
-        p_request_id: trimmedReqId,
-      });
+      const { data: rpcConvId, error: rpcError } = await (supabase.rpc as any)(
+        "get_or_create_delivery_conversation",
+        {
+          p_other_user_id: userId2,
+          p_request_id: trimmedReqId,
+        }
+      );
 
       if (!rpcError && rpcConvId) {
-        return rpcConvId;
+        return rpcConvId as string;
       }
     } catch {
-      // RPC not available, proceed to fallback
+      // Proceed to next fallback
     }
 
-    // Fallback: Direct table insert
+    // 3. Try legacy RPC create_delivery_conversation
+    try {
+      const { data: legacyId, error: legacyError } = await (supabase.rpc as any)(
+        "create_delivery_conversation",
+        {
+          p_other_user_id: userId2,
+          p_request_id: trimmedReqId,
+        }
+      );
+
+      if (!legacyError && legacyId) {
+        return legacyId as string;
+      }
+    } catch {
+      // Proceed to next fallback
+    }
+
+    // 4. Browser environment: call server route /api/chat/conversation
+    if (typeof window !== "undefined") {
+      try {
+        const res = await fetch("/api/chat/conversation", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ otherUserId: userId2, requestId: trimmedReqId }),
+        });
+        if (res.ok) {
+          const json = await res.json();
+          if (json.conversationId) {
+            return json.conversationId;
+          }
+        }
+      } catch (apiErr) {
+        console.warn("[chat] API route fallback error:", apiErr);
+      }
+    }
+
+    // 5. Fallback: Direct table insert
     let newConvId: string | null = null;
 
-    // Try inserting with request_id first
     if (trimmedReqId) {
       const { data: convWithReq } = await supabase
         .from("conversations")
@@ -299,7 +336,6 @@ export async function getOrCreateConversation(
       }
     }
 
-    // If no request_id or if insert with request_id failed (e.g. FK constraint)
     if (!newConvId) {
       const { data: convWithoutReq, error: insertError } = await supabase
         .from("conversations")
@@ -314,7 +350,7 @@ export async function getOrCreateConversation(
       newConvId = convWithoutReq.id;
     }
 
-    // Insert participants (unique list to avoid duplicate keys)
+    // Insert participants
     const uniqueParticipants = Array.from(new Set([userId1, userId2]));
     await supabase.from("conversation_participants").insert(
       uniqueParticipants.map((pid) => ({
@@ -369,9 +405,10 @@ export async function getMessages(
 }
 
 /**
- * Sends a new message.
- * Primary: uses send_message_safe RPC (SECURITY DEFINER - bypasses RLS, auto-heals participants).
- * Fallback: direct insert with participant self-heal retry.
+ * Sends a new message with triple-layer redundancy:
+ * 1. Safe SECURITY DEFINER RPC (bypasses RLS, auto-heals participants)
+ * 2. Server-side API route (/api/chat/send-message) if in browser
+ * 3. Direct table insert with self-heal participant insertion
  */
 export async function sendMessage(
   supabase: SupabaseClient<Database>,
@@ -383,7 +420,7 @@ export async function sendMessage(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   metadata?: any | null
 ): Promise<Message | null> {
-  // Primary: Use the safe RPC (handles participant self-heal internally)
+  // Layer 1: Use the safe RPC (handles participant self-heal internally)
   try {
     const { data: rpcData, error: rpcError } = await supabase.rpc("send_message_safe", {
       p_conversation_id: conversationId,
@@ -398,13 +435,38 @@ export async function sendMessage(
     }
     
     if (rpcError) {
-      console.warn("[chat] send_message_safe RPC failed, trying direct insert:", rpcError.message);
+      console.warn("[chat] send_message_safe RPC warning:", rpcError.message);
     }
   } catch {
-    // RPC not available yet — fall through to direct insert
+    // Fall through to next layer
   }
 
-  // Fallback: Direct insert with auto-heal
+  // Layer 2: In browser, call server API route (/api/chat/send-message)
+  if (typeof window !== "undefined") {
+    try {
+      const res = await fetch("/api/chat/send-message", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          conversationId,
+          content,
+          imageUrl: imageUrl ?? null,
+          messageType,
+          metadata: metadata ?? null,
+        }),
+      });
+      if (res.ok) {
+        const json = await res.json();
+        if (json.message) {
+          return json.message as Message;
+        }
+      }
+    } catch (apiErr) {
+      console.warn("[chat] send-message API fallback error:", apiErr);
+    }
+  }
+
+  // Layer 3: Direct insert with auto-heal
   let { data, error } = await supabase
     .from("messages")
     .insert({

@@ -5,6 +5,7 @@ import { MessageSquare, Zap, X, ArrowRight, MessageCircle } from "lucide-react";
 import { 
   ConversationWithDetails, 
   getConversationById,
+  getOrCreateConversation,
   markConversationAsRead,
   Message
 } from "@/lib/database/chat";
@@ -95,8 +96,11 @@ export function ChatClient({ userId, initialConversations, activeDeliveries = []
   // Sync activeConversationId with URL query params
   useEffect(() => {
     const urlId = searchParams.get("id");
+    const startWithUserId = searchParams.get("startWithUserId");
     if (urlId) {
       setActiveConversationId(urlId);
+    } else if (startWithUserId) {
+      handleStartChatWithUser(startWithUserId);
     } else if (conversations.length > 0 && !activeConversationId) {
       setActiveConversationId(conversations[0].id);
     }
@@ -238,12 +242,9 @@ export function ChatClient({ userId, initialConversations, activeDeliveries = []
   }, [userId, supabase, showToast]);
 
   const handleStartChatWithUser = async (otherUserId: string) => {
-    // Use server-side redirect — the chat page server component calls
-    // getOrCreateConversation with SECURITY DEFINER RPC which is reliable.
-    // Client-side creation was failing silently due to RLS restrictions.
     setStartingChatUserId(otherUserId);
     try {
-      // First try: find if conversation already exists locally
+      // 1. Check if conversation already exists in current loaded list
       const existing = conversations.find(
         (c) => c.other_participant?.id === otherUserId
       );
@@ -253,10 +254,40 @@ export function ChatClient({ userId, initialConversations, activeDeliveries = []
         return;
       }
 
-      // No existing conversation found — let server create it via RPC
-      router.push(`/dashboard/chat?startWithUserId=${otherUserId}`);
+      // 2. Call server-side API route (/api/chat/conversation)
+      const res = await fetch("/api/chat/conversation", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ otherUserId }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        if (data.conversationId) {
+          if (data.conversation) {
+            setConversations((prev) => [
+              data.conversation,
+              ...prev.filter((c) => c.id !== data.conversation.id),
+            ]);
+          }
+          handleSelect(data.conversationId);
+          setStartingChatUserId(null);
+          return;
+        }
+      }
+
+      // 3. Fallback: try client-side getOrCreateConversation + getConversationById
+      const convId = await getOrCreateConversation(supabase, userId, otherUserId);
+      if (convId) {
+        const conv = await getConversationById(supabase, convId, userId);
+        if (conv) {
+          setConversations((prev) => [conv, ...prev.filter((c) => c.id !== conv.id)]);
+        }
+        handleSelect(convId);
+      }
     } catch (err) {
       console.error("Error starting chat:", err);
+    } finally {
       setStartingChatUserId(null);
     }
   };
@@ -348,6 +379,7 @@ export function ChatClient({ userId, initialConversations, activeDeliveries = []
           onStartChatWithUser={handleStartChatWithUser}
           onlineUsers={onlineUsers}
           activeDeliveries={activeDeliveries}
+          startingChatUserId={startingChatUserId}
         />
       </div>
 

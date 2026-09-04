@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Search, Zap, X, MessageSquare } from "lucide-react";
+import { Search, Zap, X, MessageSquare, Loader2 } from "lucide-react";
 import { ConversationWithDetails } from "@/lib/database/chat";
 import type { ActiveDeliveryContact } from "@/components/chat/ChatClient";
 import { format, isToday, isYesterday } from "date-fns";
@@ -15,6 +15,7 @@ interface ChatListProps {
   onStartChatWithUser?: (otherUserId: string) => void;
   onlineUsers: Set<string>;
   activeDeliveries?: ActiveDeliveryContact[];
+  startingChatUserId?: string | null;
 }
 
 function formatConvTime(dateStr?: string | null): string {
@@ -32,6 +33,7 @@ export function ChatList({
   onStartChatWithUser,
   onlineUsers,
   activeDeliveries = [],
+  startingChatUserId = null,
 }: ChatListProps) {
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -109,12 +111,14 @@ export function ChatList({
             </div>
             {activeDeliveries.map((del) => {
               const nameInfo = formatStudentName(del.otherUser.full_name);
+              const isStarting = startingChatUserId === del.otherUserId;
               return (
                 <button
                   key={del.otherUserId}
                   type="button"
+                  disabled={isStarting}
                   onClick={() => onStartChatWithUser?.(del.otherUserId)}
-                  className="w-full text-left p-2.5 rounded-xl bg-emerald-500/[0.06] hover:bg-emerald-500/15 border border-emerald-500/20 hover:border-emerald-500/40 transition-all flex items-center justify-between gap-2.5 group cursor-pointer"
+                  className="w-full text-left p-2.5 rounded-xl bg-emerald-500/[0.06] hover:bg-emerald-500/15 border border-emerald-500/20 hover:border-emerald-500/40 transition-all flex items-center justify-between gap-2.5 group cursor-pointer disabled:opacity-80"
                 >
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-1.5 flex-wrap">
@@ -139,9 +143,16 @@ export function ChatList({
                       {del.latestPickup} → {del.latestDropoff}
                     </p>
                   </div>
-                  <span className="shrink-0 text-xs text-emerald-400 font-bold px-2.5 py-1 rounded-lg bg-emerald-500/20 group-hover:bg-emerald-400 group-hover:text-black transition-all">
-                    Chat
-                  </span>
+                  {isStarting ? (
+                    <span className="shrink-0 text-xs text-emerald-300 font-bold px-2.5 py-1 rounded-lg bg-emerald-500/25 flex items-center gap-1.5 border border-emerald-500/30">
+                      <Loader2 className="w-3.5 h-3.5 animate-spin text-emerald-400" />
+                      Opening...
+                    </span>
+                  ) : (
+                    <span className="shrink-0 text-xs text-emerald-400 font-bold px-2.5 py-1 rounded-lg bg-emerald-500/20 group-hover:bg-emerald-400 group-hover:text-black transition-all">
+                      Chat
+                    </span>
+                  )}
                 </button>
               );
             })}

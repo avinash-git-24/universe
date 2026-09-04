@@ -729,6 +729,13 @@ export type Database = {
           created_at: string;
         };
       };
+      get_or_create_delivery_conversation: {
+        Args: {
+          p_other_user_id: string;
+          p_request_id?: string | null;
+        };
+        Returns: string;
+      };
     };
     Enums: {
       user_role: "student" | "runner" | "admin";
