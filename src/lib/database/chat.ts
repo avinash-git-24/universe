@@ -369,7 +369,9 @@ export async function getMessages(
 }
 
 /**
- * Sends a new message with self-healing participant check and robust retry.
+ * Sends a new message.
+ * Primary: uses send_message_safe RPC (SECURITY DEFINER - bypasses RLS, auto-heals participants).
+ * Fallback: direct insert with participant self-heal retry.
  */
 export async function sendMessage(
   supabase: SupabaseClient<Database>,
@@ -381,7 +383,28 @@ export async function sendMessage(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   metadata?: any | null
 ): Promise<Message | null> {
-  // First attempt: direct insert
+  // Primary: Use the safe RPC (handles participant self-heal internally)
+  try {
+    const { data: rpcData, error: rpcError } = await supabase.rpc("send_message_safe", {
+      p_conversation_id: conversationId,
+      p_content: content,
+      p_image_url: imageUrl ?? null,
+      p_message_type: messageType,
+      p_metadata: metadata ?? null,
+    });
+
+    if (!rpcError && rpcData) {
+      return rpcData as unknown as Message;
+    }
+    
+    if (rpcError) {
+      console.warn("[chat] send_message_safe RPC failed, trying direct insert:", rpcError.message);
+    }
+  } catch {
+    // RPC not available yet — fall through to direct insert
+  }
+
+  // Fallback: Direct insert with auto-heal
   let { data, error } = await supabase
     .from("messages")
     .insert({
@@ -397,7 +420,7 @@ export async function sendMessage(
 
   // If RLS rejected because participant record is missing, auto-heal and retry
   if (error) {
-    console.warn("[chat] Initial sendMessage error, attempting participant self-heal:", error.message);
+    console.warn("[chat] Direct insert failed, attempting participant self-heal:", error.message);
     try {
       await supabase.from("conversation_participants").insert({
         conversation_id: conversationId,
@@ -428,7 +451,7 @@ export async function sendMessage(
     console.error("Error sending message:", error);
     return null;
   }
-  
+
   // Touch the conversation to update its updated_at timestamp
   await supabase
     .from("conversations")

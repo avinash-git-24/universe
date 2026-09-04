@@ -709,6 +709,26 @@ export type Database = {
         }
         Returns: string
       };
+      send_message_safe: {
+        Args: {
+          p_conversation_id: string;
+          p_content: string;
+          p_image_url?: string | null;
+          p_message_type?: string;
+          p_metadata?: Record<string, unknown> | null;
+        };
+        Returns: {
+          id: string;
+          conversation_id: string;
+          sender_id: string;
+          content: string;
+          image_url: string | null;
+          message_type: string;
+          metadata: Record<string, unknown> | null;
+          status: string;
+          created_at: string;
+        };
+      };
     };
     Enums: {
       user_role: "student" | "runner" | "admin";
