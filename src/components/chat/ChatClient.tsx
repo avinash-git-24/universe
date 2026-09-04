@@ -4,8 +4,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { MessageSquare, Zap, X, ArrowRight, MessageCircle } from "lucide-react";
 import { 
   ConversationWithDetails, 
-  getConversationById, 
-  getOrCreateConversation,
+  getConversationById,
   markConversationAsRead,
   Message
 } from "@/lib/database/chat";
@@ -239,22 +238,29 @@ export function ChatClient({ userId, initialConversations, activeDeliveries = []
   }, [userId, supabase, showToast]);
 
   const handleStartChatWithUser = async (otherUserId: string) => {
+    // Use server-side redirect — the chat page server component calls
+    // getOrCreateConversation with SECURITY DEFINER RPC which is reliable.
+    // Client-side creation was failing silently due to RLS restrictions.
+    setStartingChatUserId(otherUserId);
     try {
-      setStartingChatUserId(otherUserId);
-      const convId = await getOrCreateConversation(supabase, userId, otherUserId);
-      if (convId) {
-        handleSelect(convId);
-        const conv = await getConversationById(supabase, convId, userId);
-        if (conv) {
-          setConversations((prev) => [conv, ...prev.filter((c) => c.id !== conv.id)]);
-        }
+      // First try: find if conversation already exists locally
+      const existing = conversations.find(
+        (c) => c.other_participant?.id === otherUserId
+      );
+      if (existing) {
+        handleSelect(existing.id);
+        setStartingChatUserId(null);
+        return;
       }
+
+      // No existing conversation found — let server create it via RPC
+      router.push(`/dashboard/chat?startWithUserId=${otherUserId}`);
     } catch (err) {
       console.error("Error starting chat:", err);
-    } finally {
       setStartingChatUserId(null);
     }
   };
+
 
   useEffect(() => {
     const room = supabase.channel("global_presence");
