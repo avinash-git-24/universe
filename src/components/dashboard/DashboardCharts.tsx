@@ -155,7 +155,7 @@ export function DashboardCharts({ requests }: DashboardChartsProps) {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-[1.8fr_1fr] gap-4">
       {/* Line Chart Card */}
-      <div className="bg-[#0b120e]/90 border border-white/10 hover:border-emerald-500/30 rounded-2xl sm:rounded-3xl p-5 sm:p-6 backdrop-blur-xl shadow-lg relative transition-all group">
+      <div className="bg-[#0a0f0c]/40 border border-white/10 hover:border-emerald-500/30 rounded-2xl sm:rounded-3xl p-5 sm:p-6 backdrop-blur-xl shadow-lg relative transition-all group">
         <div className="flex justify-between items-center mb-6 relative z-20">
           <div>
             <h3 className="text-white font-bold text-base tracking-tight">Overview Analytics</h3>
@@ -309,7 +309,7 @@ export function DashboardCharts({ requests }: DashboardChartsProps) {
       </div>
 
       {/* Donut Chart Card */}
-      <div className="bg-[#0b120e]/90 border border-white/10 hover:border-emerald-500/30 rounded-2xl sm:rounded-3xl p-5 sm:p-6 backdrop-blur-xl shadow-lg flex flex-col justify-between relative overflow-hidden transition-all group">
+      <div className="bg-[#0a0f0c]/40 border border-white/10 hover:border-emerald-500/30 rounded-2xl sm:rounded-3xl p-5 sm:p-6 backdrop-blur-xl shadow-lg flex flex-col justify-between relative overflow-hidden transition-all group">
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-white font-bold text-base tracking-tight">Requests by Status</h3>
           <span className="text-xs font-mono font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">

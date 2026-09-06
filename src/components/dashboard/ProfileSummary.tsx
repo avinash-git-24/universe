@@ -15,7 +15,7 @@ export function ProfileSummary({ profile, email }: ProfileSummaryProps) {
   const formatted = formatStudentName(rawName);
 
   return (
-    <div className="bg-[#0b120e]/90 border border-white/10 hover:border-emerald-500/30 rounded-2xl sm:rounded-3xl p-5 sm:p-6 backdrop-blur-xl shadow-lg relative overflow-hidden transition-all group">
+    <div className="bg-[#0a0f0c]/40 border border-white/10 hover:border-emerald-500/30 rounded-2xl sm:rounded-3xl p-5 sm:p-6 backdrop-blur-xl shadow-lg relative overflow-hidden transition-all group">
       {/* Subtle top-right ambient glow */}
       <div className="absolute -top-10 -right-10 w-28 h-28 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none" />
 

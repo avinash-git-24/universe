@@ -24,8 +24,8 @@ export const StatsCard = memo(function StatsCard({
     <div
       className={`rounded-2xl sm:rounded-3xl p-5 sm:p-6 relative overflow-hidden backdrop-blur-xl transition-all duration-300 group hover:-translate-y-1 ${
         isActiveCard
-          ? "bg-[#0b1410]/90 border border-emerald-500/40 shadow-[0_0_30px_rgba(16,185,129,0.15)]"
-          : "bg-[#0a0f0c]/60 border border-white/10 hover:border-emerald-500/30 shadow-[0_8px_32px_rgba(0,0,0,0.4)]"
+          ? "bg-[#0a0f0c]/50 border border-emerald-500/40 shadow-[0_0_30px_rgba(16,185,129,0.15)]"
+          : "bg-[#0a0f0c]/40 border border-white/10 hover:border-emerald-500/30 shadow-[0_8px_32px_rgba(0,0,0,0.4)]"
       }`}
     >
       {/* Background ambient glow */}

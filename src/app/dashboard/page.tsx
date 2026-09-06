@@ -96,22 +96,14 @@ export default async function DashboardPage() {
     <div className="min-h-screen pt-4 pb-12 px-3 sm:px-6 sm:py-8 lg:p-8 relative overflow-x-hidden">
       {/* ── Atmospheric Cosmic Background ── */}
       <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
-        {/* Deep ambient cosmic glow */}
-        <div className="absolute top-[-15%] left-[20%] w-[650px] h-[650px] bg-emerald-500/10 rounded-full blur-[140px]" />
-        <div className="absolute top-[35%] right-[-10%] w-[550px] h-[550px] bg-emerald-600/5 rounded-full blur-[160px]" />
-        <div className="absolute bottom-[-10%] left-[-5%] w-[500px] h-[500px] bg-teal-500/5 rounded-full blur-[140px]" />
-        
-        {/* Subtle stardust cyber-grid */}
-        <div 
-          className="absolute inset-0 opacity-[0.03] pointer-events-none"
-          style={{
-            backgroundImage: `radial-gradient(circle at 1px 1px, #10b981 1px, transparent 0)`,
-            backgroundSize: "32px 32px",
-          }}
-        />
+        {/* Deep ambient cosmic glows positioned to match original aesthetic */}
+        <div className="absolute top-[-15%] left-[15%] w-[650px] h-[650px] bg-emerald-500/15 rounded-full blur-[140px]" />
+        <div className="absolute top-[35%] left-[20%] w-[520px] h-[520px] bg-emerald-500/20 rounded-full blur-[110px]" />
+        <div className="absolute top-[45%] right-[-5%] w-[500px] h-[500px] bg-emerald-600/15 rounded-full blur-[130px]" />
+        <div className="absolute bottom-[-10%] left-[-5%] w-[500px] h-[500px] bg-teal-500/10 rounded-full blur-[140px]" />
 
-        {/* Floating particles background */}
-        <div className="absolute inset-0 opacity-40">
+        {/* Floating cosmic particles background */}
+        <div className="absolute inset-0 opacity-50">
           <LazySpaceBackground />
         </div>
       </div>
@@ -121,7 +113,7 @@ export default async function DashboardPage() {
         {/* TOP BAR */}
         <div className="flex justify-between sm:justify-end gap-3 sm:gap-4 mb-4 sm:mb-6 items-center">
           {/* Bell */}
-          <div className="relative bg-[#0b120e]/80 border border-white/10 p-2.5 rounded-xl backdrop-blur-md hover:border-emerald-500/30 transition-colors">
+          <div className="relative bg-[#0a0f0c]/40 border border-white/10 p-2.5 rounded-xl backdrop-blur-md hover:border-emerald-500/30 transition-colors">
             <NotificationBell />
           </div>
           {/* New Request Button */}
@@ -190,7 +182,7 @@ export default async function DashboardPage() {
                           style={{
                             borderLeftColor: meta.color,
                           }}
-                          className="bg-[#0b120e]/90 border border-white/10 border-l-4 rounded-2xl sm:rounded-3xl p-4 sm:p-5 cursor-pointer transition-all duration-300 backdrop-blur-xl relative overflow-hidden group hover:border-emerald-500/40 hover:-translate-y-1 hover:shadow-[0_10px_35px_rgba(16,185,129,0.1)]"
+                          className="bg-[#0a0f0c]/40 border border-white/10 border-l-4 rounded-2xl sm:rounded-3xl p-4 sm:p-5 cursor-pointer transition-all duration-300 backdrop-blur-xl relative overflow-hidden group hover:border-emerald-500/40 hover:-translate-y-1 hover:shadow-[0_10px_35px_rgba(16,185,129,0.1)]"
                         >
                           {/* Glow background on hover */}
                           <div
@@ -272,7 +264,7 @@ export default async function DashboardPage() {
                   </Link>
                 )}
               </div>
-              <div className="bg-[#0b120e]/90 border border-white/10 hover:border-emerald-500/30 rounded-2xl sm:rounded-3xl p-3 sm:p-5 backdrop-blur-xl shadow-lg overflow-x-auto transition-all">
+              <div className="bg-[#0a0f0c]/40 border border-white/10 hover:border-emerald-500/30 rounded-2xl sm:rounded-3xl p-3 sm:p-5 backdrop-blur-xl shadow-lg overflow-x-auto transition-all">
                 <table className="w-full border-collapse text-left min-w-[640px]">
                   <thead>
                     <tr className="border-b border-white/5">
