@@ -59,7 +59,7 @@ interface QuickItem {
 }
 
 const PICKUP_LOCATIONS = [
-  "Hostel Vending Machine (Lobby / GF)",
+  "Hostel Vending Machine",
   "Other (Custom Spot)",
 ];
 
@@ -1121,11 +1121,11 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
                   })}
                 </div>
 
-                {pickupLocation === "Hostel Vending Machine (Lobby / GF)" && (
+                {pickupLocation === "Hostel Vending Machine" && (
                   <div className="flex items-center gap-2.5 p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/25 text-xs text-emerald-300">
                     <Zap size={15} className="text-[#00E676] shrink-0" />
                     <span>
-                      <strong>Hostel Lobby Vending Machine:</strong> Student runners in your hostel can dispense and deliver your items to your room in 3–5 minutes!
+                      <strong>Hostel Vending Machine:</strong> Student runners in your hostel can dispense and deliver your items to your room in 3–5 minutes!
                     </span>
                   </div>
                 )}
