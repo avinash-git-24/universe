@@ -23,6 +23,7 @@ import {
   ShieldCheck,
   Clock,
   Coins,
+  Store,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
@@ -31,7 +32,14 @@ import type { Database } from "@/types/database";
 type InsertRequest = Database["public"]["Tables"]["delivery_requests"]["Insert"];
 type InsertItem = Database["public"]["Tables"]["request_items"]["Insert"];
 
-type Category = "Snack" | "Beverage" | "Meal" | "Grocery" | "Stationery" | "Medicine";
+type Category =
+  | "Vending Kiosk"
+  | "Snack"
+  | "Beverage"
+  | "Meal"
+  | "Grocery"
+  | "Stationery"
+  | "Medicine";
 
 interface ItemForm {
   id: string;
@@ -41,7 +49,13 @@ interface ItemForm {
   estimatedPrice?: number;
 }
 
+interface QuickItem {
+  name: string;
+  price: number;
+}
+
 const PICKUP_LOCATIONS = [
+  "Hostel Vending Machine (Lobby / GF)",
   "Campus Food Court",
   "Hostel Night Canteen",
   "Campus Tuck Shop",
@@ -60,13 +74,90 @@ const HOSTELS = [
   "Other",
 ];
 
-const POPULAR_CHIPS: Record<Category, string[]> = {
-  Snack: ["Maggi 2-Min", "Lays Blue", "Kurkure", "Dairy Milk", "KitKat", "Doritos"],
-  Beverage: ["Cold Coffee", "Sting Energy", "Red Bull", "Amul Kool", "Chai / Tea", "Sprite"],
-  Meal: ["Paneer Butter Masala", "Egg Roll", "Veg Fried Rice", "Chicken Biryani", "Chole Bhature"],
-  Grocery: ["Bread", "Amul Butter", "Milk 500ml", "Eggs (6 pcs)", "Instant Noodles"],
-  Stationery: ["A4 Notebook", "Blue Gel Pen", "Sticky Notes", "A4 Papers", "Highlighter"],
-  Medicine: ["Paracetamol 650", "Band-Aid", "Strepsils", "Vicks Inhaler", "Digene / Eno"],
+const POPULAR_ITEMS: Record<Category, QuickItem[]> = {
+  "Vending Kiosk": [
+    { name: "Puffcorn Lays", price: 20 },
+    { name: "Frooti 400ml", price: 30 },
+    { name: "Appy Fizz 250ml", price: 20 },
+    { name: "Oreo Vanilla Biscuit", price: 30 },
+    { name: "Britannia Strawberry Shake", price: 40 },
+    { name: "Britannia Vanilla Shake", price: 40 },
+    { name: "Dark Fantasy Vanilla", price: 30 },
+    { name: "Bingo Mad Angles Achaari", price: 20 },
+    { name: "Gopal Moong Dal", price: 15 },
+    { name: "Gopal Mexican Chilli", price: 20 },
+    { name: "Paper Boat Jamun", price: 25 },
+    { name: "Paper Boat Apple", price: 25 },
+    { name: "Paper Boat Orange", price: 25 },
+    { name: "Swing Coconut Water", price: 20 },
+    { name: "Swing Mixed Fruit", price: 20 },
+    { name: "Swing Guava", price: 20 },
+    { name: "Swing Pomegranate", price: 20 },
+    { name: "Sprite MRP 20", price: 20 },
+    { name: "Fanta 250ml", price: 20 },
+    { name: "Coca-Cola Can", price: 40 },
+    { name: "Kinley Water 500ml", price: 10 },
+    { name: "Dukes Bourbon", price: 25 },
+    { name: "Dukes Strawberry Cream", price: 25 },
+    { name: "Fab Vanilla Cream", price: 30 },
+    { name: "Milk Bikis Cream", price: 30 },
+    { name: "Nut & Grain Energy Bar", price: 20 },
+    { name: "Choco Desire Energy Bar", price: 20 },
+    { name: "Snow Blueberry Pie", price: 20 },
+  ],
+  Snack: [
+    { name: "Puffcorn Lays", price: 20 },
+    { name: "Bingo Mad Angles Achaari", price: 20 },
+    { name: "Gopal Mexican Chilli", price: 20 },
+    { name: "Gopal Moong Dal", price: 15 },
+    { name: "Maggi 2-Min", price: 20 },
+    { name: "Lays Blue", price: 20 },
+    { name: "Kurkure Masala", price: 20 },
+    { name: "Doritos Cheese", price: 30 },
+    { name: "Nut & Grain Energy Bar", price: 20 },
+  ],
+  Beverage: [
+    { name: "Frooti 400ml", price: 30 },
+    { name: "Appy Fizz 250ml", price: 20 },
+    { name: "Britannia Strawberry Shake", price: 40 },
+    { name: "Britannia Vanilla Shake", price: 40 },
+    { name: "Paper Boat Jamun", price: 25 },
+    { name: "Swing Coconut Water", price: 20 },
+    { name: "Sprite MRP 20", price: 20 },
+    { name: "Fanta 250ml", price: 20 },
+    { name: "Coca-Cola Can", price: 40 },
+    { name: "Kinley Water 500ml", price: 10 },
+    { name: "Cold Coffee", price: 35 },
+    { name: "Chai / Tea", price: 15 },
+  ],
+  Meal: [
+    { name: "Paneer Butter Masala", price: 120 },
+    { name: "Egg Roll", price: 50 },
+    { name: "Veg Fried Rice", price: 80 },
+    { name: "Chicken Biryani", price: 140 },
+    { name: "Chole Bhature", price: 70 },
+  ],
+  Grocery: [
+    { name: "Bread", price: 30 },
+    { name: "Amul Butter", price: 55 },
+    { name: "Milk 500ml", price: 32 },
+    { name: "Eggs (6 pcs)", price: 45 },
+    { name: "Instant Noodles", price: 20 },
+  ],
+  Stationery: [
+    { name: "A4 Notebook", price: 60 },
+    { name: "Blue Gel Pen", price: 10 },
+    { name: "Sticky Notes", price: 40 },
+    { name: "A4 Papers (50)", price: 50 },
+    { name: "Highlighter", price: 25 },
+  ],
+  Medicine: [
+    { name: "Paracetamol 650", price: 30 },
+    { name: "Band-Aid", price: 10 },
+    { name: "Strepsils", price: 35 },
+    { name: "Vicks Inhaler", price: 60 },
+    { name: "Digene / Eno", price: 10 },
+  ],
 };
 
 export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
@@ -77,7 +168,7 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
 
   // Step 1 State: Items
   const [items, setItems] = useState<ItemForm[]>([]);
-  const [currentCategory, setCurrentCategory] = useState<Category>("Snack");
+  const [currentCategory, setCurrentCategory] = useState<Category>("Vending Kiosk");
   const [currentItemName, setCurrentItemName] = useState("");
   const [currentItemQty, setCurrentItemQty] = useState(1);
   const [currentItemPrice, setCurrentItemPrice] = useState("");
@@ -138,6 +229,23 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
     setCurrentItemName("");
     setCurrentItemQty(1);
     setCurrentItemPrice("");
+    setFormError(null);
+  };
+
+  const handleQuickAdd = (name: string, price: number) => {
+    setItems((prev) => [
+      ...prev,
+      {
+        id: Math.random().toString(36).substring(2, 9),
+        name,
+        category: currentCategory,
+        quantity: 1,
+        estimatedPrice: price,
+      },
+    ]);
+    setCurrentItemName("");
+    setCurrentItemPrice("");
+    setItemInputError(false);
     setFormError(null);
   };
 
@@ -228,25 +336,27 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
 
       const finalPickup =
         pickupLocation === "Other (Custom Spot)"
-          ? customPickupLocation.trim() || "Campus Store"
+          ? customPickupLocation.trim()
           : pickupLocation;
 
-      const finalHostel =
-        dropoffHostel === "Other" ? customDropoffHostel.trim() || "Hostel" : dropoffHostel;
+      const finalDropoff =
+        dropoffHostel === "Other"
+          ? `${customDropoffHostel.trim()} - Room ${dropoffRoom.trim()}`
+          : `${dropoffHostel} - Room ${dropoffRoom.trim()}`;
 
-      const combinedInstructions = [
-        instructions.trim() || null,
-        urgency === "urgent" ? "⚡ URGENT DELIVERY REQUEST" : null,
+      const finalInstructions = [
+        instructions.trim(),
+        urgency === "urgent" ? "[URGENT / EXPRESS PRIORITY]" : "",
       ]
         .filter(Boolean)
-        .join(" | ");
+        .join(" ");
 
       const requestData: Omit<InsertRequest, "requester_id"> = {
         pickup_location: finalPickup,
-        dropoff_location: `${finalHostel}, Room ${dropoffRoom.trim()}`,
-        instructions: combinedInstructions || null,
-        delivery_fee: currentReward,
+        dropoff_location: finalDropoff,
+        instructions: finalInstructions || null,
         total_estimated_amount: totalEstimatedItemsAmount,
+        delivery_fee: currentReward,
         status: "pending",
       };
 
@@ -296,6 +406,7 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
     label: Category;
     icon: React.ComponentType<{ size?: number; className?: string }>;
   }[] = [
+    { label: "Vending Kiosk", icon: Store },
     { label: "Snack", icon: Pizza },
     { label: "Beverage", icon: Coffee },
     { label: "Meal", icon: Utensils },
@@ -456,7 +567,7 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
             </div>
 
             {/* Categories Grid */}
-            <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 sm:gap-3 w-full">
+            <div className="grid grid-cols-3 sm:grid-cols-7 gap-2 sm:gap-2.5 w-full">
               {categories.map((cat) => {
                 const isActive = currentCategory === cat.label;
                 const IconComp = cat.icon;
@@ -466,7 +577,7 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
                     type="button"
                     onClick={() => setCurrentCategory(cat.label)}
                     className={cn(
-                      "relative rounded-2xl h-[78px] sm:h-[90px] w-full flex flex-col items-center justify-center gap-2 cursor-pointer transition-all duration-200 border overflow-hidden",
+                      "relative rounded-2xl h-[78px] sm:h-[90px] w-full flex flex-col items-center justify-center gap-1.5 sm:gap-2 cursor-pointer transition-all duration-200 border overflow-hidden",
                       isActive
                         ? "bg-emerald-500/15 border-[#00E676] shadow-[0_0_20px_rgba(0,230,118,0.25)] scale-[1.02]"
                         : "bg-white/[0.02] border-white/10 hover:border-white/20 hover:bg-white/[0.04]"
@@ -481,7 +592,7 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
                     />
                     <span
                       className={cn(
-                        "text-[11px] sm:text-xs tracking-tight",
+                        "text-[10.5px] sm:text-xs tracking-tight text-center px-1 leading-tight",
                         isActive ? "text-white font-bold" : "text-[#A7B8B0] font-medium"
                       )}
                     >
@@ -496,23 +607,37 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
             </div>
 
             {/* Quick-Pick Popular Chips */}
-            <div className="flex flex-col gap-2">
-              <div className="flex items-center gap-1.5 text-xs text-[#A7B8B0]">
-                <Sparkles size={13} className="text-[#00E676]" />
-                <span>Popular {currentCategory} items (tap to add):</span>
+            <div className="flex flex-col gap-2.5">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-1.5 text-xs text-[#A7B8B0]">
+                  <Sparkles size={13} className="text-[#00E676]" />
+                  <span>
+                    {currentCategory === "Vending Kiosk"
+                      ? "Hostel Vending Machine Live Stock (Tap to 1-click add):"
+                      : `Popular ${currentCategory} items (tap to 1-click add):`}
+                  </span>
+                </div>
+                {currentCategory === "Vending Kiosk" && (
+                  <span className="text-[10px] uppercase font-extrabold text-[#00E676] bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-full flex items-center gap-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#00E676] animate-pulse" />
+                    Hostel GF Kiosks
+                  </span>
+                )}
               </div>
-              <div className="flex flex-wrap gap-1.5 sm:gap-2">
-                {POPULAR_CHIPS[currentCategory].map((chip) => (
+              <div className="flex flex-wrap gap-1.5 sm:gap-2 max-h-[160px] overflow-y-auto pr-1">
+                {POPULAR_ITEMS[currentCategory]?.map((chip) => (
                   <button
-                    key={chip}
+                    key={chip.name}
                     type="button"
-                    onClick={() => {
-                      setCurrentItemName(chip);
-                      setItemInputError(false);
-                    }}
-                    className="text-xs bg-white/[0.04] hover:bg-emerald-500/15 text-white/80 hover:text-[#00E676] border border-white/10 hover:border-emerald-500/30 px-3 py-1.5 rounded-xl transition-all cursor-pointer flex items-center gap-1 active:scale-95"
+                    onClick={() => handleQuickAdd(chip.name, chip.price)}
+                    className="group text-xs bg-white/[0.04] hover:bg-emerald-500/15 text-white/85 hover:text-[#00E676] border border-white/10 hover:border-emerald-500/30 px-3 py-1.5 rounded-xl transition-all cursor-pointer flex items-center gap-1.5 active:scale-95 shadow-sm"
+                    title={`Click to quickly add ${chip.name} (₹${chip.price})`}
                   >
-                    <span>+</span> {chip}
+                    <Plus size={12} className="text-[#00E676] group-hover:rotate-90 transition-transform" />
+                    <span className="font-medium">{chip.name}</span>
+                    <span className="text-emerald-400 font-bold text-[11px] bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/20">
+                      ₹{chip.price}
+                    </span>
                   </button>
                 ))}
               </div>
@@ -737,6 +862,15 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
                     );
                   })}
                 </div>
+
+                {pickupLocation === "Hostel Vending Machine (Lobby / GF)" && (
+                  <div className="flex items-center gap-2.5 p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/25 text-xs text-emerald-300">
+                    <Zap size={15} className="text-[#00E676] shrink-0" />
+                    <span>
+                      <strong>Hostel Lobby Vending Kiosk:</strong> Student runners in your hostel can dispense and deliver your items to your room in 3–5 minutes!
+                    </span>
+                  </div>
+                )}
 
                 {pickupLocation === "Other (Custom Spot)" && (
                   <input
