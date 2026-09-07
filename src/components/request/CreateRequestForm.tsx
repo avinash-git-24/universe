@@ -28,6 +28,7 @@ import {
 import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
 import type { Database } from "@/types/database";
+import { VENDING_PRODUCTS } from "@/data/vendingProducts";
 
 type InsertRequest = Database["public"]["Tables"]["delivery_requests"]["Insert"];
 type InsertItem = Database["public"]["Tables"]["request_items"]["Insert"];
@@ -671,8 +672,8 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
                     const isSubActive = vendingSubFilter === sub;
                     const count =
                       sub === "All"
-                        ? POPULAR_ITEMS["Vending Machine"].length
-                        : POPULAR_ITEMS["Vending Machine"].filter((it) => it.subType === sub).length;
+                        ? VENDING_PRODUCTS.length
+                        : VENDING_PRODUCTS.filter((it) => it.subType === sub).length;
                     return (
                       <button
                         key={sub}
@@ -695,26 +696,75 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
                 </div>
               )}
 
-              <div className="flex flex-wrap gap-1.5 sm:gap-2 max-h-[220px] overflow-y-auto pr-1">
-                {(currentCategory === "Vending Machine" && vendingSubFilter !== "All"
-                  ? POPULAR_ITEMS["Vending Machine"].filter((item) => item.subType === vendingSubFilter)
-                  : POPULAR_ITEMS[currentCategory] || []
-                ).map((chip) => (
-                  <button
-                    key={chip.name}
-                    type="button"
-                    onClick={() => handleQuickAdd(chip.name, chip.price)}
-                    className="group text-xs bg-white/[0.04] hover:bg-emerald-500/15 text-white/85 hover:text-[#00E676] border border-white/10 hover:border-emerald-500/30 px-3 py-1.5 rounded-xl transition-all cursor-pointer flex items-center gap-1.5 active:scale-95 shadow-sm"
-                    title={`Click to quickly add ${chip.name} (₹${chip.price})`}
-                  >
-                    <Plus size={12} className="text-[#00E676] group-hover:rotate-90 transition-transform" />
-                    <span className="font-medium">{chip.name}</span>
-                    <span className="text-emerald-400 font-bold text-[11px] bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/20">
-                      ₹{chip.price}
-                    </span>
-                  </button>
-                ))}
-              </div>
+              {currentCategory === "Vending Machine" ? (
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2.5 sm:gap-3 max-h-[460px] overflow-y-auto pr-1.5 custom-scrollbar">
+                  {(vendingSubFilter === "All"
+                    ? VENDING_PRODUCTS
+                    : VENDING_PRODUCTS.filter((item) => item.subType === vendingSubFilter)
+                  ).map((prod) => (
+                    <div
+                      key={prod.id}
+                      onClick={() => handleQuickAdd(prod.name, prod.price)}
+                      className="group relative bg-[#0e1612]/90 hover:bg-[#132219] border border-white/10 hover:border-[#00E676]/60 rounded-2xl p-2.5 sm:p-3 flex flex-col justify-between transition-all duration-200 cursor-pointer shadow-md hover:shadow-[0_0_20px_rgba(0,230,118,0.2)] hover:-translate-y-0.5 select-none"
+                    >
+                      {/* Product Packaging Image */}
+                      <div className="relative w-full aspect-square rounded-xl bg-black/40 border border-white/5 flex items-center justify-center p-2 mb-2 overflow-hidden group-hover:border-[#00E676]/20 transition-colors">
+                        <img
+                          src={prod.image}
+                          alt={prod.name}
+                          loading="lazy"
+                          className="w-full h-full object-contain drop-shadow-[0_4px_8px_rgba(0,0,0,0.5)] group-hover:scale-105 transition-transform duration-300"
+                        />
+                        {/* Category badge */}
+                        <span className="absolute top-1.5 left-1.5 text-[9px] font-semibold text-white/60 bg-black/70 px-1.5 py-0.5 rounded-md backdrop-blur-sm border border-white/5">
+                          {prod.subType === "Drinks" ? "Drink" : prod.subType === "Snacks" ? "Snack" : "Sweet"}
+                        </span>
+                      </div>
+
+                      {/* Title */}
+                      <h4 className="text-white/90 group-hover:text-white font-medium text-xs line-clamp-2 leading-snug mb-2 min-h-[32px]">
+                        {prod.name}
+                      </h4>
+
+                      {/* Price + Quick Add Button */}
+                      <div className="flex items-center justify-between mt-auto pt-1.5 border-t border-white/5">
+                        <span className="text-[#00E676] font-extrabold text-xs sm:text-sm tracking-tight">
+                          ₹{prod.price}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleQuickAdd(prod.name, prod.price);
+                          }}
+                          className="w-7 h-7 rounded-lg bg-emerald-500/15 group-hover:bg-[#00E676] text-[#00E676] group-hover:text-[#050805] border border-emerald-500/30 group-hover:border-[#00E676] flex items-center justify-center transition-all cursor-pointer shadow-sm active:scale-90"
+                          title={`Add ${prod.name}`}
+                        >
+                          <Plus size={14} strokeWidth={2.5} />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="flex flex-wrap gap-1.5 sm:gap-2 max-h-[220px] overflow-y-auto pr-1">
+                  {(POPULAR_ITEMS[currentCategory] || []).map((chip) => (
+                    <button
+                      key={chip.name}
+                      type="button"
+                      onClick={() => handleQuickAdd(chip.name, chip.price)}
+                      className="group text-xs bg-white/[0.04] hover:bg-emerald-500/15 text-white/85 hover:text-[#00E676] border border-white/10 hover:border-emerald-500/30 px-3 py-1.5 rounded-xl transition-all cursor-pointer flex items-center gap-1.5 active:scale-95 shadow-sm"
+                      title={`Click to quickly add ${chip.name} (₹${chip.price})`}
+                    >
+                      <Plus size={12} className="text-[#00E676] group-hover:rotate-90 transition-transform" />
+                      <span className="font-medium">{chip.name}</span>
+                      <span className="text-emerald-400 font-bold text-[11px] bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/20">
+                        ₹{chip.price}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Input Row: Item Name + Optional Est Price + Quantity + Add */}
