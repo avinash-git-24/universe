@@ -39,31 +39,17 @@ export default async function NewRequestPage() {
 
   return (
     <div className="min-h-screen bg-[#050805] px-3 py-4 sm:px-6 sm:py-8 lg:p-10 relative overflow-x-hidden">
-      {/* ── Cinematic UniVerse Cosmic Photorealistic Background ── */}
+      {/* ── Sleek 2D Ambient Glow Background (No 3D Canvas / No Floating Balls) ── */}
       <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden select-none">
-        {/* Base dark canvas */}
-        <div className="absolute inset-0 bg-[#020509]" />
-
-        {/* High-res cinematic space vista (Earth horizon, Milky Way, Ringed Planet) */}
-        <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-80"
-          style={{
-            backgroundImage: "url('/login-bg.jpg')",
-            filter: "brightness(0.95) contrast(1.08)",
-          }}
-        />
-
-        {/* Radiant Emerald Aurora & Ambient Lighting */}
-        <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-[900px] h-[500px] bg-gradient-to-b from-[#00E676]/20 via-emerald-600/10 to-transparent blur-[120px] rounded-full" />
-        <div className="absolute top-[35%] -left-20 w-[500px] h-[500px] bg-emerald-500/10 blur-[130px] rounded-full" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[600px] h-[600px] bg-teal-500/15 blur-[140px] rounded-full" />
-
-        {/* Smooth Center Vignette so form text and cards stay crystal-clear */}
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(4,8,6,0.55)_20%,rgba(2,5,9,0.85)_100%)]" />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#050805]/50 via-transparent to-[#050805]/80" />
-
-        {/* Luminous Horizon Accent Line */}
-        <div className="absolute top-[160px] left-1/2 -translate-x-1/2 w-[85%] max-w-[950px] h-[1px] bg-gradient-to-r from-transparent via-[#00E676]/40 to-transparent blur-[0.5px]" />
+        {/* Soft Volumetric Emerald Glow at Top */}
+        <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-[850px] h-[500px] bg-gradient-to-b from-emerald-500/15 via-emerald-500/5 to-transparent blur-3xl rounded-full" />
+        {/* Subtle Ambient Accent Glows */}
+        <div className="absolute top-[35%] right-[-5%] w-[450px] h-[450px] bg-emerald-600/10 blur-3xl rounded-full" />
+        <div className="absolute bottom-[-10%] left-[-5%] w-[450px] h-[450px] bg-teal-500/10 blur-3xl rounded-full" />
+        {/* Faint Cyber Dot Matrix Grid */}
+        <div className="absolute inset-0 bg-[radial-gradient(#10b981_1px,transparent_1px)] [background-size:48px_48px] opacity-[0.04]" />
+        {/* Deep Space Vignette */}
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#050805]/40 to-[#050805]" />
       </div>
 
       <main className="relative z-10 w-full max-w-4xl mx-auto">

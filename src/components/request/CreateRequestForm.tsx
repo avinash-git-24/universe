@@ -437,7 +437,7 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
       )}
 
       {/* Main Glassmorphic Form Card */}
-      <div className="bg-[#0a0f0c]/75 border border-white/10 border-t-emerald-500/30 hover:border-emerald-500/30 rounded-[24px] sm:rounded-[28px] p-5 sm:p-8 lg:p-9 w-full shadow-[0_20px_60px_rgba(0,0,0,0.8),0_0_80px_rgba(0,230,118,0.08)] backdrop-blur-2xl flex flex-col gap-6 sm:gap-8 transition-all relative">
+      <div className="bg-[#0a0f0c]/65 border border-white/10 hover:border-emerald-500/20 rounded-[24px] sm:rounded-[28px] p-5 sm:p-8 lg:p-9 w-full shadow-[0_12px_45px_rgba(0,0,0,0.6),0_0_30px_rgba(0,230,118,0.04)] backdrop-blur-2xl flex flex-col gap-6 sm:gap-8 transition-all">
         {/* ================= STEP 1: ITEM DETAILS ================= */}
         {step === 1 && (
           <>
