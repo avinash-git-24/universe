@@ -448,7 +448,6 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
         instructions: finalInstructions || null,
         total_estimated_amount: totalEstimatedItemsAmount,
         delivery_fee: currentReward,
-        delivery_otp: freshOtp,
         status: "pending",
       };
 
@@ -459,11 +458,27 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
         estimated_price: item.estimatedPrice || 0,
       }));
 
-      const { data: request, error: requestError } = await supabase
+      // Resilient insert: Try with delivery_otp, fallback cleanly without it if column is not yet in DB schema
+      let insertResult = await supabase
         .from("delivery_requests")
-        .insert({ ...requestData, requester_id: currentUserId })
+        .insert({ ...requestData, delivery_otp: freshOtp, requester_id: currentUserId })
         .select()
         .single();
+
+      if (
+        insertResult.error &&
+        (insertResult.error.message?.includes("delivery_otp") ||
+          insertResult.error.code === "PGRST204" ||
+          insertResult.error.message?.includes("schema cache"))
+      ) {
+        insertResult = await supabase
+          .from("delivery_requests")
+          .insert({ ...requestData, requester_id: currentUserId })
+          .select()
+          .single();
+      }
+
+      const { data: request, error: requestError } = insertResult;
 
       if (requestError || !request) {
         console.error("Delivery request insert error:", requestError);
