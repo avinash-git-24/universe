@@ -65,8 +65,6 @@ const HOSTELS = [
   "Hostel B",
   "Hostel C",
   "Hostel D",
-  "Aryabhatta Hall",
-  "Kalam Hostel",
   "Other",
 ];
 
