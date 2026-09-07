@@ -239,19 +239,9 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
   // Step 3 State: Extras
   const [instructions, setInstructions] = useState("");
 
-  const calculateSuggestedReward = () => {
-    let base = 15;
-    if (items.length === 0) return base;
-    const hasMeal = items.some((item) => item.category === "Meal");
-    if (hasMeal) base += 10;
-    const totalQty = items.reduce((sum, item) => sum + item.quantity, 0);
-    if (totalQty > 3) base += 5;
-    if (urgency === "urgent") base += 10;
-    return base;
-  };
-
+  // Delivery Reward: strictly chosen by requester (no automatic reward added)
   const currentReward =
-    customReward !== "" ? Math.max(5, Number(customReward)) : calculateSuggestedReward();
+    customReward.trim() !== "" ? Math.max(0, Number(customReward) || 0) : 0;
 
   const totalEstimatedItemsAmount = items.reduce(
     (sum, item) => sum + (item.estimatedPrice || 0) * item.quantity,
@@ -1084,54 +1074,64 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
                         urgency === "urgent" ? "text-emerald-400" : "text-white"
                       )}
                     >
-                      ⚡ Express / Urgent (+₹10)
+                      ⚡ Express Priority
                     </span>
                     <span className="text-[11px] text-[#A7B8B0]">
-                      High runner priority for late-night cravings
+                      High runner priority for fast delivery
                     </span>
                   </button>
                 </div>
               </div>
 
-              {/* Delivery Reward */}
+              {/* Delivery Reward - Strictly User Defined */}
               <div className="flex flex-col gap-2.5 border-t border-white/10 pt-5">
                 <div className="flex justify-between items-center">
                   <label className="text-[#00E676] text-xs sm:text-sm font-bold flex items-center gap-1.5">
                     <Coins size={14} /> Delivery Reward for Runner
                   </label>
-                  <span className="text-emerald-400/80 text-xs font-semibold">
-                    Suggested: ₹{calculateSuggestedReward()}
+                  <span className="text-emerald-400/90 text-[11px] font-semibold bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 rounded-full">
+                    Aapke man se (Optional)
                   </span>
                 </div>
+                <p className="text-[#A7B8B0] text-xs m-0">
+                  Aap runner ko kitna reward dena chahte hain? Jo chahein enter karein (koi auto reward add nahi hoga).
+                </p>
 
                 <div className="flex flex-wrap items-center gap-2.5">
                   <div className="flex items-center bg-black/40 border border-white/15 rounded-xl px-4 py-2.5 focus-within:border-[#00E676]">
                     <span className="text-[#00E676] text-lg font-extrabold mr-2">₹</span>
                     <input
                       type="number"
-                      min={5}
-                      placeholder={calculateSuggestedReward().toString()}
+                      min={0}
+                      placeholder="0"
                       value={customReward}
                       onChange={(e) => setCustomReward(e.target.value)}
-                      className="bg-transparent border-none text-white text-base font-extrabold w-20 outline-none"
+                      className="bg-transparent border-none text-white text-base font-extrabold w-24 outline-none placeholder:text-white/30"
                     />
                   </div>
 
                   {/* Preset quick buttons */}
                   <div className="flex flex-wrap gap-1.5 sm:gap-2">
-                    {[15, 20, 30, 50].map((amt) => (
+                    {[
+                      { label: "₹0 (Free)", val: "0" },
+                      { label: "₹10", val: "10" },
+                      { label: "₹15", val: "15" },
+                      { label: "₹20", val: "20" },
+                      { label: "₹30", val: "30" },
+                      { label: "₹50", val: "50" },
+                    ].map((btn) => (
                       <button
-                        key={amt}
+                        key={btn.val}
                         type="button"
-                        onClick={() => setCustomReward(amt.toString())}
+                        onClick={() => setCustomReward(btn.val)}
                         className={cn(
-                          "rounded-xl px-3.5 py-2 text-xs sm:text-sm font-bold cursor-pointer transition-all border",
-                          currentReward === amt
-                            ? "bg-[#00E676]/20 border-[#00E676] text-[#00E676] shadow-[0_0_10px_rgba(0,230,118,0.2)]"
+                          "rounded-xl px-3 py-2 text-xs font-bold cursor-pointer transition-all border",
+                          customReward === btn.val
+                            ? "bg-[#00E676]/20 border-[#00E676] text-[#00E676] shadow-[0_0_10px_rgba(0,230,118,0.2)] font-extrabold"
                             : "bg-white/5 border-white/10 text-[#A7B8B0] hover:text-white"
                         )}
                       >
-                        ₹{amt}
+                        {btn.label}
                       </button>
                     ))}
                   </div>
@@ -1246,10 +1246,17 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
                       Runner Delivery Reward
                     </span>
                     <span className="text-[#A7B8B0] text-[11px]">
-                      Credited directly upon delivery verification
+                      {currentReward === 0
+                        ? "₹0 (Free delivery / Voluntary runner request)"
+                        : "Credited directly upon delivery verification"}
                     </span>
                   </div>
-                  <span className="text-[#00E676] text-xl sm:text-2xl font-black">
+                  <span
+                    className={cn(
+                      "text-xl sm:text-2xl font-black",
+                      currentReward === 0 ? "text-white/60" : "text-[#00E676]"
+                    )}
+                  >
                     ₹{currentReward}
                   </span>
                 </div>
