@@ -25,6 +25,10 @@ import {
   X,
   Store,
   Compass,
+  Navigation,
+  Activity,
+  Flame,
+  ArrowRight,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
@@ -94,6 +98,7 @@ export function RequestLiveTracker({ initialRequest }: RequestLiveTrackerProps) 
   const [copiedOtp, setCopiedOtp] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [showCelebration, setShowCelebration] = useState(false);
+  const [boostSuccessMsg, setBoostSuccessMsg] = useState<string | null>(null);
 
   const prevStatusRef = useRef(initialRequest.status);
   const prevRunnerIdRef = useRef(
@@ -228,6 +233,8 @@ export function RequestLiveTracker({ initialRequest }: RequestLiveTrackerProps) 
       if (!error) {
         setRequest((prev) => ({ ...prev, delivery_fee: newFee }));
         if (soundEnabled) playNotificationChime();
+        setBoostSuccessMsg(`Reward boosted by +₹${boostAmount}! Now ₹${newFee}`);
+        setTimeout(() => setBoostSuccessMsg(null), 3500);
       }
     } catch (err) {
       console.error("Failed to boost delivery reward:", err);
@@ -294,29 +301,45 @@ export function RequestLiveTracker({ initialRequest }: RequestLiveTrackerProps) 
 
   return (
     <div className="space-y-6">
-      {/* Sound Toggle Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <span className="w-2.5 h-2.5 rounded-full bg-[#00E676] animate-pulse shadow-[0_0_10px_#00E676]" />
-          <span className="text-xs font-bold uppercase tracking-wider text-emerald-400">
-            Live Real-Time Tracker
+      {/* ── Top Header Toolbar ── */}
+      <div className="flex items-center justify-between px-1">
+        <div className="flex items-center gap-2.5">
+          <div className="relative flex items-center justify-center">
+            <span className="w-2.5 h-2.5 rounded-full bg-[#00E676] shadow-[0_0_12px_#00E676]" />
+            <span className="w-5 h-5 rounded-full border border-[#00E676] animate-ping absolute opacity-60" />
+          </div>
+          <span className="text-xs font-extrabold uppercase tracking-widest text-[#00E676] flex items-center gap-1.5">
+            Live Campus Radar
+            <span className="text-white/30">•</span>
+            <span className="text-[#A7B8B0] font-mono text-[11px]">Real-Time Sync</span>
           </span>
         </div>
+
         <button
           type="button"
           onClick={() => setSoundEnabled(!soundEnabled)}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/5 border border-white/10 hover:border-emerald-500/30 text-xs text-[#A7B8B0] hover:text-white transition-colors cursor-pointer"
-          title={soundEnabled ? "Audio chime active" : "Audio chime muted"}
+          className={cn(
+            "flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-semibold transition-all cursor-pointer",
+            soundEnabled
+              ? "bg-emerald-500/15 border-emerald-500/40 text-emerald-300 shadow-[0_0_15px_rgba(0,230,118,0.15)]"
+              : "bg-white/5 border-white/10 text-white/40 hover:text-white"
+          )}
+          title={soundEnabled ? "Notification sound active" : "Sound muted"}
         >
           {soundEnabled ? (
             <>
               <Volume2 size={14} className="text-[#00E676]" />
-              <span className="hidden sm:inline">Chime On</span>
+              <span className="hidden sm:inline">Chime Active</span>
+              <span className="flex gap-0.5 items-end h-3 ml-0.5">
+                <span className="w-0.5 h-1.5 bg-[#00E676] animate-pulse rounded-full" />
+                <span className="w-0.5 h-3 bg-[#00E676] animate-pulse rounded-full" />
+                <span className="w-0.5 h-2 bg-[#00E676] animate-pulse rounded-full" />
+              </span>
             </>
           ) : (
             <>
               <VolumeX size={14} className="text-white/40" />
-              <span className="hidden sm:inline">Chime Muted</span>
+              <span className="hidden sm:inline">Muted</span>
             </>
           )}
         </button>
@@ -324,140 +347,261 @@ export function RequestLiveTracker({ initialRequest }: RequestLiveTrackerProps) 
 
       {/* Celebration Banner when runner is matched */}
       {showCelebration && (
-        <div className="p-4 rounded-2xl bg-gradient-to-r from-emerald-500/20 via-emerald-500/30 to-emerald-500/20 border-2 border-[#00E676] text-white shadow-[0_0_30px_rgba(0,230,118,0.4)] flex items-center justify-between animate-bounce">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-[#00E676] text-[#050805] flex items-center justify-center font-black text-xl shadow-[0_0_15px_#00E676]">
-              🎉
+        <div className="p-4 sm:p-5 rounded-3xl bg-gradient-to-r from-emerald-500/25 via-[#0c1f14] to-emerald-500/25 border-2 border-[#00E676] text-white shadow-[0_0_40px_rgba(0,230,118,0.4)] flex items-center justify-between animate-bounce">
+          <div className="flex items-center gap-3.5">
+            <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-[#00C853] to-[#00E676] text-[#050805] flex items-center justify-center font-black text-2xl shadow-[0_0_20px_#00E676]">
+              ⚡
             </div>
             <div>
-              <p className="font-extrabold text-sm sm:text-base text-white">Runner Matched!</p>
-              <p className="text-xs text-emerald-200">
-                {runner?.full_name || "A student runner"} has accepted your request.
+              <p className="font-black text-base sm:text-lg text-white tracking-tight">
+                Runner Found & Matched!
+              </p>
+              <p className="text-xs sm:text-sm text-emerald-300">
+                <strong className="text-white">{runner?.full_name || "A campus runner"}</strong> has
+                accepted your request and is heading to the pickup spot.
               </p>
             </div>
           </div>
           <button
             type="button"
             onClick={() => setShowCelebration(false)}
-            className="text-white/60 hover:text-white p-1"
+            className="text-white/60 hover:text-white p-1.5 rounded-lg hover:bg-white/10 transition-colors"
           >
-            <X size={16} />
+            <X size={18} />
           </button>
         </div>
       )}
 
       {/* ============================================================ */}
-      {/* ── CASE 1: PENDING SEARCH SCREEN (RAPIDO / UBER RADAR) ───── */}
+      {/* ── CASE 1: SCI-FI / RAPIDO CAMPUS RADAR (PENDING STATE) ─── */}
       {/* ============================================================ */}
       {request.status === "pending" && (
-        <div className="relative overflow-hidden rounded-3xl bg-[#0a100c]/95 border-2 border-emerald-500/30 p-6 sm:p-10 flex flex-col items-center text-center shadow-[0_0_50px_rgba(0,230,118,0.12)]">
-          {/* Subtle Ambient Radial Glow */}
+        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-b from-[#08120b]/95 via-[#060c08]/95 to-[#050906]/95 border-2 border-emerald-500/30 p-6 sm:p-10 flex flex-col items-center text-center shadow-[0_0_60px_rgba(0,230,118,0.14)] backdrop-blur-2xl">
+          {/* Holographic HUD Grid Overlay */}
           <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_center,rgba(0,230,118,0.12)_0%,transparent_70%)]" />
+          <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(to_right,#00e67608_1px,transparent_1px),linear-gradient(to_bottom,#00e67608_1px,transparent_1px)] bg-[size:32px_32px]" />
 
-          {/* ── Rapido Radar Animation Centerpiece ── */}
-          <div className="relative w-48 h-48 sm:w-60 sm:h-60 flex items-center justify-center my-4">
-            {/* Outer Expanding Pulse Waves */}
-            <div className="absolute inset-0 rounded-full border border-emerald-500/20 animate-ping duration-1000 opacity-20" />
-            <div className="absolute inset-4 rounded-full border border-emerald-500/30 animate-pulse duration-700" />
-            <div className="absolute inset-8 rounded-full border border-dashed border-emerald-500/40 animate-[spin_12s_linear_infinite]" />
-            <div className="absolute inset-16 rounded-full border border-emerald-500/40" />
+          {/* Tactical Corner Reticles */}
+          <div className="absolute top-4 left-4 w-4 h-4 border-t-2 border-l-2 border-emerald-500/40 pointer-events-none" />
+          <div className="absolute top-4 right-4 w-4 h-4 border-t-2 border-r-2 border-emerald-500/40 pointer-events-none" />
+          <div className="absolute bottom-4 left-4 w-4 h-4 border-b-2 border-l-2 border-emerald-500/40 pointer-events-none" />
+          <div className="absolute bottom-4 right-4 w-4 h-4 border-b-2 border-r-2 border-emerald-500/40 pointer-events-none" />
+
+          {/* Tactical Monospace Frequency Tags */}
+          <div className="w-full flex items-center justify-between text-[10px] font-mono text-emerald-400/60 pb-2">
+            <span className="hidden sm:inline">RADAR FREQ: 5.8 GHz // CH-04</span>
+            <span className="bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20 text-[#00E676] font-bold">
+              ● 14 CAMPUS RUNNERS NEARBY
+            </span>
+            <span className="hidden sm:inline">LATENCY: ~18ms MESH</span>
+          </div>
+
+          {/* ── High-Tech Circular Holographic Radar ── */}
+          <div className="relative w-56 h-56 sm:w-72 sm:h-72 flex items-center justify-center my-6">
+            {/* Coordinate Ring 4 (Outermost) */}
+            <div className="absolute inset-0 rounded-full border border-emerald-500/25 shadow-[0_0_25px_rgba(0,230,118,0.15)]" />
+            <div className="absolute inset-0 rounded-full border border-dashed border-emerald-500/35 animate-[spin_35s_linear_infinite]" />
+
+            {/* Coordinate Ring 3 */}
+            <div className="absolute inset-8 sm:inset-10 rounded-full border border-emerald-500/20" />
+            <span className="absolute top-1 sm:top-2 text-[8px] sm:text-[9px] font-mono text-emerald-400/50">
+              300m
+            </span>
+
+            {/* Coordinate Ring 2 */}
+            <div className="absolute inset-16 sm:inset-20 rounded-full border border-emerald-500/30" />
+            <span className="absolute top-10 sm:top-12 text-[8px] sm:text-[9px] font-mono text-emerald-400/50">
+              200m
+            </span>
+
+            {/* Coordinate Ring 1 */}
+            <div className="absolute inset-24 sm:inset-28 rounded-full border border-dashed border-emerald-500/40" />
+
+            {/* Compass Axis Crosshairs */}
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+              <div className="w-full h-[1px] bg-gradient-to-r from-transparent via-emerald-500/30 to-transparent" />
+            </div>
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+              <div className="h-full w-[1px] bg-gradient-to-b from-transparent via-emerald-500/30 to-transparent" />
+            </div>
+
+            {/* Compass Cardinal Points */}
+            <span className="absolute -top-1 text-[9px] font-black font-mono text-[#00E676]">N</span>
+            <span className="absolute -bottom-1 text-[9px] font-black font-mono text-[#00E676]">S</span>
+            <span className="absolute -right-1 text-[9px] font-black font-mono text-[#00E676]">E</span>
+            <span className="absolute -left-1 text-[9px] font-black font-mono text-[#00E676]">W</span>
 
             {/* Rotating Radar Sweep Cone */}
-            <div className="absolute inset-2 rounded-full overflow-hidden pointer-events-none animate-[spin_4s_linear_infinite]">
-              <div className="w-full h-full bg-[conic-gradient(from_0deg,transparent_0deg,transparent_270deg,rgba(0,230,118,0.35)_360deg)] rounded-full" />
+            <div className="absolute inset-1 rounded-full overflow-hidden pointer-events-none animate-[spin_3.5s_linear_infinite]">
+              <div className="w-full h-full bg-[conic-gradient(from_0deg,transparent_0deg,transparent_270deg,rgba(0,230,118,0.15)_340deg,rgba(0,230,118,0.6)_360deg)] rounded-full" />
             </div>
 
-            {/* Orbiting / Nearby Runner Dots */}
-            <div className="absolute top-8 right-12 w-3 h-3 rounded-full bg-[#00E676] shadow-[0_0_12px_#00E676] animate-bounce" />
-            <div className="absolute bottom-10 left-10 w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-[0_0_10px_#00E676] animate-pulse" />
-            <div className="absolute top-20 left-6 w-2 h-2 rounded-full bg-emerald-300 shadow-[0_0_8px_#00E676]" />
+            {/* Simulated Active Runner Pings on Radar */}
+            {/* Runner 1 (Top-Right) */}
+            <div className="absolute top-10 right-14 flex items-center gap-1 group cursor-default">
+              <div className="relative flex items-center justify-center">
+                <span className="w-2.5 h-2.5 rounded-full bg-[#00E676] shadow-[0_0_12px_#00E676]" />
+                <span className="w-6 h-6 rounded-full border border-emerald-400 animate-ping absolute opacity-70" />
+              </div>
+              <span className="hidden sm:inline text-[9px] font-mono font-bold text-emerald-300 bg-black/80 px-1.5 py-0.5 rounded border border-emerald-500/30">
+                Runner • 140m
+              </span>
+            </div>
 
-            {/* Central Pickup / Vending Machine Beacon */}
-            <div className="relative z-10 w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-tr from-[#00C853] to-[#00E676] flex items-center justify-center shadow-[0_0_35px_rgba(0,230,118,0.5)] border-2 border-white/40">
-              <Store size={32} className="text-[#050805] animate-pulse" />
+            {/* Runner 2 (Bottom-Left) */}
+            <div className="absolute bottom-12 left-10 flex items-center gap-1 group cursor-default">
+              <div className="relative flex items-center justify-center">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_10px_#00E676]" />
+                <span className="w-5 h-5 rounded-full border border-emerald-400 animate-pulse absolute opacity-60" />
+              </div>
+              <span className="hidden sm:inline text-[9px] font-mono font-bold text-emerald-300 bg-black/80 px-1.5 py-0.5 rounded border border-emerald-500/30">
+                Runner • 220m
+              </span>
+            </div>
+
+            {/* Runner 3 (Top-Left) */}
+            <div className="absolute top-24 left-8 flex items-center gap-1">
+              <div className="w-1.5 h-1.5 rounded-full bg-emerald-300 shadow-[0_0_8px_#00E676]" />
+            </div>
+
+            {/* Central Beacon: Target Reticle + Pickup Beacon */}
+            <div className="relative z-10 w-22 h-22 sm:w-26 sm:h-26 flex items-center justify-center">
+              {/* Outer Pulsing Aura */}
+              <div className="absolute inset-0 rounded-full bg-[#00E676]/20 animate-ping duration-1000" />
+              <div className="absolute -inset-2 rounded-full border border-[#00E676]/50 animate-pulse" />
+
+              {/* Core Beacon Button */}
+              <div className="relative w-16 h-16 sm:w-18 sm:h-18 rounded-2xl bg-gradient-to-tr from-[#00C853] to-[#00E676] flex items-center justify-center shadow-[0_0_35px_rgba(0,230,118,0.6)] border-2 border-white/50">
+                <Store size={28} className="text-[#050805]" />
+              </div>
             </div>
           </div>
 
-          {/* Radar Status Headlines */}
-          <div className="relative z-10 max-w-md space-y-2 mt-2">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-[#00E676] text-xs font-black uppercase tracking-wider">
-              <Radio size={13} className="animate-pulse" /> Searching for Nearby Runners
+          {/* Status Badge & Dynamic Glowing Headline */}
+          <div className="relative z-10 max-w-lg space-y-3 mt-1">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-500/15 border border-emerald-500/35 text-[#00E676] text-xs font-black uppercase tracking-wider shadow-[0_0_20px_rgba(0,230,118,0.2)]">
+              <span className="flex h-2 w-2 relative">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-[#00E676]"></span>
+              </span>
+              Broadcasting on Campus Network
             </div>
-            <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight">
-              Broadcasting on Campus
+
+            <h2 className="text-2xl sm:text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-emerald-100 to-[#00E676] tracking-tight">
+              Looking for Student Runners
             </h2>
-            <p className="text-xs sm:text-sm text-[#A7B8B0]">
-              Looking for student runners near{" "}
-              <strong className="text-white">{request.pickup_location}</strong> to deliver to{" "}
-              <strong className="text-emerald-300">{request.dropoff_location}</strong>.
-            </p>
+
+            {/* High-Tech Route Flow Ribbon */}
+            <div className="p-3 sm:p-3.5 rounded-2xl bg-black/60 border border-emerald-500/25 flex items-center justify-between gap-2 text-xs shadow-inner">
+              <div className="flex items-center gap-2 min-w-0 text-left">
+                <div className="w-6 h-6 rounded-lg bg-emerald-500/20 text-[#00E676] flex items-center justify-center shrink-0 border border-emerald-500/40">
+                  <MapPin size={13} />
+                </div>
+                <div className="truncate">
+                  <span className="text-[10px] text-[#A7B8B0] uppercase tracking-wider block">Pickup</span>
+                  <strong className="text-white text-xs truncate block">{request.pickup_location}</strong>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-1 text-[#00E676] shrink-0 font-mono text-xs px-2">
+                <ArrowRight size={14} className="animate-pulse" />
+                <ArrowRight size={14} className="animate-pulse delay-75 hidden sm:inline" />
+              </div>
+
+              <div className="flex items-center gap-2 min-w-0 text-right justify-end">
+                <div className="truncate">
+                  <span className="text-[10px] text-[#A7B8B0] uppercase tracking-wider block">Deliver To</span>
+                  <strong className="text-[#00E676] text-xs truncate block">{request.dropoff_location}</strong>
+                </div>
+                <div className="w-6 h-6 rounded-lg bg-emerald-500/20 text-[#00E676] flex items-center justify-center shrink-0 border border-emerald-500/40">
+                  <Navigation size={13} />
+                </div>
+              </div>
+            </div>
           </div>
 
-          {/* Live Metrics Grid */}
-          <div className="grid grid-cols-3 gap-2 sm:gap-4 w-full max-w-lg mt-6 pt-6 border-t border-white/10 text-center">
-            <div className="p-3 rounded-2xl bg-black/40 border border-white/10 flex flex-col items-center">
-              <Clock size={16} className="text-emerald-400 mb-1" />
-              <span className="text-base sm:text-lg font-black text-white font-mono">
+          {/* Live Metrics HUD */}
+          <div className="grid grid-cols-3 gap-2.5 sm:gap-4 w-full max-w-xl mt-6 pt-6 border-t border-white/10 text-center">
+            {/* Tile 1: Search Time */}
+            <div className="p-3.5 rounded-2xl bg-gradient-to-b from-black/60 to-black/40 border border-white/10 hover:border-emerald-500/30 transition-all flex flex-col items-center">
+              <div className="flex items-center gap-1 text-[#A7B8B0] text-[10px] uppercase font-bold tracking-wider mb-1">
+                <Clock size={12} className="text-emerald-400" /> Duration
+              </div>
+              <span className="text-lg sm:text-2xl font-black text-white font-mono tracking-tight">
                 {formatTimer(elapsedSeconds)}
               </span>
-              <span className="text-[10px] text-[#A7B8B0]">Search Time</span>
+              <span className="text-[10px] text-emerald-400/80 mt-0.5">● Live Timer</span>
             </div>
 
-            <div className="p-3 rounded-2xl bg-black/40 border border-white/10 flex flex-col items-center">
-              <Compass size={16} className="text-[#00E676] mb-1" />
-              <span className="text-base sm:text-lg font-black text-[#00E676] font-mono">
+            {/* Tile 2: Estimated Acceptance */}
+            <div className="p-3.5 rounded-2xl bg-gradient-to-b from-black/60 to-black/40 border border-white/10 hover:border-emerald-500/30 transition-all flex flex-col items-center">
+              <div className="flex items-center gap-1 text-[#A7B8B0] text-[10px] uppercase font-bold tracking-wider mb-1">
+                <Activity size={12} className="text-[#00E676]" /> Est. Match
+              </div>
+              <span className="text-lg sm:text-2xl font-black text-[#00E676] font-mono tracking-tight">
                 ~2–4 min
               </span>
-              <span className="text-[10px] text-[#A7B8B0]">Est. Acceptance</span>
+              <span className="text-[10px] text-[#A7B8B0] mt-0.5">High Density</span>
             </div>
 
-            <div className="p-3 rounded-2xl bg-black/40 border border-white/10 flex flex-col items-center">
-              <IndianRupee size={16} className="text-emerald-400 mb-1" />
-              <span className="text-base sm:text-lg font-black text-white font-mono">
+            {/* Tile 3: Runner Payout */}
+            <div className="p-3.5 rounded-2xl bg-gradient-to-b from-black/60 to-black/40 border border-white/10 hover:border-emerald-500/30 transition-all flex flex-col items-center">
+              <div className="flex items-center gap-1 text-[#A7B8B0] text-[10px] uppercase font-bold tracking-wider mb-1">
+                <ShieldCheck size={12} className="text-emerald-400" /> Reward
+              </div>
+              <span className="text-lg sm:text-2xl font-black text-white font-mono tracking-tight">
                 ₹{request.delivery_fee}
               </span>
-              <span className="text-[10px] text-[#A7B8B0]">Runner Payout</span>
+              <span className="text-[10px] text-emerald-400/80 mt-0.5">Escrow Locked</span>
             </div>
           </div>
 
-          {/* Quick Tip Booster */}
-          <div className="w-full max-w-lg mt-6 p-4 rounded-2xl bg-emerald-500/[0.07] border border-emerald-500/25 flex flex-col sm:flex-row items-center justify-between gap-3">
+          {/* Quick Tip Booster Banner */}
+          <div className="w-full max-w-xl mt-6 p-4 rounded-2xl bg-gradient-to-r from-emerald-500/[0.08] via-emerald-500/[0.14] to-emerald-500/[0.08] border border-emerald-500/30 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-[0_0_25px_rgba(0,230,118,0.1)]">
             <div className="text-center sm:text-left">
-              <p className="text-xs font-bold text-white flex items-center justify-center sm:justify-start gap-1">
-                <Sparkles size={14} className="text-[#00E676]" />
-                Speed up matching?
+              <p className="text-xs font-black text-white flex items-center justify-center sm:justify-start gap-1.5">
+                <Flame size={15} className="text-[#00E676] animate-pulse" />
+                Turbocharge Matching Speed
               </p>
               <p className="text-[11px] text-[#A7B8B0]">
-                Boost reward to get priority runner pickup immediately.
+                Add an extra tip to move your order to the top of nearby runners' screens.
               </p>
             </div>
-            <div className="flex items-center gap-2">
+
+            <div className="flex items-center gap-2 shrink-0">
               <button
                 type="button"
                 disabled={isBoosting}
                 onClick={() => handleBoostReward(5)}
-                className="px-3 py-1.5 rounded-xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 hover:bg-emerald-500/30 text-xs font-extrabold cursor-pointer transition-all active:scale-95 disabled:opacity-50"
+                className="px-3 py-2 rounded-xl bg-black/50 hover:bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-xs font-bold cursor-pointer transition-all active:scale-95 disabled:opacity-50"
               >
-                +₹5 Tip
+                +₹5 Boost
               </button>
               <button
                 type="button"
                 disabled={isBoosting}
                 onClick={() => handleBoostReward(10)}
-                className="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-[#00C853] to-[#00E676] text-[#050805] text-xs font-black cursor-pointer transition-all shadow-[0_0_15px_rgba(0,230,118,0.3)] hover:shadow-[0_0_25px_rgba(0,230,118,0.5)] active:scale-95 disabled:opacity-50"
+                className="px-4 py-2 rounded-xl bg-gradient-to-r from-[#00C853] to-[#00E676] text-[#050805] text-xs font-black cursor-pointer transition-all shadow-[0_0_20px_rgba(0,230,118,0.4)] hover:shadow-[0_0_30px_rgba(0,230,118,0.6)] active:scale-95 disabled:opacity-50"
               >
-                +₹10 Tip ⚡
+                +₹10 Turbo ⚡
               </button>
             </div>
           </div>
 
+          {/* Boost Success Feedback Alert */}
+          {boostSuccessMsg && (
+            <div className="mt-3 px-4 py-1.5 rounded-full bg-[#00E676]/20 border border-[#00E676]/40 text-[#00E676] text-xs font-bold animate-fade-in">
+              {boostSuccessMsg}
+            </div>
+          )}
+
           {/* Cancel Option */}
-          <div className="mt-5">
+          <div className="mt-6">
             <button
               type="button"
               disabled={isCancelling}
               onClick={handleCancel}
-              className="text-xs text-red-400/80 hover:text-red-400 underline cursor-pointer disabled:opacity-50 transition-colors"
+              className="text-xs text-red-400/70 hover:text-red-400 underline cursor-pointer disabled:opacity-50 transition-colors"
             >
               {isCancelling ? "Cancelling request..." : "Cancel this request"}
             </button>
@@ -473,12 +617,12 @@ export function RequestLiveTracker({ initialRequest }: RequestLiveTrackerProps) 
           {/* Top Status & Runner Alert Banner */}
           <div
             className={cn(
-              "p-5 rounded-3xl border-2 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-[0_0_30px_rgba(0,0,0,0.4)]",
+              "p-5 sm:p-6 rounded-3xl border-2 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-[0_0_35px_rgba(0,0,0,0.5)] backdrop-blur-xl",
               request.status === "delivered"
-                ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-300"
+                ? "bg-emerald-500/10 border-emerald-500/35 text-emerald-300 shadow-[0_0_35px_rgba(0,230,118,0.15)]"
                 : request.status === "cancelled"
                 ? "bg-red-500/10 border-red-500/30 text-red-300"
-                : "bg-gradient-to-r from-[#0e1712] via-[#09120c] to-[#0e1712] border-emerald-500/40"
+                : "bg-gradient-to-r from-[#0c1a11]/95 via-[#08130c]/95 to-[#0c1a11]/95 border-emerald-500/40"
             )}
           >
             <div className="flex items-center gap-3.5">
@@ -486,7 +630,7 @@ export function RequestLiveTracker({ initialRequest }: RequestLiveTrackerProps) 
                 className={cn(
                   "w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 text-xl font-bold shadow-md",
                   request.status === "delivered"
-                    ? "bg-emerald-500 text-black shadow-[0_0_15px_#00E676]"
+                    ? "bg-emerald-500 text-black shadow-[0_0_20px_#00E676]"
                     : request.status === "cancelled"
                     ? "bg-red-500/20 text-red-400 border border-red-500/30"
                     : "bg-emerald-500/20 text-[#00E676] border border-emerald-500/40 animate-pulse"
@@ -524,15 +668,15 @@ export function RequestLiveTracker({ initialRequest }: RequestLiveTrackerProps) 
 
             <div className="text-right shrink-0">
               <span className="text-xs text-[#A7B8B0] block">Runner Reward</span>
-              <span className="text-xl font-black text-[#00E676]">₹{request.delivery_fee}</span>
+              <span className="text-2xl font-black text-[#00E676] font-mono">₹{request.delivery_fee}</span>
             </div>
           </div>
 
           {/* Handover Security PIN Card (Visible until delivered) */}
           {!["delivered", "cancelled"].includes(request.status) && (
-            <div className="bg-gradient-to-r from-emerald-950/70 via-[#0c1a11] to-emerald-950/70 border-2 border-emerald-500/50 rounded-3xl p-5 sm:p-6 shadow-[0_0_35px_rgba(0,230,118,0.2)] flex flex-col sm:flex-row items-center justify-between gap-5">
-              <div className="space-y-1 text-center sm:text-left">
-                <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-500/40 text-[11px] font-black uppercase tracking-wider text-emerald-300">
+            <div className="bg-gradient-to-r from-emerald-950/80 via-[#0c1f14] to-emerald-950/80 border-2 border-emerald-500/50 rounded-3xl p-5 sm:p-6 shadow-[0_0_35px_rgba(0,230,118,0.25)] flex flex-col sm:flex-row items-center justify-between gap-5 backdrop-blur-xl">
+              <div className="space-y-1.5 text-center sm:text-left">
+                <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-500/40 text-[11px] font-black uppercase tracking-wider text-emerald-300">
                   <ShieldCheck size={13} className="text-[#00E676]" />
                   Delivery Handover PIN
                 </div>
@@ -550,7 +694,7 @@ export function RequestLiveTracker({ initialRequest }: RequestLiveTrackerProps) 
                   {displayPin.split("").map((digit, i) => (
                     <div
                       key={i}
-                      className="w-11 h-13 sm:w-13 sm:h-15 rounded-2xl bg-black/85 border-2 border-[#00E676] flex items-center justify-center font-mono text-2xl sm:text-3xl font-black text-[#00E676] shadow-[0_0_20px_rgba(0,230,118,0.35)] select-all"
+                      className="w-12 h-14 sm:w-14 sm:h-16 rounded-2xl bg-black/90 border-2 border-[#00E676] flex items-center justify-center font-mono text-2xl sm:text-3xl font-black text-[#00E676] shadow-[0_0_25px_rgba(0,230,118,0.4)] select-all"
                     >
                       {digit}
                     </div>
@@ -559,7 +703,7 @@ export function RequestLiveTracker({ initialRequest }: RequestLiveTrackerProps) 
                 <button
                   type="button"
                   onClick={handleCopyOtp}
-                  className="p-3 rounded-2xl bg-white/10 hover:bg-white/15 border border-white/20 text-white transition-colors cursor-pointer"
+                  className="p-3.5 rounded-2xl bg-white/10 hover:bg-white/15 border border-white/20 text-white transition-colors cursor-pointer active:scale-95"
                   title="Copy PIN"
                 >
                   {copiedOtp ? (
@@ -573,16 +717,19 @@ export function RequestLiveTracker({ initialRequest }: RequestLiveTrackerProps) 
           )}
 
           {/* Dynamic Stages Timeline */}
-          <div className="p-5 sm:p-6 rounded-3xl bg-[#0e1612]/95 border border-white/10 shadow-[0_4px_25px_rgba(0,0,0,0.4)]">
-            <h4 className="text-xs font-bold text-[#A7B8B0] uppercase tracking-wider mb-5">
-              Live Order Stages
+          <div className="p-5 sm:p-6 rounded-3xl bg-[#09120c]/90 border border-white/10 shadow-[0_4px_25px_rgba(0,0,0,0.4)] backdrop-blur-xl">
+            <h4 className="text-xs font-bold text-[#A7B8B0] uppercase tracking-wider mb-5 flex items-center justify-between">
+              <span>Live Order Progress</span>
+              <span className="text-[#00E676] font-mono text-[11px]">
+                Stage {currentStageIndex + 1} of {STAGES.length}
+              </span>
             </h4>
             <div className="relative flex items-center justify-between w-full">
               {/* Background Track Line */}
               <div className="absolute left-4 right-4 top-4 -translate-y-1/2 h-1 bg-white/10 rounded-full" />
               {/* Active Progress Line */}
               <div
-                className="absolute left-4 top-4 -translate-y-1/2 h-1 bg-[#00E676] rounded-full transition-all duration-700 shadow-[0_0_10px_#00E676]"
+                className="absolute left-4 top-4 -translate-y-1/2 h-1 bg-[#00E676] rounded-full transition-all duration-700 shadow-[0_0_12px_#00E676]"
                 style={{
                   width: `calc(${(currentStageIndex / (STAGES.length - 1)) * 100}% - 8px)`,
                 }}
@@ -601,8 +748,8 @@ export function RequestLiveTracker({ initialRequest }: RequestLiveTrackerProps) 
                         isCompleted
                           ? "bg-[#00E676] text-[#050805] shadow-[0_0_12px_#00E676]"
                           : isCurrent
-                          ? "bg-gradient-to-r from-[#00C853] to-[#00E676] text-[#050805] ring-4 ring-emerald-500/30 shadow-[0_0_18px_#00E676] animate-pulse"
-                          : "bg-black/60 border border-white/15 text-white/30"
+                          ? "bg-gradient-to-r from-[#00C853] to-[#00E676] text-[#050805] ring-4 ring-emerald-500/35 shadow-[0_0_20px_#00E676] animate-pulse"
+                          : "bg-black/70 border border-white/15 text-white/30"
                       )}
                     >
                       <Icon size={16} />
@@ -633,15 +780,15 @@ export function RequestLiveTracker({ initialRequest }: RequestLiveTrackerProps) 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Left Column: Runner Information */}
         <div className="space-y-4">
-          <div className="p-5 rounded-3xl bg-[#0e1612]/95 border border-white/10 shadow-lg flex flex-col gap-4">
+          <div className="p-5 sm:p-6 rounded-3xl bg-[#09120c]/90 border border-white/10 hover:border-emerald-500/25 transition-all shadow-lg backdrop-blur-xl flex flex-col gap-4">
             <h4 className="text-xs font-bold text-[#00E676] uppercase tracking-wider flex items-center gap-1.5">
               <User size={14} /> Assigned Student Runner
             </h4>
 
             {runner ? (
               <div className="flex flex-col gap-4">
-                <div className="flex items-center gap-3.5 p-3.5 rounded-2xl bg-black/40 border border-white/10">
-                  <div className="w-13 h-13 rounded-2xl bg-gradient-to-tr from-emerald-600 to-emerald-400 flex items-center justify-center text-xl font-black text-white shadow-[0_0_15px_rgba(0,230,118,0.25)] shrink-0">
+                <div className="flex items-center gap-3.5 p-3.5 rounded-2xl bg-black/50 border border-white/10">
+                  <div className="w-13 h-13 rounded-2xl bg-gradient-to-tr from-emerald-600 to-emerald-400 flex items-center justify-center text-xl font-black text-white shadow-[0_0_18px_rgba(0,230,118,0.3)] shrink-0">
                     {runner.full_name?.charAt(0).toUpperCase() || "R"}
                   </div>
                   <div className="flex-1 min-w-0">
@@ -662,7 +809,7 @@ export function RequestLiveTracker({ initialRequest }: RequestLiveTrackerProps) 
                 {/* Direct Action: Chat with Runner */}
                 <Link
                   href={`/dashboard/chat?requestId=${request.id}&startWithUserId=${runner.id}`}
-                  className="w-full bg-gradient-to-r from-[#00C853] to-[#00E676] hover:from-[#00E676] hover:to-[#00C853] text-[#050805] font-extrabold text-sm p-3.5 rounded-2xl flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(0,230,118,0.3)] transition-all active:scale-[0.99]"
+                  className="w-full bg-gradient-to-r from-[#00C853] to-[#00E676] hover:from-[#00E676] hover:to-[#00C853] text-[#050805] font-extrabold text-sm p-4 rounded-2xl flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(0,230,118,0.3)] transition-all active:scale-[0.99]"
                 >
                   <MessageSquare size={16} />
                   Message {runner.full_name?.split(" ")[0] || "Runner"}
@@ -670,34 +817,35 @@ export function RequestLiveTracker({ initialRequest }: RequestLiveTrackerProps) 
                 </Link>
               </div>
             ) : (
-              <div className="p-6 rounded-2xl bg-black/40 border border-dashed border-white/15 text-center flex flex-col items-center gap-2">
-                <Radio size={24} className="text-[#00E676] animate-pulse" />
+              <div className="p-6 rounded-2xl bg-black/50 border border-dashed border-emerald-500/20 text-center flex flex-col items-center gap-2.5">
+                <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/25 flex items-center justify-center text-[#00E676]">
+                  <Radio size={20} className="animate-pulse" />
+                </div>
                 <p className="text-sm font-bold text-white">Awaiting Runner Pickup</p>
-                <p className="text-xs text-[#A7B8B0]">
-                  Nearby campus runners have been notified. You will receive an instant audio &
-                  visual alert when accepted.
+                <p className="text-xs text-[#A7B8B0] max-w-xs">
+                  Nearby campus runners have received your request notification. You will hear an instant audio chime when matched.
                 </p>
               </div>
             )}
           </div>
 
           {/* Delivery Locations */}
-          <div className="p-5 rounded-3xl bg-[#0e1612]/95 border border-white/10 shadow-lg space-y-4">
+          <div className="p-5 sm:p-6 rounded-3xl bg-[#09120c]/90 border border-white/10 hover:border-emerald-500/25 transition-all shadow-lg backdrop-blur-xl space-y-4">
             <h4 className="text-xs font-bold text-[#00E676] uppercase tracking-wider flex items-center gap-1.5">
-              <MapPin size={14} /> Logistics Details
+              <MapPin size={14} /> Logistics Route
             </h4>
 
             <div className="space-y-3 text-xs">
-              <div className="p-3.5 rounded-2xl bg-black/40 border border-white/10 space-y-1">
-                <span className="text-[10px] uppercase tracking-wider text-[#A7B8B0] font-bold">
-                  Pickup Location
+              <div className="p-3.5 rounded-2xl bg-black/50 border border-white/10 space-y-1">
+                <span className="text-[10px] uppercase tracking-wider text-[#A7B8B0] font-bold flex items-center gap-1">
+                  <Store size={12} className="text-emerald-400" /> Pickup Spot
                 </span>
                 <p className="font-extrabold text-white text-sm">{request.pickup_location}</p>
               </div>
 
-              <div className="p-3.5 rounded-2xl bg-black/40 border border-white/10 space-y-1">
-                <span className="text-[10px] uppercase tracking-wider text-[#A7B8B0] font-bold">
-                  Delivery Destination
+              <div className="p-3.5 rounded-2xl bg-black/50 border border-white/10 space-y-1">
+                <span className="text-[10px] uppercase tracking-wider text-[#A7B8B0] font-bold flex items-center gap-1">
+                  <Navigation size={12} className="text-[#00E676]" /> Destination Room
                 </span>
                 <p className="font-extrabold text-[#00E676] text-sm">
                   {request.dropoff_location}
@@ -718,7 +866,7 @@ export function RequestLiveTracker({ initialRequest }: RequestLiveTrackerProps) 
 
         {/* Right Column: Requested Items & Financial Breakdown */}
         <div className="space-y-4">
-          <div className="p-5 rounded-3xl bg-[#0e1612]/95 border border-white/10 shadow-lg space-y-4">
+          <div className="p-5 sm:p-6 rounded-3xl bg-[#09120c]/90 border border-white/10 hover:border-emerald-500/25 transition-all shadow-lg backdrop-blur-xl space-y-4">
             <div className="flex justify-between items-center">
               <h4 className="text-xs font-bold text-[#00E676] uppercase tracking-wider flex items-center gap-1.5">
                 <Package size={14} /> Requested Items ({request.items?.length || 0})
@@ -732,7 +880,7 @@ export function RequestLiveTracker({ initialRequest }: RequestLiveTrackerProps) 
               {request.items?.map((it) => (
                 <div
                   key={it.id}
-                  className="flex items-center justify-between p-3 rounded-2xl bg-black/40 border border-white/10 text-xs"
+                  className="flex items-center justify-between p-3.5 rounded-2xl bg-black/50 border border-white/10 text-xs"
                 >
                   <div className="flex items-center gap-2.5">
                     <span className="text-[#00E676] font-black bg-emerald-500/15 border border-emerald-500/25 px-2 py-0.5 rounded-md">
@@ -740,7 +888,7 @@ export function RequestLiveTracker({ initialRequest }: RequestLiveTrackerProps) 
                     </span>
                     <span className="text-white font-semibold">{it.name}</span>
                   </div>
-                  <span className="text-[#A7B8B0] font-mono">
+                  <span className="text-emerald-400 font-mono font-bold">
                     {it.estimated_price ? `~₹${it.estimated_price * it.quantity}` : "Custom"}
                   </span>
                 </div>
@@ -748,9 +896,9 @@ export function RequestLiveTracker({ initialRequest }: RequestLiveTrackerProps) 
             </div>
 
             {/* Financial Summary */}
-            <div className="pt-3 border-t border-white/10 space-y-2 text-xs">
+            <div className="pt-3.5 border-t border-white/10 space-y-2.5 text-xs">
               <div className="flex justify-between text-[#A7B8B0]">
-                <span>Items Estimated Cost</span>
+                <span>Estimated Items Cost</span>
                 <span className="font-mono text-white">~₹{request.total_estimated_amount}</span>
               </div>
               <div className="flex justify-between text-[#A7B8B0]">
@@ -759,9 +907,9 @@ export function RequestLiveTracker({ initialRequest }: RequestLiveTrackerProps) 
                   ₹{request.delivery_fee}
                 </span>
               </div>
-              <div className="flex justify-between text-white font-bold pt-2 border-t border-white/5 text-sm">
+              <div className="flex justify-between text-white font-bold pt-2.5 border-t border-white/10 text-sm">
                 <span>Total Expected Amount</span>
-                <span className="font-mono text-[#00E676]">
+                <span className="font-mono text-[#00E676] text-base">
                   ~₹{request.total_estimated_amount + request.delivery_fee}
                 </span>
               </div>
@@ -769,14 +917,14 @@ export function RequestLiveTracker({ initialRequest }: RequestLiveTrackerProps) 
           </div>
 
           {/* Request Meta Card */}
-          <div className="p-4 rounded-3xl bg-black/30 border border-white/10 text-xs text-[#A7B8B0] flex items-center justify-between">
+          <div className="p-4 rounded-3xl bg-black/40 border border-white/10 text-xs text-[#A7B8B0] flex items-center justify-between backdrop-blur-md">
             <span>
               Request ID:{" "}
               <strong className="text-white font-mono">
                 #{request.id.substring(0, 8).toUpperCase()}
               </strong>
             </span>
-            <span>{format(new Date(request.created_at), "MMM d, h:mm a")}</span>
+            <span className="font-mono">{format(new Date(request.created_at), "MMM d, h:mm a")}</span>
           </div>
         </div>
       </div>
