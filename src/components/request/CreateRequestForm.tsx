@@ -1340,7 +1340,7 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
                   </span>
                 </div>
                 <p className="text-[#A7B8B0] text-xs m-0">
-                  Aapne {totalItemCount} {totalItemCount === 1 ? "item" : "items"} select kiye hain, isliye minimum reward ₹{minRequiredReward} (₹5/item) hai. Runner ko fast delivery ke liye aap extra reward bhi de sakte hain.
+                  You have selected {totalItemCount} {totalItemCount === 1 ? "item" : "items"}, so the minimum reward is ₹{minRequiredReward} (₹5 per item). You can also add an extra tip/reward for faster runner pickup.
                 </p>
 
                 <div className="flex flex-wrap items-center gap-2.5">
