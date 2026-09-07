@@ -57,11 +57,6 @@ interface QuickItem {
 
 const PICKUP_LOCATIONS = [
   "Hostel Vending Machine (Lobby / GF)",
-  "Campus Food Court",
-  "Hostel Night Canteen",
-  "Campus Tuck Shop",
-  "Nescafe Stall",
-  "Main Gate Stores",
   "Other (Custom Spot)",
 ];
 
@@ -928,7 +923,7 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
                 <label className="text-[#00E676] text-xs sm:text-sm font-bold flex items-center gap-1.5">
                   <MapPin size={14} /> Pickup Location
                 </label>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                   {PICKUP_LOCATIONS.map((loc) => {
                     const isSelected = pickupLocation === loc;
                     return (
