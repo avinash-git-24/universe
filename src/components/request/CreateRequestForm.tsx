@@ -234,14 +234,14 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
   const [dropoffRoom, setDropoffRoom] = useState("");
   const [roomError, setRoomError] = useState(false);
   const [urgency, setUrgency] = useState<"standard" | "urgent">("standard");
-  const [customReward, setCustomReward] = useState<string>("");
+  const [customReward, setCustomReward] = useState<string>("5");
 
   // Step 3 State: Extras
   const [instructions, setInstructions] = useState("");
 
-  // Delivery Reward: strictly chosen by requester (no automatic reward added)
+  // Delivery Reward: strictly chosen by requester with minimum ₹5
   const currentReward =
-    customReward.trim() !== "" ? Math.max(0, Number(customReward) || 0) : 0;
+    customReward.trim() !== "" ? Math.max(5, Number(customReward) || 5) : 5;
 
   const totalEstimatedItemsAmount = items.reduce(
     (sum, item) => sum + (item.estimatedPrice || 0) * item.quantity,
@@ -312,6 +312,10 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
       setFormError("Please enter your hostel name.");
       return;
     }
+    if (currentReward < 5) {
+      setFormError("Minimum runner delivery reward must be at least ₹5.");
+      return;
+    }
     setRoomError(false);
     setFormError(null);
     setStep(3);
@@ -325,6 +329,11 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
     }
     if (!dropoffRoom.trim()) {
       setFormError("Please provide your room number.");
+      setStep(2);
+      return;
+    }
+    if (currentReward < 5) {
+      setFormError("Minimum runner delivery reward must be at least ₹5.");
       setStep(2);
       return;
     }
@@ -1083,18 +1092,18 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
                 </div>
               </div>
 
-              {/* Delivery Reward - Strictly User Defined */}
+              {/* Delivery Reward - Strictly User Defined (Min ₹5) */}
               <div className="flex flex-col gap-2.5 border-t border-white/10 pt-5">
                 <div className="flex justify-between items-center">
                   <label className="text-[#00E676] text-xs sm:text-sm font-bold flex items-center gap-1.5">
                     <Coins size={14} /> Delivery Reward for Runner
                   </label>
                   <span className="text-emerald-400/90 text-[11px] font-semibold bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 rounded-full">
-                    Aapke man se (Optional)
+                    Min ₹5 (Apne man se chunein)
                   </span>
                 </div>
                 <p className="text-[#A7B8B0] text-xs m-0">
-                  Aap runner ko kitna reward dena chahte hain? Jo chahein enter karein (koi auto reward add nahi hoga).
+                  Runner ko kitna reward dena chahte hain? Minimum ₹5 hona zaroori hai.
                 </p>
 
                 <div className="flex flex-wrap items-center gap-2.5">
@@ -1102,8 +1111,8 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
                     <span className="text-[#00E676] text-lg font-extrabold mr-2">₹</span>
                     <input
                       type="number"
-                      min={0}
-                      placeholder="0"
+                      min={5}
+                      placeholder="5"
                       value={customReward}
                       onChange={(e) => setCustomReward(e.target.value)}
                       className="bg-transparent border-none text-white text-base font-extrabold w-24 outline-none placeholder:text-white/30"
@@ -1113,7 +1122,7 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
                   {/* Preset quick buttons */}
                   <div className="flex flex-wrap gap-1.5 sm:gap-2">
                     {[
-                      { label: "₹0 (Free)", val: "0" },
+                      { label: "₹5 (Min)", val: "5" },
                       { label: "₹10", val: "10" },
                       { label: "₹15", val: "15" },
                       { label: "₹20", val: "20" },
@@ -1246,17 +1255,10 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
                       Runner Delivery Reward
                     </span>
                     <span className="text-[#A7B8B0] text-[11px]">
-                      {currentReward === 0
-                        ? "₹0 (Free delivery / Voluntary runner request)"
-                        : "Credited directly upon delivery verification"}
+                      Credited directly to runner upon delivery verification
                     </span>
                   </div>
-                  <span
-                    className={cn(
-                      "text-xl sm:text-2xl font-black",
-                      currentReward === 0 ? "text-white/60" : "text-[#00E676]"
-                    )}
-                  >
+                  <span className="text-[#00E676] text-xl sm:text-2xl font-black">
                     ₹{currentReward}
                   </span>
                 </div>
