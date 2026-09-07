@@ -439,12 +439,16 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
         .filter(Boolean)
         .join(" ");
 
+      // Generate unique 4-digit Handover PIN
+      const freshOtp = Math.floor(1000 + Math.random() * 9000).toString();
+
       const requestData: Omit<InsertRequest, "requester_id"> = {
         pickup_location: finalPickup,
         dropoff_location: finalDropoff,
         instructions: finalInstructions || null,
         total_estimated_amount: totalEstimatedItemsAmount,
         delivery_fee: currentReward,
+        delivery_otp: freshOtp,
         status: "pending",
       };
 
@@ -480,7 +484,8 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
         }
       }
 
-      window.location.href = "/dashboard";
+      // Redirect immediately to live tracking page
+      window.location.href = `/dashboard/requests/${request.id}`;
     } catch (error) {
       console.error("Unexpected submission error:", error);
       setFormError(
