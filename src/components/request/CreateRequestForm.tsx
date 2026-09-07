@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import {
   Plus,
@@ -236,14 +236,32 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
   const [dropoffRoom, setDropoffRoom] = useState("");
   const [roomError, setRoomError] = useState(false);
   const [urgency, setUrgency] = useState<"standard" | "urgent">("standard");
+
+  // Total item count across all selected products
+  const totalItemCount = items.reduce((sum, item) => sum + item.quantity, 0);
+
+  // Delivery Reward: strictly ₹5 per item minimum (minimum ₹5 if 0 or 1 item)
+  const minRequiredReward = Math.max(5, totalItemCount * 5);
+
   const [customReward, setCustomReward] = useState<string>("5");
+
+  // Keep customReward synced with minRequiredReward when items are added or removed
+  useEffect(() => {
+    setCustomReward((prev) => {
+      const num = Number(prev);
+      if (!prev || isNaN(num) || num < minRequiredReward) {
+        return String(minRequiredReward);
+      }
+      return prev;
+    });
+  }, [minRequiredReward]);
+
+  // Delivery Reward: strictly chosen by requester with minimum ₹5 per item
+  const currentReward =
+    customReward.trim() !== "" ? Math.max(minRequiredReward, Number(customReward) || minRequiredReward) : minRequiredReward;
 
   // Step 3 State: Extras
   const [instructions, setInstructions] = useState("");
-
-  // Delivery Reward: strictly chosen by requester with minimum ₹5
-  const currentReward =
-    customReward.trim() !== "" ? Math.max(5, Number(customReward) || 5) : 5;
 
   const totalEstimatedItemsAmount = items.reduce(
     (sum, item) => sum + (item.estimatedPrice || 0) * item.quantity,
@@ -331,8 +349,8 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
       setFormError("Please enter your custom pickup spot.");
       return;
     }
-    if (currentReward < 5) {
-      setFormError("Minimum runner delivery reward must be at least ₹5.");
+    if (currentReward < minRequiredReward) {
+      setFormError(`Minimum runner delivery reward must be at least ₹${minRequiredReward} (₹5 per item).`);
       return;
     }
     setRoomError(false);
@@ -351,8 +369,8 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
       setStep(2);
       return;
     }
-    if (currentReward < 5) {
-      setFormError("Minimum runner delivery reward must be at least ₹5.");
+    if (currentReward < minRequiredReward) {
+      setFormError(`Minimum runner delivery reward must be at least ₹${minRequiredReward} (₹5 per item).`);
       setStep(2);
       return;
     }
@@ -1094,6 +1112,56 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
               </div>
             </div>
 
+            {/* Selected Items Review Card */}
+            <div className="bg-[#0e1612]/95 border border-emerald-500/25 rounded-2xl p-4 flex flex-col gap-3 shadow-[0_4px_20px_rgba(0,0,0,0.4)]">
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-[#00E676] font-bold flex items-center gap-1.5 uppercase tracking-wider">
+                  <Box size={14} className="text-[#00E676]" />
+                  Selected Items ({totalItemCount} {totalItemCount === 1 ? "item" : "items"})
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setStep(1)}
+                  className="text-xs font-semibold text-[#00E676] hover:underline cursor-pointer flex items-center gap-1"
+                >
+                  Edit Items
+                </button>
+              </div>
+              <div className="flex flex-col gap-2 max-h-[170px] overflow-y-auto pr-1 [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:bg-emerald-500/30 [&::-webkit-scrollbar-thumb]:rounded-full">
+                {items.map((it) => (
+                  <div
+                    key={it.id}
+                    className="flex items-center justify-between bg-black/40 border border-white/10 rounded-xl px-3.5 py-2 text-xs"
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <span className="text-[#00E676] font-black bg-emerald-500/15 px-2 py-0.5 rounded-md border border-emerald-500/25">
+                        {it.quantity}x
+                      </span>
+                      <span className="text-white font-semibold">{it.name}</span>
+                      <span className="text-white/40 text-[10px]">({it.category})</span>
+                    </div>
+                    <span className="text-emerald-400 font-bold">
+                      {it.estimatedPrice !== undefined
+                        ? `~₹${it.estimatedPrice * it.quantity}`
+                        : "Custom price"}
+                    </span>
+                  </div>
+                ))}
+              </div>
+              <div className="flex flex-wrap items-center justify-between pt-2 border-t border-white/5 text-xs gap-2">
+                <span className="text-[#A7B8B0]">
+                  Items Est. Total:{" "}
+                  <strong className="text-white">~₹{totalEstimatedItemsAmount}</strong>
+                </span>
+                <span className="text-[#A7B8B0]">
+                  Delivery Reward:{" "}
+                  <strong className="text-[#00E676]">
+                    ₹5 × {totalItemCount} items = ₹{minRequiredReward}
+                  </strong>
+                </span>
+              </div>
+            </div>
+
             <div className="flex flex-col gap-6">
               {/* Pickup Location */}
               <div className="flex flex-col gap-2.5">
@@ -1261,18 +1329,18 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
                 </div>
               </div>
 
-              {/* Delivery Reward - Strictly User Defined (Min ₹5) */}
+              {/* Delivery Reward - Strictly User Defined (Min ₹5 per item) */}
               <div className="flex flex-col gap-2.5 border-t border-white/10 pt-5">
                 <div className="flex justify-between items-center">
                   <label className="text-[#00E676] text-xs sm:text-sm font-bold flex items-center gap-1.5">
                     <Coins size={14} /> Delivery Reward for Runner
                   </label>
                   <span className="text-emerald-400/90 text-[11px] font-semibold bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 rounded-full">
-                    Min ₹5 (Apne man se chunein)
+                    ₹5 per item (Min ₹{minRequiredReward})
                   </span>
                 </div>
                 <p className="text-[#A7B8B0] text-xs m-0">
-                  Runner ko kitna reward dena chahte hain? Minimum ₹5 hona zaroori hai.
+                  Aapne {totalItemCount} {totalItemCount === 1 ? "item" : "items"} select kiye hain, isliye minimum reward ₹{minRequiredReward} (₹5/item) hai. Runner ko fast delivery ke liye aap extra reward bhi de sakte hain.
                 </p>
 
                 <div className="flex flex-wrap items-center gap-2.5">
@@ -1280,8 +1348,8 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
                     <span className="text-[#00E676] text-lg font-extrabold mr-2">₹</span>
                     <input
                       type="number"
-                      min={5}
-                      placeholder="5"
+                      min={minRequiredReward}
+                      placeholder={String(minRequiredReward)}
                       value={customReward}
                       onChange={(e) => setCustomReward(e.target.value)}
                       className="bg-transparent border-none text-white text-base font-extrabold w-24 outline-none placeholder:text-white/30"
@@ -1291,12 +1359,12 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
                   {/* Preset quick buttons */}
                   <div className="flex flex-wrap gap-1.5 sm:gap-2">
                     {[
-                      { label: "₹5 (Min)", val: "5" },
-                      { label: "₹10", val: "10" },
-                      { label: "₹15", val: "15" },
-                      { label: "₹20", val: "20" },
-                      { label: "₹30", val: "30" },
-                      { label: "₹50", val: "50" },
+                      { label: `₹${minRequiredReward} (Min)`, val: String(minRequiredReward) },
+                      { label: `₹${minRequiredReward + 5}`, val: String(minRequiredReward + 5) },
+                      { label: `₹${minRequiredReward + 10}`, val: String(minRequiredReward + 10) },
+                      { label: `₹${minRequiredReward + 20}`, val: String(minRequiredReward + 20) },
+                      { label: `₹${minRequiredReward + 35}`, val: String(minRequiredReward + 35) },
+                      { label: `₹${minRequiredReward + 50}`, val: String(minRequiredReward + 50) },
                     ].map((btn) => (
                       <button
                         key={btn.val}
@@ -1372,7 +1440,7 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
               <div className="bg-emerald-500/[0.04] border border-emerald-500/20 rounded-2xl p-4 sm:p-5 flex flex-col gap-3.5">
                 {/* Items preview */}
                 <div className="flex justify-between items-start text-xs sm:text-sm">
-                  <span className="text-[#A7B8B0] font-medium">Items ({items.length})</span>
+                  <span className="text-[#A7B8B0] font-medium">Items ({totalItemCount} {totalItemCount === 1 ? "item" : "items"})</span>
                   <div className="text-right flex flex-col gap-1 max-w-[280px]">
                     {items.map((i) => (
                       <span key={i.id} className="text-white font-semibold text-xs sm:text-sm">
