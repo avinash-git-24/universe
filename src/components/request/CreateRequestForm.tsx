@@ -33,7 +33,7 @@ type InsertRequest = Database["public"]["Tables"]["delivery_requests"]["Insert"]
 type InsertItem = Database["public"]["Tables"]["request_items"]["Insert"];
 
 type Category =
-  | "Vending Kiosk"
+  | "Vending Machine"
   | "Snack"
   | "Beverage"
   | "Meal"
@@ -69,7 +69,7 @@ const HOSTELS = [
 ];
 
 const POPULAR_ITEMS: Record<Category, QuickItem[]> = {
-  "Vending Kiosk": [
+  "Vending Machine": [
     // ── Cold Drinks & Shakes (Vending 1 & 2) ──
     { name: "Frooti 400ml", price: 30, subType: "Drinks" },
     { name: "Appy Fizz 250ml", price: 20, subType: "Drinks" },
@@ -212,7 +212,7 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
 
   // Step 1 State: Items
   const [items, setItems] = useState<ItemForm[]>([]);
-  const [currentCategory, setCurrentCategory] = useState<Category>("Vending Kiosk");
+  const [currentCategory, setCurrentCategory] = useState<Category>("Vending Machine");
   const [vendingSubFilter, setVendingSubFilter] = useState<"All" | "Drinks" | "Snacks" | "Sweets">("All");
   const [currentItemName, setCurrentItemName] = useState("");
   const [currentItemQty, setCurrentItemQty] = useState(1);
@@ -445,7 +445,7 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
     label: Category;
     icon: React.ComponentType<{ size?: number; className?: string }>;
   }[] = [
-    { label: "Vending Kiosk", icon: Store },
+    { label: "Vending Machine", icon: Store },
     { label: "Snack", icon: Pizza },
     { label: "Beverage", icon: Coffee },
     { label: "Meal", icon: Utensils },
@@ -651,28 +651,28 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
                 <div className="flex items-center gap-1.5 text-xs text-[#A7B8B0]">
                   <Sparkles size={13} className="text-[#00E676]" />
                   <span>
-                    {currentCategory === "Vending Kiosk"
+                    {currentCategory === "Vending Machine"
                       ? "Hostel Vending Machine Live Stock (Tap to 1-click add):"
                       : `Popular ${currentCategory} items (tap to 1-click add):`}
                   </span>
                 </div>
-                {currentCategory === "Vending Kiosk" && (
+                {currentCategory === "Vending Machine" && (
                   <span className="text-[10px] uppercase font-extrabold text-[#00E676] bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-full flex items-center gap-1">
                     <span className="w-1.5 h-1.5 rounded-full bg-[#00E676] animate-pulse" />
-                    Hostel GF Kiosks
+                    Hostel GF Machines
                   </span>
                 )}
               </div>
 
               {/* Vending Machine Sub-Category Tabs */}
-              {currentCategory === "Vending Kiosk" && (
+              {currentCategory === "Vending Machine" && (
                 <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs select-none">
                   {(["All", "Drinks", "Snacks", "Sweets"] as const).map((sub) => {
                     const isSubActive = vendingSubFilter === sub;
                     const count =
                       sub === "All"
-                        ? POPULAR_ITEMS["Vending Kiosk"].length
-                        : POPULAR_ITEMS["Vending Kiosk"].filter((it) => it.subType === sub).length;
+                        ? POPULAR_ITEMS["Vending Machine"].length
+                        : POPULAR_ITEMS["Vending Machine"].filter((it) => it.subType === sub).length;
                     return (
                       <button
                         key={sub}
@@ -696,8 +696,8 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
               )}
 
               <div className="flex flex-wrap gap-1.5 sm:gap-2 max-h-[220px] overflow-y-auto pr-1">
-                {(currentCategory === "Vending Kiosk" && vendingSubFilter !== "All"
-                  ? POPULAR_ITEMS["Vending Kiosk"].filter((item) => item.subType === vendingSubFilter)
+                {(currentCategory === "Vending Machine" && vendingSubFilter !== "All"
+                  ? POPULAR_ITEMS["Vending Machine"].filter((item) => item.subType === vendingSubFilter)
                   : POPULAR_ITEMS[currentCategory] || []
                 ).map((chip) => (
                   <button
@@ -941,7 +941,7 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
                   <div className="flex items-center gap-2.5 p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/25 text-xs text-emerald-300">
                     <Zap size={15} className="text-[#00E676] shrink-0" />
                     <span>
-                      <strong>Hostel Lobby Vending Kiosk:</strong> Student runners in your hostel can dispense and deliver your items to your room in 3–5 minutes!
+                      <strong>Hostel Lobby Vending Machine:</strong> Student runners in your hostel can dispense and deliver your items to your room in 3–5 minutes!
                     </span>
                   </div>
                 )}
