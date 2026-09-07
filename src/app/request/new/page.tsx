@@ -5,7 +5,6 @@ import { CreateRequestForm } from "@/components/request/CreateRequestForm";
 import { NotificationBell } from "@/components/notifications/NotificationBell";
 import { ArrowLeft, Sparkles, Zap } from "lucide-react";
 import Link from "next/link";
-import LazySpaceBackground from "@/components/auth/LazySpaceBackground";
 
 export default async function NewRequestPage() {
   const { data: { user }, error } = await getUser();
@@ -40,17 +39,17 @@ export default async function NewRequestPage() {
 
   return (
     <div className="min-h-screen bg-[#050805] px-3 py-4 sm:px-6 sm:py-8 lg:p-10 relative overflow-x-hidden">
-      {/* ── Atmospheric Cosmic Background ── */}
-      <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
-        {/* Deep ambient cosmic glowing nebulae */}
-        <div className="absolute top-[-10%] left-[20%] w-[600px] h-[600px] bg-emerald-500/15 rounded-full blur-[140px]" />
-        <div className="absolute top-[35%] right-[5%] w-[500px] h-[500px] bg-emerald-600/15 rounded-full blur-[130px]" />
-        <div className="absolute bottom-[-10%] left-[-5%] w-[500px] h-[500px] bg-teal-500/10 rounded-full blur-[140px]" />
-
-        {/* Floating cosmic particles background */}
-        <div className="absolute inset-0 opacity-45">
-          <LazySpaceBackground />
-        </div>
+      {/* ── Sleek 2D Ambient Glow Background (No 3D Canvas / No Floating Balls) ── */}
+      <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden select-none">
+        {/* Soft Volumetric Emerald Glow at Top */}
+        <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-[850px] h-[500px] bg-gradient-to-b from-emerald-500/15 via-emerald-500/5 to-transparent blur-3xl rounded-full" />
+        {/* Subtle Ambient Accent Glows */}
+        <div className="absolute top-[35%] right-[-5%] w-[450px] h-[450px] bg-emerald-600/10 blur-3xl rounded-full" />
+        <div className="absolute bottom-[-10%] left-[-5%] w-[450px] h-[450px] bg-teal-500/10 blur-3xl rounded-full" />
+        {/* Faint Cyber Dot Matrix Grid */}
+        <div className="absolute inset-0 bg-[radial-gradient(#10b981_1px,transparent_1px)] [background-size:48px_48px] opacity-[0.04]" />
+        {/* Deep Space Vignette */}
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#050805]/40 to-[#050805]" />
       </div>
 
       <main className="relative z-10 w-full max-w-4xl mx-auto">
