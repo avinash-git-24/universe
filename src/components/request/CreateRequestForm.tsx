@@ -24,6 +24,8 @@ import {
   Clock,
   Coins,
   Store,
+  Search,
+  X,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
@@ -215,10 +217,17 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
   const [items, setItems] = useState<ItemForm[]>([]);
   const [currentCategory, setCurrentCategory] = useState<Category>("Vending Machine");
   const [vendingSubFilter, setVendingSubFilter] = useState<"All" | "Drinks" | "Snacks" | "Sweets">("All");
+  const [vendingSearch, setVendingSearch] = useState("");
   const [currentItemName, setCurrentItemName] = useState("");
   const [currentItemQty, setCurrentItemQty] = useState(1);
   const [currentItemPrice, setCurrentItemPrice] = useState("");
   const [itemInputError, setItemInputError] = useState(false);
+
+  // Helper to get quantity of an item currently in cart
+  const getItemQty = (name: string): number => {
+    const found = items.find((it) => it.name.toLowerCase() === name.toLowerCase());
+    return found ? found.quantity : 0;
+  };
 
   // Step 2 State: Logistics & Reward
   const [pickupLocation, setPickupLocation] = useState(PICKUP_LOCATIONS[0]);
@@ -268,20 +277,41 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
   };
 
   const handleQuickAdd = (name: string, price: number) => {
-    setItems((prev) => [
-      ...prev,
-      {
-        id: Math.random().toString(36).substring(2, 9),
-        name,
-        category: currentCategory,
-        quantity: 1,
-        estimatedPrice: price,
-      },
-    ]);
+    setItems((prev) => {
+      const idx = prev.findIndex((it) => it.name.toLowerCase() === name.toLowerCase());
+      if (idx > -1) {
+        const updated = [...prev];
+        updated[idx] = { ...updated[idx], quantity: updated[idx].quantity + 1 };
+        return updated;
+      }
+      return [
+        ...prev,
+        {
+          id: Math.random().toString(36).substring(2, 9),
+          name,
+          category: currentCategory,
+          quantity: 1,
+          estimatedPrice: price,
+        },
+      ];
+    });
     setCurrentItemName("");
     setCurrentItemPrice("");
     setItemInputError(false);
     setFormError(null);
+  };
+
+  const handleQuickRemove = (name: string) => {
+    setItems((prev) => {
+      const idx = prev.findIndex((it) => it.name.toLowerCase() === name.toLowerCase());
+      if (idx === -1) return prev;
+      if (prev[idx].quantity > 1) {
+        const updated = [...prev];
+        updated[idx] = { ...updated[idx], quantity: updated[idx].quantity - 1 };
+        return updated;
+      }
+      return prev.filter((_, i) => i !== idx);
+    });
   };
 
   const handleRemoveItem = (id: string) => {
@@ -665,86 +695,190 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
                 )}
               </div>
 
-              {/* Vending Machine Sub-Category Tabs */}
+              {/* Vending Machine Filter & Search Header */}
               {currentCategory === "Vending Machine" && (
-                <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs select-none">
-                  {(["All", "Drinks", "Snacks", "Sweets"] as const).map((sub) => {
-                    const isSubActive = vendingSubFilter === sub;
-                    const count =
-                      sub === "All"
-                        ? VENDING_PRODUCTS.length
-                        : VENDING_PRODUCTS.filter((it) => it.subType === sub).length;
-                    return (
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+                  {/* Sub-Category Tabs */}
+                  <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs select-none flex-1">
+                    {(["All", "Drinks", "Snacks", "Sweets"] as const).map((sub) => {
+                      const isSubActive = vendingSubFilter === sub;
+                      const count =
+                        sub === "All"
+                          ? VENDING_PRODUCTS.length
+                          : VENDING_PRODUCTS.filter((it) => it.subType === sub).length;
+                      return (
+                        <button
+                          key={sub}
+                          type="button"
+                          onClick={() => setVendingSubFilter(sub)}
+                          className={cn(
+                            "px-2.5 py-1 rounded-lg font-semibold cursor-pointer transition-all border text-[11px] whitespace-nowrap",
+                            isSubActive
+                              ? "bg-[#00E676]/20 border-[#00E676] text-[#00E676] shadow-[0_0_10px_rgba(0,230,118,0.2)] font-bold"
+                              : "bg-white/[0.03] border-white/10 text-white/60 hover:text-white hover:border-white/20"
+                          )}
+                        >
+                          {sub === "All" && `All (${count})`}
+                          {sub === "Drinks" && `🥤 Drinks (${count})`}
+                          {sub === "Snacks" && `🍿 Chips (${count})`}
+                          {sub === "Sweets" && `🍫 Chocolates (${count})`}
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {/* Instant Quick Search Bar */}
+                  <div className="relative w-full sm:w-52 shrink-0">
+                    <Search size={13} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-white/40 pointer-events-none" />
+                    <input
+                      type="text"
+                      placeholder="Search 57 snacks & drinks..."
+                      value={vendingSearch}
+                      onChange={(e) => setVendingSearch(e.target.value)}
+                      className="w-full bg-black/40 border border-white/10 focus:border-[#00E676] rounded-xl pl-7 pr-7 py-1.5 text-xs text-white placeholder:text-white/30 outline-none transition-all"
+                    />
+                    {vendingSearch && (
                       <button
-                        key={sub}
                         type="button"
-                        onClick={() => setVendingSubFilter(sub)}
-                        className={cn(
-                          "px-2.5 py-1 rounded-lg font-semibold cursor-pointer transition-all border text-[11px] whitespace-nowrap",
-                          isSubActive
-                            ? "bg-[#00E676]/20 border-[#00E676] text-[#00E676] shadow-[0_0_10px_rgba(0,230,118,0.2)] font-bold"
-                            : "bg-white/[0.03] border-white/10 text-white/60 hover:text-white hover:border-white/20"
-                        )}
+                        onClick={() => setVendingSearch("")}
+                        className="absolute right-2 top-1/2 -translate-y-1/2 text-white/40 hover:text-white cursor-pointer"
+                        title="Clear search"
                       >
-                        {sub === "All" && `All Items (${count})`}
-                        {sub === "Drinks" && `🥤 Drinks & Shakes (${count})`}
-                        {sub === "Snacks" && `🍿 Chips & Wafers (${count})`}
-                        {sub === "Sweets" && `🍫 Chocolates & Biscuits (${count})`}
+                        <X size={12} />
                       </button>
-                    );
-                  })}
+                    )}
+                  </div>
                 </div>
               )}
 
               {currentCategory === "Vending Machine" ? (
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2.5 sm:gap-3 max-h-[460px] overflow-y-auto pr-1.5 custom-scrollbar">
-                  {(vendingSubFilter === "All"
-                    ? VENDING_PRODUCTS
-                    : VENDING_PRODUCTS.filter((item) => item.subType === vendingSubFilter)
-                  ).map((prod) => (
-                    <div
-                      key={prod.id}
-                      onClick={() => handleQuickAdd(prod.name, prod.price)}
-                      className="group relative bg-[#0e1612]/90 hover:bg-[#132219] border border-white/10 hover:border-[#00E676]/60 rounded-2xl p-2.5 sm:p-3 flex flex-col justify-between transition-all duration-200 cursor-pointer shadow-md hover:shadow-[0_0_20px_rgba(0,230,118,0.2)] hover:-translate-y-0.5 select-none"
-                    >
-                      {/* Product Packaging Image */}
-                      <div className="relative w-full aspect-square rounded-xl bg-black/40 border border-white/5 flex items-center justify-center p-2 mb-2 overflow-hidden group-hover:border-[#00E676]/20 transition-colors">
-                        <img
-                          src={prod.image}
-                          alt={prod.name}
-                          loading="lazy"
-                          className="w-full h-full object-contain drop-shadow-[0_4px_8px_rgba(0,0,0,0.5)] group-hover:scale-105 transition-transform duration-300"
-                        />
-                        {/* Category badge */}
-                        <span className="absolute top-1.5 left-1.5 text-[9px] font-semibold text-white/60 bg-black/70 px-1.5 py-0.5 rounded-md backdrop-blur-sm border border-white/5">
-                          {prod.subType === "Drinks" ? "Drink" : prod.subType === "Snacks" ? "Snack" : "Sweet"}
-                        </span>
-                      </div>
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2.5 sm:gap-3 max-h-[460px] overflow-y-auto pr-1.5 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-black/20 [&::-webkit-scrollbar-thumb]:bg-emerald-500/30 hover:[&::-webkit-scrollbar-thumb]:bg-[#00E676]/60 [&::-webkit-scrollbar-thumb]:rounded-full">
+                  {VENDING_PRODUCTS.filter((item) => {
+                    const matchesTab = vendingSubFilter === "All" || item.subType === vendingSubFilter;
+                    const q = vendingSearch.trim().toLowerCase();
+                    const matchesSearch =
+                      !q ||
+                      item.name.toLowerCase().includes(q) ||
+                      item.slot.toLowerCase().includes(q);
+                    return matchesTab && matchesSearch;
+                  }).map((prod) => {
+                    const qty = getItemQty(prod.name);
+                    const isInCart = qty > 0;
+                    return (
+                      <div
+                        key={prod.id}
+                        onClick={() => {
+                          if (!isInCart) handleQuickAdd(prod.name, prod.price);
+                        }}
+                        className={cn(
+                          "group relative border rounded-2xl p-2.5 sm:p-3 flex flex-col justify-between transition-all duration-200 cursor-pointer shadow-md select-none",
+                          isInCart
+                            ? "bg-[#122319] border-[#00E676] ring-1 ring-[#00E676]/40 shadow-[0_0_20px_rgba(0,230,118,0.22)]"
+                            : "bg-[#0e1612]/90 hover:bg-[#132219] border-white/10 hover:border-[#00E676]/60 hover:shadow-[0_0_20px_rgba(0,230,118,0.2)] hover:-translate-y-0.5"
+                        )}
+                      >
+                        {/* Top-Right Cart Quantity Indicator Badge */}
+                        {isInCart && (
+                          <span className="absolute -top-1.5 -right-1.5 bg-[#00E676] text-[#050805] text-[10px] font-black w-5 h-5 rounded-full flex items-center justify-center shadow-lg border border-[#050805] z-10 animate-in fade-in zoom-in-75">
+                            {qty}
+                          </span>
+                        )}
 
-                      {/* Title */}
-                      <h4 className="text-white/90 group-hover:text-white font-medium text-xs line-clamp-2 leading-snug mb-2 min-h-[32px]">
-                        {prod.name}
-                      </h4>
+                        {/* Product Packaging Image */}
+                        <div className="relative w-full aspect-square rounded-xl bg-black/40 border border-white/5 flex items-center justify-center p-2 mb-2 overflow-hidden group-hover:border-[#00E676]/20 transition-colors">
+                          <img
+                            src={prod.image}
+                            alt={prod.name}
+                            loading="lazy"
+                            className="w-full h-full object-contain drop-shadow-[0_4px_8px_rgba(0,0,0,0.5)] group-hover:scale-105 transition-transform duration-300"
+                          />
+                          {/* Category badge */}
+                          <span className="absolute top-1.5 left-1.5 text-[9px] font-semibold text-white/60 bg-black/70 px-1.5 py-0.5 rounded-md backdrop-blur-sm border border-white/5">
+                            {prod.subType === "Drinks" ? "Drink" : prod.subType === "Snacks" ? "Snack" : "Sweet"}
+                          </span>
+                          {/* Vending Machine Slot Code (e.g., A-01, B-03) */}
+                          <span className="absolute top-1.5 right-1.5 text-[9px] font-mono font-bold text-[#00E676] bg-black/80 px-1.5 py-0.5 rounded border border-emerald-500/30 shadow-sm">
+                            {prod.slot}
+                          </span>
+                        </div>
 
-                      {/* Price + Quick Add Button */}
-                      <div className="flex items-center justify-between mt-auto pt-1.5 border-t border-white/5">
-                        <span className="text-[#00E676] font-extrabold text-xs sm:text-sm tracking-tight">
-                          ₹{prod.price}
-                        </span>
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleQuickAdd(prod.name, prod.price);
-                          }}
-                          className="w-7 h-7 rounded-lg bg-emerald-500/15 group-hover:bg-[#00E676] text-[#00E676] group-hover:text-[#050805] border border-emerald-500/30 group-hover:border-[#00E676] flex items-center justify-center transition-all cursor-pointer shadow-sm active:scale-90"
-                          title={`Add ${prod.name}`}
-                        >
-                          <Plus size={14} strokeWidth={2.5} />
-                        </button>
+                        {/* Title */}
+                        <h4 className="text-white/90 group-hover:text-white font-medium text-xs line-clamp-2 leading-snug mb-2 min-h-[32px]">
+                          {prod.name}
+                        </h4>
+
+                        {/* Price + Quick Add / In-Card Stepper */}
+                        <div className="flex items-center justify-between mt-auto pt-1.5 border-t border-white/5">
+                          <span className="text-[#00E676] font-extrabold text-xs sm:text-sm tracking-tight">
+                            ₹{prod.price}
+                          </span>
+
+                          {isInCart ? (
+                            <div className="flex items-center bg-[#00E676] text-[#050805] rounded-lg p-0.5 shadow-[0_0_12px_rgba(0,230,118,0.35)]">
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleQuickRemove(prod.name);
+                                }}
+                                className="w-6 h-6 flex items-center justify-center hover:bg-black/20 rounded transition-colors active:scale-90"
+                                title={`Remove 1 ${prod.name}`}
+                              >
+                                <Minus size={12} strokeWidth={3} />
+                              </button>
+                              <span className="text-xs font-black px-1.5 min-w-[16px] text-center">
+                                {qty}
+                              </span>
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleQuickAdd(prod.name, prod.price);
+                                }}
+                                className="w-6 h-6 flex items-center justify-center hover:bg-black/20 rounded transition-colors active:scale-90"
+                                title={`Add 1 more ${prod.name}`}
+                              >
+                                <Plus size={12} strokeWidth={3} />
+                              </button>
+                            </div>
+                          ) : (
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleQuickAdd(prod.name, prod.price);
+                              }}
+                              className="w-7 h-7 rounded-lg bg-emerald-500/15 group-hover:bg-[#00E676] text-[#00E676] group-hover:text-[#050805] border border-emerald-500/30 group-hover:border-[#00E676] flex items-center justify-center transition-all cursor-pointer shadow-sm active:scale-90"
+                              title={`Add ${prod.name}`}
+                            >
+                              <Plus size={14} strokeWidth={2.5} />
+                            </button>
+                          )}
+                        </div>
                       </div>
+                    );
+                  })}
+
+                  {/* Empty Search Results */}
+                  {VENDING_PRODUCTS.filter((item) => {
+                    const matchesTab = vendingSubFilter === "All" || item.subType === vendingSubFilter;
+                    const q = vendingSearch.trim().toLowerCase();
+                    return matchesTab && (!q || item.name.toLowerCase().includes(q) || item.slot.toLowerCase().includes(q));
+                  }).length === 0 && (
+                    <div className="col-span-full py-12 text-center flex flex-col items-center justify-center gap-2 text-white/50">
+                      <p className="text-xs">No vending machine items found matching &quot;{vendingSearch}&quot;</p>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setVendingSearch("");
+                          setVendingSubFilter("All");
+                        }}
+                        className="text-xs font-semibold text-[#00E676] hover:underline cursor-pointer"
+                      >
+                        Reset search and view all items
+                      </button>
                     </div>
-                  ))}
+                  )}
                 </div>
               ) : (
                 <div className="flex flex-wrap gap-1.5 sm:gap-2 max-h-[220px] overflow-y-auto pr-1">
