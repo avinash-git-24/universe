@@ -223,9 +223,6 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
   const [pickupLocation, setPickupLocation] = useState(PICKUP_LOCATIONS[0]);
   const [customPickupLocation, setCustomPickupLocation] = useState("");
   const [dropoffHostel, setDropoffHostel] = useState(HOSTELS[0]);
-  const [otherSpotType, setOtherSpotType] = useState<"Classroom" | "Ground" | "Library" | "Custom">("Classroom");
-  const [otherBuilding, setOtherBuilding] = useState("Academic Block 1");
-  const [customDropoffHostel, setCustomDropoffHostel] = useState("");
   const [dropoffRoom, setDropoffRoom] = useState("");
   const [roomError, setRoomError] = useState(false);
   const [urgency, setUrgency] = useState<"standard" | "urgent">("standard");
@@ -301,10 +298,6 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
     }
     if (pickupLocation === "Other (Custom Spot)" && !customPickupLocation.trim()) {
       setFormError("Please enter your custom pickup spot.");
-      return;
-    }
-    if (dropoffHostel === "Other" && otherSpotType === "Custom" && !otherBuilding.trim()) {
-      setFormError("Please enter your location or building name.");
       return;
     }
     if (currentReward < 5) {
@@ -385,23 +378,10 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
           ? customPickupLocation.trim()
           : pickupLocation;
 
-      let finalDropoff = `${dropoffHostel} - Room ${dropoffRoom.trim()}`;
-      if (dropoffHostel === "Other") {
-        const spotName = otherBuilding.trim() || (
-          otherSpotType === "Classroom" ? "Academic Block" :
-          otherSpotType === "Ground" ? "Sports Ground" :
-          otherSpotType === "Library" ? "Central Library" : "Campus Spot"
-        );
-        if (otherSpotType === "Classroom") {
-          finalDropoff = `Classroom: ${spotName} - Room ${dropoffRoom.trim()}`;
-        } else if (otherSpotType === "Ground") {
-          finalDropoff = `Ground: ${spotName} - ${dropoffRoom.trim()}`;
-        } else if (otherSpotType === "Library") {
-          finalDropoff = `Library: ${spotName} - ${dropoffRoom.trim()}`;
-        } else {
-          finalDropoff = `${spotName} - ${dropoffRoom.trim()}`;
-        }
-      }
+      const finalDropoff =
+        dropoffHostel === "Other"
+          ? `Class Room: ${dropoffRoom.trim()}`
+          : `${dropoffHostel} - Room ${dropoffRoom.trim()}`;
 
       const finalInstructions = [
         instructions.trim(),
@@ -979,353 +959,68 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
 
               {/* Delivery Destination */}
               <div className="flex flex-col gap-3 border-t border-white/10 pt-5">
-                <div className="flex items-center justify-between">
-                  <label className="text-[#00E676] text-xs sm:text-sm font-bold flex items-center gap-1.5">
-                    <MapPin size={14} /> Delivery Destination (Hostel, Classroom, Ground, etc.)
-                  </label>
-                  <span className="text-[11px] text-white/50">
-                    Hostel, Class ya Ground chunein
-                  </span>
-                </div>
+                <label className="text-[#00E676] text-xs sm:text-sm font-bold flex items-center gap-1.5">
+                  <MapPin size={14} /> Delivery Destination (Hostel & Room)
+                </label>
 
                 {/* Hostel & Other Grid */}
                 <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
                   {HOSTELS.map((hostel) => {
                     const isSelected = dropoffHostel === hostel;
-                    const isOther = hostel === "Other";
                     return (
                       <button
                         key={hostel}
                         type="button"
                         onClick={() => {
                           setDropoffHostel(hostel);
-                          if (isOther && !otherBuilding) setOtherBuilding("Academic Block 1");
                           if (roomError) setRoomError(false);
                         }}
                         className={cn(
-                          "py-2.5 px-3 rounded-xl text-center cursor-pointer text-xs sm:text-sm font-medium transition-all border flex flex-col items-center justify-center min-h-[50px]",
+                          "py-2.5 px-3 rounded-xl text-center cursor-pointer text-xs sm:text-sm font-medium transition-all border",
                           isSelected
                             ? "bg-emerald-500/20 border-[#00E676] text-[#00E676] font-bold shadow-[0_0_15px_rgba(0,230,118,0.2)]"
                             : "bg-black/40 border-white/10 text-white/80 hover:border-white/20"
                         )}
                       >
-                        <span>{hostel}</span>
-                        {isOther && (
-                          <span className="text-[10px] text-emerald-400 font-normal">
-                            Class / Ground
-                          </span>
-                        )}
+                        {hostel}
                       </button>
                     );
                   })}
                 </div>
 
-                {/* Standard Hostel Room Input */}
-                {dropoffHostel !== "Other" && (
-                  <div className="flex flex-col gap-1 mt-1">
-                    <input
-                      type="text"
-                      placeholder={`Room Number in ${dropoffHostel} (e.g. 104, B-205, Ground Floor A-Wing)...`}
-                      value={dropoffRoom}
-                      onChange={(e) => {
-                        setDropoffRoom(e.target.value);
-                        if (roomError) setRoomError(false);
-                      }}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") {
-                          e.preventDefault();
-                          handleStep2Continue();
-                        }
-                      }}
-                      className={cn(
-                        "bg-black/40 rounded-xl px-4 py-3 text-white text-sm outline-none border transition-all placeholder:text-white/30",
-                        roomError
-                          ? "border-red-500 ring-1 ring-red-500"
-                          : "border-white/10 focus:border-[#00E676]"
-                      )}
-                    />
-                    {roomError && (
-                      <span className="text-red-400 text-xs font-semibold mt-0.5">
-                        * Room number is required so runner can find you.
-                      </span>
+                {/* Single Room / Classroom Input */}
+                <div className="flex flex-col gap-1 mt-1">
+                  <input
+                    type="text"
+                    placeholder={
+                      dropoffHostel === "Other"
+                        ? "Classroom (e.g. 104, B-205, Ground)..."
+                        : "Room Number (e.g. 104, B-205, Ground Floor A-Wing)..."
+                    }
+                    value={dropoffRoom}
+                    onChange={(e) => {
+                      setDropoffRoom(e.target.value);
+                      if (roomError) setRoomError(false);
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        handleStep2Continue();
+                      }
+                    }}
+                    className={cn(
+                      "bg-black/40 rounded-xl px-4 py-3 text-white text-sm outline-none border transition-all placeholder:text-white/30",
+                      roomError
+                        ? "border-red-500 ring-1 ring-red-500"
+                        : "border-white/10 focus:border-[#00E676]"
                     )}
-                  </div>
-                )}
-
-                {/* Campus Spots (Classroom, Ground, Library, Custom Spot) when "Other" is chosen */}
-                {dropoffHostel === "Other" && (
-                  <div className="flex flex-col gap-3 p-3.5 sm:p-4 rounded-2xl bg-emerald-500/[0.04] border border-emerald-500/20 mt-1">
-                    <div className="flex flex-col gap-1.5">
-                      <span className="text-white/80 text-xs font-semibold">
-                        Kahan mangwana chahte hain? Chunein:
-                      </span>
-                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                        {[
-                          { id: "Classroom", label: "🏫 Classroom", desc: "Academic Block / Room" },
-                          { id: "Ground", label: "⚽ Ground", desc: "Cricket / Sports Ground" },
-                          { id: "Library", label: "📚 Library", desc: "Reading Room / Table" },
-                          { id: "Custom", label: "📍 Other Spot", desc: "Canteen, SAC, Any Place" },
-                        ].map((type) => {
-                          const isCurrent = otherSpotType === type.id;
-                          return (
-                            <button
-                              key={type.id}
-                              type="button"
-                              onClick={() => {
-                                setOtherSpotType(type.id as any);
-                                if (type.id === "Classroom") setOtherBuilding("Academic Block 1");
-                                if (type.id === "Ground") setOtherBuilding("Main Cricket Ground");
-                                if (type.id === "Library") setOtherBuilding("Central Library");
-                                if (type.id === "Custom") setOtherBuilding("");
-                                if (roomError) setRoomError(false);
-                              }}
-                              className={cn(
-                                "p-2.5 rounded-xl border text-left cursor-pointer transition-all flex flex-col gap-0.5",
-                                isCurrent
-                                  ? "bg-emerald-500/20 border-[#00E676] text-[#00E676] shadow-[0_0_12px_rgba(0,230,118,0.2)] font-bold"
-                                  : "bg-black/40 border-white/10 text-white/70 hover:border-white/20"
-                              )}
-                            >
-                              <span className="text-xs sm:text-sm">{type.label}</span>
-                              <span className="text-[10px] text-white/50 font-normal">{type.desc}</span>
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </div>
-
-                    {/* Classroom Form */}
-                    {otherSpotType === "Classroom" && (
-                      <div className="flex flex-col gap-3 pt-1">
-                        <div className="flex flex-col gap-1.5">
-                          <label className="text-white/80 text-xs font-semibold">
-                            Academic Block / Department:
-                          </label>
-                          <div className="flex flex-wrap gap-1.5">
-                            {[
-                              "Academic Block 1",
-                              "Academic Block 2",
-                              "Science Block",
-                              "Lecture Hall (LHC)",
-                              "Engineering Block",
-                            ].map((blk) => (
-                              <button
-                                key={blk}
-                                type="button"
-                                onClick={() => setOtherBuilding(blk)}
-                                className={cn(
-                                  "text-[11px] px-2.5 py-1 rounded-lg border transition-all cursor-pointer",
-                                  otherBuilding === blk
-                                    ? "bg-[#00E676]/20 border-[#00E676] text-[#00E676] font-bold"
-                                    : "bg-white/5 border-white/10 text-white/70 hover:text-white"
-                                )}
-                              >
-                                {blk}
-                              </button>
-                            ))}
-                          </div>
-                          <input
-                            type="text"
-                            placeholder="Ya block/department ka naam likhein..."
-                            value={otherBuilding}
-                            onChange={(e) => setOtherBuilding(e.target.value)}
-                            className="w-full bg-black/40 border border-white/10 focus:border-[#00E676] rounded-xl px-4 py-2.5 text-white text-sm outline-none transition-colors"
-                          />
-                        </div>
-
-                        <div className="flex flex-col gap-1">
-                          <label className="text-[#00E676] text-xs font-bold">
-                            Kounse Class / Room No. me? <span className="text-red-400">*</span>
-                          </label>
-                          <input
-                            type="text"
-                            placeholder="e.g. Room 204 (2nd Floor), LH-3, CS Lab 2..."
-                            value={dropoffRoom}
-                            onChange={(e) => {
-                              setDropoffRoom(e.target.value);
-                              if (roomError) setRoomError(false);
-                            }}
-                            onKeyDown={(e) => {
-                              if (e.key === "Enter") {
-                                e.preventDefault();
-                                handleStep2Continue();
-                              }
-                            }}
-                            className={cn(
-                              "w-full bg-black/40 rounded-xl px-4 py-3 text-white text-sm outline-none border transition-all placeholder:text-white/30",
-                              roomError
-                                ? "border-red-500 ring-1 ring-red-500"
-                                : "border-white/10 focus:border-[#00E676]"
-                            )}
-                          />
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Ground Form */}
-                    {otherSpotType === "Ground" && (
-                      <div className="flex flex-col gap-3 pt-1">
-                        <div className="flex flex-col gap-1.5">
-                          <label className="text-white/80 text-xs font-semibold">
-                            Kounse Ground me?
-                          </label>
-                          <div className="flex flex-wrap gap-1.5">
-                            {[
-                              "Main Cricket Ground",
-                              "Football Ground",
-                              "Basketball Court",
-                              "Volleyball / Badminton",
-                              "Sports Complex",
-                            ].map((grd) => (
-                              <button
-                                key={grd}
-                                type="button"
-                                onClick={() => setOtherBuilding(grd)}
-                                className={cn(
-                                  "text-[11px] px-2.5 py-1 rounded-lg border transition-all cursor-pointer",
-                                  otherBuilding === grd
-                                    ? "bg-[#00E676]/20 border-[#00E676] text-[#00E676] font-bold"
-                                    : "bg-white/5 border-white/10 text-white/70 hover:text-white"
-                                )}
-                              >
-                                {grd}
-                              </button>
-                            ))}
-                          </div>
-                          <input
-                            type="text"
-                            placeholder="Ya ground ka naam likhein..."
-                            value={otherBuilding}
-                            onChange={(e) => setOtherBuilding(e.target.value)}
-                            className="w-full bg-black/40 border border-white/10 focus:border-[#00E676] rounded-xl px-4 py-2.5 text-white text-sm outline-none transition-colors"
-                          />
-                        </div>
-
-                        <div className="flex flex-col gap-1">
-                          <label className="text-[#00E676] text-xs font-bold">
-                            Ground me kahan par? (Spot / Landmark) <span className="text-red-400">*</span>
-                          </label>
-                          <input
-                            type="text"
-                            placeholder="e.g. Near pavilion benches, commentary box, court stands, floodlight 2..."
-                            value={dropoffRoom}
-                            onChange={(e) => {
-                              setDropoffRoom(e.target.value);
-                              if (roomError) setRoomError(false);
-                            }}
-                            onKeyDown={(e) => {
-                              if (e.key === "Enter") {
-                                e.preventDefault();
-                                handleStep2Continue();
-                              }
-                            }}
-                            className={cn(
-                              "w-full bg-black/40 rounded-xl px-4 py-3 text-white text-sm outline-none border transition-all placeholder:text-white/30",
-                              roomError
-                                ? "border-red-500 ring-1 ring-red-500"
-                                : "border-white/10 focus:border-[#00E676]"
-                            )}
-                          />
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Library Form */}
-                    {otherSpotType === "Library" && (
-                      <div className="flex flex-col gap-3 pt-1">
-                        <div className="flex flex-col gap-1">
-                          <label className="text-white/80 text-xs font-semibold">
-                            Library Name:
-                          </label>
-                          <input
-                            type="text"
-                            value={otherBuilding || "Central Library"}
-                            onChange={(e) => setOtherBuilding(e.target.value)}
-                            className="w-full bg-black/40 border border-white/10 focus:border-[#00E676] rounded-xl px-4 py-2.5 text-white text-sm outline-none transition-colors"
-                          />
-                        </div>
-
-                        <div className="flex flex-col gap-1">
-                          <label className="text-[#00E676] text-xs font-bold">
-                            Floor aur Table No. / Section <span className="text-red-400">*</span>
-                          </label>
-                          <input
-                            type="text"
-                            placeholder="e.g. 1st Floor Reading Room, Table #14, Reference Section..."
-                            value={dropoffRoom}
-                            onChange={(e) => {
-                              setDropoffRoom(e.target.value);
-                              if (roomError) setRoomError(false);
-                            }}
-                            onKeyDown={(e) => {
-                              if (e.key === "Enter") {
-                                e.preventDefault();
-                                handleStep2Continue();
-                              }
-                            }}
-                            className={cn(
-                              "w-full bg-black/40 rounded-xl px-4 py-3 text-white text-sm outline-none border transition-all placeholder:text-white/30",
-                              roomError
-                                ? "border-red-500 ring-1 ring-red-500"
-                                : "border-white/10 focus:border-[#00E676]"
-                            )}
-                          />
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Custom Spot Form */}
-                    {otherSpotType === "Custom" && (
-                      <div className="flex flex-col gap-3 pt-1">
-                        <div className="flex flex-col gap-1">
-                          <label className="text-white/80 text-xs font-semibold">
-                            Location / Building Name:
-                          </label>
-                          <input
-                            type="text"
-                            placeholder="e.g. Campus Canteen, Student Activity Center (SAC), Admin Block, Other Hostel..."
-                            value={otherBuilding}
-                            onChange={(e) => setOtherBuilding(e.target.value)}
-                            className="w-full bg-black/40 border border-white/10 focus:border-[#00E676] rounded-xl px-4 py-2.5 text-white text-sm outline-none transition-colors"
-                          />
-                        </div>
-
-                        <div className="flex flex-col gap-1">
-                          <label className="text-[#00E676] text-xs font-bold">
-                            Exact Table / Spot / Room <span className="text-red-400">*</span>
-                          </label>
-                          <input
-                            type="text"
-                            placeholder="e.g. Table #5 near Nescafe, 2nd floor lounge, near water cooler..."
-                            value={dropoffRoom}
-                            onChange={(e) => {
-                              setDropoffRoom(e.target.value);
-                              if (roomError) setRoomError(false);
-                            }}
-                            onKeyDown={(e) => {
-                              if (e.key === "Enter") {
-                                e.preventDefault();
-                                handleStep2Continue();
-                              }
-                            }}
-                            className={cn(
-                              "w-full bg-black/40 rounded-xl px-4 py-3 text-white text-sm outline-none border transition-all placeholder:text-white/30",
-                              roomError
-                                ? "border-red-500 ring-1 ring-red-500"
-                                : "border-white/10 focus:border-[#00E676]"
-                            )}
-                          />
-                        </div>
-                      </div>
-                    )}
-
-                    {roomError && (
-                      <span className="text-red-400 text-xs font-semibold">
-                        * Please provide classroom, ground spot, or table detail so runner can find you.
-                      </span>
-                    )}
-                  </div>
-                )}
+                  />
+                  {roomError && (
+                    <span className="text-red-400 text-xs font-semibold mt-0.5">
+                      * {dropoffHostel === "Other" ? "Classroom / spot detail" : "Room number"} is required so runner can find you.
+                    </span>
+                  )}
+                </div>
               </div>
 
               {/* Delivery Speed / Priority Option */}
@@ -1519,7 +1214,7 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
                   <span className="text-[#A7B8B0] font-medium">Delivery Destination</span>
                   <span className="text-white font-bold text-right">
                     {dropoffHostel === "Other"
-                      ? `${otherSpotType}: ${otherBuilding || "Campus"} (${dropoffRoom})`
+                      ? `Class Room: ${dropoffRoom}`
                       : `${dropoffHostel}, Room ${dropoffRoom}`}
                   </span>
                 </div>
