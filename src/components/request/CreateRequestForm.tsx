@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import {
   Plus,
@@ -23,6 +23,8 @@ import {
   ShieldCheck,
   Clock,
   Coins,
+  PackageCheck,
+  Flame,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
@@ -60,6 +62,81 @@ const HOSTELS = [
   "Other",
 ];
 
+const CATEGORY_CONFIG: Record<
+  Category,
+  {
+    label: Category;
+    icon: React.ComponentType<{ size?: number; className?: string }>;
+    activeBg: string;
+    activeBorder: string;
+    activeText: string;
+    activeGlow: string;
+    iconColor: string;
+    badgeBg: string;
+  }
+> = {
+  Snack: {
+    label: "Snack",
+    icon: Pizza,
+    activeBg: "bg-amber-500/15",
+    activeBorder: "border-amber-400",
+    activeText: "text-amber-300",
+    activeGlow: "shadow-[0_0_20px_rgba(251,191,36,0.25)]",
+    iconColor: "text-amber-400",
+    badgeBg: "bg-amber-500/20 text-amber-300",
+  },
+  Beverage: {
+    label: "Beverage",
+    icon: Coffee,
+    activeBg: "bg-cyan-500/15",
+    activeBorder: "border-cyan-400",
+    activeText: "text-cyan-300",
+    activeGlow: "shadow-[0_0_20px_rgba(6,182,212,0.25)]",
+    iconColor: "text-cyan-400",
+    badgeBg: "bg-cyan-500/20 text-cyan-300",
+  },
+  Meal: {
+    label: "Meal",
+    icon: Utensils,
+    activeBg: "bg-orange-500/15",
+    activeBorder: "border-orange-400",
+    activeText: "text-orange-300",
+    activeGlow: "shadow-[0_0_20px_rgba(249,115,22,0.25)]",
+    iconColor: "text-orange-400",
+    badgeBg: "bg-orange-500/20 text-orange-300",
+  },
+  Grocery: {
+    label: "Grocery",
+    icon: ShoppingBag,
+    activeBg: "bg-emerald-500/15",
+    activeBorder: "border-emerald-400",
+    activeText: "text-emerald-300",
+    activeGlow: "shadow-[0_0_20px_rgba(16,185,129,0.25)]",
+    iconColor: "text-emerald-400",
+    badgeBg: "bg-emerald-500/20 text-emerald-300",
+  },
+  Stationery: {
+    label: "Stationery",
+    icon: Book,
+    activeBg: "bg-indigo-500/15",
+    activeBorder: "border-indigo-400",
+    activeText: "text-indigo-300",
+    activeGlow: "shadow-[0_0_20px_rgba(99,102,241,0.25)]",
+    iconColor: "text-indigo-400",
+    badgeBg: "bg-indigo-500/20 text-indigo-300",
+  },
+  Medicine: {
+    label: "Medicine",
+    icon: Pill,
+    activeBg: "bg-rose-500/15",
+    activeBorder: "border-rose-400",
+    activeText: "text-rose-300",
+    activeGlow: "shadow-[0_0_20px_rgba(244,63,94,0.25)]",
+    iconColor: "text-rose-400",
+    badgeBg: "bg-rose-500/20 text-rose-300",
+  },
+};
+
 const POPULAR_CHIPS: Record<Category, string[]> = {
   Snack: ["Maggi 2-Min", "Lays Blue", "Kurkure", "Dairy Milk", "KitKat", "Doritos"],
   Beverage: ["Cold Coffee", "Sting Energy", "Red Bull", "Amul Kool", "Chai / Tea", "Sprite"],
@@ -69,8 +146,42 @@ const POPULAR_CHIPS: Record<Category, string[]> = {
   Medicine: ["Paracetamol 650", "Band-Aid", "Strepsils", "Vicks Inhaler", "Digene / Eno"],
 };
 
+// 1-Tap Student Packs
+const HOSTEL_COMBOS = [
+  {
+    name: "Midnight Maggi Pack",
+    icon: Flame,
+    color: "from-amber-500/20 to-orange-500/20 border-amber-500/30 text-amber-300",
+    items: [
+      { name: "Maggi 2-Min", category: "Snack" as Category, quantity: 2, estimatedPrice: 15 },
+      { name: "Cold Coffee", category: "Beverage" as Category, quantity: 1, estimatedPrice: 35 },
+    ],
+  },
+  {
+    name: "Exam All-Nighter",
+    icon: Zap,
+    color: "from-cyan-500/20 to-blue-500/20 border-cyan-500/30 text-cyan-300",
+    items: [
+      { name: "Red Bull Energy", category: "Beverage" as Category, quantity: 1, estimatedPrice: 125 },
+      { name: "Blue Gel Pen", category: "Stationery" as Category, quantity: 1, estimatedPrice: 10 },
+      { name: "A4 Spiral Notebook", category: "Stationery" as Category, quantity: 1, estimatedPrice: 60 },
+    ],
+  },
+  {
+    name: "Quick First-Aid",
+    icon: Pill,
+    color: "from-rose-500/20 to-pink-500/20 border-rose-500/30 text-rose-300",
+    items: [
+      { name: "Paracetamol 650", category: "Medicine" as Category, quantity: 1, estimatedPrice: 30 },
+      { name: "Band-Aid Strips", category: "Medicine" as Category, quantity: 4, estimatedPrice: 15 },
+    ],
+  },
+];
+
 export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
   const router = useRouter();
+  const nameInputRef = useRef<HTMLInputElement>(null);
+
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
@@ -115,15 +226,23 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
     0
   );
 
-  const handleAddItem = (overrideName?: string) => {
+  const handleAddItem = (overrideName?: string, overridePrice?: number, overrideQty?: number) => {
     const nameToAdd = (overrideName !== undefined ? overrideName : currentItemName).trim();
     if (!nameToAdd) {
       setItemInputError(true);
+      nameInputRef.current?.focus();
       return;
     }
     setItemInputError(false);
 
-    const parsedPrice = currentItemPrice ? Math.max(0, Number(currentItemPrice)) : undefined;
+    const priceToAdd =
+      overridePrice !== undefined
+        ? overridePrice
+        : currentItemPrice
+        ? Math.max(0, Number(currentItemPrice))
+        : undefined;
+
+    const qtyToAdd = overrideQty !== undefined ? overrideQty : currentItemQty;
 
     setItems((prev) => [
       ...prev,
@@ -131,13 +250,31 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
         id: Math.random().toString(36).substring(2, 9),
         name: nameToAdd,
         category: currentCategory,
-        quantity: currentItemQty,
-        estimatedPrice: parsedPrice,
+        quantity: qtyToAdd,
+        estimatedPrice: priceToAdd,
       },
     ]);
+
     setCurrentItemName("");
     setCurrentItemQty(1);
     setCurrentItemPrice("");
+    setFormError(null);
+
+    // Auto refocus to input so student can type next item without touching mouse
+    setTimeout(() => {
+      nameInputRef.current?.focus();
+    }, 40);
+  };
+
+  const handleAddCombo = (comboItems: typeof HOSTEL_COMBOS[0]["items"]) => {
+    const newItems: ItemForm[] = comboItems.map((c) => ({
+      id: Math.random().toString(36).substring(2, 9),
+      name: c.name,
+      category: c.category,
+      quantity: c.quantity,
+      estimatedPrice: c.estimatedPrice,
+    }));
+    setItems((prev) => [...prev, ...newItems]);
     setFormError(null);
   };
 
@@ -292,52 +429,42 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
     }
   };
 
-  const categories: {
-    label: Category;
-    icon: React.ComponentType<{ size?: number; className?: string }>;
-  }[] = [
-    { label: "Snack", icon: Pizza },
-    { label: "Beverage", icon: Coffee },
-    { label: "Meal", icon: Utensils },
-    { label: "Grocery", icon: ShoppingBag },
-    { label: "Stationery", icon: Book },
-    { label: "Medicine", icon: Pill },
-  ];
+  const categories = Object.values(CATEGORY_CONFIG);
 
   return (
     <div className="max-w-[820px] mx-auto w-full flex flex-col items-center">
       {/* ── Dynamic Stepper Header ── */}
-      <div className="w-full max-w-[620px] mb-8 sm:mb-10 px-2">
-        <div className="flex items-center justify-between relative">
+      <div className="w-full max-w-[620px] mb-6 sm:mb-8 px-2">
+        <div className="flex items-center justify-between relative bg-white/[0.02] border border-white/10 rounded-full py-2.5 px-4 sm:px-6 backdrop-blur-md">
           {/* Step 1 Pill */}
           <button
             type="button"
             onClick={() => setStep(1)}
-            className="flex flex-col items-center gap-2 z-10 cursor-pointer group bg-transparent border-none"
+            className="flex items-center gap-2 z-10 cursor-pointer bg-transparent border-none"
           >
             <div
               className={cn(
-                "w-9 h-9 sm:w-11 sm:h-11 rounded-2xl flex items-center justify-center font-extrabold text-sm sm:text-base transition-all duration-300",
+                "w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center font-extrabold text-xs transition-all duration-300",
                 step >= 1
-                  ? "bg-[#00E676] text-[#050805] shadow-[0_0_20px_rgba(0,230,118,0.4)]"
+                  ? "bg-[#00E676] text-[#050805] shadow-[0_0_15px_rgba(0,230,118,0.4)]"
                   : "bg-white/5 text-white/40 border border-white/10",
-                step === 1 ? "ring-4 ring-[#00E676]/30 scale-105" : ""
+                step === 1 ? "ring-2 ring-[#00E676]/40 scale-105" : ""
               )}
             >
-              {step > 1 ? <Check size={18} strokeWidth={3} /> : "1"}
+              {step > 1 ? <Check size={14} strokeWidth={3} /> : "1"}
             </div>
             <span
               className={cn(
-                "text-[11px] sm:text-xs font-semibold tracking-wide transition-colors",
+                "text-xs font-semibold tracking-wide transition-colors",
                 step >= 1 ? "text-white" : "text-white/40"
               )}
             >
-              Item Details
+              Items
             </span>
           </button>
 
           {/* Line 1 -> 2 */}
-          <div className="flex-1 h-0.5 mx-2 sm:mx-3 -mt-6 rounded-full bg-white/10 overflow-hidden">
+          <div className="flex-1 h-0.5 mx-2 sm:mx-3 rounded-full bg-white/10 overflow-hidden">
             <div
               className={cn(
                 "h-full bg-gradient-to-r from-[#00E676] to-emerald-400 transition-all duration-500",
@@ -354,33 +481,33 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
             }}
             disabled={items.length === 0}
             className={cn(
-              "flex flex-col items-center gap-2 z-10 bg-transparent border-none transition-opacity",
+              "flex items-center gap-2 z-10 bg-transparent border-none transition-opacity",
               items.length > 0 ? "cursor-pointer" : "cursor-not-allowed opacity-50"
             )}
           >
             <div
               className={cn(
-                "w-9 h-9 sm:w-11 sm:h-11 rounded-2xl flex items-center justify-center font-extrabold text-sm sm:text-base transition-all duration-300 border",
+                "w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center font-extrabold text-xs transition-all duration-300 border",
                 step >= 2
-                  ? "bg-[#00E676] text-[#050805] border-[#00E676] shadow-[0_0_20px_rgba(0,230,118,0.4)]"
+                  ? "bg-[#00E676] text-[#050805] border-[#00E676] shadow-[0_0_15px_rgba(0,230,118,0.4)]"
                   : "bg-[#0a0f0c]/60 text-white/40 border-white/15",
-                step === 2 ? "ring-4 ring-[#00E676]/30 scale-105" : ""
+                step === 2 ? "ring-2 ring-[#00E676]/40 scale-105" : ""
               )}
             >
-              {step > 2 ? <Check size={18} strokeWidth={3} /> : "2"}
+              {step > 2 ? <Check size={14} strokeWidth={3} /> : "2"}
             </div>
             <span
               className={cn(
-                "text-[11px] sm:text-xs font-semibold tracking-wide transition-colors",
+                "text-xs font-semibold tracking-wide transition-colors",
                 step >= 2 ? "text-white" : "text-white/40"
               )}
             >
-              Delivery & Reward
+              Delivery
             </span>
           </button>
 
           {/* Line 2 -> 3 */}
-          <div className="flex-1 h-0.5 mx-2 sm:mx-3 -mt-6 rounded-full bg-white/10 overflow-hidden">
+          <div className="flex-1 h-0.5 mx-2 sm:mx-3 rounded-full bg-white/10 overflow-hidden">
             <div
               className={cn(
                 "h-full bg-gradient-to-r from-[#00E676] to-emerald-400 transition-all duration-500",
@@ -397,7 +524,7 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
             }}
             disabled={items.length === 0 || !dropoffRoom.trim()}
             className={cn(
-              "flex flex-col items-center gap-2 z-10 bg-transparent border-none transition-opacity",
+              "flex items-center gap-2 z-10 bg-transparent border-none transition-opacity",
               items.length > 0 && dropoffRoom.trim()
                 ? "cursor-pointer"
                 : "cursor-not-allowed opacity-50"
@@ -405,9 +532,9 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
           >
             <div
               className={cn(
-                "w-9 h-9 sm:w-11 sm:h-11 rounded-2xl flex items-center justify-center font-extrabold text-sm sm:text-base transition-all duration-300 border",
+                "w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center font-extrabold text-xs transition-all duration-300 border",
                 step === 3
-                  ? "bg-[#00E676] text-[#050805] border-[#00E676] ring-4 ring-[#00E676]/30 shadow-[0_0_20px_rgba(0,230,118,0.4)] scale-105"
+                  ? "bg-[#00E676] text-[#050805] border-[#00E676] ring-2 ring-[#00E676]/40 shadow-[0_0_15px_rgba(0,230,118,0.4)] scale-105"
                   : "bg-[#0a0f0c]/60 text-white/40 border-white/15"
               )}
             >
@@ -415,7 +542,7 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
             </div>
             <span
               className={cn(
-                "text-[11px] sm:text-xs font-semibold tracking-wide transition-colors",
+                "text-xs font-semibold tracking-wide transition-colors",
                 step === 3 ? "text-white" : "text-white/40"
               )}
             >
@@ -429,34 +556,36 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
       {formError && (
         <div
           role="alert"
-          className="w-full bg-red-500/15 border border-red-500/40 rounded-2xl p-4 text-red-300 text-xs sm:text-sm flex items-center gap-3 mb-6 shadow-[0_4px_20px_rgba(239,68,68,0.15)]"
+          className="w-full bg-red-500/15 border border-red-500/40 rounded-2xl p-3.5 sm:p-4 text-red-300 text-xs sm:text-sm flex items-center gap-3 mb-5 shadow-[0_4px_20px_rgba(239,68,68,0.15)]"
         >
-          <AlertCircle size={20} className="text-red-400 shrink-0" />
+          <AlertCircle size={18} className="text-red-400 shrink-0" />
           <span className="font-medium">{formError}</span>
         </div>
       )}
 
       {/* Main Glassmorphic Form Card */}
-      <div className="bg-[#0a0f0c]/65 border border-white/10 hover:border-emerald-500/20 rounded-[24px] sm:rounded-[28px] p-5 sm:p-8 lg:p-9 w-full shadow-[0_12px_45px_rgba(0,0,0,0.6),0_0_30px_rgba(0,230,118,0.04)] backdrop-blur-2xl flex flex-col gap-6 sm:gap-8 transition-all">
+      <div className="bg-[#0a0f0c]/80 border border-white/10 border-t-emerald-500/30 hover:border-emerald-500/30 rounded-[24px] sm:rounded-[28px] p-5 sm:p-7 lg:p-8 w-full shadow-[0_20px_60px_rgba(0,0,0,0.8),0_0_60px_rgba(0,230,118,0.06)] backdrop-blur-2xl flex flex-col gap-5 sm:gap-6 transition-all relative">
         {/* ================= STEP 1: ITEM DETAILS ================= */}
         {step === 1 && (
           <>
-            <div className="flex items-center gap-3 sm:gap-4">
-              <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center border border-emerald-500/30 shrink-0 shadow-[0_0_15px_rgba(0,230,118,0.15)]">
-                <Box size={22} className="text-[#00E676]" />
-              </div>
-              <div>
-                <h2 className="text-white font-extrabold text-lg sm:text-xl tracking-tight leading-tight">
-                  What do you need delivered?
-                </h2>
-                <p className="text-[#A7B8B0] text-xs sm:text-sm mt-1">
-                  Pick a category, tap quick campus favorites or type any custom item.
-                </p>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center border border-emerald-500/30 shrink-0 shadow-[0_0_12px_rgba(0,230,118,0.15)]">
+                  <Box size={20} className="text-[#00E676]" />
+                </div>
+                <div>
+                  <h2 className="text-white font-extrabold text-lg sm:text-xl tracking-tight leading-tight">
+                    What do you need delivered?
+                  </h2>
+                  <p className="text-[#A7B8B0] text-xs mt-0.5">
+                    Pick a category, tap quick campus favorites, or type any custom item.
+                  </p>
+                </div>
               </div>
             </div>
 
-            {/* Categories Grid */}
-            <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 sm:gap-3 w-full">
+            {/* Categories Grid with Unique Accent Colors */}
+            <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 sm:gap-2.5 w-full">
               {categories.map((cat) => {
                 const isActive = currentCategory === cat.label;
                 const IconComp = cat.icon;
@@ -464,44 +593,81 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
                   <button
                     key={cat.label}
                     type="button"
-                    onClick={() => setCurrentCategory(cat.label)}
+                    onClick={() => {
+                      setCurrentCategory(cat.label);
+                      setTimeout(() => nameInputRef.current?.focus(), 50);
+                    }}
                     className={cn(
-                      "relative rounded-2xl h-[78px] sm:h-[90px] w-full flex flex-col items-center justify-center gap-2 cursor-pointer transition-all duration-200 border overflow-hidden",
+                      "relative rounded-2xl h-[72px] sm:h-[84px] w-full flex flex-col items-center justify-center gap-1.5 cursor-pointer transition-all duration-200 border overflow-hidden",
                       isActive
-                        ? "bg-emerald-500/15 border-[#00E676] shadow-[0_0_20px_rgba(0,230,118,0.25)] scale-[1.02]"
+                        ? `${cat.activeBg} ${cat.activeBorder} ${cat.activeGlow} scale-[1.03]`
                         : "bg-white/[0.02] border-white/10 hover:border-white/20 hover:bg-white/[0.04]"
                     )}
                   >
                     <IconComp
-                      size={22}
-                      className={cn(
-                        "transition-colors",
-                        isActive ? "text-[#00E676]" : "text-[#A7B8B0]"
-                      )}
+                      size={20}
+                      className={cn("transition-colors", isActive ? cat.iconColor : "text-[#A7B8B0]")}
                     />
                     <span
                       className={cn(
                         "text-[11px] sm:text-xs tracking-tight",
-                        isActive ? "text-white font-bold" : "text-[#A7B8B0] font-medium"
+                        isActive ? `${cat.activeText} font-extrabold` : "text-[#A7B8B0] font-medium"
                       )}
                     >
                       {cat.label}
                     </span>
                     {isActive && (
-                      <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#00E676] to-transparent" />
+                      <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-current to-transparent" />
                     )}
                   </button>
                 );
               })}
             </div>
 
-            {/* Quick-Pick Popular Chips */}
-            <div className="flex flex-col gap-2">
+            {/* 1-Tap Student Combo Packs */}
+            <div className="flex flex-col gap-1.5 pt-1 border-t border-white/5">
+              <span className="text-[11px] font-semibold text-[#A7B8B0] flex items-center gap-1">
+                <PackageCheck size={13} className="text-[#00E676]" />
+                1-Tap Hostel Combos:
+              </span>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                {HOSTEL_COMBOS.map((combo) => {
+                  const ComboIcon = combo.icon;
+                  return (
+                    <button
+                      key={combo.name}
+                      type="button"
+                      onClick={() => handleAddCombo(combo.items)}
+                      className={cn(
+                        "bg-gradient-to-r border rounded-xl p-2.5 text-left cursor-pointer transition-all hover:scale-[1.02] active:scale-95 flex items-center justify-between",
+                        combo.color
+                      )}
+                    >
+                      <div className="flex items-center gap-2 min-w-0">
+                        <ComboIcon size={16} className="shrink-0" />
+                        <div className="flex flex-col truncate">
+                          <span className="font-bold text-xs truncate">{combo.name}</span>
+                          <span className="text-[10px] text-white/60 truncate">
+                            {combo.items.map((i) => i.name).join(" + ")}
+                          </span>
+                        </div>
+                      </div>
+                      <span className="text-[11px] font-extrabold ml-1 bg-black/40 px-1.5 py-0.5 rounded-md shrink-0">
+                        + Add
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Quick-Pick Popular Chips for Active Category */}
+            <div className="flex flex-col gap-1.5">
               <div className="flex items-center gap-1.5 text-xs text-[#A7B8B0]">
                 <Sparkles size={13} className="text-[#00E676]" />
-                <span>Popular {currentCategory} items (tap to add):</span>
+                <span>Popular {currentCategory} items (tap to fill):</span>
               </div>
-              <div className="flex flex-wrap gap-1.5 sm:gap-2">
+              <div className="flex flex-wrap gap-1.5">
                 {POPULAR_CHIPS[currentCategory].map((chip) => (
                   <button
                     key={chip}
@@ -509,8 +675,9 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
                     onClick={() => {
                       setCurrentItemName(chip);
                       setItemInputError(false);
+                      nameInputRef.current?.focus();
                     }}
-                    className="text-xs bg-white/[0.04] hover:bg-emerald-500/15 text-white/80 hover:text-[#00E676] border border-white/10 hover:border-emerald-500/30 px-3 py-1.5 rounded-xl transition-all cursor-pointer flex items-center gap-1 active:scale-95"
+                    className="text-xs bg-white/[0.03] hover:bg-emerald-500/15 text-white/80 hover:text-[#00E676] border border-white/10 hover:border-emerald-500/30 px-3 py-1.5 rounded-xl transition-all cursor-pointer flex items-center gap-1 active:scale-95"
                   >
                     <span>+</span> {chip}
                   </button>
@@ -519,13 +686,14 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
             </div>
 
             {/* Input Row: Item Name + Optional Est Price + Quantity + Add */}
-            <div className="flex flex-col gap-3 bg-black/40 border border-white/10 p-3.5 sm:p-4 rounded-2xl">
-              <div className="flex flex-wrap gap-2.5 sm:gap-3 items-center">
-                {/* Item Name Input */}
-                <div className="flex-1 min-w-[200px]">
+            <div className="flex flex-col gap-2 bg-black/40 border border-white/10 p-3 sm:p-3.5 rounded-2xl">
+              <div className="flex flex-wrap gap-2 sm:gap-2.5 items-center">
+                {/* Item Name Input with Auto-Focus */}
+                <div className="flex-1 min-w-[190px]">
                   <input
+                    ref={nameInputRef}
                     type="text"
-                    placeholder={`Type ${currentCategory.toLowerCase()} name...`}
+                    placeholder={`Type ${currentCategory.toLowerCase()} name (Press Enter to add)...`}
                     value={currentItemName}
                     onChange={(e) => {
                       setCurrentItemName(e.target.value);
@@ -538,7 +706,7 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
                       }
                     }}
                     className={cn(
-                      "w-full bg-white/[0.04] border rounded-xl px-3.5 py-3 text-white text-sm outline-none transition-all placeholder:text-white/30",
+                      "w-full bg-white/[0.04] border rounded-xl px-3.5 py-2.5 text-white text-sm outline-none transition-all placeholder:text-white/30",
                       itemInputError
                         ? "border-red-500 ring-1 ring-red-500"
                         : "border-white/10 focus:border-[#00E676] focus:bg-white/[0.06]"
@@ -547,7 +715,7 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
                 </div>
 
                 {/* Optional Estimated Price */}
-                <div className="w-28 sm:w-32 flex items-center bg-white/[0.04] border border-white/10 rounded-xl px-3 py-2.5 focus-within:border-[#00E676]">
+                <div className="w-28 flex items-center bg-white/[0.04] border border-white/10 rounded-xl px-3 py-2.5 focus-within:border-[#00E676]">
                   <span className="text-emerald-400 font-bold text-xs mr-1">₹</span>
                   <input
                     type="number"
@@ -570,19 +738,19 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
                   <button
                     type="button"
                     onClick={() => setCurrentItemQty(Math.max(1, currentItemQty - 1))}
-                    className="bg-transparent border-none text-white/70 hover:text-white px-3 py-2.5 cursor-pointer hover:bg-white/5 transition-colors"
+                    className="bg-transparent border-none text-white/70 hover:text-white px-2.5 py-2 cursor-pointer hover:bg-white/5 transition-colors"
                   >
-                    <Minus size={14} />
+                    <Minus size={13} />
                   </button>
-                  <span className="text-white font-extrabold text-sm min-w-[24px] text-center">
+                  <span className="text-white font-extrabold text-xs min-w-[20px] text-center">
                     {currentItemQty}
                   </span>
                   <button
                     type="button"
                     onClick={() => setCurrentItemQty(currentItemQty + 1)}
-                    className="bg-transparent border-none text-white/70 hover:text-white px-3 py-2.5 cursor-pointer hover:bg-white/5 transition-colors"
+                    className="bg-transparent border-none text-white/70 hover:text-white px-2.5 py-2 cursor-pointer hover:bg-white/5 transition-colors"
                   >
-                    <Plus size={14} />
+                    <Plus size={13} />
                   </button>
                 </div>
 
@@ -590,21 +758,21 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
                 <button
                   type="button"
                   onClick={() => handleAddItem()}
-                  className="bg-emerald-500 hover:bg-emerald-400 text-[#050805] font-extrabold text-sm px-5 py-3 rounded-xl cursor-pointer flex items-center gap-1.5 shadow-[0_0_15px_rgba(0,230,118,0.3)] transition-all active:scale-95"
+                  className="bg-emerald-500 hover:bg-emerald-400 text-[#050805] font-extrabold text-sm px-4 py-2.5 rounded-xl cursor-pointer flex items-center gap-1.5 shadow-[0_0_15px_rgba(0,230,118,0.3)] transition-all active:scale-95 shrink-0"
                 >
-                  <Plus size={16} strokeWidth={3} /> Add
+                  <Plus size={15} strokeWidth={3} /> Add
                 </button>
               </div>
 
               {itemInputError && (
                 <span className="text-red-400 text-xs font-semibold">
-                  * Please enter an item name before clicking Add.
+                  * Please enter an item name before adding.
                 </span>
               )}
             </div>
 
-            {/* Added Items List */}
-            <div className="flex flex-col gap-3">
+            {/* Added Items List / Compact Empty State */}
+            <div className="flex flex-col gap-2">
               <div className="flex justify-between items-center px-1">
                 <span className="text-[#A7B8B0] text-xs font-semibold uppercase tracking-wider">
                   Added Items ({items.length})
@@ -620,58 +788,68 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
                 )}
               </div>
 
+              {/* Compact Empty State to preserve viewport height */}
               {items.length === 0 ? (
-                <div className="border border-dashed border-white/15 rounded-2xl p-8 sm:p-10 flex flex-col items-center justify-center gap-2 bg-black/25 text-center">
-                  <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mb-1">
-                    <Box size={24} className="text-[#00E676] opacity-80" />
+                <div className="border border-dashed border-white/15 rounded-xl py-3.5 px-4 flex items-center justify-between bg-black/20 text-xs text-[#A7B8B0]">
+                  <div className="flex items-center gap-2">
+                    <Box size={16} className="text-[#00E676] shrink-0" />
+                    <span>No items added yet. Type an item above or tap a quick combo.</span>
                   </div>
-                  <h4 className="text-white font-bold text-sm sm:text-base m-0">No items added yet</h4>
-                  <p className="text-[#A7B8B0] text-xs max-w-xs m-0">
-                    Tap popular chips above or type items and hit &ldquo;Add&rdquo;.
-                  </p>
+                  <span className="text-white/40 hidden sm:inline text-[11px]">
+                    Press <kbd className="bg-white/10 px-1 py-0.5 rounded text-[10px]">Enter</kbd> to add
+                  </span>
                 </div>
               ) : (
-                <div className="flex flex-col gap-2 bg-black/35 rounded-2xl p-3 border border-white/10 max-h-[280px] overflow-y-auto">
-                  {items.map((item) => (
-                    <div
-                      key={item.id}
-                      className="flex justify-between items-center p-3 rounded-xl bg-white/[0.02] border border-white/5 hover:border-white/10 transition-colors"
-                    >
-                      <div className="flex items-center gap-2.5">
-                        <span className="bg-[#00E676]/15 text-[#00E676] text-xs font-extrabold px-2 py-0.5 rounded-md">
-                          {item.quantity}x
-                        </span>
-                        <span className="text-white font-semibold text-sm">{item.name}</span>
-                        <span className="text-[#A7B8B0] text-[11px] px-2 py-0.5 bg-white/5 rounded-md">
-                          {item.category}
-                        </span>
-                        {item.estimatedPrice ? (
-                          <span className="text-emerald-400/90 text-xs font-medium">
-                            ~₹{item.estimatedPrice * item.quantity}
-                          </span>
-                        ) : null}
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveItem(item.id)}
-                        className="bg-transparent border-none text-white/40 hover:text-red-400 cursor-pointer p-1.5 rounded-lg transition-colors"
+                <div className="flex flex-col gap-2 bg-black/35 rounded-2xl p-2.5 border border-white/10 max-h-[220px] overflow-y-auto">
+                  {items.map((item) => {
+                    const catConfig = CATEGORY_CONFIG[item.category] || CATEGORY_CONFIG.Snack;
+                    return (
+                      <div
+                        key={item.id}
+                        className="flex justify-between items-center p-2.5 rounded-xl bg-white/[0.02] border border-white/5 hover:border-white/10 transition-colors"
                       >
-                        <Trash2 size={16} />
-                      </button>
-                    </div>
-                  ))}
-
-                  {totalEstimatedItemsAmount > 0 && (
-                    <div className="pt-2 border-t border-white/10 flex justify-between items-center text-xs text-[#A7B8B0] px-2">
-                      <span>Est. Items Total:</span>
-                      <span className="text-white font-bold text-sm">₹{totalEstimatedItemsAmount}</span>
-                    </div>
-                  )}
+                        <div className="flex items-center gap-2">
+                          <span className="bg-[#00E676]/15 text-[#00E676] text-xs font-extrabold px-2 py-0.5 rounded-md">
+                            {item.quantity}x
+                          </span>
+                          <span className="text-white font-semibold text-sm">{item.name}</span>
+                          <span className={cn("text-[10px] font-bold px-2 py-0.5 rounded-md", catConfig.badgeBg)}>
+                            {item.category}
+                          </span>
+                          {item.estimatedPrice ? (
+                            <span className="text-emerald-400/90 text-xs font-medium">
+                              ~₹{item.estimatedPrice * item.quantity}
+                            </span>
+                          ) : null}
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveItem(item.id)}
+                          className="bg-transparent border-none text-white/40 hover:text-red-400 cursor-pointer p-1 rounded-lg transition-colors"
+                        >
+                          <Trash2 size={15} />
+                        </button>
+                      </div>
+                    );
+                  })}
                 </div>
               )}
             </div>
 
-            {/* Continue Button */}
+            {/* Live Floating Order Summary Bar (Directly Above Continue CTA) */}
+            <div className="flex items-center justify-between bg-white/[0.03] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-[#A7B8B0]">
+              <div className="flex items-center gap-2.5">
+                <span>Items: <strong className="text-white font-extrabold">{items.length}</strong></span>
+                <span className="text-white/20">|</span>
+                <span>Est. Items: <strong className="text-emerald-400 font-extrabold">~₹{totalEstimatedItemsAmount}</strong></span>
+              </div>
+              <div className="flex items-center gap-1 text-emerald-300 font-semibold">
+                <Sparkles size={13} className="text-[#00E676]" />
+                <span>Delivery Fee: ₹{currentReward}</span>
+              </div>
+            </div>
+
+            {/* Continue Button (Visible on screen without scrolling) */}
             <button
               type="button"
               onClick={() => {
@@ -683,7 +861,7 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
                 setStep(2);
               }}
               className={cn(
-                "w-full font-extrabold text-sm sm:text-base p-4 rounded-2xl border-none flex items-center justify-center gap-2 transition-all duration-200",
+                "w-full font-extrabold text-sm sm:text-base p-3.5 sm:p-4 rounded-2xl border-none flex items-center justify-center gap-2 transition-all duration-200",
                 items.length > 0
                   ? "bg-gradient-to-r from-[#00C853] to-[#00E676] text-[#050805] cursor-pointer shadow-[0_0_25px_rgba(0,230,118,0.35)] hover:shadow-[0_0_35px_rgba(0,230,118,0.5)] active:scale-[0.99]"
                   : "bg-white/5 text-white/30 cursor-not-allowed"
@@ -697,23 +875,23 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
         {/* ================= STEP 2: LOGISTICS & REWARD ================= */}
         {step === 2 && (
           <>
-            <div className="flex items-center gap-3 sm:gap-4">
-              <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center border border-emerald-500/30 shrink-0 shadow-[0_0_15px_rgba(0,230,118,0.15)]">
-                <MapPin size={22} className="text-[#00E676]" />
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center border border-emerald-500/30 shrink-0 shadow-[0_0_12px_rgba(0,230,118,0.15)]">
+                <MapPin size={20} className="text-[#00E676]" />
               </div>
               <div>
                 <h2 className="text-white font-extrabold text-lg sm:text-xl tracking-tight leading-tight">
                   Logistics & Runner Reward
                 </h2>
-                <p className="text-[#A7B8B0] text-xs sm:text-sm mt-1">
+                <p className="text-[#A7B8B0] text-xs mt-0.5">
                   Specify where to fetch your items and the reward for the student runner.
                 </p>
               </div>
             </div>
 
-            <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-5">
               {/* Pickup Location */}
-              <div className="flex flex-col gap-2.5">
+              <div className="flex flex-col gap-2">
                 <label className="text-[#00E676] text-xs sm:text-sm font-bold flex items-center gap-1.5">
                   <MapPin size={14} /> Pickup Location
                 </label>
@@ -726,7 +904,7 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
                         type="button"
                         onClick={() => setPickupLocation(loc)}
                         className={cn(
-                          "p-3 rounded-xl text-left cursor-pointer text-xs sm:text-sm font-medium transition-all border",
+                          "p-2.5 sm:p-3 rounded-xl text-left cursor-pointer text-xs font-medium transition-all border",
                           isSelected
                             ? "bg-emerald-500/20 border-[#00E676] text-[#00E676] font-bold shadow-[0_0_15px_rgba(0,230,118,0.2)]"
                             : "bg-black/40 border-white/10 text-white/80 hover:border-white/20"
@@ -744,13 +922,13 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
                     placeholder="Enter custom pickup spot (e.g. Nescafe near Library, Gate 2 Tapri)..."
                     value={customPickupLocation}
                     onChange={(e) => setCustomPickupLocation(e.target.value)}
-                    className="w-full mt-1 bg-black/40 border border-white/10 focus:border-[#00E676] rounded-xl px-4 py-3 text-white text-sm outline-none transition-colors"
+                    className="w-full mt-1 bg-black/40 border border-white/10 focus:border-[#00E676] rounded-xl px-4 py-2.5 text-white text-sm outline-none transition-colors"
                   />
                 )}
               </div>
 
               {/* Delivery Destination */}
-              <div className="flex flex-col gap-3 border-t border-white/10 pt-5">
+              <div className="flex flex-col gap-2.5 border-t border-white/10 pt-4">
                 <label className="text-[#00E676] text-xs sm:text-sm font-bold flex items-center gap-1.5">
                   <MapPin size={14} /> Delivery Destination (Hostel & Room)
                 </label>
@@ -765,7 +943,7 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
                         type="button"
                         onClick={() => setDropoffHostel(hostel)}
                         className={cn(
-                          "py-2.5 px-3 rounded-xl text-center cursor-pointer text-xs sm:text-sm font-medium transition-all border",
+                          "py-2.5 px-3 rounded-xl text-center cursor-pointer text-xs font-medium transition-all border",
                           isSelected
                             ? "bg-emerald-500/20 border-[#00E676] text-[#00E676] font-bold shadow-[0_0_15px_rgba(0,230,118,0.2)]"
                             : "bg-black/40 border-white/10 text-white/80 hover:border-white/20"
@@ -783,12 +961,12 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
                     placeholder="Enter your hostel name..."
                     value={customDropoffHostel}
                     onChange={(e) => setCustomDropoffHostel(e.target.value)}
-                    className="w-full bg-black/40 border border-white/10 focus:border-[#00E676] rounded-xl px-4 py-3 text-white text-sm outline-none transition-colors"
+                    className="w-full bg-black/40 border border-white/10 focus:border-[#00E676] rounded-xl px-4 py-2.5 text-white text-sm outline-none transition-colors"
                   />
                 )}
 
                 {/* Room Number Input */}
-                <div className="flex flex-col gap-1 mt-1">
+                <div className="flex flex-col gap-1 mt-0.5">
                   <input
                     type="text"
                     placeholder="Room Number (e.g. 104, B-205, Ground Floor A-Wing)..."
@@ -804,7 +982,7 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
                       }
                     }}
                     className={cn(
-                      "bg-black/40 rounded-xl px-4 py-3 text-white text-sm outline-none border transition-all placeholder:text-white/30",
+                      "bg-black/40 rounded-xl px-4 py-2.5 text-white text-sm outline-none border transition-all placeholder:text-white/30",
                       roomError
                         ? "border-red-500 ring-1 ring-red-500"
                         : "border-white/10 focus:border-[#00E676]"
@@ -819,16 +997,16 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
               </div>
 
               {/* Delivery Speed / Priority Option */}
-              <div className="flex flex-col gap-2.5 border-t border-white/10 pt-5">
+              <div className="flex flex-col gap-2 border-t border-white/10 pt-4">
                 <label className="text-[#00E676] text-xs sm:text-sm font-bold flex items-center gap-1.5">
                   <Clock size={14} /> Delivery Speed & Priority
                 </label>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   <button
                     type="button"
                     onClick={() => setUrgency("standard")}
                     className={cn(
-                      "p-3.5 rounded-xl border text-left cursor-pointer transition-all flex flex-col gap-1",
+                      "p-3 rounded-xl border text-left cursor-pointer transition-all flex flex-col gap-0.5",
                       urgency === "standard"
                         ? "bg-emerald-500/15 border-[#00E676] shadow-[0_0_15px_rgba(0,230,118,0.15)]"
                         : "bg-black/35 border-white/10 hover:border-white/20"
@@ -851,7 +1029,7 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
                     type="button"
                     onClick={() => setUrgency("urgent")}
                     className={cn(
-                      "p-3.5 rounded-xl border text-left cursor-pointer transition-all flex flex-col gap-1",
+                      "p-3 rounded-xl border text-left cursor-pointer transition-all flex flex-col gap-0.5",
                       urgency === "urgent"
                         ? "bg-emerald-500/15 border-[#00E676] shadow-[0_0_15px_rgba(0,230,118,0.15)]"
                         : "bg-black/35 border-white/10 hover:border-white/20"
@@ -863,7 +1041,7 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
                         urgency === "urgent" ? "text-emerald-400" : "text-white"
                       )}
                     >
-                      ⚡ Express / Urgent (+₹10)
+                      ⚡ Express Priority (+₹10)
                     </span>
                     <span className="text-[11px] text-[#A7B8B0]">
                       High runner priority for late-night cravings
@@ -873,7 +1051,7 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
               </div>
 
               {/* Delivery Reward */}
-              <div className="flex flex-col gap-2.5 border-t border-white/10 pt-5">
+              <div className="flex flex-col gap-2 border-t border-white/10 pt-4">
                 <div className="flex justify-between items-center">
                   <label className="text-[#00E676] text-xs sm:text-sm font-bold flex items-center gap-1.5">
                     <Coins size={14} /> Delivery Reward for Runner
@@ -884,8 +1062,8 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
                 </div>
 
                 <div className="flex flex-wrap items-center gap-2.5">
-                  <div className="flex items-center bg-black/40 border border-white/15 rounded-xl px-4 py-2.5 focus-within:border-[#00E676]">
-                    <span className="text-[#00E676] text-lg font-extrabold mr-2">₹</span>
+                  <div className="flex items-center bg-black/40 border border-white/15 rounded-xl px-3.5 py-2 focus-within:border-[#00E676]">
+                    <span className="text-[#00E676] text-base font-extrabold mr-1.5">₹</span>
                     <input
                       type="number"
                       min={5}
@@ -897,14 +1075,14 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
                   </div>
 
                   {/* Preset quick buttons */}
-                  <div className="flex flex-wrap gap-1.5 sm:gap-2">
+                  <div className="flex flex-wrap gap-1.5">
                     {[15, 20, 30, 50].map((amt) => (
                       <button
                         key={amt}
                         type="button"
                         onClick={() => setCustomReward(amt.toString())}
                         className={cn(
-                          "rounded-xl px-3.5 py-2 text-xs sm:text-sm font-bold cursor-pointer transition-all border",
+                          "rounded-xl px-3 py-1.5 text-xs font-bold cursor-pointer transition-all border",
                           currentReward === amt
                             ? "bg-[#00E676]/20 border-[#00E676] text-[#00E676] shadow-[0_0_10px_rgba(0,230,118,0.2)]"
                             : "bg-white/5 border-white/10 text-[#A7B8B0] hover:text-white"
@@ -918,18 +1096,18 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
               </div>
 
               {/* Navigation Buttons */}
-              <div className="flex gap-3 pt-2">
+              <div className="flex gap-2.5 pt-1">
                 <button
                   type="button"
                   onClick={() => setStep(1)}
-                  className="bg-white/5 border border-white/10 text-white p-3.5 rounded-2xl cursor-pointer flex items-center justify-center w-14 shrink-0 hover:bg-white/10 transition-colors"
+                  className="bg-white/5 border border-white/10 text-white p-3.5 rounded-2xl cursor-pointer flex items-center justify-center w-12 shrink-0 hover:bg-white/10 transition-colors"
                 >
                   <ArrowLeft size={18} />
                 </button>
                 <button
                   type="button"
                   onClick={handleStep2Continue}
-                  className="flex-1 bg-gradient-to-r from-[#00C853] to-[#00E676] text-[#050805] font-extrabold text-sm sm:text-base p-4 rounded-2xl border-none flex items-center justify-center gap-2 cursor-pointer shadow-[0_0_25px_rgba(0,230,118,0.35)] hover:shadow-[0_0_35px_rgba(0,230,118,0.5)] active:scale-[0.99] transition-all"
+                  className="flex-1 bg-gradient-to-r from-[#00C853] to-[#00E676] text-[#050805] font-extrabold text-sm sm:text-base p-3.5 rounded-2xl border-none flex items-center justify-center gap-2 cursor-pointer shadow-[0_0_25px_rgba(0,230,118,0.35)] hover:shadow-[0_0_35px_rgba(0,230,118,0.5)] active:scale-[0.99] transition-all"
                 >
                   Continue to Summary <ArrowRight size={18} />
                 </button>
@@ -941,36 +1119,36 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
         {/* ================= STEP 3: CONFIRM & SUBMIT ================= */}
         {step === 3 && (
           <>
-            <div className="flex items-center gap-3 sm:gap-4">
-              <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center border border-emerald-500/30 shrink-0 shadow-[0_0_15px_rgba(0,230,118,0.15)]">
-                <Check size={22} className="text-[#00E676]" />
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center border border-emerald-500/30 shrink-0 shadow-[0_0_12px_rgba(0,230,118,0.15)]">
+                <Check size={20} className="text-[#00E676]" />
               </div>
               <div>
                 <h2 className="text-white font-extrabold text-lg sm:text-xl tracking-tight leading-tight">
                   Review & Confirm Request
                 </h2>
-                <p className="text-[#A7B8B0] text-xs sm:text-sm mt-1">
+                <p className="text-[#A7B8B0] text-xs mt-0.5">
                   Double check your request details before publishing for campus runners.
                 </p>
               </div>
             </div>
 
-            <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-5">
               {/* Optional Instructions */}
-              <div className="flex flex-col gap-2">
-                <label className="text-[#00E676] text-xs sm:text-sm font-bold">
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[#00E676] text-xs font-bold">
                   Special Instructions (Optional)
                 </label>
                 <textarea
-                  placeholder="e.g. Call when outside the hostel gate. Prefer chilled if cold coffee..."
+                  placeholder="e.g. Call when outside hostel gate. Prefer chilled if cold coffee..."
                   value={instructions}
                   onChange={(e) => setInstructions(e.target.value)}
-                  className="bg-black/40 border border-white/10 focus:border-[#00E676] rounded-2xl p-4 text-white text-sm min-h-[90px] resize-y outline-none transition-colors placeholder:text-white/30"
+                  className="bg-black/40 border border-white/10 focus:border-[#00E676] rounded-xl p-3 text-white text-sm min-h-[75px] resize-y outline-none transition-colors placeholder:text-white/30"
                 />
               </div>
 
               {/* Order Summary Glass Card */}
-              <div className="bg-emerald-500/[0.04] border border-emerald-500/20 rounded-2xl p-4 sm:p-5 flex flex-col gap-3.5">
+              <div className="bg-emerald-500/[0.04] border border-emerald-500/20 rounded-2xl p-4 flex flex-col gap-3">
                 {/* Items preview */}
                 <div className="flex justify-between items-start text-xs sm:text-sm">
                   <span className="text-[#A7B8B0] font-medium">Items ({items.length})</span>
@@ -978,14 +1156,14 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
                     {items.map((i) => (
                       <span key={i.id} className="text-white font-semibold text-xs sm:text-sm">
                         {i.quantity}x {i.name}{" "}
-                        <span className="text-[#A7B8B0] text-xs">({i.category})</span>
+                        <span className="text-[#A7B8B0] text-[11px]">({i.category})</span>
                       </span>
                     ))}
                   </div>
                 </div>
 
                 {/* Pickup */}
-                <div className="flex justify-between items-center text-xs sm:text-sm border-t border-white/5 pt-3">
+                <div className="flex justify-between items-center text-xs sm:text-sm border-t border-white/5 pt-2.5">
                   <span className="text-[#A7B8B0] font-medium">Pickup Spot</span>
                   <span className="text-white font-bold">
                     {pickupLocation === "Other (Custom Spot)"
@@ -1019,13 +1197,13 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
                 )}
 
                 {/* Total Reward Highlight */}
-                <div className="border-t border-emerald-500/20 pt-3 flex justify-between items-center">
+                <div className="border-t border-emerald-500/20 pt-2.5 flex justify-between items-center">
                   <div className="flex flex-col">
                     <span className="text-white text-sm sm:text-base font-extrabold">
                       Runner Delivery Reward
                     </span>
                     <span className="text-[#A7B8B0] text-[11px]">
-                      Credited directly upon delivery verification
+                      Credited directly upon OTP delivery verification
                     </span>
                   </div>
                   <span className="text-[#00E676] text-xl sm:text-2xl font-black">
@@ -1035,24 +1213,24 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
               </div>
 
               {/* Escrow & Trust Badges */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div className="flex items-center gap-2.5 p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs font-medium">
-                  <ShieldCheck size={18} className="text-[#00E676] shrink-0" />
-                  <span>Escrow Protected: Reward released only after 4-digit OTP match.</span>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                <div className="flex items-center gap-2 p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs font-medium">
+                  <ShieldCheck size={16} className="text-[#00E676] shrink-0" />
+                  <span>Escrow: Reward released only after 4-digit OTP match.</span>
                 </div>
-                <div className="flex items-center gap-2.5 p-3 rounded-xl bg-white/[0.03] border border-white/10 text-white/80 text-xs font-medium">
-                  <Zap size={18} className="text-[#00E676] shrink-0" />
-                  <span>High Availability: Campus runners typically match in 4-8 mins.</span>
+                <div className="flex items-center gap-2 p-2.5 rounded-xl bg-white/[0.03] border border-white/10 text-white/80 text-xs font-medium">
+                  <Zap size={16} className="text-[#00E676] shrink-0" />
+                  <span>Campus runners typically match in 4-8 mins.</span>
                 </div>
               </div>
 
               {/* Submit Buttons */}
-              <div className="flex gap-3 pt-2">
+              <div className="flex gap-2.5 pt-1">
                 <button
                   type="button"
                   onClick={() => setStep(2)}
                   disabled={isSubmitting}
-                  className="bg-white/5 border border-white/10 text-white p-4 rounded-2xl cursor-pointer flex items-center justify-center w-14 shrink-0 hover:bg-white/10 disabled:opacity-50 transition-colors"
+                  className="bg-white/5 border border-white/10 text-white p-3.5 rounded-2xl cursor-pointer flex items-center justify-center w-12 shrink-0 hover:bg-white/10 disabled:opacity-50 transition-colors"
                 >
                   <ArrowLeft size={18} />
                 </button>
@@ -1060,7 +1238,7 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
                   type="button"
                   onClick={handleSubmit}
                   disabled={isSubmitting}
-                  className="flex-1 bg-gradient-to-r from-[#00C853] to-[#00E676] text-[#050805] font-extrabold text-sm sm:text-base p-4 rounded-2xl border-none flex items-center justify-center gap-2 cursor-pointer shadow-[0_0_25px_rgba(0,230,118,0.4)] hover:shadow-[0_0_35px_rgba(0,230,118,0.6)] disabled:opacity-75 transition-all active:scale-[0.99]"
+                  className="flex-1 bg-gradient-to-r from-[#00C853] to-[#00E676] text-[#050805] font-extrabold text-sm sm:text-base p-3.5 rounded-2xl border-none flex items-center justify-center gap-2 cursor-pointer shadow-[0_0_25px_rgba(0,230,118,0.4)] hover:shadow-[0_0_35px_rgba(0,230,118,0.6)] disabled:opacity-75 transition-all active:scale-[0.99]"
                 >
                   {isSubmitting ? (
                     <div className="flex items-center gap-2">

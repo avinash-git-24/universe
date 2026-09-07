@@ -71,10 +71,10 @@ export default async function NewRequestPage() {
           <div className="flex gap-2.5 sm:gap-3.5 items-center">
             <Link
               href="/dashboard"
-              className="no-underline flex items-center gap-2 bg-[#0a0f0c]/60 hover:bg-emerald-500/15 text-[#A7B8B0] hover:text-white font-semibold text-xs sm:text-sm border border-white/10 hover:border-emerald-500/30 rounded-xl px-3 sm:px-4 py-2 sm:py-2.5 backdrop-blur-md transition-all active:scale-95"
+              className="no-underline flex items-center gap-1.5 sm:gap-2 bg-[#0a0f0c]/60 hover:bg-emerald-500/15 text-[#A7B8B0] hover:text-white font-semibold text-xs sm:text-sm border border-white/10 hover:border-emerald-500/30 rounded-xl px-3 sm:px-4 py-2 sm:py-2.5 backdrop-blur-md transition-all active:scale-95"
             >
               <ArrowLeft size={16} />
-              <span className="hidden xs:inline">Back to Dashboard</span>
+              <span>Back<span className="hidden sm:inline"> to Dashboard</span></span>
             </Link>
 
             {/* Notification Bell */}
