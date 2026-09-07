@@ -22,8 +22,8 @@ export function MakeOfferButton({
   const router = useRouter();
 
   const handleOfferSuccess = () => {
-    // Optionally redirect to chat or refresh
-    router.push(`/dashboard/marketplace/chat`);
+    // Redirect to chat
+    router.push(`/dashboard/chat`);
   };
 
   return (

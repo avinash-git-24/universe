@@ -152,7 +152,7 @@ export function ResaleMarketplace() {
         try {
           const ids = await getUserFavoriteIds(supabase);
           if (!cancelled) setFavoriteIds(ids);
-        } catch {}
+        } catch { }
       }
     }
     loadAuth();
@@ -184,7 +184,7 @@ export function ResaleMarketplace() {
     startTransition(() => {
       router.replace(`${pathname}${qs ? `?${qs}` : ""}`, { scroll: false });
     });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedSearch, category, condition, sort, minPrice, maxPrice]);
 
   // ── Helper: build filters ──
@@ -264,7 +264,7 @@ export function ResaleMarketplace() {
 
     load();
     return () => { cancelled = true; };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [category, condition, sort, minPrice, maxPrice, debouncedSearch]);
 
   // ── Load more ──
@@ -304,7 +304,7 @@ export function ResaleMarketplace() {
 
     loadMore();
     return () => { cancelled = true; };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loadMorePage]);
 
   // ── Clear all filters ──
@@ -559,9 +559,9 @@ export function ResaleMarketplace() {
                 const imageUrl = firstImg ? (data.imageUrls[listing.id] ?? null) : null;
                 return (
                   <div key={listing.id} role="listitem">
-                    <ResaleListingCard 
-                      listing={listing} 
-                      primaryImageUrl={imageUrl} 
+                    <ResaleListingCard
+                      listing={listing}
+                      primaryImageUrl={imageUrl}
                       isFavorited={favoriteIds.has(listing.id)}
                       showFavoriteButton={isAuthenticated}
                     />
@@ -623,11 +623,10 @@ function CategoryPill({
       onClick={onClick}
       role="tab"
       aria-selected={active}
-      className={`flex items-center gap-1.5 px-3.5 sm:px-4 py-2 rounded-full text-xs font-semibold cursor-pointer transition-all shrink-0 select-none ${
-        active
+      className={`flex items-center gap-1.5 px-3.5 sm:px-4 py-2 rounded-full text-xs font-semibold cursor-pointer transition-all shrink-0 select-none ${active
           ? "bg-emerald-500/20 border border-emerald-500/50 text-emerald-300 shadow-[0_0_12px_rgba(16,185,129,0.3)]"
           : "bg-[#0c1410]/80 border border-white/10 text-white/70 hover:text-white hover:border-white/20 hover:bg-white/5"
-      }`}
+        }`}
     >
       {icon && <span className="text-sm">{icon}</span>}
       <span>{label}</span>

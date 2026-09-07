@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useState, useEffect } from "react";
+import { memo, useState, useMemo } from "react";
 import Link from "next/link";
 import { MapPin, Clock, Tag, HandCoins } from "lucide-react";
 import type { ResaleListingWithImages } from "@/lib/database/resale";
@@ -17,10 +17,10 @@ const CONDITION_LABELS: Record<string, string> = {
 };
 
 const CONDITION_COLORS: Record<string, { text: string; bg: string }> = {
-  new:      { text: "#00E676", bg: "rgba(0,230,118,0.12)" },
+  new: { text: "#00E676", bg: "rgba(0,230,118,0.12)" },
   like_new: { text: "#34d399", bg: "rgba(52,211,153,0.12)" },
-  good:     { text: "#60a5fa", bg: "rgba(96,165,250,0.12)" },
-  fair:     { text: "#A7B8B0", bg: "rgba(167,184,176,0.10)" },
+  good: { text: "#60a5fa", bg: "rgba(96,165,250,0.12)" },
+  fair: { text: "#A7B8B0", bg: "rgba(167,184,176,0.10)" },
 };
 
 function formatRelativeTime(iso: string): string {
@@ -67,41 +67,17 @@ export const ResaleListingCard = memo(function ResaleListingCard({
   isFavorited = false,
   showFavoriteButton = false,
 }: ResaleListingCardProps) {
-  const [blobUrl, setBlobUrl] = useState<string | null>(null);
+  const [imgError, setImgError] = useState(false);
 
-  useEffect(() => {
-    if (!primaryImageUrl) return;
-
-    let active = true;
-    let objectUrl: string | null = null;
-
-    const fetchImage = async () => {
-      try {
-        const fetchUrl = primaryImageUrl.replace('127.0.0.1', 'localhost');
-        const res = await fetch(fetchUrl);
-        if (res.ok) {
-          const blob = await res.blob();
-          objectUrl = URL.createObjectURL(blob);
-          if (active) {
-            setBlobUrl(objectUrl);
-          } else {
-            URL.revokeObjectURL(objectUrl);
-          }
-        }
-      } catch (err) {
-        console.error("Failed to fetch card image", err);
-      }
-    };
-
-    fetchImage();
-
-    return () => {
-      active = false;
-      if (objectUrl) {
-        URL.revokeObjectURL(objectUrl);
-      }
-    };
+  // Normalize 127.0.0.1 to window.location.hostname for consistent local dev image loading
+  const displayImageUrl = useMemo(() => {
+    if (!primaryImageUrl) return null;
+    if (typeof window !== "undefined" && window.location.hostname === "localhost") {
+      return primaryImageUrl.replace("127.0.0.1", "localhost");
+    }
+    return primaryImageUrl;
   }, [primaryImageUrl]);
+
   const conditionStyle = CONDITION_COLORS[listing.condition] ?? CONDITION_COLORS.fair;
   const discountPct =
     listing.original_price && listing.original_price > listing.price
@@ -139,10 +115,10 @@ export const ResaleListingCard = memo(function ResaleListingCard({
             flexShrink: 0,
           }}
         >
-          {blobUrl ? (
+          {displayImageUrl && !imgError ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
-              src={blobUrl}
+              src={displayImageUrl}
               alt={listing.title}
               style={{
                 width: "100%",
@@ -152,39 +128,24 @@ export const ResaleListingCard = memo(function ResaleListingCard({
               }}
               className="group-hover:scale-105"
               loading="lazy"
-              onError={(e) => {
-                (e.currentTarget as HTMLImageElement).style.display = "none";
-                const parent = e.currentTarget.parentElement;
-                if (parent) {
-                  const fallback = parent.querySelector(".img-fallback") as HTMLElement | null;
-                  if (fallback) fallback.style.display = "flex";
-                }
-              }}
+              onError={() => setImgError(true)}
             />
-          ) : null}
-
-          {/* Fallback placeholder */}
-          <div
-            className="img-fallback"
-            style={{
-              display: blobUrl ? "none" : "flex",
-              position: "absolute",
-              inset: 0,
-              alignItems: "center",
-              justifyContent: "center",
-              flexDirection: "column",
-              gap: "0.5rem",
-            }}
-          >
-            {primaryImageUrl && !blobUrl ? (
-              <div className="w-5 h-5 border-2 border-[#00E676]/30 border-t-[#00E676] rounded-full animate-spin" />
-            ) : (
-              <>
-                <Tag size={32} color="rgba(167,184,176,0.3)" />
-                <span style={{ color: "rgba(167,184,176,0.4)", fontSize: "0.7rem" }}>No image</span>
-              </>
-            )}
-          </div>
+          ) : (
+            <div
+              style={{
+                position: "absolute",
+                inset: 0,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                flexDirection: "column",
+                gap: "0.5rem",
+              }}
+            >
+              <Tag size={32} color="rgba(167,184,176,0.3)" />
+              <span style={{ color: "rgba(167,184,176,0.4)", fontSize: "0.7rem" }}>No image</span>
+            </div>
+          )}
 
           {/* Badges overlay */}
           <div

@@ -2,22 +2,21 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { 
-  LayoutDashboard, 
-  Wallet, 
-  MessageSquare, 
-  BarChart2, 
-  User, 
+import {
+  LayoutDashboard,
+  Wallet,
+  MessageSquare,
+  BarChart2,
+  User,
   Settings,
   X,
   Menu,
   ShoppingBag,
   Home,
-  LogOut, 
-  Crown, 
-  Zap, 
-  FileText, 
-  Bike 
+  LogOut,
+  Zap,
+  FileText,
+  Bike
 } from "lucide-react";
 import { LogoutButton } from "../auth/LogoutButton";
 import { createClient } from "@/lib/supabase/client";
@@ -42,7 +41,7 @@ export function Sidebar() {
   const isProfilePage = pathname === "/dashboard/profile";
   const [unreadCount, setUnreadCount] = useState(0);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
-  
+
   // Toast Notification State
   const [toast, setToast] = useState<{ id: string; message: string; conversationId: string } | null>(null);
 
@@ -112,23 +111,23 @@ export function Sidebar() {
         async (payload) => {
           if (payload.new.sender_id !== userId) {
             setUnreadCount(c => c + 1);
-            
+
             // Fetch sender info for the toast
             const { data: senderProfile } = await supabase
               .from('profiles')
               .select('full_name')
               .eq('id', payload.new.sender_id)
               .single();
-              
+
             const senderName = senderProfile?.full_name || 'Someone';
             const msgContent = payload.new.image_url ? 'Sent an image 📷' : payload.new.content;
-            
+
             setToast({
               id: payload.new.id,
               message: `${senderName}: ${msgContent}`,
               conversationId: payload.new.conversation_id
             });
-            
+
             // Auto hide toast after 5s
             setTimeout(() => {
               setToast(current => current?.id === payload.new.id ? null : current);
@@ -157,19 +156,18 @@ export function Sidebar() {
       {!isProfilePage && navItems.map((item) => {
         const isActive = pathname === item.href;
         return (
-          <Link 
-            key={item.name} 
-            href={item.href} 
+          <Link
+            key={item.name}
+            href={item.href}
             prefetch={true}
             onClick={onItemClick}
             className="no-underline"
           >
-            <div 
-              className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-sm font-medium relative ${
-                isActive 
-                  ? "bg-[#00E676]/10 text-[#00E676] font-bold" 
+            <div
+              className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-sm font-medium relative ${isActive
+                  ? "bg-[#00E676]/10 text-[#00E676] font-bold"
                   : "text-[#A7B8B0] hover:bg-[#00E676]/5 hover:text-[#00E676]"
-              }`}
+                }`}
             >
               <item.icon size={18} className="shrink-0" />
               <span className="truncate">{item.name}</span>
@@ -193,7 +191,7 @@ export function Sidebar() {
       {/* ── Toast Notification ── */}
       {toast && (
         <div className="fixed top-4 right-4 z-[100] bg-[#0d1310] border border-[#10b981]/30 p-4 rounded-xl shadow-2xl flex items-start gap-4 min-w-[280px] max-w-[400px] animate-in slide-in-from-top-10 fade-in duration-300">
-          <div 
+          <div
             className="flex-1 cursor-pointer"
             onClick={() => {
               router.push(`/dashboard/chat?id=${toast.conversationId}`);
@@ -203,7 +201,7 @@ export function Sidebar() {
             <p className="text-sm font-bold text-white mb-1">New Message</p>
             <p className="text-xs text-white/70 line-clamp-2">{toast.message}</p>
           </div>
-          <button 
+          <button
             onClick={() => setToast(null)}
             className="text-white/40 hover:text-white transition-colors"
             aria-label="Close notification"
@@ -224,8 +222,8 @@ export function Sidebar() {
 
         <div className="flex items-center gap-2">
           {unreadCount > 0 && (
-            <Link 
-              href="/dashboard/chat" 
+            <Link
+              href="/dashboard/chat"
               className="px-2.5 py-1 rounded-full bg-[#00E676]/15 border border-[#00E676]/30 text-[#00E676] text-xs font-bold flex items-center gap-1.5"
             >
               <MessageSquare size={13} />
@@ -245,7 +243,7 @@ export function Sidebar() {
 
       {/* ── Mobile Drawer Backdrop & Slide-out Menu (<1024px) ── */}
       {isMobileOpen && (
-        <div 
+        <div
           className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm lg:hidden animate-in fade-in duration-200"
           onClick={() => setIsMobileOpen(false)}
           aria-hidden="true"
@@ -253,9 +251,8 @@ export function Sidebar() {
       )}
 
       <aside
-        className={`fixed top-0 bottom-0 left-0 z-50 w-[280px] max-w-[85vw] bg-[#050A07] border-r border-[#66FFB2]/15 p-6 flex flex-col justify-between shadow-2xl transition-transform duration-300 ease-out lg:hidden ${
-          isMobileOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
+        className={`fixed top-0 bottom-0 left-0 z-50 w-[280px] max-w-[85vw] bg-[#050A07] border-r border-[#66FFB2]/15 p-6 flex flex-col justify-between shadow-2xl transition-transform duration-300 ease-out lg:hidden ${isMobileOpen ? "translate-x-0" : "-translate-x-full"
+          }`}
         aria-label="Mobile Dashboard Navigation"
       >
         {/* Drawer Header */}
@@ -282,25 +279,8 @@ export function Sidebar() {
         </div>
 
         {/* Drawer Footer */}
-        <div className="pt-4 border-t border-[#66FFB2]/10 space-y-4">
-          {!isProfilePage && (
-            <div className="bg-[#0A0F0C]/80 border border-[#66FFB2]/15 rounded-2xl p-4">
-              <div className="flex items-center gap-2 mb-1.5">
-                <Crown size={15} color="#F59E0B" />
-                <h4 className="text-white font-bold text-xs">Upgrade to Pro</h4>
-              </div>
-              <p className="text-[#A7B8B0] text-[11px] leading-relaxed mb-3">
-                Unlock unlimited requests & priority perks.
-              </p>
-              <button 
-                className="w-full py-2 bg-gradient-to-r from-[#00C853] to-[#00E676] text-black font-extrabold text-xs rounded-lg shadow-[0_0_12px_rgba(0,230,118,0.3)] active:scale-95 transition-transform"
-              >
-                Upgrade Now
-              </button>
-            </div>
-          )}
-
-          <LogoutButton 
+        <div className="pt-4 border-t border-[#66FFB2]/10">
+          <LogoutButton
             variant="ghost"
             className="w-full flex justify-start gap-3 items-center px-4 py-3 text-[#ef4444] hover:bg-[#ef4444]/10 hover:text-[#f87171] rounded-xl font-bold text-sm transition-colors"
           >
@@ -311,7 +291,7 @@ export function Sidebar() {
       </aside>
 
       {/* ── Desktop Fixed Sidebar (>=1024px) ── */}
-      <aside 
+      <aside
         className="hidden lg:flex fixed top-0 left-0 w-[240px] h-screen bg-[#050A07] border-r border-[#66FFB2]/5 flex-col p-6 z-40"
         aria-label="Desktop Dashboard Navigation"
       >
@@ -328,25 +308,9 @@ export function Sidebar() {
         {/* Desktop Nav links */}
         {renderNavLinks()}
 
-        {/* Upgrade to Pro */}
-        {!isProfilePage && (
-          <div className="bg-[#0A0F0C]/80 border border-[#66FFB2]/10 rounded-2xl p-4 mb-4 backdrop-blur-md">
-            <div className="flex items-center gap-2 mb-1.5">
-              <Crown size={15} color="#F59E0B" />
-              <h4 className="text-white font-bold text-xs">Upgrade to Pro</h4>
-            </div>
-            <p className="text-[#A7B8B0] text-[11px] leading-relaxed mb-3">
-              Unlock more features and get unlimited requests.
-            </p>
-            <button className="w-full py-2 bg-gradient-to-r from-[#00C853] to-[#00E676] text-black font-extrabold text-xs rounded-lg shadow-[0_0_15px_rgba(0,230,118,0.25)] hover:scale-105 transition-transform">
-              Upgrade Now
-            </button>
-          </div>
-        )}
-
         {/* Logout */}
         <div className="pt-2 border-t border-[#66FFB2]/5">
-          <LogoutButton 
+          <LogoutButton
             variant="ghost"
             className="w-full flex justify-start gap-3 items-center px-4 py-3 text-[#ef4444] hover:bg-[#ef4444]/10 hover:text-[#f87171] rounded-xl font-bold text-sm transition-colors"
           >
