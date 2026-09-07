@@ -376,10 +376,9 @@ export function RequestLiveTracker({ initialRequest }: RequestLiveTrackerProps) 
       {/* ── CASE 1: SCI-FI / RAPIDO CAMPUS RADAR (PENDING STATE) ─── */}
       {/* ============================================================ */}
       {request.status === "pending" && (
-        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-b from-[#08120b]/95 via-[#060c08]/95 to-[#050906]/95 border-2 border-emerald-500/30 p-6 sm:p-10 flex flex-col items-center text-center shadow-[0_0_60px_rgba(0,230,118,0.14)] backdrop-blur-2xl">
-          {/* Holographic HUD Grid Overlay */}
+        <div className="relative overflow-hidden rounded-3xl bg-[#0a100c]/95 border-2 border-emerald-500/30 p-6 sm:p-10 flex flex-col items-center text-center shadow-[0_0_50px_rgba(0,230,118,0.12)]">
+          {/* Subtle Ambient Radial Glow */}
           <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_center,rgba(0,230,118,0.12)_0%,transparent_70%)]" />
-          <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(to_right,#00e67608_1px,transparent_1px),linear-gradient(to_bottom,#00e67608_1px,transparent_1px)] bg-[size:32px_32px]" />
 
           {/* Tactical Corner Reticles */}
           <div className="absolute top-4 left-4 w-4 h-4 border-t-2 border-l-2 border-emerald-500/40 pointer-events-none" />
