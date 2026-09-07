@@ -3,9 +3,9 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { CreateRequestForm } from "@/components/request/CreateRequestForm";
 import { NotificationBell } from "@/components/notifications/NotificationBell";
-import { Plus, Zap } from "lucide-react";
+import { ArrowLeft, Sparkles, Zap } from "lucide-react";
 import Link from "next/link";
-import { RealtimeProvider } from "@/providers/RealtimeProvider";
+import LazySpaceBackground from "@/components/auth/LazySpaceBackground";
 
 export default async function NewRequestPage() {
   const { data: { user }, error } = await getUser();
@@ -39,47 +39,66 @@ export default async function NewRequestPage() {
   }
 
   return (
-    <div className="flex min-h-screen bg-[#050805] px-3 py-4 sm:px-6 sm:py-8 lg:p-10">
-      <main className="flex-1 w-full max-w-4xl mx-auto">
-        
+    <div className="min-h-screen bg-[#050805] px-3 py-4 sm:px-6 sm:py-8 lg:p-10 relative overflow-x-hidden">
+      {/* ── Atmospheric Cosmic Background ── */}
+      <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
+        {/* Deep ambient cosmic glowing nebulae */}
+        <div className="absolute top-[-10%] left-[20%] w-[600px] h-[600px] bg-emerald-500/15 rounded-full blur-[140px]" />
+        <div className="absolute top-[35%] right-[5%] w-[500px] h-[500px] bg-emerald-600/15 rounded-full blur-[130px]" />
+        <div className="absolute bottom-[-10%] left-[-5%] w-[500px] h-[500px] bg-teal-500/10 rounded-full blur-[140px]" />
+
+        {/* Floating cosmic particles background */}
+        <div className="absolute inset-0 opacity-45">
+          <LazySpaceBackground />
+        </div>
+      </div>
+
+      <main className="relative z-10 w-full max-w-4xl mx-auto">
         {/* Top Bar */}
         <div className="flex justify-between items-center mb-6 sm:mb-10">
-          
           {/* Logo */}
-          <Link href="/dashboard" className="no-underline">
-            <div className="flex items-center gap-2">
-              <div className="bg-[#00E676] rounded-md p-1 flex items-center justify-center">
-                <Zap size={16} color="#050805" fill="#050805" />
+          <Link href="/dashboard" className="no-underline group">
+            <div className="flex items-center gap-2.5">
+              <div className="bg-[#00E676] rounded-xl p-1.5 flex items-center justify-center shadow-[0_0_15px_rgba(0,230,118,0.35)] group-hover:scale-105 transition-transform">
+                <Zap size={18} color="#050805" fill="#050805" />
               </div>
-              <span className="text-white font-extrabold text-lg sm:text-xl tracking-tight">UniVerse</span>
+              <span className="text-white font-extrabold text-xl sm:text-2xl tracking-tight">
+                Uni<span className="text-[#00E676]">Verse</span>
+              </span>
             </div>
           </Link>
 
-          {/* Right Actions */}
-          <div className="flex gap-3 sm:gap-5 items-center">
-            {/* Bell */}
-            <div className="relative bg-[#0a0f0c]/40 border border-[#66ffb2]/10 p-2 sm:p-2.5 rounded-xl backdrop-blur-md">
+          {/* Right Actions: Back to Dashboard & Notification Bell */}
+          <div className="flex gap-2.5 sm:gap-3.5 items-center">
+            <Link
+              href="/dashboard"
+              className="no-underline flex items-center gap-2 bg-[#0a0f0c]/60 hover:bg-emerald-500/15 text-[#A7B8B0] hover:text-white font-semibold text-xs sm:text-sm border border-white/10 hover:border-emerald-500/30 rounded-xl px-3 sm:px-4 py-2 sm:py-2.5 backdrop-blur-md transition-all active:scale-95"
+            >
+              <ArrowLeft size={16} />
+              <span className="hidden xs:inline">Back to Dashboard</span>
+            </Link>
+
+            {/* Notification Bell */}
+            <div className="relative bg-[#0a0f0c]/60 border border-white/10 hover:border-emerald-500/30 p-2 sm:p-2.5 rounded-xl backdrop-blur-md transition-colors">
               <NotificationBell />
             </div>
-            {/* Button */}
-            <Link href="/request/new" className="no-underline hidden sm:inline-block">
-              <button className="flex items-center gap-2 bg-[#00E676]/15 text-[#00E676] font-bold text-xs sm:text-sm border border-[#00E676]/30 rounded-xl px-3.5 sm:px-5 py-2.5 sm:py-3 cursor-pointer">
-                <Plus size={16} /> New Request
-              </button>
-            </Link>
           </div>
         </div>
 
-        {/* Header */}
-        <div className="text-center mb-6 sm:mb-10">
+        {/* Header Section */}
+        <div className="text-center mb-6 sm:mb-10 flex flex-col items-center">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-emerald-400 text-xs font-semibold mb-3">
+            <Sparkles size={13} />
+            <span>Instant Campus Delivery Network</span>
+          </div>
           <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white mb-2 tracking-tight">
-            Create <span className="text-[#00E676]">Request</span>
+            Create <span className="text-[#00E676] drop-shadow-[0_0_20px_rgba(0,230,118,0.35)]">Request</span>
           </h1>
-          <p className="text-[#A7B8B0] text-xs sm:text-sm lg:text-[0.95rem]">
-            Tell us what you need and where to deliver it.
+          <p className="text-[#A7B8B0] text-xs sm:text-sm lg:text-base max-w-md">
+            Tell us what you need — student runners across campus will deliver it straight to your room.
           </p>
         </div>
-        
+
         {/* Main Form */}
         <CreateRequestForm requesterId={user.id} />
       </main>

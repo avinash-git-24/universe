@@ -19,6 +19,10 @@ import {
   Check,
   AlertCircle,
   Sparkles,
+  Zap,
+  ShieldCheck,
+  Clock,
+  Coins,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
@@ -34,16 +38,36 @@ interface ItemForm {
   name: string;
   category: Category;
   quantity: number;
+  estimatedPrice?: number;
 }
 
 const PICKUP_LOCATIONS = [
-  "Campus Store",
-  "Vending Machine",
-  "Food Court",
-  "Hostel Shop",
+  "Campus Food Court",
+  "Hostel Night Canteen",
+  "Campus Tuck Shop",
+  "Nescafe Stall",
+  "Main Gate Stores",
+  "Other (Custom Spot)",
 ];
 
-const HOSTELS = ["Hostel A", "Hostel B", "Hostel C", "Hostel D"];
+const HOSTELS = [
+  "Hostel A",
+  "Hostel B",
+  "Hostel C",
+  "Hostel D",
+  "Aryabhatta Hall",
+  "Kalam Hostel",
+  "Other",
+];
+
+const POPULAR_CHIPS: Record<Category, string[]> = {
+  Snack: ["Maggi 2-Min", "Lays Blue", "Kurkure", "Dairy Milk", "KitKat", "Doritos"],
+  Beverage: ["Cold Coffee", "Sting Energy", "Red Bull", "Amul Kool", "Chai / Tea", "Sprite"],
+  Meal: ["Paneer Butter Masala", "Egg Roll", "Veg Fried Rice", "Chicken Biryani", "Chole Bhature"],
+  Grocery: ["Bread", "Amul Butter", "Milk 500ml", "Eggs (6 pcs)", "Instant Noodles"],
+  Stationery: ["A4 Notebook", "Blue Gel Pen", "Sticky Notes", "A4 Papers", "Highlighter"],
+  Medicine: ["Paracetamol 650", "Band-Aid", "Strepsils", "Vicks Inhaler", "Digene / Eno"],
+};
 
 export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
   const router = useRouter();
@@ -56,48 +80,64 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
   const [currentCategory, setCurrentCategory] = useState<Category>("Snack");
   const [currentItemName, setCurrentItemName] = useState("");
   const [currentItemQty, setCurrentItemQty] = useState(1);
+  const [currentItemPrice, setCurrentItemPrice] = useState("");
   const [itemInputError, setItemInputError] = useState(false);
 
   // Step 2 State: Logistics & Reward
   const [pickupLocation, setPickupLocation] = useState(PICKUP_LOCATIONS[0]);
+  const [customPickupLocation, setCustomPickupLocation] = useState("");
   const [dropoffHostel, setDropoffHostel] = useState(HOSTELS[0]);
+  const [customDropoffHostel, setCustomDropoffHostel] = useState("");
   const [dropoffRoom, setDropoffRoom] = useState("");
   const [roomError, setRoomError] = useState(false);
+  const [urgency, setUrgency] = useState<"standard" | "urgent">("standard");
   const [customReward, setCustomReward] = useState<string>("");
 
   // Step 3 State: Extras
   const [instructions, setInstructions] = useState("");
 
   const calculateSuggestedReward = () => {
-    if (items.length === 0) return 5;
+    let base = 15;
+    if (items.length === 0) return base;
     const hasMeal = items.some((item) => item.category === "Meal");
-    if (hasMeal) return 25;
+    if (hasMeal) base += 10;
     const totalQty = items.reduce((sum, item) => sum + item.quantity, 0);
-    if (totalQty === 1) return 5;
-    if (totalQty === 2) return 10;
-    if (totalQty === 3) return 15;
-    return 20;
+    if (totalQty > 3) base += 5;
+    if (urgency === "urgent") base += 10;
+    return base;
   };
 
-  const currentReward = customReward !== "" ? Math.max(0, Number(customReward)) : calculateSuggestedReward();
+  const currentReward =
+    customReward !== "" ? Math.max(5, Number(customReward)) : calculateSuggestedReward();
 
-  const handleAddItem = () => {
-    if (!currentItemName.trim()) {
+  const totalEstimatedItemsAmount = items.reduce(
+    (sum, item) => sum + (item.estimatedPrice || 0) * item.quantity,
+    0
+  );
+
+  const handleAddItem = (overrideName?: string) => {
+    const nameToAdd = (overrideName !== undefined ? overrideName : currentItemName).trim();
+    if (!nameToAdd) {
       setItemInputError(true);
       return;
     }
     setItemInputError(false);
+
+    const parsedPrice = currentItemPrice ? Math.max(0, Number(currentItemPrice)) : undefined;
+
     setItems((prev) => [
       ...prev,
       {
         id: Math.random().toString(36).substring(2, 9),
-        name: currentItemName.trim(),
+        name: nameToAdd,
         category: currentCategory,
         quantity: currentItemQty,
+        estimatedPrice: parsedPrice,
       },
     ]);
     setCurrentItemName("");
     setCurrentItemQty(1);
+    setCurrentItemPrice("");
     setFormError(null);
   };
 
@@ -112,6 +152,14 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
   const handleStep2Continue = () => {
     if (!dropoffRoom.trim()) {
       setRoomError(true);
+      return;
+    }
+    if (pickupLocation === "Other (Custom Spot)" && !customPickupLocation.trim()) {
+      setFormError("Please enter your custom pickup spot.");
+      return;
+    }
+    if (dropoffHostel === "Other" && !customDropoffHostel.trim()) {
+      setFormError("Please enter your hostel name.");
       return;
     }
     setRoomError(false);
@@ -178,12 +226,27 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
         );
       }
 
+      const finalPickup =
+        pickupLocation === "Other (Custom Spot)"
+          ? customPickupLocation.trim() || "Campus Store"
+          : pickupLocation;
+
+      const finalHostel =
+        dropoffHostel === "Other" ? customDropoffHostel.trim() || "Hostel" : dropoffHostel;
+
+      const combinedInstructions = [
+        instructions.trim() || null,
+        urgency === "urgent" ? "⚡ URGENT DELIVERY REQUEST" : null,
+      ]
+        .filter(Boolean)
+        .join(" | ");
+
       const requestData: Omit<InsertRequest, "requester_id"> = {
-        pickup_location: pickupLocation,
-        dropoff_location: `${dropoffHostel}, Room ${dropoffRoom.trim()}`,
-        instructions: instructions.trim() || null,
+        pickup_location: finalPickup,
+        dropoff_location: `${finalHostel}, Room ${dropoffRoom.trim()}`,
+        instructions: combinedInstructions || null,
         delivery_fee: currentReward,
-        total_estimated_amount: 0,
+        total_estimated_amount: totalEstimatedItemsAmount,
         status: "pending",
       };
 
@@ -191,7 +254,7 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
         name: item.name,
         quantity: item.quantity,
         notes: `Category: ${item.category}`,
-        estimated_price: 0,
+        estimated_price: item.estimatedPrice || 0,
       }));
 
       const { data: request, error: requestError } = await supabase
@@ -202,7 +265,9 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
 
       if (requestError || !request) {
         console.error("Delivery request insert error:", requestError);
-        setFormError(requestError?.message || "Failed to create delivery request. Please try again.");
+        setFormError(
+          requestError?.message || "Failed to create delivery request. Please try again."
+        );
         setIsSubmitting(false);
         return;
       }
@@ -220,14 +285,16 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
       window.location.href = "/dashboard";
     } catch (error) {
       console.error("Unexpected submission error:", error);
-      setFormError(error instanceof Error ? error.message : "An unexpected error occurred. Please try again.");
+      setFormError(
+        error instanceof Error ? error.message : "An unexpected error occurred. Please try again."
+      );
       setIsSubmitting(false);
     }
   };
 
   const categories: {
     label: Category;
-    icon: React.ComponentType<{ size?: number; color?: string; strokeWidth?: number }>;
+    icon: React.ComponentType<{ size?: number; className?: string }>;
   }[] = [
     { label: "Snack", icon: Pizza },
     { label: "Beverage", icon: Coffee },
@@ -238,89 +305,123 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
   ];
 
   return (
-    <div className="max-w-[800px] mx-auto w-full flex flex-col items-center">
-      {/* Dynamic Step Indicator */}
-      <div className="flex items-center justify-between sm:justify-center gap-1.5 sm:gap-3 mb-6 sm:mb-10 w-full max-w-[600px] relative px-2">
-        {/* Step 1 Indicator */}
-        <div
-          onClick={() => setStep(1)}
-          className="flex flex-col items-center gap-1.5 z-10 cursor-pointer"
-        >
-          <div
+    <div className="max-w-[820px] mx-auto w-full flex flex-col items-center">
+      {/* ── Dynamic Stepper Header ── */}
+      <div className="w-full max-w-[620px] mb-8 sm:mb-10 px-2">
+        <div className="flex items-center justify-between relative">
+          {/* Step 1 Pill */}
+          <button
+            type="button"
+            onClick={() => setStep(1)}
+            className="flex flex-col items-center gap-2 z-10 cursor-pointer group bg-transparent border-none"
+          >
+            <div
+              className={cn(
+                "w-9 h-9 sm:w-11 sm:h-11 rounded-2xl flex items-center justify-center font-extrabold text-sm sm:text-base transition-all duration-300",
+                step >= 1
+                  ? "bg-[#00E676] text-[#050805] shadow-[0_0_20px_rgba(0,230,118,0.4)]"
+                  : "bg-white/5 text-white/40 border border-white/10",
+                step === 1 ? "ring-4 ring-[#00E676]/30 scale-105" : ""
+              )}
+            >
+              {step > 1 ? <Check size={18} strokeWidth={3} /> : "1"}
+            </div>
+            <span
+              className={cn(
+                "text-[11px] sm:text-xs font-semibold tracking-wide transition-colors",
+                step >= 1 ? "text-white" : "text-white/40"
+              )}
+            >
+              Item Details
+            </span>
+          </button>
+
+          {/* Line 1 -> 2 */}
+          <div className="flex-1 h-0.5 mx-2 sm:mx-3 -mt-6 rounded-full bg-white/10 overflow-hidden">
+            <div
+              className={cn(
+                "h-full bg-gradient-to-r from-[#00E676] to-emerald-400 transition-all duration-500",
+                step >= 2 ? "w-full" : "w-0"
+              )}
+            />
+          </div>
+
+          {/* Step 2 Pill */}
+          <button
+            type="button"
+            onClick={() => {
+              if (items.length > 0) setStep(2);
+            }}
+            disabled={items.length === 0}
             className={cn(
-              "w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center font-extrabold text-sm sm:text-base transition-all duration-300",
-              step >= 1 ? "bg-[#00E676] text-[#050805]" : "bg-white/5 text-white/40",
-              step === 1 ? "ring-4 ring-[#00E676]/30 shadow-[0_0_15px_rgba(0,230,118,0.5)]" : ""
+              "flex flex-col items-center gap-2 z-10 bg-transparent border-none transition-opacity",
+              items.length > 0 ? "cursor-pointer" : "cursor-not-allowed opacity-50"
             )}
           >
-            {step > 1 ? <Check size={16} strokeWidth={3} /> : "1"}
+            <div
+              className={cn(
+                "w-9 h-9 sm:w-11 sm:h-11 rounded-2xl flex items-center justify-center font-extrabold text-sm sm:text-base transition-all duration-300 border",
+                step >= 2
+                  ? "bg-[#00E676] text-[#050805] border-[#00E676] shadow-[0_0_20px_rgba(0,230,118,0.4)]"
+                  : "bg-[#0a0f0c]/60 text-white/40 border-white/15",
+                step === 2 ? "ring-4 ring-[#00E676]/30 scale-105" : ""
+              )}
+            >
+              {step > 2 ? <Check size={18} strokeWidth={3} /> : "2"}
+            </div>
+            <span
+              className={cn(
+                "text-[11px] sm:text-xs font-semibold tracking-wide transition-colors",
+                step >= 2 ? "text-white" : "text-white/40"
+              )}
+            >
+              Delivery & Reward
+            </span>
+          </button>
+
+          {/* Line 2 -> 3 */}
+          <div className="flex-1 h-0.5 mx-2 sm:mx-3 -mt-6 rounded-full bg-white/10 overflow-hidden">
+            <div
+              className={cn(
+                "h-full bg-gradient-to-r from-[#00E676] to-emerald-400 transition-all duration-500",
+                step === 3 ? "w-full" : "w-0"
+              )}
+            />
           </div>
-          <span className={cn("text-[10px] sm:text-xs font-semibold text-center whitespace-nowrap", step >= 1 ? "text-white" : "text-white/40")}>
-            Item Details
-          </span>
-        </div>
 
-        {/* Line 1 -> 2 */}
-        <div
-          className={cn(
-            "flex-1 h-0.5 -mt-4 sm:-mt-5 transition-all duration-300",
-            step >= 2 ? "bg-[#00E676]" : "border-t-2 border-dashed border-white/20"
-          )}
-        />
-
-        {/* Step 2 Indicator */}
-        <div
-          onClick={() => {
-            if (items.length > 0) setStep(2);
-          }}
-          className={cn(
-            "flex flex-col items-center gap-1.5 z-10",
-            items.length > 0 ? "cursor-pointer" : "cursor-not-allowed opacity-70"
-          )}
-        >
-          <div
+          {/* Step 3 Pill */}
+          <button
+            type="button"
+            onClick={() => {
+              if (items.length > 0 && dropoffRoom.trim()) setStep(3);
+            }}
+            disabled={items.length === 0 || !dropoffRoom.trim()}
             className={cn(
-              "w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center font-extrabold text-sm sm:text-base transition-all duration-300 border",
-              step >= 2 ? "bg-[#00E676] text-[#050805] border-[#00E676]" : "bg-transparent text-white/40 border-white/20",
-              step === 2 ? "ring-4 ring-[#00E676]/30 shadow-[0_0_15px_rgba(0,230,118,0.5)]" : ""
+              "flex flex-col items-center gap-2 z-10 bg-transparent border-none transition-opacity",
+              items.length > 0 && dropoffRoom.trim()
+                ? "cursor-pointer"
+                : "cursor-not-allowed opacity-50"
             )}
           >
-            {step > 2 ? <Check size={16} strokeWidth={3} /> : "2"}
-          </div>
-          <span className={cn("text-[10px] sm:text-xs font-semibold text-center whitespace-nowrap", step >= 2 ? "text-white" : "text-white/40")}>
-            Delivery Details
-          </span>
-        </div>
-
-        {/* Line 2 -> 3 */}
-        <div
-          className={cn(
-            "flex-1 h-0.5 -mt-4 sm:-mt-5 transition-all duration-300",
-            step === 3 ? "bg-[#00E676]" : "border-t-2 border-dashed border-white/20"
-          )}
-        />
-
-        {/* Step 3 Indicator */}
-        <div
-          onClick={() => {
-            if (items.length > 0 && dropoffRoom.trim()) setStep(3);
-          }}
-          className={cn(
-            "flex flex-col items-center gap-1.5 z-10",
-            items.length > 0 && dropoffRoom.trim() ? "cursor-pointer" : "cursor-not-allowed opacity-70"
-          )}
-        >
-          <div
-            className={cn(
-              "w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center font-extrabold text-sm sm:text-base transition-all duration-300 border",
-              step === 3 ? "bg-[#00E676] text-[#050805] border-[#00E676] ring-4 ring-[#00E676]/30 shadow-[0_0_15px_rgba(0,230,118,0.5)]" : "bg-transparent text-white/40 border-white/20"
-            )}
-          >
-            3
-          </div>
-          <span className={cn("text-[10px] sm:text-xs font-semibold text-center whitespace-nowrap", step === 3 ? "text-white" : "text-white/40")}>
-            Confirm Request
-          </span>
+            <div
+              className={cn(
+                "w-9 h-9 sm:w-11 sm:h-11 rounded-2xl flex items-center justify-center font-extrabold text-sm sm:text-base transition-all duration-300 border",
+                step === 3
+                  ? "bg-[#00E676] text-[#050805] border-[#00E676] ring-4 ring-[#00E676]/30 shadow-[0_0_20px_rgba(0,230,118,0.4)] scale-105"
+                  : "bg-[#0a0f0c]/60 text-white/40 border-white/15"
+              )}
+            >
+              3
+            </div>
+            <span
+              className={cn(
+                "text-[11px] sm:text-xs font-semibold tracking-wide transition-colors",
+                step === 3 ? "text-white" : "text-white/40"
+              )}
+            >
+              Confirm
+            </span>
+          </button>
         </div>
       </div>
 
@@ -328,31 +429,33 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
       {formError && (
         <div
           role="alert"
-          className="w-full bg-red-500/15 border border-red-500/40 rounded-xl p-3.5 sm:p-4 text-red-300 text-xs sm:text-sm flex items-center gap-2.5 mb-6 break-words"
+          className="w-full bg-red-500/15 border border-red-500/40 rounded-2xl p-4 text-red-300 text-xs sm:text-sm flex items-center gap-3 mb-6 shadow-[0_4px_20px_rgba(239,68,68,0.15)]"
         >
-          <AlertCircle size={18} className="text-red-400 shrink-0" />
-          <span>{formError}</span>
+          <AlertCircle size={20} className="text-red-400 shrink-0" />
+          <span className="font-medium">{formError}</span>
         </div>
       )}
 
-      {/* Main Glassmorphic Card */}
-      <div className="bg-[#0a0f0c]/85 border border-[#66ffb2]/20 rounded-[20px] sm:rounded-[24px] p-4 sm:p-8 lg:p-9 w-full shadow-[0_10px_40px_rgba(0,0,0,0.5),0_0_40px_rgba(0,230,118,0.05)] backdrop-blur-xl flex flex-col gap-6 sm:gap-8">
+      {/* Main Glassmorphic Form Card */}
+      <div className="bg-[#0a0f0c]/65 border border-white/10 hover:border-emerald-500/20 rounded-[24px] sm:rounded-[28px] p-5 sm:p-8 lg:p-9 w-full shadow-[0_12px_45px_rgba(0,0,0,0.6),0_0_30px_rgba(0,230,118,0.04)] backdrop-blur-2xl flex flex-col gap-6 sm:gap-8 transition-all">
         {/* ================= STEP 1: ITEM DETAILS ================= */}
         {step === 1 && (
           <>
             <div className="flex items-center gap-3 sm:gap-4">
-              <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-[#00E676]/10 flex items-center justify-center border border-[#00E676]/25 shrink-0">
-                <Box size={20} className="text-[#00E676]" />
+              <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center border border-emerald-500/30 shrink-0 shadow-[0_0_15px_rgba(0,230,118,0.15)]">
+                <Box size={22} className="text-[#00E676]" />
               </div>
               <div>
-                <h2 className="text-white font-extrabold text-lg sm:text-xl m-0 leading-tight">What do you need?</h2>
-                <p className="text-[#A7B8B0] text-xs sm:text-sm m-0 mt-1">
-                  Select a category and add the items you want delivered to your room.
+                <h2 className="text-white font-extrabold text-lg sm:text-xl tracking-tight leading-tight">
+                  What do you need delivered?
+                </h2>
+                <p className="text-[#A7B8B0] text-xs sm:text-sm mt-1">
+                  Pick a category, tap quick campus favorites or type any custom item.
                 </p>
               </div>
             </div>
 
-            {/* Categories Grid (3 cols on mobile, 6 cols on tablet/desktop) */}
+            {/* Categories Grid */}
             <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 sm:gap-3 w-full">
               {categories.map((cat) => {
                 const isActive = currentCategory === cat.label;
@@ -363,243 +466,212 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
                     type="button"
                     onClick={() => setCurrentCategory(cat.label)}
                     className={cn(
-                      "relative rounded-2xl h-[76px] sm:h-[88px] w-full flex flex-col items-center justify-center gap-1.5 cursor-pointer transition-all duration-200 border",
+                      "relative rounded-2xl h-[78px] sm:h-[90px] w-full flex flex-col items-center justify-center gap-2 cursor-pointer transition-all duration-200 border overflow-hidden",
                       isActive
-                        ? "bg-[#00E676]/15 border-[#00E676] shadow-[0_0_20px_rgba(0,230,118,0.2)]"
-                        : "bg-white/[0.02] border-white/10 hover:border-white/20"
+                        ? "bg-emerald-500/15 border-[#00E676] shadow-[0_0_20px_rgba(0,230,118,0.25)] scale-[1.02]"
+                        : "bg-white/[0.02] border-white/10 hover:border-white/20 hover:bg-white/[0.04]"
                     )}
                   >
-                    <IconComp size={20} color={isActive ? "#00E676" : "#A7B8B0"} strokeWidth={1.75} />
-                    <span className={cn("text-[11px] sm:text-xs", isActive ? "text-white font-bold" : "text-[#A7B8B0] font-medium")}>
+                    <IconComp
+                      size={22}
+                      className={cn(
+                        "transition-colors",
+                        isActive ? "text-[#00E676]" : "text-[#A7B8B0]"
+                      )}
+                    />
+                    <span
+                      className={cn(
+                        "text-[11px] sm:text-xs tracking-tight",
+                        isActive ? "text-white font-bold" : "text-[#A7B8B0] font-medium"
+                      )}
+                    >
                       {cat.label}
                     </span>
                     {isActive && (
-                      <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 rotate-45 w-2 h-2 bg-[#00E676]" />
+                      <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#00E676] to-transparent" />
                     )}
                   </button>
                 );
               })}
             </div>
 
-            {/* Input Row */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-              <label style={{ color: "#00E676", fontSize: "0.85rem", fontWeight: 700 }}>
-                Add item for category: <span style={{ color: "#fff" }}>{currentCategory}</span>
-              </label>
-              <div style={{ display: "flex", gap: "0.75rem", alignItems: "center", flexWrap: "wrap" }}>
-                <input
-                  type="text"
-                  placeholder={`e.g. ${
-                    currentCategory === "Snack"
-                      ? "Lays Chips, Doritos, KitKat..."
-                      : currentCategory === "Beverage"
-                      ? "Cold Coffee, Red Bull, Sprite..."
-                      : currentCategory === "Meal"
-                      ? "Paneer Butter Masala, Roti..."
-                      : currentCategory === "Stationery"
-                      ? "A4 Notebook, Blue Pen..."
-                      : currentCategory === "Medicine"
-                      ? "Paracetamol, Band-Aid..."
-                      : "Milk, Bread, Biscuits..."
-                  }`}
-                  value={currentItemName}
-                  onChange={(e) => {
-                    setCurrentItemName(e.target.value);
-                    if (itemInputError) setItemInputError(false);
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      e.preventDefault();
-                      handleAddItem();
-                    }
-                  }}
-                  style={{
-                    flex: "1 1 240px",
-                    background: "rgba(0,0,0,0.4)",
-                    border: itemInputError ? "1px solid #ef4444" : "1px solid rgba(255,255,255,0.12)",
-                    borderRadius: "12px",
-                    padding: "0.85rem 1rem",
-                    color: "#fff",
-                    fontSize: "0.95rem",
-                    outline: "none",
-                  }}
-                />
+            {/* Quick-Pick Popular Chips */}
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center gap-1.5 text-xs text-[#A7B8B0]">
+                <Sparkles size={13} className="text-[#00E676]" />
+                <span>Popular {currentCategory} items (tap to add):</span>
+              </div>
+              <div className="flex flex-wrap gap-1.5 sm:gap-2">
+                {POPULAR_CHIPS[currentCategory].map((chip) => (
+                  <button
+                    key={chip}
+                    type="button"
+                    onClick={() => {
+                      setCurrentItemName(chip);
+                      setItemInputError(false);
+                    }}
+                    className="text-xs bg-white/[0.04] hover:bg-emerald-500/15 text-white/80 hover:text-[#00E676] border border-white/10 hover:border-emerald-500/30 px-3 py-1.5 rounded-xl transition-all cursor-pointer flex items-center gap-1 active:scale-95"
+                  >
+                    <span>+</span> {chip}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Input Row: Item Name + Optional Est Price + Quantity + Add */}
+            <div className="flex flex-col gap-3 bg-black/40 border border-white/10 p-3.5 sm:p-4 rounded-2xl">
+              <div className="flex flex-wrap gap-2.5 sm:gap-3 items-center">
+                {/* Item Name Input */}
+                <div className="flex-1 min-w-[200px]">
+                  <input
+                    type="text"
+                    placeholder={`Type ${currentCategory.toLowerCase()} name...`}
+                    value={currentItemName}
+                    onChange={(e) => {
+                      setCurrentItemName(e.target.value);
+                      if (itemInputError) setItemInputError(false);
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        handleAddItem();
+                      }
+                    }}
+                    className={cn(
+                      "w-full bg-white/[0.04] border rounded-xl px-3.5 py-3 text-white text-sm outline-none transition-all placeholder:text-white/30",
+                      itemInputError
+                        ? "border-red-500 ring-1 ring-red-500"
+                        : "border-white/10 focus:border-[#00E676] focus:bg-white/[0.06]"
+                    )}
+                  />
+                </div>
+
+                {/* Optional Estimated Price */}
+                <div className="w-28 sm:w-32 flex items-center bg-white/[0.04] border border-white/10 rounded-xl px-3 py-2.5 focus-within:border-[#00E676]">
+                  <span className="text-emerald-400 font-bold text-xs mr-1">₹</span>
+                  <input
+                    type="number"
+                    min={0}
+                    placeholder="Est. price"
+                    value={currentItemPrice}
+                    onChange={(e) => setCurrentItemPrice(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        handleAddItem();
+                      }
+                    }}
+                    className="w-full bg-transparent border-none text-white text-xs outline-none placeholder:text-white/30"
+                  />
+                </div>
 
                 {/* Quantity Controls */}
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    background: "rgba(0,0,0,0.4)",
-                    border: "1px solid rgba(255,255,255,0.12)",
-                    borderRadius: "12px",
-                    overflow: "hidden",
-                  }}
-                >
+                <div className="flex items-center bg-white/[0.04] border border-white/10 rounded-xl overflow-hidden">
                   <button
                     type="button"
                     onClick={() => setCurrentItemQty(Math.max(1, currentItemQty - 1))}
-                    style={{
-                      background: "transparent",
-                      border: "none",
-                      color: "rgba(255,255,255,0.7)",
-                      padding: "0.85rem 0.9rem",
-                      cursor: "pointer",
-                    }}
+                    className="bg-transparent border-none text-white/70 hover:text-white px-3 py-2.5 cursor-pointer hover:bg-white/5 transition-colors"
                   >
                     <Minus size={14} />
                   </button>
-                  <span style={{ color: "#fff", fontWeight: 800, fontSize: "0.95rem", minWidth: "24px", textAlign: "center" }}>
+                  <span className="text-white font-extrabold text-sm min-w-[24px] text-center">
                     {currentItemQty}
                   </span>
                   <button
                     type="button"
                     onClick={() => setCurrentItemQty(currentItemQty + 1)}
-                    style={{
-                      background: "transparent",
-                      border: "none",
-                      color: "rgba(255,255,255,0.7)",
-                      padding: "0.85rem 0.9rem",
-                      cursor: "pointer",
-                    }}
+                    className="bg-transparent border-none text-white/70 hover:text-white px-3 py-2.5 cursor-pointer hover:bg-white/5 transition-colors"
                   >
                     <Plus size={14} />
                   </button>
                 </div>
 
-                {/* Add Item Button */}
+                {/* Add Button */}
                 <button
                   type="button"
-                  onClick={handleAddItem}
-                  style={{
-                    background: "rgba(0,230,118,0.2)",
-                    border: "1px solid rgba(0,230,118,0.4)",
-                    color: "#00E676",
-                    fontWeight: 700,
-                    fontSize: "0.95rem",
-                    padding: "0.85rem 1.6rem",
-                    borderRadius: "12px",
-                    cursor: "pointer",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "0.4rem",
-                  }}
+                  onClick={() => handleAddItem()}
+                  className="bg-emerald-500 hover:bg-emerald-400 text-[#050805] font-extrabold text-sm px-5 py-3 rounded-xl cursor-pointer flex items-center gap-1.5 shadow-[0_0_15px_rgba(0,230,118,0.3)] transition-all active:scale-95"
                 >
-                  <Plus size={16} /> Add
+                  <Plus size={16} strokeWidth={3} /> Add
                 </button>
               </div>
+
+              {itemInputError && (
+                <span className="text-red-400 text-xs font-semibold">
+                  * Please enter an item name before clicking Add.
+                </span>
+              )}
             </div>
 
-            {/* List / Empty State */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <span style={{ color: "#A7B8B0", fontSize: "0.85rem", fontWeight: 600 }}>Added Items ({items.length})</span>
+            {/* Added Items List */}
+            <div className="flex flex-col gap-3">
+              <div className="flex justify-between items-center px-1">
+                <span className="text-[#A7B8B0] text-xs font-semibold uppercase tracking-wider">
+                  Added Items ({items.length})
+                </span>
                 {items.length > 0 && (
                   <button
                     type="button"
                     onClick={handleClearAll}
-                    style={{
-                      background: "transparent",
-                      border: "none",
-                      color: "#A7B8B0",
-                      fontSize: "0.8rem",
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "0.4rem",
-                      cursor: "pointer",
-                    }}
+                    className="bg-transparent border-none text-[#A7B8B0] hover:text-red-400 text-xs flex items-center gap-1.5 cursor-pointer transition-colors"
                   >
-                    Clear all <Trash2 size={14} />
+                    <Trash2 size={13} /> Clear all
                   </button>
                 )}
               </div>
 
               {items.length === 0 ? (
-                <div
-                  style={{
-                    border: "1px dashed rgba(255,255,255,0.12)",
-                    borderRadius: "16px",
-                    padding: "3rem 1.5rem",
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    gap: "0.5rem",
-                    background: "rgba(0,0,0,0.25)",
-                    textAlign: "center",
-                  }}
-                >
-                  <Box size={36} color="#00E676" style={{ opacity: 0.8, marginBottom: "0.25rem" }} />
-                  <h4 style={{ color: "#fff", fontWeight: 700, margin: 0, fontSize: "1rem" }}>No items added yet</h4>
-                  <p style={{ color: "#A7B8B0", margin: 0, fontSize: "0.85rem" }}>Type an item name above and click &ldquo;Add&rdquo; to begin.</p>
+                <div className="border border-dashed border-white/15 rounded-2xl p-8 sm:p-10 flex flex-col items-center justify-center gap-2 bg-black/25 text-center">
+                  <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mb-1">
+                    <Box size={24} className="text-[#00E676] opacity-80" />
+                  </div>
+                  <h4 className="text-white font-bold text-sm sm:text-base m-0">No items added yet</h4>
+                  <p className="text-[#A7B8B0] text-xs max-w-xs m-0">
+                    Tap popular chips above or type items and hit &ldquo;Add&rdquo;.
+                  </p>
                 </div>
               ) : (
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "0.5rem",
-                    background: "rgba(0,0,0,0.3)",
-                    borderRadius: "16px",
-                    padding: "1rem",
-                    border: "1px solid rgba(255,255,255,0.06)",
-                    maxHeight: "260px",
-                    overflowY: "auto",
-                  }}
-                >
+                <div className="flex flex-col gap-2 bg-black/35 rounded-2xl p-3 border border-white/10 max-h-[280px] overflow-y-auto">
                   {items.map((item) => (
                     <div
                       key={item.id}
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        padding: "0.6rem 0.8rem",
-                        background: "rgba(255,255,255,0.02)",
-                        borderRadius: "10px",
-                        border: "1px solid rgba(255,255,255,0.04)",
-                      }}
+                      className="flex justify-between items-center p-3 rounded-xl bg-white/[0.02] border border-white/5 hover:border-white/10 transition-colors"
                     >
-                      <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-                        <span
-                          style={{
-                            background: "rgba(0,230,118,0.15)",
-                            color: "#00E676",
-                            fontSize: "0.75rem",
-                            fontWeight: 800,
-                            padding: "0.2rem 0.5rem",
-                            borderRadius: "6px",
-                          }}
-                        >
+                      <div className="flex items-center gap-2.5">
+                        <span className="bg-[#00E676]/15 text-[#00E676] text-xs font-extrabold px-2 py-0.5 rounded-md">
                           {item.quantity}x
                         </span>
-                        <span style={{ color: "#fff", fontWeight: 600, fontSize: "0.95rem" }}>{item.name}</span>
-                        <span
-                          style={{
-                            color: "#A7B8B0",
-                            fontSize: "0.75rem",
-                            padding: "0.15rem 0.45rem",
-                            background: "rgba(255,255,255,0.05)",
-                            borderRadius: "6px",
-                          }}
-                        >
+                        <span className="text-white font-semibold text-sm">{item.name}</span>
+                        <span className="text-[#A7B8B0] text-[11px] px-2 py-0.5 bg-white/5 rounded-md">
                           {item.category}
                         </span>
+                        {item.estimatedPrice ? (
+                          <span className="text-emerald-400/90 text-xs font-medium">
+                            ~₹{item.estimatedPrice * item.quantity}
+                          </span>
+                        ) : null}
                       </div>
                       <button
                         type="button"
                         onClick={() => handleRemoveItem(item.id)}
-                        style={{ background: "transparent", border: "none", color: "#ef4444", cursor: "pointer", padding: "4px" }}
+                        className="bg-transparent border-none text-white/40 hover:text-red-400 cursor-pointer p-1.5 rounded-lg transition-colors"
                       >
                         <Trash2 size={16} />
                       </button>
                     </div>
                   ))}
+
+                  {totalEstimatedItemsAmount > 0 && (
+                    <div className="pt-2 border-t border-white/10 flex justify-between items-center text-xs text-[#A7B8B0] px-2">
+                      <span>Est. Items Total:</span>
+                      <span className="text-white font-bold text-sm">₹{totalEstimatedItemsAmount}</span>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
 
-            {/* Step 1 Continue Button */}
+            {/* Continue Button */}
             <button
               type="button"
               onClick={() => {
@@ -610,23 +682,12 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
                 setFormError(null);
                 setStep(2);
               }}
-              style={{
-                width: "100%",
-                background: items.length > 0 ? "linear-gradient(135deg, #00C853 0%, #00E676 100%)" : "rgba(255,255,255,0.06)",
-                color: items.length > 0 ? "#050805" : "rgba(255,255,255,0.3)",
-                fontWeight: 800,
-                fontSize: "1rem",
-                padding: "1rem",
-                borderRadius: "14px",
-                border: "none",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: "0.5rem",
-                cursor: items.length > 0 ? "pointer" : "default",
-                boxShadow: items.length > 0 ? "0 0 25px rgba(0,230,118,0.35)" : "none",
-                transition: "all 0.2s ease",
-              }}
+              className={cn(
+                "w-full font-extrabold text-sm sm:text-base p-4 rounded-2xl border-none flex items-center justify-center gap-2 transition-all duration-200",
+                items.length > 0
+                  ? "bg-gradient-to-r from-[#00C853] to-[#00E676] text-[#050805] cursor-pointer shadow-[0_0_25px_rgba(0,230,118,0.35)] hover:shadow-[0_0_35px_rgba(0,230,118,0.5)] active:scale-[0.99]"
+                  : "bg-white/5 text-white/30 cursor-not-allowed"
+              )}
             >
               Continue to Delivery Details <ArrowRight size={18} />
             </button>
@@ -637,24 +698,26 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
         {step === 2 && (
           <>
             <div className="flex items-center gap-3 sm:gap-4">
-              <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-[#00E676]/10 flex items-center justify-center border border-[#00E676]/25 shrink-0">
-                <MapPin size={20} className="text-[#00E676]" />
+              <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center border border-emerald-500/30 shrink-0 shadow-[0_0_15px_rgba(0,230,118,0.15)]">
+                <MapPin size={22} className="text-[#00E676]" />
               </div>
               <div>
-                <h2 className="text-white font-extrabold text-lg sm:text-xl m-0 leading-tight">Logistics & Reward</h2>
-                <p className="text-[#A7B8B0] text-xs sm:text-sm m-0 mt-1">
-                  Where should the runner pick up your items and deliver them?
+                <h2 className="text-white font-extrabold text-lg sm:text-xl tracking-tight leading-tight">
+                  Logistics & Runner Reward
+                </h2>
+                <p className="text-[#A7B8B0] text-xs sm:text-sm mt-1">
+                  Specify where to fetch your items and the reward for the student runner.
                 </p>
               </div>
             </div>
 
-            <div className="flex flex-col gap-5 sm:gap-6">
+            <div className="flex flex-col gap-6">
               {/* Pickup Location */}
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col gap-2.5">
                 <label className="text-[#00E676] text-xs sm:text-sm font-bold flex items-center gap-1.5">
-                  <MapPin size={14} /> Select Pickup Location
+                  <MapPin size={14} /> Pickup Location
                 </label>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-2.5">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                   {PICKUP_LOCATIONS.map((loc) => {
                     const isSelected = pickupLocation === loc;
                     return (
@@ -663,10 +726,10 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
                         type="button"
                         onClick={() => setPickupLocation(loc)}
                         className={cn(
-                          "p-3 sm:p-3.5 rounded-xl text-left cursor-pointer text-xs sm:text-sm font-medium transition-all duration-150 border",
+                          "p-3 rounded-xl text-left cursor-pointer text-xs sm:text-sm font-medium transition-all border",
                           isSelected
-                            ? "bg-[#00E676]/15 border-[#00E676] text-[#00E676] font-bold shadow-[0_0_15px_rgba(0,230,118,0.15)]"
-                            : "bg-black/35 border-white/10 text-white/90 hover:border-white/20"
+                            ? "bg-emerald-500/20 border-[#00E676] text-[#00E676] font-bold shadow-[0_0_15px_rgba(0,230,118,0.2)]"
+                            : "bg-black/40 border-white/10 text-white/80 hover:border-white/20"
                         )}
                       >
                         {loc}
@@ -674,16 +737,26 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
                     );
                   })}
                 </div>
+
+                {pickupLocation === "Other (Custom Spot)" && (
+                  <input
+                    type="text"
+                    placeholder="Enter custom pickup spot (e.g. Nescafe near Library, Gate 2 Tapri)..."
+                    value={customPickupLocation}
+                    onChange={(e) => setCustomPickupLocation(e.target.value)}
+                    className="w-full mt-1 bg-black/40 border border-white/10 focus:border-[#00E676] rounded-xl px-4 py-3 text-white text-sm outline-none transition-colors"
+                  />
+                )}
               </div>
 
-              {/* Delivery Details */}
-              <div className="flex flex-col gap-2 border-t border-white/10 pt-4 sm:pt-5">
+              {/* Delivery Destination */}
+              <div className="flex flex-col gap-3 border-t border-white/10 pt-5">
                 <label className="text-[#00E676] text-xs sm:text-sm font-bold flex items-center gap-1.5">
                   <MapPin size={14} /> Delivery Destination (Hostel & Room)
                 </label>
 
-                {/* Hostel Selector */}
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-1">
+                {/* Hostel Grid */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                   {HOSTELS.map((hostel) => {
                     const isSelected = dropoffHostel === hostel;
                     return (
@@ -692,10 +765,10 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
                         type="button"
                         onClick={() => setDropoffHostel(hostel)}
                         className={cn(
-                          "py-2.5 sm:py-3 px-2 rounded-xl text-center cursor-pointer text-xs sm:text-sm font-medium transition-all duration-150 border",
+                          "py-2.5 px-3 rounded-xl text-center cursor-pointer text-xs sm:text-sm font-medium transition-all border",
                           isSelected
-                            ? "bg-[#00E676]/15 border-[#00E676] text-[#00E676] font-bold shadow-[0_0_15px_rgba(0,230,118,0.15)]"
-                            : "bg-black/35 border-white/10 text-white/90 hover:border-white/20"
+                            ? "bg-emerald-500/20 border-[#00E676] text-[#00E676] font-bold shadow-[0_0_15px_rgba(0,230,118,0.2)]"
+                            : "bg-black/40 border-white/10 text-white/80 hover:border-white/20"
                         )}
                       >
                         {hostel}
@@ -704,11 +777,21 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
                   })}
                 </div>
 
+                {dropoffHostel === "Other" && (
+                  <input
+                    type="text"
+                    placeholder="Enter your hostel name..."
+                    value={customDropoffHostel}
+                    onChange={(e) => setCustomDropoffHostel(e.target.value)}
+                    className="w-full bg-black/40 border border-white/10 focus:border-[#00E676] rounded-xl px-4 py-3 text-white text-sm outline-none transition-colors"
+                  />
+                )}
+
                 {/* Room Number Input */}
                 <div className="flex flex-col gap-1 mt-1">
                   <input
                     type="text"
-                    placeholder="Enter Room Number (e.g. 104, B-205)"
+                    placeholder="Room Number (e.g. 104, B-205, Ground Floor A-Wing)..."
                     value={dropoffRoom}
                     onChange={(e) => {
                       setDropoffRoom(e.target.value);
@@ -721,35 +804,91 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
                       }
                     }}
                     className={cn(
-                      "bg-black/40 rounded-xl px-4 py-3 text-white text-sm outline-none border transition-all",
-                      roomError ? "border-red-500 ring-1 ring-red-500" : "border-white/12 focus:border-[#00E676]"
+                      "bg-black/40 rounded-xl px-4 py-3 text-white text-sm outline-none border transition-all placeholder:text-white/30",
+                      roomError
+                        ? "border-red-500 ring-1 ring-red-500"
+                        : "border-white/10 focus:border-[#00E676]"
                     )}
                   />
                   {roomError && (
                     <span className="text-red-400 text-xs font-semibold mt-0.5">
-                      * Please enter your room number to continue.
+                      * Room number is required so runner can find you.
                     </span>
                   )}
                 </div>
               </div>
 
+              {/* Delivery Speed / Priority Option */}
+              <div className="flex flex-col gap-2.5 border-t border-white/10 pt-5">
+                <label className="text-[#00E676] text-xs sm:text-sm font-bold flex items-center gap-1.5">
+                  <Clock size={14} /> Delivery Speed & Priority
+                </label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                  <button
+                    type="button"
+                    onClick={() => setUrgency("standard")}
+                    className={cn(
+                      "p-3.5 rounded-xl border text-left cursor-pointer transition-all flex flex-col gap-1",
+                      urgency === "standard"
+                        ? "bg-emerald-500/15 border-[#00E676] shadow-[0_0_15px_rgba(0,230,118,0.15)]"
+                        : "bg-black/35 border-white/10 hover:border-white/20"
+                    )}
+                  >
+                    <span
+                      className={cn(
+                        "text-xs font-bold",
+                        urgency === "standard" ? "text-emerald-400" : "text-white"
+                      )}
+                    >
+                      🟢 Standard Delivery
+                    </span>
+                    <span className="text-[11px] text-[#A7B8B0]">
+                      Usually delivered within 30-45 minutes
+                    </span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setUrgency("urgent")}
+                    className={cn(
+                      "p-3.5 rounded-xl border text-left cursor-pointer transition-all flex flex-col gap-1",
+                      urgency === "urgent"
+                        ? "bg-emerald-500/15 border-[#00E676] shadow-[0_0_15px_rgba(0,230,118,0.15)]"
+                        : "bg-black/35 border-white/10 hover:border-white/20"
+                    )}
+                  >
+                    <span
+                      className={cn(
+                        "text-xs font-bold",
+                        urgency === "urgent" ? "text-emerald-400" : "text-white"
+                      )}
+                    >
+                      ⚡ Express / Urgent (+₹10)
+                    </span>
+                    <span className="text-[11px] text-[#A7B8B0]">
+                      High runner priority for late-night cravings
+                    </span>
+                  </button>
+                </div>
+              </div>
+
               {/* Delivery Reward */}
-              <div className="flex flex-col gap-2 border-t border-white/10 pt-4 sm:pt-5">
+              <div className="flex flex-col gap-2.5 border-t border-white/10 pt-5">
                 <div className="flex justify-between items-center">
                   <label className="text-[#00E676] text-xs sm:text-sm font-bold flex items-center gap-1.5">
-                    <Sparkles size={14} /> Delivery Reward for Runner
+                    <Coins size={14} /> Delivery Reward for Runner
                   </label>
-                  <span className="text-[#A7B8B0] text-xs">
+                  <span className="text-emerald-400/80 text-xs font-semibold">
                     Suggested: ₹{calculateSuggestedReward()}
                   </span>
                 </div>
 
-                <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-                  <div className="flex items-center bg-black/40 border border-white/12 rounded-xl px-3 sm:px-4 py-2">
-                    <span className="text-[#00E676] text-lg font-extrabold mr-1.5">₹</span>
+                <div className="flex flex-wrap items-center gap-2.5">
+                  <div className="flex items-center bg-black/40 border border-white/15 rounded-xl px-4 py-2.5 focus-within:border-[#00E676]">
+                    <span className="text-[#00E676] text-lg font-extrabold mr-2">₹</span>
                     <input
                       type="number"
-                      min={0}
+                      min={5}
                       placeholder={calculateSuggestedReward().toString()}
                       value={customReward}
                       onChange={(e) => setCustomReward(e.target.value)}
@@ -759,15 +898,15 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
 
                   {/* Preset quick buttons */}
                   <div className="flex flex-wrap gap-1.5 sm:gap-2">
-                    {[5, 10, 20, 50].map((amt) => (
+                    {[15, 20, 30, 50].map((amt) => (
                       <button
                         key={amt}
                         type="button"
                         onClick={() => setCustomReward(amt.toString())}
                         className={cn(
-                          "rounded-xl px-3 py-2 text-xs sm:text-sm font-bold cursor-pointer transition-all border",
+                          "rounded-xl px-3.5 py-2 text-xs sm:text-sm font-bold cursor-pointer transition-all border",
                           currentReward === amt
-                            ? "bg-[#00E676]/20 border-[#00E676] text-[#00E676]"
+                            ? "bg-[#00E676]/20 border-[#00E676] text-[#00E676] shadow-[0_0_10px_rgba(0,230,118,0.2)]"
                             : "bg-white/5 border-white/10 text-[#A7B8B0] hover:text-white"
                         )}
                       >
@@ -779,18 +918,18 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
               </div>
 
               {/* Navigation Buttons */}
-              <div className="flex gap-3 mt-2">
+              <div className="flex gap-3 pt-2">
                 <button
                   type="button"
                   onClick={() => setStep(1)}
-                  className="bg-white/5 border border-white/10 text-white p-3.5 rounded-xl cursor-pointer flex items-center justify-center w-12 shrink-0 hover:bg-white/10"
+                  className="bg-white/5 border border-white/10 text-white p-3.5 rounded-2xl cursor-pointer flex items-center justify-center w-14 shrink-0 hover:bg-white/10 transition-colors"
                 >
                   <ArrowLeft size={18} />
                 </button>
                 <button
                   type="button"
                   onClick={handleStep2Continue}
-                  className="flex-1 bg-gradient-to-r from-[#00C853] to-[#00E676] text-[#050805] font-extrabold text-sm sm:text-base p-3.5 rounded-xl border-none flex items-center justify-center gap-2 cursor-pointer shadow-[0_0_25px_rgba(0,230,118,0.35)] hover:scale-[1.02] transition-transform"
+                  className="flex-1 bg-gradient-to-r from-[#00C853] to-[#00E676] text-[#050805] font-extrabold text-sm sm:text-base p-4 rounded-2xl border-none flex items-center justify-center gap-2 cursor-pointer shadow-[0_0_25px_rgba(0,230,118,0.35)] hover:shadow-[0_0_35px_rgba(0,230,118,0.5)] active:scale-[0.99] transition-all"
                 >
                   Continue to Summary <ArrowRight size={18} />
                 </button>
@@ -802,122 +941,118 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
         {/* ================= STEP 3: CONFIRM & SUBMIT ================= */}
         {step === 3 && (
           <>
-            <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-              <div
-                style={{
-                  width: "44px",
-                  height: "44px",
-                  borderRadius: "12px",
-                  background: "rgba(0,230,118,0.12)",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  border: "1px solid rgba(0,230,118,0.25)",
-                }}
-              >
-                <Check size={22} color="#00E676" />
+            <div className="flex items-center gap-3 sm:gap-4">
+              <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center border border-emerald-500/30 shrink-0 shadow-[0_0_15px_rgba(0,230,118,0.15)]">
+                <Check size={22} className="text-[#00E676]" />
               </div>
               <div>
-                <h2 style={{ color: "#fff", fontWeight: 800, fontSize: "1.3rem", margin: 0 }}>Review & Confirm</h2>
-                <p style={{ color: "#A7B8B0", fontSize: "0.85rem", margin: 0, marginTop: "0.2rem" }}>
+                <h2 className="text-white font-extrabold text-lg sm:text-xl tracking-tight leading-tight">
+                  Review & Confirm Request
+                </h2>
+                <p className="text-[#A7B8B0] text-xs sm:text-sm mt-1">
                   Double check your request details before publishing for campus runners.
                 </p>
               </div>
             </div>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+            <div className="flex flex-col gap-6">
               {/* Optional Instructions */}
-              <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-                <label style={{ color: "#00E676", fontSize: "0.85rem", fontWeight: 700 }}>
+              <div className="flex flex-col gap-2">
+                <label className="text-[#00E676] text-xs sm:text-sm font-bold">
                   Special Instructions (Optional)
                 </label>
                 <textarea
-                  placeholder="e.g. Call when outside the hostel gate. Prefer chilled if possible."
+                  placeholder="e.g. Call when outside the hostel gate. Prefer chilled if cold coffee..."
                   value={instructions}
                   onChange={(e) => setInstructions(e.target.value)}
-                  style={{
-                    background: "rgba(0,0,0,0.4)",
-                    border: "1px solid rgba(255,255,255,0.12)",
-                    borderRadius: "12px",
-                    padding: "0.9rem 1.1rem",
-                    color: "#fff",
-                    fontSize: "0.95rem",
-                    minHeight: "85px",
-                    resize: "vertical",
-                    outline: "none",
-                  }}
+                  className="bg-black/40 border border-white/10 focus:border-[#00E676] rounded-2xl p-4 text-white text-sm min-h-[90px] resize-y outline-none transition-colors placeholder:text-white/30"
                 />
               </div>
 
-              {/* Order Summary Box */}
-              <div
-                style={{
-                  background: "rgba(0,230,118,0.06)",
-                  border: "1px solid rgba(0,230,118,0.2)",
-                  borderRadius: "16px",
-                  padding: "1.35rem",
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: "0.85rem",
-                }}
-              >
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", fontSize: "0.9rem" }}>
-                  <span style={{ color: "#A7B8B0", fontWeight: 500 }}>Items ({items.length})</span>
-                  <div style={{ textAlign: "right", display: "flex", flexDirection: "column", gap: "0.2rem", maxWidth: "260px" }}>
+              {/* Order Summary Glass Card */}
+              <div className="bg-emerald-500/[0.04] border border-emerald-500/20 rounded-2xl p-4 sm:p-5 flex flex-col gap-3.5">
+                {/* Items preview */}
+                <div className="flex justify-between items-start text-xs sm:text-sm">
+                  <span className="text-[#A7B8B0] font-medium">Items ({items.length})</span>
+                  <div className="text-right flex flex-col gap-1 max-w-[280px]">
                     {items.map((i) => (
-                      <span key={i.id} style={{ color: "#fff", fontWeight: 600, fontSize: "0.85rem" }}>
-                        {i.quantity}x {i.name} ({i.category})
+                      <span key={i.id} className="text-white font-semibold text-xs sm:text-sm">
+                        {i.quantity}x {i.name}{" "}
+                        <span className="text-[#A7B8B0] text-xs">({i.category})</span>
                       </span>
                     ))}
                   </div>
                 </div>
 
-                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.9rem", borderTop: "1px solid rgba(255,255,255,0.06)", paddingTop: "0.6rem" }}>
-                  <span style={{ color: "#A7B8B0", fontWeight: 500 }}>Pickup Location</span>
-                  <span style={{ color: "#fff", fontWeight: 700 }}>{pickupLocation}</span>
-                </div>
-
-                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.9rem" }}>
-                  <span style={{ color: "#A7B8B0", fontWeight: 500 }}>Delivery Address</span>
-                  <span style={{ color: "#fff", fontWeight: 700 }}>
-                    {dropoffHostel}, Room {dropoffRoom}
+                {/* Pickup */}
+                <div className="flex justify-between items-center text-xs sm:text-sm border-t border-white/5 pt-3">
+                  <span className="text-[#A7B8B0] font-medium">Pickup Spot</span>
+                  <span className="text-white font-bold">
+                    {pickupLocation === "Other (Custom Spot)"
+                      ? customPickupLocation || "Custom Spot"
+                      : pickupLocation}
                   </span>
                 </div>
 
-                <div
-                  style={{
-                    borderTop: "1px solid rgba(0,230,118,0.2)",
-                    paddingTop: "0.85rem",
-                    marginTop: "0.25rem",
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                  }}
-                >
-                  <span style={{ color: "#fff", fontSize: "1.05rem", fontWeight: 800 }}>Total Delivery Reward</span>
-                  <span style={{ color: "#00E676", fontSize: "1.4rem", fontWeight: 900 }}>₹{currentReward}</span>
+                {/* Dropoff */}
+                <div className="flex justify-between items-center text-xs sm:text-sm">
+                  <span className="text-[#A7B8B0] font-medium">Delivery Address</span>
+                  <span className="text-white font-bold">
+                    {dropoffHostel === "Other" ? customDropoffHostel || "Hostel" : dropoffHostel},{" "}
+                    Room {dropoffRoom}
+                  </span>
+                </div>
+
+                {/* Speed */}
+                <div className="flex justify-between items-center text-xs sm:text-sm">
+                  <span className="text-[#A7B8B0] font-medium">Delivery Speed</span>
+                  <span className="text-emerald-400 font-bold">
+                    {urgency === "urgent" ? "⚡ Express Priority" : "🟢 Standard (~30-45m)"}
+                  </span>
+                </div>
+
+                {totalEstimatedItemsAmount > 0 && (
+                  <div className="flex justify-between items-center text-xs sm:text-sm border-t border-white/5 pt-2">
+                    <span className="text-[#A7B8B0] font-medium">Est. Items Cost</span>
+                    <span className="text-white font-bold">~₹{totalEstimatedItemsAmount}</span>
+                  </div>
+                )}
+
+                {/* Total Reward Highlight */}
+                <div className="border-t border-emerald-500/20 pt-3 flex justify-between items-center">
+                  <div className="flex flex-col">
+                    <span className="text-white text-sm sm:text-base font-extrabold">
+                      Runner Delivery Reward
+                    </span>
+                    <span className="text-[#A7B8B0] text-[11px]">
+                      Credited directly upon delivery verification
+                    </span>
+                  </div>
+                  <span className="text-[#00E676] text-xl sm:text-2xl font-black">
+                    ₹{currentReward}
+                  </span>
                 </div>
               </div>
 
-              {/* Action Buttons */}
-              <div style={{ display: "flex", gap: "1rem", marginTop: "0.5rem" }}>
+              {/* Escrow & Trust Badges */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="flex items-center gap-2.5 p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs font-medium">
+                  <ShieldCheck size={18} className="text-[#00E676] shrink-0" />
+                  <span>Escrow Protected: Reward released only after 4-digit OTP match.</span>
+                </div>
+                <div className="flex items-center gap-2.5 p-3 rounded-xl bg-white/[0.03] border border-white/10 text-white/80 text-xs font-medium">
+                  <Zap size={18} className="text-[#00E676] shrink-0" />
+                  <span>High Availability: Campus runners typically match in 4-8 mins.</span>
+                </div>
+              </div>
+
+              {/* Submit Buttons */}
+              <div className="flex gap-3 pt-2">
                 <button
                   type="button"
                   onClick={() => setStep(2)}
                   disabled={isSubmitting}
-                  style={{
-                    background: "rgba(255,255,255,0.05)",
-                    border: "1px solid rgba(255,255,255,0.1)",
-                    color: "#fff",
-                    padding: "1rem",
-                    borderRadius: "14px",
-                    cursor: isSubmitting ? "not-allowed" : "pointer",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    width: "60px",
-                    opacity: isSubmitting ? 0.5 : 1,
-                  }}
+                  className="bg-white/5 border border-white/10 text-white p-4 rounded-2xl cursor-pointer flex items-center justify-center w-14 shrink-0 hover:bg-white/10 disabled:opacity-50 transition-colors"
                 >
                   <ArrowLeft size={18} />
                 </button>
@@ -925,38 +1060,12 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
                   type="button"
                   onClick={handleSubmit}
                   disabled={isSubmitting}
-                  style={{
-                    flex: 1,
-                    background: "linear-gradient(135deg, #00C853 0%, #00E676 100%)",
-                    color: "#050805",
-                    fontWeight: 800,
-                    fontSize: "1.05rem",
-                    padding: "1rem",
-                    borderRadius: "14px",
-                    border: "none",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    gap: "0.5rem",
-                    cursor: isSubmitting ? "not-allowed" : "pointer",
-                    boxShadow: "0 0 25px rgba(0,230,118,0.4)",
-                    opacity: isSubmitting ? 0.8 : 1,
-                    transition: "all 0.2s ease",
-                  }}
+                  className="flex-1 bg-gradient-to-r from-[#00C853] to-[#00E676] text-[#050805] font-extrabold text-sm sm:text-base p-4 rounded-2xl border-none flex items-center justify-center gap-2 cursor-pointer shadow-[0_0_25px_rgba(0,230,118,0.4)] hover:shadow-[0_0_35px_rgba(0,230,118,0.6)] disabled:opacity-75 transition-all active:scale-[0.99]"
                 >
                   {isSubmitting ? (
-                    <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                      <div
-                        style={{
-                          width: "18px",
-                          height: "18px",
-                          border: "2px solid #050805",
-                          borderTopColor: "transparent",
-                          borderRadius: "50%",
-                          animation: "spin 1s linear infinite",
-                        }}
-                      />
-                      <span>Publishing Request...</span>
+                    <div className="flex items-center gap-2">
+                      <div className="w-4 h-4 border-2 border-[#050805] border-t-transparent rounded-full animate-spin" />
+                      <span>Publishing Request to Campus...</span>
                     </div>
                   ) : (
                     <>
