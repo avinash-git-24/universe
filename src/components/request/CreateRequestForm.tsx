@@ -52,6 +52,7 @@ interface ItemForm {
 interface QuickItem {
   name: string;
   price: number;
+  subType?: "Drinks" | "Snacks" | "Sweets";
 }
 
 const PICKUP_LOCATIONS = [
@@ -76,53 +77,103 @@ const HOSTELS = [
 
 const POPULAR_ITEMS: Record<Category, QuickItem[]> = {
   "Vending Kiosk": [
-    { name: "Puffcorn Lays", price: 20 },
-    { name: "Frooti 400ml", price: 30 },
-    { name: "Appy Fizz 250ml", price: 20 },
-    { name: "Oreo Vanilla Biscuit", price: 30 },
-    { name: "Britannia Strawberry Shake", price: 40 },
-    { name: "Britannia Vanilla Shake", price: 40 },
-    { name: "Dark Fantasy Vanilla", price: 30 },
-    { name: "Bingo Mad Angles Achaari", price: 20 },
-    { name: "Gopal Moong Dal", price: 15 },
-    { name: "Gopal Mexican Chilli", price: 20 },
-    { name: "Paper Boat Jamun", price: 25 },
-    { name: "Paper Boat Apple", price: 25 },
-    { name: "Paper Boat Orange", price: 25 },
-    { name: "Swing Coconut Water", price: 20 },
-    { name: "Swing Mixed Fruit", price: 20 },
-    { name: "Swing Guava", price: 20 },
-    { name: "Swing Pomegranate", price: 20 },
-    { name: "Sprite MRP 20", price: 20 },
-    { name: "Fanta 250ml", price: 20 },
-    { name: "Coca-Cola Can", price: 40 },
-    { name: "Kinley Water 500ml", price: 10 },
-    { name: "Dukes Bourbon", price: 25 },
-    { name: "Dukes Strawberry Cream", price: 25 },
-    { name: "Fab Vanilla Cream", price: 30 },
-    { name: "Milk Bikis Cream", price: 30 },
-    { name: "Nut & Grain Energy Bar", price: 20 },
-    { name: "Choco Desire Energy Bar", price: 20 },
-    { name: "Snow Blueberry Pie", price: 20 },
+    // ── Cold Drinks & Shakes (Vending 1 & 2) ──
+    { name: "Frooti 400ml", price: 30, subType: "Drinks" },
+    { name: "Appy Fizz 250ml", price: 20, subType: "Drinks" },
+    { name: "Amul Kool Cafe", price: 40, subType: "Drinks" },
+    { name: "Amul Kool Dark Chocolate", price: 25, subType: "Drinks" },
+    { name: "Amul Kool Koko", price: 40, subType: "Drinks" },
+    { name: "Amul Kool Rose", price: 30, subType: "Drinks" },
+    { name: "Dark Fantasy Shake", price: 30, subType: "Drinks" },
+    { name: "Britannia Strawberry Shake", price: 40, subType: "Drinks" },
+    { name: "Britannia Vanilla Shake", price: 40, subType: "Drinks" },
+    { name: "Paper Boat Jamun", price: 25, subType: "Drinks" },
+    { name: "Paper Boat Apple", price: 25, subType: "Drinks" },
+    { name: "Paper Boat Orange", price: 25, subType: "Drinks" },
+    { name: "Swing Coconut Water", price: 20, subType: "Drinks" },
+    { name: "Swing Mixed Fruit", price: 20, subType: "Drinks" },
+    { name: "Swing Guava", price: 20, subType: "Drinks" },
+    { name: "Swing Pomegranate", price: 20, subType: "Drinks" },
+    { name: "Jam-in Mix Fruit", price: 20, subType: "Drinks" },
+    { name: "Sprite MRP 20", price: 20, subType: "Drinks" },
+    { name: "Fanta 250ml", price: 20, subType: "Drinks" },
+    { name: "Coca-Cola Can", price: 40, subType: "Drinks" },
+    { name: "Kinley Water 500ml", price: 10, subType: "Drinks" },
+
+    // ── Chips, Namkeen & Wafers (Vending 1 & 2) ──
+    { name: "Lays Magic Masala", price: 20, subType: "Snacks" },
+    { name: "Lays Sizzling Hot", price: 20, subType: "Snacks" },
+    { name: "Lays West Indies Sweet Chilli", price: 20, subType: "Snacks" },
+    { name: "Puffcorn Lays", price: 20, subType: "Snacks" },
+    { name: "Balaji Masala Wafers", price: 20, subType: "Snacks" },
+    { name: "Balaji Salted Wafers", price: 20, subType: "Snacks" },
+    { name: "Kurkure Masala Munch", price: 20, subType: "Snacks" },
+    { name: "Chili Chataka Kurkure", price: 20, subType: "Snacks" },
+    { name: "CrunchEx Chili Tadka", price: 20, subType: "Snacks" },
+    { name: "ACT Butter Popcorn", price: 20, subType: "Snacks" },
+    { name: "Gopal Masala Sev Murmura", price: 15, subType: "Snacks" },
+    { name: "Gopal Tikha Mitha Mix", price: 15, subType: "Snacks" },
+    { name: "Gopal Farali Chevdo", price: 20, subType: "Snacks" },
+    { name: "Gopal Moong Dal", price: 15, subType: "Snacks" },
+    { name: "Gopal Mexican Chilli", price: 20, subType: "Snacks" },
+    { name: "Bingo Mad Angles Achaari", price: 20, subType: "Snacks" },
+    { name: "Roaven Salted Peanut", price: 30, subType: "Snacks" },
+    { name: "Maggi 2-Min", price: 20, subType: "Snacks" },
+    { name: "Doritos Cheese", price: 30, subType: "Snacks" },
+
+    // ── Chocolates, Biscuits & Sweets (Vending 1 & 2) ──
+    { name: "KitKat", price: 30, subType: "Sweets" },
+    { name: "Dairy Milk Chocolate", price: 45, subType: "Sweets" },
+    { name: "Amul Fruit Nut", price: 45, subType: "Sweets" },
+    { name: "Amul Velvet Chocolate", price: 30, subType: "Sweets" },
+    { name: "Amul Smooth Chocolate", price: 20, subType: "Sweets" },
+    { name: "Dark Fantasy Vanilla", price: 30, subType: "Sweets" },
+    { name: "Lotte Chocopie", price: 20, subType: "Sweets" },
+    { name: "Oreo Vanilla Biscuit", price: 30, subType: "Sweets" },
+    { name: "Dukes Bourbon", price: 25, subType: "Sweets" },
+    { name: "Dukes Strawberry Cream", price: 25, subType: "Sweets" },
+    { name: "Fab Vanilla Cream", price: 30, subType: "Sweets" },
+    { name: "Milk Bikis Cream", price: 30, subType: "Sweets" },
+    { name: "Butter Cookies", price: 20, subType: "Sweets" },
+    { name: "Snow Blueberry Pie", price: 20, subType: "Sweets" },
+    { name: "Nut & Grain Energy Bar", price: 20, subType: "Sweets" },
+    { name: "Choco Desire Energy Bar", price: 20, subType: "Sweets" },
+    { name: "Amul Premium Butter", price: 20, subType: "Sweets" },
   ],
   Snack: [
+    { name: "Lays Magic Masala", price: 20 },
+    { name: "Lays Sizzling Hot", price: 20 },
+    { name: "Lays West Indies Sweet Chilli", price: 20 },
     { name: "Puffcorn Lays", price: 20 },
-    { name: "Bingo Mad Angles Achaari", price: 20 },
-    { name: "Gopal Mexican Chilli", price: 20 },
+    { name: "Balaji Masala Wafers", price: 20 },
+    { name: "Balaji Salted Wafers", price: 20 },
+    { name: "Kurkure Masala Munch", price: 20 },
+    { name: "Chili Chataka Kurkure", price: 20 },
+    { name: "CrunchEx Chili Tadka", price: 20 },
+    { name: "ACT Butter Popcorn", price: 20 },
+    { name: "Gopal Masala Sev Murmura", price: 15 },
+    { name: "Gopal Tikha Mitha Mix", price: 15 },
+    { name: "Gopal Farali Chevdo", price: 20 },
     { name: "Gopal Moong Dal", price: 15 },
+    { name: "Gopal Mexican Chilli", price: 20 },
+    { name: "Bingo Mad Angles Achaari", price: 20 },
+    { name: "Roaven Salted Peanut", price: 30 },
     { name: "Maggi 2-Min", price: 20 },
-    { name: "Lays Blue", price: 20 },
-    { name: "Kurkure Masala", price: 20 },
     { name: "Doritos Cheese", price: 30 },
-    { name: "Nut & Grain Energy Bar", price: 20 },
   ],
   Beverage: [
     { name: "Frooti 400ml", price: 30 },
     { name: "Appy Fizz 250ml", price: 20 },
+    { name: "Amul Kool Cafe", price: 40 },
+    { name: "Amul Kool Dark Chocolate", price: 25 },
+    { name: "Amul Kool Koko", price: 40 },
+    { name: "Amul Kool Rose", price: 30 },
+    { name: "Dark Fantasy Shake", price: 30 },
     { name: "Britannia Strawberry Shake", price: 40 },
     { name: "Britannia Vanilla Shake", price: 40 },
     { name: "Paper Boat Jamun", price: 25 },
     { name: "Swing Coconut Water", price: 20 },
+    { name: "Jam-in Mix Fruit", price: 20 },
     { name: "Sprite MRP 20", price: 20 },
     { name: "Fanta 250ml", price: 20 },
     { name: "Coca-Cola Can", price: 40 },
@@ -169,6 +220,7 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
   // Step 1 State: Items
   const [items, setItems] = useState<ItemForm[]>([]);
   const [currentCategory, setCurrentCategory] = useState<Category>("Vending Kiosk");
+  const [vendingSubFilter, setVendingSubFilter] = useState<"All" | "Drinks" | "Snacks" | "Sweets">("All");
   const [currentItemName, setCurrentItemName] = useState("");
   const [currentItemQty, setCurrentItemQty] = useState(1);
   const [currentItemPrice, setCurrentItemPrice] = useState("");
@@ -624,8 +676,43 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
                   </span>
                 )}
               </div>
-              <div className="flex flex-wrap gap-1.5 sm:gap-2 max-h-[160px] overflow-y-auto pr-1">
-                {POPULAR_ITEMS[currentCategory]?.map((chip) => (
+
+              {/* Vending Machine Sub-Category Tabs */}
+              {currentCategory === "Vending Kiosk" && (
+                <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs select-none">
+                  {(["All", "Drinks", "Snacks", "Sweets"] as const).map((sub) => {
+                    const isSubActive = vendingSubFilter === sub;
+                    const count =
+                      sub === "All"
+                        ? POPULAR_ITEMS["Vending Kiosk"].length
+                        : POPULAR_ITEMS["Vending Kiosk"].filter((it) => it.subType === sub).length;
+                    return (
+                      <button
+                        key={sub}
+                        type="button"
+                        onClick={() => setVendingSubFilter(sub)}
+                        className={cn(
+                          "px-2.5 py-1 rounded-lg font-semibold cursor-pointer transition-all border text-[11px] whitespace-nowrap",
+                          isSubActive
+                            ? "bg-[#00E676]/20 border-[#00E676] text-[#00E676] shadow-[0_0_10px_rgba(0,230,118,0.2)] font-bold"
+                            : "bg-white/[0.03] border-white/10 text-white/60 hover:text-white hover:border-white/20"
+                        )}
+                      >
+                        {sub === "All" && `All Items (${count})`}
+                        {sub === "Drinks" && `🥤 Drinks & Shakes (${count})`}
+                        {sub === "Snacks" && `🍿 Chips & Wafers (${count})`}
+                        {sub === "Sweets" && `🍫 Chocolates & Biscuits (${count})`}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+
+              <div className="flex flex-wrap gap-1.5 sm:gap-2 max-h-[220px] overflow-y-auto pr-1">
+                {(currentCategory === "Vending Kiosk" && vendingSubFilter !== "All"
+                  ? POPULAR_ITEMS["Vending Kiosk"].filter((item) => item.subType === vendingSubFilter)
+                  : POPULAR_ITEMS[currentCategory] || []
+                ).map((chip) => (
                   <button
                     key={chip.name}
                     type="button"
