@@ -994,8 +994,8 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
                     type="text"
                     placeholder={
                       dropoffHostel === "Other"
-                        ? "Classroom (e.g. 104, B-205, Ground)..."
-                        : "Room Number (e.g. 104, B-205, Ground Floor A-Wing)..."
+                        ? "Class Room (e.g. 104, B-205)..."
+                        : "Room Number (e.g. 104, B-205)..."
                     }
                     value={dropoffRoom}
                     onChange={(e) => {
