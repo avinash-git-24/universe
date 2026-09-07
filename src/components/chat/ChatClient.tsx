@@ -88,6 +88,57 @@ export function ChatClient({ userId, initialConversations, activeDeliveries = []
     }
   }, [router, supabase, userId]);
 
+  const handleStartChatWithUser = useCallback(async (otherUserId: string) => {
+    setStartingChatUserId(otherUserId);
+    try {
+      // 1. Check if conversation already exists in current loaded list
+      const existing = conversations.find(
+        (c) => c.other_participant?.id === otherUserId
+      );
+      if (existing) {
+        handleSelect(existing.id);
+        setStartingChatUserId(null);
+        return;
+      }
+
+      // 2. Call server-side API route (/api/chat/conversation)
+      const res = await fetch("/api/chat/conversation", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ otherUserId }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        if (data.conversationId) {
+          if (data.conversation) {
+            setConversations((prev) => [
+              data.conversation,
+              ...prev.filter((c) => c.id !== data.conversation.id),
+            ]);
+          }
+          handleSelect(data.conversationId);
+          setStartingChatUserId(null);
+          return;
+        }
+      }
+
+      // 3. Fallback: try client-side getOrCreateConversation + getConversationById
+      const convId = await getOrCreateConversation(supabase, userId, otherUserId);
+      if (convId) {
+        const conv = await getConversationById(supabase, convId, userId);
+        if (conv) {
+          setConversations((prev) => [conv, ...prev.filter((c) => c.id !== conv.id)]);
+        }
+        handleSelect(convId);
+      }
+    } catch (err) {
+      console.error("Error starting chat:", err);
+    } finally {
+      setStartingChatUserId(null);
+    }
+  }, [conversations, handleSelect, supabase, userId]);
+
   // Sync state if server props change
   useEffect(() => {
     setConversations(initialConversations);
@@ -241,56 +292,7 @@ export function ChatClient({ userId, initialConversations, activeDeliveries = []
     };
   }, [userId, supabase, showToast]);
 
-  const handleStartChatWithUser = async (otherUserId: string) => {
-    setStartingChatUserId(otherUserId);
-    try {
-      // 1. Check if conversation already exists in current loaded list
-      const existing = conversations.find(
-        (c) => c.other_participant?.id === otherUserId
-      );
-      if (existing) {
-        handleSelect(existing.id);
-        setStartingChatUserId(null);
-        return;
-      }
 
-      // 2. Call server-side API route (/api/chat/conversation)
-      const res = await fetch("/api/chat/conversation", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ otherUserId }),
-      });
-
-      if (res.ok) {
-        const data = await res.json();
-        if (data.conversationId) {
-          if (data.conversation) {
-            setConversations((prev) => [
-              data.conversation,
-              ...prev.filter((c) => c.id !== data.conversation.id),
-            ]);
-          }
-          handleSelect(data.conversationId);
-          setStartingChatUserId(null);
-          return;
-        }
-      }
-
-      // 3. Fallback: try client-side getOrCreateConversation + getConversationById
-      const convId = await getOrCreateConversation(supabase, userId, otherUserId);
-      if (convId) {
-        const conv = await getConversationById(supabase, convId, userId);
-        if (conv) {
-          setConversations((prev) => [conv, ...prev.filter((c) => c.id !== conv.id)]);
-        }
-        handleSelect(convId);
-      }
-    } catch (err) {
-      console.error("Error starting chat:", err);
-    } finally {
-      setStartingChatUserId(null);
-    }
-  };
 
 
   useEffect(() => {

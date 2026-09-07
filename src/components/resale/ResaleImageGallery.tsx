@@ -63,17 +63,33 @@ export function ResaleImageGallery({ title, images, signedUrls, isOwner, listing
     };
   }, [signedUrls]);
 
+  // Filter images that have valid signed URLs or storage_path
+  const validImages = images.filter((img) => signedUrls[img.storage_path] || img.storage_path);
+  const currentImage = validImages[currentIndex];
+
+  const handlePrev = () => {
+    setCurrentIndex((prev) => (prev === 0 ? validImages.length - 1 : prev - 1));
+  };
+
+  const handleNext = () => {
+    setCurrentIndex((prev) => (prev === validImages.length - 1 ? 0 : prev + 1));
+  };
+
   // Handle keyboard events in lightbox
   useEffect(() => {
     if (!isLightboxOpen) return;
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setIsLightboxOpen(false);
-      else if (e.key === "ArrowLeft") handlePrev();
-      else if (e.key === "ArrowRight") handleNext();
+      if (e.key === "Escape") {
+        setIsLightboxOpen(false);
+      } else if (e.key === "ArrowLeft") {
+        setCurrentIndex((prev) => (prev === 0 ? validImages.length - 1 : prev - 1));
+      } else if (e.key === "ArrowRight") {
+        setCurrentIndex((prev) => (prev === validImages.length - 1 ? 0 : prev + 1));
+      }
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  });
+  }, [isLightboxOpen, validImages.length]);
 
   const getImageUrl = (path: string) => {
     return blobUrls[path] || signedUrls[path] || '';
@@ -118,9 +134,7 @@ export function ResaleImageGallery({ title, images, signedUrls, isOwner, listing
     }
   };
 
-  // Filter images that have valid signed URLs or storage_path
-  const validImages = images.filter((img) => signedUrls[img.storage_path] || img.storage_path);
-  const currentImage = validImages[currentIndex];
+
 
   if (validImages.length === 0) {
     return (
@@ -154,13 +168,7 @@ export function ResaleImageGallery({ title, images, signedUrls, isOwner, listing
     );
   }
 
-  const handlePrev = () => {
-    setCurrentIndex((prev) => (prev === 0 ? validImages.length - 1 : prev - 1));
-  };
 
-  const handleNext = () => {
-    setCurrentIndex((prev) => (prev === validImages.length - 1 ? 0 : prev + 1));
-  };
 
   return (
     <>
