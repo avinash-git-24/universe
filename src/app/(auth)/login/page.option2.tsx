@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { ROUTES } from "@/constants/routes";
-import TechSpotlightBackground from "@/components/auth/TechSpotlightBackground";
+import CosmicSpaceBackground from "@/components/auth/CosmicSpaceBackground";
 import {
   Mail,
   Lock,
@@ -15,14 +15,13 @@ import {
   AlertCircle,
   ArrowRight,
   ShieldCheck,
-  Terminal,
-  Zap,
+  Sparkles,
+  Compass,
   X,
-  Cpu,
 } from "lucide-react";
 
-// ─── Option 3: Modern Tech Input Field ─────────────────────────────────────────
-function TechField({
+// ─── Modern Cosmic Input Field ────────────────────────────────────────────────
+function CosmicField({
   id,
   type,
   label,
@@ -60,10 +59,9 @@ function TechField({
       <div className="flex items-center justify-between text-xs min-h-[18px]">
         <label
           htmlFor={id}
-          className="font-mono text-[10.5px] font-medium tracking-wider text-slate-400 uppercase flex items-center gap-1.5"
+          className="font-semibold tracking-wider text-slate-300 uppercase text-[11px]"
         >
-          <span className="text-emerald-400 font-bold">&gt;</span>
-          <span>{label}</span>
+          {label}
         </label>
         {headerRight}
       </div>
@@ -71,15 +69,15 @@ function TechField({
       <div
         className={`relative flex items-center w-full rounded-xl transition-all duration-200 ${
           error
-            ? "bg-red-950/20 border border-red-500/60 shadow-[0_0_15px_rgba(239,68,68,0.25)]"
+            ? "bg-red-950/20 border border-red-500/60 shadow-[0_0_15px_rgba(239,68,68,0.2)]"
             : focused
-            ? "bg-[#060a14]/90 border border-emerald-400 shadow-[0_0_22px_rgba(16,185,129,0.25)] ring-1 ring-emerald-400/30"
-            : "bg-[#080d1a]/60 border border-slate-800/80 hover:border-slate-700 hover:bg-[#0c1222]/70"
+            ? "bg-[#060a1f]/80 border border-indigo-400 shadow-[0_0_20px_rgba(129,140,248,0.25)] ring-1 ring-indigo-400/30"
+            : "bg-[#080d22]/50 border border-slate-700/40 hover:border-slate-600/70 hover:bg-[#0a102b]/60"
         }`}
       >
         <span
           className={`absolute left-3.5 flex items-center transition-colors pointer-events-none ${
-            focused ? "text-emerald-400" : "text-slate-500"
+            focused ? "text-indigo-400" : "text-slate-400"
           }`}
         >
           {leftIcon}
@@ -96,7 +94,7 @@ function TechField({
           onBlur={() => setFocused(false)}
           onKeyDown={onKeyDown}
           onKeyUp={onKeyUp}
-          className="w-full bg-transparent text-white text-sm py-3.5 pl-11 pr-16 outline-none placeholder:text-slate-500 tracking-normal font-sans"
+          className="w-full bg-transparent text-white text-sm py-3.5 pl-11 pr-16 outline-none placeholder:text-slate-500 tracking-normal"
         />
 
         {rightNode && (
@@ -113,7 +111,7 @@ function TechField({
       )}
 
       {error && (
-        <p className="text-red-400 text-xs mt-0.5 flex items-center gap-1 font-medium font-sans">
+        <p className="text-red-400 text-xs mt-0.5 flex items-center gap-1 font-medium">
           <AlertCircle size={13} />
           <span>{error}</span>
         </p>
@@ -244,56 +242,48 @@ function LoginForm() {
 
   return (
     <div className="w-full min-h-[100dvh] flex flex-col items-center justify-center p-4 sm:p-6 relative overflow-hidden font-sans">
-      {/* ── Option 3: Modern Tech Dot-Grid + Spotlight Beam Background ── */}
-      <TechSpotlightBackground />
+      {/* ── Option 2: Minimal Cosmic Deep Space & Stardust Background ── */}
+      <CosmicSpaceBackground />
 
-      {/* ── Top High-Tech Status Pill ── */}
+      {/* ── Top Header Brand Pill ── */}
       <div
-        className={`relative z-10 mb-6 flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-[#070b16]/80 border border-emerald-500/30 backdrop-blur-xl shadow-[0_0_20px_rgba(16,185,129,0.18)] transition-all duration-500 ${
+        className={`relative z-10 mb-6 flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-950/40 border border-indigo-500/30 backdrop-blur-xl shadow-[0_0_25px_rgba(99,102,241,0.2)] transition-all duration-500 ${
           mounted ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-4"
         }`}
       >
-        <span className="relative flex h-2 w-2">
-          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-          <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
-        </span>
-        <span className="font-mono text-[11px] font-semibold text-emerald-300 tracking-wider uppercase">
-          SECURE_AUTH // MARWADI UNIVERSITY GATEWAY
+        <Sparkles size={14} className="text-cyan-400 animate-pulse" />
+        <span className="text-[11px] font-bold text-indigo-200 tracking-wider uppercase">
+          UniVerse · Marwadi University Campus Gateway
         </span>
       </div>
 
-      {/* ── Main Tech Spotlight Glass Card ── */}
+      {/* ── Main Celestial Glass Card ── */}
       <div
-        className={`relative z-10 w-full max-w-[440px] rounded-2xl p-6 sm:p-8 backdrop-blur-2xl transition-all duration-700 shadow-2xl ${
+        className={`relative z-10 w-full max-w-[440px] rounded-3xl p-6 sm:p-8 backdrop-blur-2xl transition-all duration-700 ${
           mounted ? "opacity-100 scale-100 translate-y-0" : "opacity-0 scale-95 translate-y-6"
         }`}
         style={{
-          background: "linear-gradient(180deg, rgba(11, 17, 30, 0.82) 0%, rgba(5, 8, 16, 0.94) 100%)",
-          border: "1px solid rgba(255, 255, 255, 0.08)",
-          boxShadow: "0 25px 60px -15px rgba(0, 0, 0, 0.9), 0 0 45px -10px rgba(16, 185, 129, 0.15)",
+          background: "linear-gradient(145deg, rgba(12, 18, 38, 0.76) 0%, rgba(6, 10, 24, 0.88) 100%)",
+          border: "1px solid rgba(129, 140, 248, 0.22)",
+          boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.85), 0 0 45px -10px rgba(99, 102, 241, 0.2)",
         }}
       >
-        {/* Top Edge Laser Accent Line */}
-        <div className="absolute top-0 inset-x-8 h-[1px] bg-gradient-to-r from-transparent via-emerald-400 to-transparent shadow-[0_0_12px_#10b981]" />
+        {/* Subtle Ambient Cosmic Corner Glows */}
+        <div className="absolute -top-12 -right-12 w-36 h-36 bg-purple-500/15 rounded-full blur-2xl pointer-events-none" />
+        <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-cyan-500/15 rounded-full blur-2xl pointer-events-none" />
 
-        {/* Subtle Tech Corner Accents */}
-        <div className="absolute top-3 left-3 text-[9px] font-mono text-emerald-500/30 select-none">+</div>
-        <div className="absolute top-3 right-3 text-[9px] font-mono text-emerald-500/30 select-none">+</div>
-        <div className="absolute bottom-3 left-3 text-[9px] font-mono text-emerald-500/30 select-none">+</div>
-        <div className="absolute bottom-3 right-3 text-[9px] font-mono text-emerald-500/30 select-none">+</div>
-
-        {/* ── Brand Header ── */}
+        {/* ── Brand Logo & Header ── */}
         <div className="text-center mb-7 relative z-10">
-          <div className="inline-flex items-center justify-center w-13 h-13 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-[0_0_25px_rgba(16,185,129,0.35)] mb-3.5 ring-1 ring-emerald-400/40 p-3">
-            <Cpu size={26} className="text-white" />
+          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-500 via-purple-500 to-cyan-400 text-white shadow-[0_0_25px_rgba(129,140,248,0.4)] mb-4 ring-2 ring-indigo-400/30">
+            <Compass size={28} className="text-white animate-spin-slow" />
           </div>
 
           <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
-            Uni<span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400">Verse</span>
+            Uni<span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-300 to-cyan-300">Verse</span>
           </h1>
 
-          <p className="text-xs text-slate-400 mt-1.5 font-mono tracking-wide">
-            CAMPUS COMMERCE &amp; STUDENT NETWORK
+          <p className="text-xs sm:text-sm text-slate-300 mt-1.5 font-medium">
+            Campus delivery & student marketplace
           </p>
         </div>
 
@@ -307,10 +297,10 @@ function LoginForm() {
           )}
 
           {/* Email Field */}
-          <TechField
+          <CosmicField
             id="email"
             type="email"
-            label="STUDENT EMAIL"
+            label="Student Email"
             placeholder="avinash.128203@marwadiuniversity.ac.in"
             autoComplete="email"
             value={email}
@@ -334,7 +324,7 @@ function LoginForm() {
                 )}
                 {emailValid && (
                   <span title="Valid MU Email">
-                    <CheckCircle2 size={16} className="text-emerald-400 shrink-0" />
+                    <CheckCircle2 size={16} className="text-cyan-400 shrink-0" />
                   </span>
                 )}
               </>
@@ -342,10 +332,10 @@ function LoginForm() {
           />
 
           {/* Password Field */}
-          <TechField
+          <CosmicField
             id="password"
             type={showPw ? "text" : "password"}
-            label="PASSWORD"
+            label="Password"
             placeholder="Enter your password"
             autoComplete="current-password"
             value={password}
@@ -368,9 +358,9 @@ function LoginForm() {
                     const el = document.getElementById("password");
                     if (el) el.focus();
                   }}
-                  className="font-mono text-[10.5px] font-semibold text-emerald-400 hover:underline"
+                  className="text-[10.5px] font-semibold text-indigo-400 hover:underline"
                 >
-                  CLEAR
+                  Clear
                 </button>
               ) : null
             }
@@ -388,19 +378,19 @@ function LoginForm() {
 
           {/* Remember Me & Forgot Password */}
           <div className="flex items-center justify-between text-xs pt-1">
-            <label className="flex items-center gap-2 cursor-pointer text-slate-400 select-none group">
+            <label className="flex items-center gap-2 cursor-pointer text-slate-300 select-none group">
               <input
                 type="checkbox"
                 checked={remember}
                 onChange={(e) => setRemember(e.target.checked)}
-                className="w-4 h-4 rounded border-slate-700 bg-black/50 text-emerald-500 focus:ring-emerald-400 focus:ring-offset-0 cursor-pointer accent-emerald-500"
+                className="w-4 h-4 rounded border-slate-700 bg-black/50 text-indigo-500 focus:ring-indigo-400 focus:ring-offset-0 cursor-pointer accent-indigo-500"
               />
-              <span className="group-hover:text-slate-200 transition-colors font-sans">Remember me</span>
+              <span className="group-hover:text-white transition-colors">Remember me</span>
             </label>
 
             <Link
               href={ROUTES.FORGOT_PASSWORD}
-              className="text-emerald-400 hover:text-emerald-300 font-semibold transition-colors hover:underline text-xs"
+              className="text-indigo-400 hover:text-indigo-300 font-semibold transition-colors hover:underline"
             >
               Forgot password?
             </Link>
@@ -410,21 +400,21 @@ function LoginForm() {
           <button
             type="submit"
             disabled={loading || isSuccess}
-            className="w-full mt-2 py-3.5 px-4 rounded-xl font-bold text-slate-950 bg-gradient-to-r from-emerald-400 via-teal-400 to-emerald-400 bg-[length:200%_auto] hover:bg-right transition-all duration-300 shadow-[0_0_25px_rgba(16,185,129,0.35)] hover:shadow-[0_0_35px_rgba(16,185,129,0.55)] active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none flex items-center justify-center gap-2 text-sm tracking-wide cursor-pointer"
+            className="w-full mt-2 py-3.5 px-4 rounded-xl font-bold text-white bg-gradient-to-r from-indigo-600 via-purple-600 to-cyan-500 bg-[length:200%_auto] hover:bg-right transition-all duration-300 shadow-[0_0_25px_rgba(99,102,241,0.35)] hover:shadow-[0_0_35px_rgba(99,102,241,0.5)] active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none flex items-center justify-center gap-2 text-sm tracking-wide cursor-pointer"
           >
             {loading ? (
               <>
-                <span className="w-4 h-4 border-2 border-slate-950/30 border-t-slate-950 rounded-full animate-spin" />
-                <span>AUTHENTICATING...</span>
+                <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                <span>Signing in...</span>
               </>
             ) : isSuccess ? (
               <>
-                <CheckCircle2 size={17} className="text-slate-950" />
-                <span>ACCESS GRANTED</span>
+                <CheckCircle2 size={17} className="text-white" />
+                <span>Entering UniVerse...</span>
               </>
             ) : (
               <>
-                <span>Sign In to UniVerse</span>
+                <span>Sign In</span>
                 <ArrowRight size={16} />
               </>
             )}
@@ -433,8 +423,8 @@ function LoginForm() {
           {/* Divider */}
           <div className="flex items-center gap-3 my-1">
             <div className="flex-1 h-px bg-white/10" />
-            <span className="font-mono text-[10px] text-slate-500 uppercase tracking-widest font-semibold">
-              OR CONTINUE WITH
+            <span className="text-[11px] text-slate-500 uppercase tracking-widest font-semibold">
+              OR
             </span>
             <div className="flex-1 h-px bg-white/10" />
           </div>
@@ -444,7 +434,7 @@ function LoginForm() {
             type="button"
             onClick={handleGoogle}
             disabled={loading || isSuccess}
-            className="w-full py-3 px-4 rounded-xl font-medium text-slate-200 bg-[#070b16]/70 hover:bg-[#0b1122] border border-slate-800 hover:border-slate-700 transition-all duration-200 flex items-center justify-center gap-3 text-xs tracking-wide active:scale-[0.99] cursor-pointer"
+            className="w-full py-3 px-4 rounded-xl font-semibold text-white bg-slate-900/50 hover:bg-slate-800/60 border border-slate-700/50 hover:border-slate-600 transition-all duration-200 flex items-center justify-center gap-3 text-xs tracking-wide active:scale-[0.99] cursor-pointer"
           >
             <svg width="17" height="17" viewBox="0 0 24 24">
               <path
@@ -464,7 +454,7 @@ function LoginForm() {
                 d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
               />
             </svg>
-            <span>Student Google Account</span>
+            <span>Continue with Student Google</span>
           </button>
         </form>
 
@@ -474,7 +464,7 @@ function LoginForm() {
             Don&apos;t have an account?{" "}
             <Link
               href={ROUTES.REGISTER}
-              className="text-emerald-400 hover:text-emerald-300 font-semibold transition-colors hover:underline ml-1"
+              className="text-indigo-400 hover:text-indigo-300 font-bold transition-colors hover:underline ml-1"
             >
               Create student account &rarr;
             </Link>
@@ -484,25 +474,39 @@ function LoginForm() {
 
       {/* ── Bottom Campus Verified Trust Footer ── */}
       <div
-        className={`relative z-10 mt-6 flex flex-wrap items-center justify-center gap-3 sm:gap-6 font-mono text-[10.5px] text-slate-500 transition-all duration-700 ${
+        className={`relative z-10 mt-6 flex flex-wrap items-center justify-center gap-3 sm:gap-6 text-[11px] text-slate-400 transition-all duration-700 ${
           mounted ? "opacity-100" : "opacity-0"
         }`}
       >
-        <span className="flex items-center gap-1.5 hover:text-slate-400 transition-colors">
-          <ShieldCheck size={13} className="text-emerald-400" />
-          <span>[ 256-BIT SSL ]</span>
+        <span className="flex items-center gap-1.5 hover:text-slate-300 transition-colors">
+          <ShieldCheck size={13} className="text-indigo-400" />
+          <span>256-Bit SSL Encrypted</span>
         </span>
-        <span className="text-slate-800 hidden sm:inline">•</span>
-        <span className="flex items-center gap-1.5 hover:text-slate-400 transition-colors">
-          <Zap size={13} className="text-teal-400" />
-          <span>[ MARWADI ID VERIFIED ]</span>
+        <span className="text-slate-700 hidden sm:inline">•</span>
+        <span className="flex items-center gap-1.5 hover:text-slate-300 transition-colors">
+          <Sparkles size={13} className="text-cyan-400" />
+          <span>Verified MU Students Only</span>
         </span>
-        <span className="text-slate-800 hidden sm:inline">•</span>
-        <span className="flex items-center gap-1.5 hover:text-slate-400 transition-colors">
-          <Terminal size={13} className="text-cyan-400" />
-          <span>[ ZERO BROKERAGE ]</span>
+        <span className="text-slate-700 hidden sm:inline">•</span>
+        <span className="flex items-center gap-1.5 hover:text-slate-300 transition-colors">
+          <Compass size={13} className="text-purple-400" />
+          <span>Hostel-to-Hostel Delivery</span>
         </span>
       </div>
+
+      <style jsx global>{`
+        @keyframes spinSlow {
+          from {
+            transform: rotate(0deg);
+          }
+          to {
+            transform: rotate(360deg);
+          }
+        }
+        .animate-spin-slow {
+          animation: spinSlow 20s linear infinite;
+        }
+      `}</style>
     </div>
   );
 }
@@ -511,8 +515,8 @@ export default function LoginPage() {
   return (
     <Suspense
       fallback={
-        <div className="w-full min-h-screen bg-[#04060d] flex items-center justify-center text-emerald-400">
-          <span className="w-8 h-8 border-2 border-emerald-500/30 border-t-emerald-400 rounded-full animate-spin" />
+        <div className="w-full min-h-screen bg-[#02040c] flex items-center justify-center text-indigo-400">
+          <span className="w-8 h-8 border-2 border-indigo-500/30 border-t-indigo-400 rounded-full animate-spin" />
         </div>
       }
     >
