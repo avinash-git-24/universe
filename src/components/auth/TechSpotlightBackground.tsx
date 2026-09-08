@@ -104,23 +104,29 @@ export default function TechSpotlightBackground() {
       curMouseX += (targetMouseX - curMouseX) * 0.075;
       curMouseY += (targetMouseY - curMouseY) * 0.075;
 
-      // ─── 1. Volumetric Overhead Architectural Spotlight Beam ─────────────────
+      // ─── 1. Volumetric Overhead Architectural Spotlight Beam (Softened Cinematic) ───
       const beamApexX = width / 2;
       const beamApexY = -30;
       const beamSpread = Math.max(width * 0.58, 640);
 
-      // Primary Volumetric Light Cone
+      // Primary Volumetric Light Cone with feathered blur filter
+      ctx.save();
+      // Soften the triangle boundaries so it looks like real atmospheric light
+      if (typeof ctx.filter !== "undefined") {
+        ctx.filter = "blur(40px)";
+      }
+
       const coneGradient = ctx.createRadialGradient(
         beamApexX,
         beamApexY,
-        15,
+        25,
         beamApexX,
         height * 0.52,
         Math.max(width * 0.75, 750)
       );
-      coneGradient.addColorStop(0, "rgba(16, 185, 129, 0.24)"); // Emerald core
-      coneGradient.addColorStop(0.22, "rgba(20, 184, 166, 0.15)"); // Teal mid
-      coneGradient.addColorStop(0.48, "rgba(56, 189, 248, 0.06)"); // Soft sky blue fringe
+      coneGradient.addColorStop(0, "rgba(16, 185, 129, 0.22)"); // Soft emerald core
+      coneGradient.addColorStop(0.25, "rgba(20, 184, 166, 0.14)"); // Soft teal mid
+      coneGradient.addColorStop(0.52, "rgba(56, 189, 248, 0.05)"); // Soft sky blue fringe
       coneGradient.addColorStop(0.85, "rgba(3, 5, 12, 0)");
       coneGradient.addColorStop(1, "rgba(0, 0, 0, 0)");
 
@@ -131,6 +137,7 @@ export default function TechSpotlightBackground() {
       ctx.lineTo(beamApexX + beamSpread, height);
       ctx.closePath();
       ctx.fill();
+      ctx.restore();
 
       // Secondary focused center spotlight for login card pedestal
       const centerGlow = ctx.createRadialGradient(

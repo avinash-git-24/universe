@@ -15,14 +15,13 @@ import {
   AlertCircle,
   ArrowRight,
   ShieldCheck,
-  Terminal,
   Zap,
   X,
-  Cpu,
   Sparkles,
+  Layers,
 } from "lucide-react";
 
-// ─── Option 3: Modern Tech Input Field ─────────────────────────────────────────
+// ─── Refined Modern Tech Input Field ─────────────────────────────────────────
 function TechField({
   id,
   type,
@@ -63,9 +62,9 @@ function TechField({
       <div className="flex items-center justify-between text-xs min-h-[18px]">
         <label
           htmlFor={id}
-          className="font-mono text-[10.5px] font-medium tracking-wider text-slate-400 uppercase flex items-center gap-1.5"
+          className="text-[11px] font-semibold tracking-wider text-slate-300 uppercase flex items-center gap-1.5 font-sans"
         >
-          <span className="text-emerald-400 font-bold">&gt;</span>
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399]" />
           <span>{label}</span>
         </label>
         {headerRight}
@@ -74,20 +73,21 @@ function TechField({
       <div
         className={`relative flex items-center w-full rounded-xl transition-all duration-200 ${
           error
-            ? "bg-red-950/20 border border-red-500/60 shadow-[0_0_16px_rgba(239,68,68,0.25)]"
+            ? "bg-red-950/20 border border-red-500/60 shadow-[0_0_18px_rgba(239,68,68,0.22)]"
             : focused
-            ? "bg-[#060a14]/90 border border-emerald-400 shadow-[0_0_22px_rgba(16,185,129,0.25)] ring-1 ring-emerald-400/30"
-            : "bg-[#070c18]/65 border border-slate-800/80 hover:border-slate-700 hover:bg-[#0c1222]/75"
+            ? "bg-[#060a14]/95 border border-emerald-400 shadow-[0_0_24px_rgba(16,185,129,0.28)] ring-1 ring-emerald-400/30"
+            : "bg-[#070c18]/70 border border-slate-800/80 hover:border-slate-700 hover:bg-[#0c1222]/80"
         }`}
       >
         <span
           className={`absolute left-3.5 flex items-center transition-colors pointer-events-none ${
-            focused ? "text-emerald-400" : "text-slate-500"
+            focused ? "text-emerald-400" : "text-slate-400"
           }`}
         >
           {leftIcon}
         </span>
 
+        {/* pr-20 / pr-24 ensures long university emails never collide with right action icons */}
         <input
           ref={inputRef}
           id={id}
@@ -100,11 +100,11 @@ function TechField({
           onBlur={() => setFocused(false)}
           onKeyDown={onKeyDown}
           onKeyUp={onKeyUp}
-          className="w-full bg-transparent text-white text-sm py-3.5 pl-11 pr-16 outline-none placeholder:text-slate-500 tracking-normal font-sans"
+          className="w-full bg-transparent text-white text-sm py-3.5 pl-11 pr-20 sm:pr-24 outline-none placeholder:text-slate-500 tracking-normal font-sans"
         />
 
         {rightNode && (
-          <div className="absolute right-3.5 flex items-center gap-2">
+          <div className="absolute right-3 sm:right-3.5 flex items-center gap-2">
             {rightNode}
           </div>
         )}
@@ -265,12 +265,12 @@ function LoginForm() {
 
   return (
     <div className="w-full min-h-[100dvh] flex flex-col items-center justify-center p-4 sm:p-6 relative overflow-hidden font-sans">
-      {/* ── Option 3: Modern Tech Dot-Grid + Spotlight Beam Background ── */}
+      {/* ── Option 3: Modern Tech Dot-Grid + Softened Cinematic Spotlight ── */}
       <TechSpotlightBackground />
 
-      {/* ── Top High-Tech Status Pill ── */}
+      {/* ── Top University Gateway Status Pill (Well-spaced) ── */}
       <div
-        className={`relative z-10 mb-6 flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-[#060914]/85 border border-emerald-500/30 backdrop-blur-xl shadow-[0_0_25px_rgba(16,185,129,0.18)] transition-all duration-500 ${
+        className={`relative z-10 mb-7 flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-[#060914]/90 border border-emerald-500/35 backdrop-blur-xl shadow-[0_0_25px_rgba(16,185,129,0.2)] transition-all duration-500 ${
           mounted ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-4"
         }`}
       >
@@ -278,43 +278,61 @@ function LoginForm() {
           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
           <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
         </span>
-        <span className="font-mono text-[11px] font-semibold text-emerald-300 tracking-wider uppercase">
-          SECURE_AUTH // MARWADI UNIVERSITY GATEWAY
+        <span className="text-[10.5px] font-semibold text-emerald-300 tracking-[0.14em] uppercase font-sans">
+          Marwadi University &bull; Secure Gateway
         </span>
       </div>
 
-      {/* ── Main Tech Spotlight Glass Card ── */}
+      {/* ── Main Tech Spotlight Frosted Glass Card ── */}
       <div
-        className={`relative z-10 w-full max-w-[440px] rounded-2xl p-6 sm:p-8 backdrop-blur-2xl transition-all duration-700 shadow-2xl group ${
+        className={`relative z-10 w-full max-w-[440px] rounded-2xl p-6 sm:p-8 backdrop-blur-2xl transition-all duration-700 shadow-2xl overflow-hidden group ${
           mounted ? "opacity-100 scale-100 translate-y-0" : "opacity-0 scale-95 translate-y-6"
         }`}
         style={{
-          background: "linear-gradient(180deg, rgba(10, 16, 28, 0.85) 0%, rgba(4, 7, 15, 0.95) 100%)",
-          border: "1px solid rgba(255, 255, 255, 0.09)",
+          background: "linear-gradient(180deg, rgba(10, 16, 28, 0.88) 0%, rgba(4, 7, 15, 0.96) 100%)",
+          border: "1px solid rgba(255, 255, 255, 0.08)",
           boxShadow: "0 25px 65px -15px rgba(0, 0, 0, 0.95), 0 0 50px -10px rgba(16, 185, 129, 0.16)",
         }}
       >
-        {/* Top Edge Laser Accent Line */}
-        <div className="absolute top-0 inset-x-8 h-[1.5px] bg-gradient-to-r from-transparent via-emerald-400 to-transparent shadow-[0_0_15px_#10b981]" />
+        {/* Soft Ambient Inner Highlight */}
+        <div className="absolute top-0 inset-x-0 h-16 bg-gradient-to-b from-white/[0.04] to-transparent pointer-events-none rounded-t-2xl" />
 
-        {/* Subtle Tech Corner Accents */}
-        <div className="absolute top-3 left-3 text-[9px] font-mono text-emerald-500/35 select-none">+</div>
-        <div className="absolute top-3 right-3 text-[9px] font-mono text-emerald-500/35 select-none">+</div>
-        <div className="absolute bottom-3 left-3 text-[9px] font-mono text-emerald-500/35 select-none">+</div>
-        <div className="absolute bottom-3 right-3 text-[9px] font-mono text-emerald-500/35 select-none">+</div>
-
-        {/* ── Brand Header ── */}
+        {/* ── Brand Header with Custom UniVerse Orbital Emblem ── */}
         <div className="text-center mb-6 relative z-10">
-          <div className="inline-flex items-center justify-center w-13 h-13 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-[0_0_25px_rgba(16,185,129,0.35)] mb-3.5 ring-1 ring-emerald-400/40 p-3">
-            <Cpu size={26} className="text-white" />
+          <div className="inline-flex items-center justify-center w-13 h-13 rounded-2xl bg-gradient-to-br from-emerald-400 via-teal-500 to-emerald-600 text-white shadow-[0_0_30px_rgba(16,185,129,0.38)] mb-3.5 ring-1 ring-white/25 p-3 group-hover:scale-105 transition-transform duration-300">
+            {/* Custom UniVerse Interconnected Student Orbit Monogram */}
+            <svg
+              width="26"
+              height="26"
+              viewBox="0 0 28 28"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              className="text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.4)]"
+            >
+              <path
+                d="M7 6V14C7 17.866 10.134 21 14 21C17.866 21 21 17.866 21 14V6"
+                stroke="currentColor"
+                strokeWidth="2.8"
+                strokeLinecap="round"
+              />
+              <circle cx="14" cy="14" r="2.4" fill="white" />
+              <circle cx="21" cy="7" r="1.6" fill="#A7F3D0" />
+              <path
+                d="M5 14C5 9.02944 9.02944 5 14 5"
+                stroke="#6EE7B7"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeDasharray="2 3"
+              />
+            </svg>
           </div>
 
-          <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight font-sans">
             Uni<span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400">Verse</span>
           </h1>
 
-          <p className="text-xs text-slate-400 mt-1.5 font-mono tracking-wide">
-            CAMPUS COMMERCE &amp; STUDENT NETWORK
+          <p className="text-[10.5px] sm:text-[11px] font-semibold text-slate-400 mt-1.5 tracking-[0.18em] uppercase font-sans">
+            Campus Commerce &amp; Student Network
           </p>
         </div>
 
@@ -332,7 +350,7 @@ function LoginForm() {
             <TechField
               id="email"
               type="email"
-              label="STUDENT EMAIL"
+              label="Student Email"
               placeholder="avinash.128203@marwadiuniversity.ac.in"
               autoComplete="email"
               value={email}
@@ -348,15 +366,15 @@ function LoginForm() {
                     <button
                       type="button"
                       onClick={() => setEmail("")}
-                      className="text-slate-400 hover:text-white transition-colors p-1"
+                      className="text-slate-400 hover:text-white transition-colors p-1 rounded-md hover:bg-white/10"
                       title="Clear email"
                     >
                       <X size={14} />
                     </button>
                   )}
                   {emailValid && (
-                    <span title="Verified Marwadi University ID">
-                      <CheckCircle2 size={16} className="text-emerald-400 shrink-0" />
+                    <span title="Verified Marwadi University ID" className="flex items-center">
+                      <CheckCircle2 size={16} className="text-emerald-400 shrink-0 drop-shadow-[0_0_6px_rgba(52,211,153,0.6)]" />
                     </span>
                   )}
                 </>
@@ -369,9 +387,9 @@ function LoginForm() {
                 <button
                   type="button"
                   onClick={handleAutocompleteDomain}
-                  className="px-2.5 py-1 rounded-md bg-emerald-950/50 hover:bg-emerald-900/60 border border-emerald-500/40 text-[11px] font-mono text-emerald-300 hover:text-white transition-all flex items-center gap-1.5 shadow-[0_0_12px_rgba(16,185,129,0.15)] group/chip cursor-pointer"
+                  className="px-3 py-1.5 rounded-lg bg-emerald-950/60 hover:bg-emerald-900/80 border border-emerald-500/40 text-[11px] font-medium text-emerald-300 hover:text-white transition-all flex items-center gap-1.5 shadow-[0_0_15px_rgba(16,185,129,0.18)] group/chip cursor-pointer"
                 >
-                  <Sparkles size={11} className="text-emerald-400 group-hover/chip:rotate-12 transition-transform" />
+                  <Sparkles size={12} className="text-emerald-400 group-hover/chip:rotate-12 transition-transform" />
                   <span>Tap to add <strong className="text-emerald-200">@marwadiuniversity.ac.in</strong></span>
                 </button>
               </div>
@@ -383,7 +401,7 @@ function LoginForm() {
             inputRef={passwordInputRef}
             id="password"
             type={showPw ? "text" : "password"}
-            label="PASSWORD"
+            label="Password"
             placeholder="Enter your password"
             autoComplete="current-password"
             value={password}
@@ -405,7 +423,7 @@ function LoginForm() {
                     if (errors.password) setErrors((prev) => ({ ...prev, password: undefined }));
                     passwordInputRef.current?.focus();
                   }}
-                  className="font-mono text-[10.5px] font-semibold text-emerald-400 hover:underline"
+                  className="text-[11px] font-semibold text-emerald-400 hover:underline"
                 >
                   CLEAR
                 </button>
@@ -415,7 +433,7 @@ function LoginForm() {
               <button
                 type="button"
                 onClick={() => setShowPw(!showPw)}
-                className="text-slate-400 hover:text-white transition-colors p-1"
+                className="text-slate-400 hover:text-white transition-colors p-1 rounded-md hover:bg-white/10"
                 title={showPw ? "Hide password" : "Show password"}
               >
                 {showPw ? <EyeOff size={15} /> : <Eye size={15} />}
@@ -425,14 +443,14 @@ function LoginForm() {
 
           {/* Remember Me & Forgot Password */}
           <div className="flex items-center justify-between text-xs pt-1">
-            <label className="flex items-center gap-2 cursor-pointer text-slate-400 select-none group/rem">
+            <label className="flex items-center gap-2 cursor-pointer text-slate-300 select-none group/rem">
               <input
                 type="checkbox"
                 checked={remember}
                 onChange={(e) => setRemember(e.target.checked)}
-                className="w-4 h-4 rounded border-slate-700 bg-black/50 text-emerald-500 focus:ring-emerald-400 focus:ring-offset-0 cursor-pointer accent-emerald-500"
+                className="w-4 h-4 rounded border-slate-700 bg-black/60 text-emerald-500 focus:ring-emerald-400 focus:ring-offset-0 cursor-pointer accent-emerald-500"
               />
-              <span className="group-hover/rem:text-slate-200 transition-colors font-sans">Remember me</span>
+              <span className="group-hover/rem:text-white transition-colors font-medium">Remember me</span>
             </label>
 
             <Link
@@ -443,48 +461,51 @@ function LoginForm() {
             </Link>
           </div>
 
-          {/* Sign In Button */}
+          {/* Sign In Button with Shimmer Sweep */}
           <button
             type="submit"
             disabled={loading || isSuccess}
-            className="w-full mt-2 py-3.5 px-4 rounded-xl font-bold text-slate-950 bg-gradient-to-r from-emerald-400 via-teal-400 to-emerald-400 bg-[length:200%_auto] hover:bg-right transition-all duration-300 shadow-[0_0_25px_rgba(16,185,129,0.35)] hover:shadow-[0_0_35px_rgba(16,185,129,0.55)] active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none flex items-center justify-center gap-2 text-sm tracking-wide cursor-pointer relative overflow-hidden group/btn"
+            className="w-full mt-2 py-3.5 px-4 rounded-xl font-bold text-slate-950 bg-gradient-to-r from-emerald-400 via-emerald-300 to-teal-400 bg-[length:200%_auto] hover:bg-right transition-all duration-300 shadow-[0_0_28px_rgba(16,185,129,0.38)] hover:shadow-[0_0_38px_rgba(16,185,129,0.58)] active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none flex items-center justify-center gap-2 text-sm tracking-wide cursor-pointer relative overflow-hidden group/btn"
           >
             {/* Top highlight shine */}
-            <div className="absolute top-0 inset-x-0 h-[1px] bg-white/30" />
+            <div className="absolute top-0 inset-x-0 h-[1px] bg-white/40" />
+
+            {/* Shimmer sweep effect on hover */}
+            <div className="absolute inset-0 -translate-x-full group-hover/btn:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/25 to-transparent pointer-events-none" />
 
             {loading ? (
               <>
                 <span className="w-4 h-4 border-2 border-slate-950/30 border-t-slate-950 rounded-full animate-spin" />
-                <span>AUTHENTICATING...</span>
+                <span>Signing in...</span>
               </>
             ) : isSuccess ? (
               <>
                 <CheckCircle2 size={17} className="text-slate-950" />
-                <span>ACCESS GRANTED</span>
+                <span>Access Granted</span>
               </>
             ) : (
               <>
                 <span>Sign In to UniVerse</span>
-                <ArrowRight size={16} className="group-hover/btn:translate-x-0.5 transition-transform" />
+                <ArrowRight size={16} className="group-hover/btn:translate-x-1 transition-transform" />
               </>
             )}
           </button>
 
           {/* Divider */}
           <div className="flex items-center gap-3 my-1">
-            <div className="flex-1 h-px bg-white/10" />
-            <span className="font-mono text-[10px] text-slate-500 uppercase tracking-widest font-semibold">
-              OR CONTINUE WITH
+            <div className="flex-1 h-px bg-white/[0.08]" />
+            <span className="text-[10.5px] text-slate-400 uppercase tracking-widest font-semibold font-sans">
+              OR
             </span>
-            <div className="flex-1 h-px bg-white/10" />
+            <div className="flex-1 h-px bg-white/[0.08]" />
           </div>
 
-          {/* Google Sign In */}
+          {/* Google Sign In with Glassmorphism */}
           <button
             type="button"
             onClick={handleGoogle}
             disabled={loading || isSuccess}
-            className="w-full py-3 px-4 rounded-xl font-medium text-slate-200 bg-[#070b16]/75 hover:bg-[#0c1224] border border-slate-800 hover:border-slate-700 transition-all duration-200 flex items-center justify-center gap-3 text-xs tracking-wide active:scale-[0.99] cursor-pointer"
+            className="w-full py-3 px-4 rounded-xl font-medium text-slate-200 bg-[#070c18]/80 hover:bg-[#0c1428] border border-slate-800/90 hover:border-emerald-500/40 hover:shadow-[0_0_20px_rgba(16,185,129,0.12)] transition-all duration-200 flex items-center justify-center gap-3 text-xs tracking-wide active:scale-[0.99] cursor-pointer"
           >
             <svg width="17" height="17" viewBox="0 0 24 24">
               <path
@@ -504,7 +525,7 @@ function LoginForm() {
                 d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
               />
             </svg>
-            <span>Student Google Account</span>
+            <span>Continue with Student Google ID</span>
           </button>
         </form>
 
@@ -522,26 +543,26 @@ function LoginForm() {
         </div>
       </div>
 
-      {/* ── Bottom Campus Verified Trust Footer ── */}
+      {/* ── Bottom Campus Verified Trust Badges (Refined Glass Micro-Pills) ── */}
       <div
-        className={`relative z-10 mt-6 flex flex-wrap items-center justify-center gap-3 sm:gap-6 font-mono text-[10.5px] text-slate-500 transition-all duration-700 ${
+        className={`relative z-10 mt-7 flex flex-wrap items-center justify-center gap-2.5 sm:gap-3 transition-all duration-700 ${
           mounted ? "opacity-100" : "opacity-0"
         }`}
       >
-        <span className="flex items-center gap-1.5 hover:text-slate-400 transition-colors">
+        <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/[0.03] border border-white/[0.06] backdrop-blur-md hover:border-emerald-500/30 transition-colors">
           <ShieldCheck size={13} className="text-emerald-400" />
-          <span>[ 256-BIT SSL ]</span>
-        </span>
-        <span className="text-slate-800 hidden sm:inline">•</span>
-        <span className="flex items-center gap-1.5 hover:text-slate-400 transition-colors">
+          <span className="text-[11px] font-medium text-slate-300">256-Bit SSL Encrypted</span>
+        </div>
+
+        <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/[0.03] border border-white/[0.06] backdrop-blur-md hover:border-emerald-500/30 transition-colors">
           <Zap size={13} className="text-teal-400" />
-          <span>[ MARWADI ID VERIFIED ]</span>
-        </span>
-        <span className="text-slate-800 hidden sm:inline">•</span>
-        <span className="flex items-center gap-1.5 hover:text-slate-400 transition-colors">
-          <Terminal size={13} className="text-cyan-400" />
-          <span>[ HOSTEL DELIVERY ]</span>
-        </span>
+          <span className="text-[11px] font-medium text-slate-300">Marwadi ID Verified</span>
+        </div>
+
+        <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/[0.03] border border-white/[0.06] backdrop-blur-md hover:border-emerald-500/30 transition-colors">
+          <Layers size={13} className="text-cyan-400" />
+          <span className="text-[11px] font-medium text-slate-300">Hostel Delivery &amp; Resale</span>
+        </div>
       </div>
     </div>
   );
