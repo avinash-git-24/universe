@@ -1,0 +1,27 @@
+# Tests
+**/__tests__/**
+**/*.test.ts
+**/*.test.tsx
+**/*.spec.ts
+**/*.spec.tsx
+tests/
+
+# Documentation & Guidelines
+docs/
+*.md
+!README.md
+
+# Supabase Local Files & Migrations (not needed by Next.js client runtime)
+supabase/
+
+# GitHub Workflows
+.github/
+
+# Scripts & Tooling
+scripts/
+
+# IDE & OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
