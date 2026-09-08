@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, Suspense, useRef } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
@@ -19,7 +19,6 @@ import {
   Zap,
   X,
   Cpu,
-  Sparkles,
 } from "lucide-react";
 
 // ─── Option 3: Modern Tech Input Field ─────────────────────────────────────────
@@ -38,7 +37,6 @@ function TechField({
   onKeyDown,
   onKeyUp,
   headerRight,
-  inputRef,
 }: {
   id: string;
   type: string;
@@ -54,7 +52,6 @@ function TechField({
   onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
   onKeyUp?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
   headerRight?: React.ReactNode;
-  inputRef?: React.Ref<HTMLInputElement>;
 }) {
   const [focused, setFocused] = useState(false);
 
@@ -74,10 +71,10 @@ function TechField({
       <div
         className={`relative flex items-center w-full rounded-xl transition-all duration-200 ${
           error
-            ? "bg-red-950/20 border border-red-500/60 shadow-[0_0_16px_rgba(239,68,68,0.25)]"
+            ? "bg-red-950/20 border border-red-500/60 shadow-[0_0_15px_rgba(239,68,68,0.25)]"
             : focused
             ? "bg-[#060a14]/90 border border-emerald-400 shadow-[0_0_22px_rgba(16,185,129,0.25)] ring-1 ring-emerald-400/30"
-            : "bg-[#070c18]/65 border border-slate-800/80 hover:border-slate-700 hover:bg-[#0c1222]/75"
+            : "bg-[#080d1a]/60 border border-slate-800/80 hover:border-slate-700 hover:bg-[#0c1222]/70"
         }`}
       >
         <span
@@ -89,7 +86,6 @@ function TechField({
         </span>
 
         <input
-          ref={inputRef}
           id={id}
           type={type}
           placeholder={placeholder}
@@ -111,7 +107,7 @@ function TechField({
       </div>
 
       {warningNode && (
-        <p className="text-amber-400 text-xs mt-0.5 flex items-center gap-1 font-medium animate-pulse font-sans">
+        <p className="text-amber-400 text-xs mt-0.5 flex items-center gap-1 font-medium animate-pulse">
           <span>{warningNode}</span>
         </p>
       )}
@@ -130,7 +126,6 @@ function TechField({
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const passwordInputRef = useRef<HTMLInputElement>(null);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -154,18 +149,6 @@ function LoginForm() {
     if (typeof e.getModifierState === "function") {
       setCapsLockOn(e.getModifierState("CapsLock"));
     }
-  }
-
-  // 1-Click autocomplete for Marwadi domain
-  function handleAutocompleteDomain() {
-    let base = email.trim();
-    if (base.includes("@")) {
-      base = base.split("@")[0];
-    }
-    const full = `${base}@marwadiuniversity.ac.in`;
-    setEmail(full);
-    if (errors.email) setErrors((prev) => ({ ...prev, email: undefined }));
-    passwordInputRef.current?.focus();
   }
 
   useEffect(() => {
@@ -258,10 +241,6 @@ function LoginForm() {
   }
 
   const emailValid = validateEmail(email);
-  const showDomainAutocomplete =
-    email.length >= 2 &&
-    !email.includes("@marwadiuniversity.ac.in") &&
-    !email.includes("@");
 
   return (
     <div className="w-full min-h-[100dvh] flex flex-col items-center justify-center p-4 sm:p-6 relative overflow-hidden font-sans">
@@ -270,7 +249,7 @@ function LoginForm() {
 
       {/* ── Top High-Tech Status Pill ── */}
       <div
-        className={`relative z-10 mb-6 flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-[#060914]/85 border border-emerald-500/30 backdrop-blur-xl shadow-[0_0_25px_rgba(16,185,129,0.18)] transition-all duration-500 ${
+        className={`relative z-10 mb-6 flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-[#070b16]/80 border border-emerald-500/30 backdrop-blur-xl shadow-[0_0_20px_rgba(16,185,129,0.18)] transition-all duration-500 ${
           mounted ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-4"
         }`}
       >
@@ -285,26 +264,26 @@ function LoginForm() {
 
       {/* ── Main Tech Spotlight Glass Card ── */}
       <div
-        className={`relative z-10 w-full max-w-[440px] rounded-2xl p-6 sm:p-8 backdrop-blur-2xl transition-all duration-700 shadow-2xl group ${
+        className={`relative z-10 w-full max-w-[440px] rounded-2xl p-6 sm:p-8 backdrop-blur-2xl transition-all duration-700 shadow-2xl ${
           mounted ? "opacity-100 scale-100 translate-y-0" : "opacity-0 scale-95 translate-y-6"
         }`}
         style={{
-          background: "linear-gradient(180deg, rgba(10, 16, 28, 0.85) 0%, rgba(4, 7, 15, 0.95) 100%)",
-          border: "1px solid rgba(255, 255, 255, 0.09)",
-          boxShadow: "0 25px 65px -15px rgba(0, 0, 0, 0.95), 0 0 50px -10px rgba(16, 185, 129, 0.16)",
+          background: "linear-gradient(180deg, rgba(11, 17, 30, 0.82) 0%, rgba(5, 8, 16, 0.94) 100%)",
+          border: "1px solid rgba(255, 255, 255, 0.08)",
+          boxShadow: "0 25px 60px -15px rgba(0, 0, 0, 0.9), 0 0 45px -10px rgba(16, 185, 129, 0.15)",
         }}
       >
         {/* Top Edge Laser Accent Line */}
-        <div className="absolute top-0 inset-x-8 h-[1.5px] bg-gradient-to-r from-transparent via-emerald-400 to-transparent shadow-[0_0_15px_#10b981]" />
+        <div className="absolute top-0 inset-x-8 h-[1px] bg-gradient-to-r from-transparent via-emerald-400 to-transparent shadow-[0_0_12px_#10b981]" />
 
         {/* Subtle Tech Corner Accents */}
-        <div className="absolute top-3 left-3 text-[9px] font-mono text-emerald-500/35 select-none">+</div>
-        <div className="absolute top-3 right-3 text-[9px] font-mono text-emerald-500/35 select-none">+</div>
-        <div className="absolute bottom-3 left-3 text-[9px] font-mono text-emerald-500/35 select-none">+</div>
-        <div className="absolute bottom-3 right-3 text-[9px] font-mono text-emerald-500/35 select-none">+</div>
+        <div className="absolute top-3 left-3 text-[9px] font-mono text-emerald-500/30 select-none">+</div>
+        <div className="absolute top-3 right-3 text-[9px] font-mono text-emerald-500/30 select-none">+</div>
+        <div className="absolute bottom-3 left-3 text-[9px] font-mono text-emerald-500/30 select-none">+</div>
+        <div className="absolute bottom-3 right-3 text-[9px] font-mono text-emerald-500/30 select-none">+</div>
 
         {/* ── Brand Header ── */}
-        <div className="text-center mb-6 relative z-10">
+        <div className="text-center mb-7 relative z-10">
           <div className="inline-flex items-center justify-center w-13 h-13 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-[0_0_25px_rgba(16,185,129,0.35)] mb-3.5 ring-1 ring-emerald-400/40 p-3">
             <Cpu size={26} className="text-white" />
           </div>
@@ -327,60 +306,43 @@ function LoginForm() {
             </div>
           )}
 
-          {/* Email Field with Autocomplete Helper */}
-          <div>
-            <TechField
-              id="email"
-              type="email"
-              label="STUDENT EMAIL"
-              placeholder="avinash.128203@marwadiuniversity.ac.in"
-              autoComplete="email"
-              value={email}
-              onChange={(e) => {
-                setEmail(e.target.value);
-                if (errors.email) setErrors((prev) => ({ ...prev, email: undefined }));
-              }}
-              error={errors.email}
-              leftIcon={<Mail size={16} />}
-              rightNode={
-                <>
-                  {email.length > 0 && (
-                    <button
-                      type="button"
-                      onClick={() => setEmail("")}
-                      className="text-slate-400 hover:text-white transition-colors p-1"
-                      title="Clear email"
-                    >
-                      <X size={14} />
-                    </button>
-                  )}
-                  {emailValid && (
-                    <span title="Verified Marwadi University ID">
-                      <CheckCircle2 size={16} className="text-emerald-400 shrink-0" />
-                    </span>
-                  )}
-                </>
-              }
-            />
-
-            {/* Smart 1-Tap Autocomplete Chip */}
-            {showDomainAutocomplete && (
-              <div className="mt-1.5 flex items-center gap-1.5">
-                <button
-                  type="button"
-                  onClick={handleAutocompleteDomain}
-                  className="px-2.5 py-1 rounded-md bg-emerald-950/50 hover:bg-emerald-900/60 border border-emerald-500/40 text-[11px] font-mono text-emerald-300 hover:text-white transition-all flex items-center gap-1.5 shadow-[0_0_12px_rgba(16,185,129,0.15)] group/chip cursor-pointer"
-                >
-                  <Sparkles size={11} className="text-emerald-400 group-hover/chip:rotate-12 transition-transform" />
-                  <span>Tap to add <strong className="text-emerald-200">@marwadiuniversity.ac.in</strong></span>
-                </button>
-              </div>
-            )}
-          </div>
+          {/* Email Field */}
+          <TechField
+            id="email"
+            type="email"
+            label="STUDENT EMAIL"
+            placeholder="avinash.128203@marwadiuniversity.ac.in"
+            autoComplete="email"
+            value={email}
+            onChange={(e) => {
+              setEmail(e.target.value);
+              if (errors.email) setErrors((prev) => ({ ...prev, email: undefined }));
+            }}
+            error={errors.email}
+            leftIcon={<Mail size={16} />}
+            rightNode={
+              <>
+                {email.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => setEmail("")}
+                    className="text-slate-400 hover:text-white transition-colors p-1"
+                    title="Clear email"
+                  >
+                    <X size={14} />
+                  </button>
+                )}
+                {emailValid && (
+                  <span title="Valid MU Email">
+                    <CheckCircle2 size={16} className="text-emerald-400 shrink-0" />
+                  </span>
+                )}
+              </>
+            }
+          />
 
           {/* Password Field */}
           <TechField
-            inputRef={passwordInputRef}
             id="password"
             type={showPw ? "text" : "password"}
             label="PASSWORD"
@@ -403,7 +365,8 @@ function LoginForm() {
                   onClick={() => {
                     setPassword("");
                     if (errors.password) setErrors((prev) => ({ ...prev, password: undefined }));
-                    passwordInputRef.current?.focus();
+                    const el = document.getElementById("password");
+                    if (el) el.focus();
                   }}
                   className="font-mono text-[10.5px] font-semibold text-emerald-400 hover:underline"
                 >
@@ -425,14 +388,14 @@ function LoginForm() {
 
           {/* Remember Me & Forgot Password */}
           <div className="flex items-center justify-between text-xs pt-1">
-            <label className="flex items-center gap-2 cursor-pointer text-slate-400 select-none group/rem">
+            <label className="flex items-center gap-2 cursor-pointer text-slate-400 select-none group">
               <input
                 type="checkbox"
                 checked={remember}
                 onChange={(e) => setRemember(e.target.checked)}
                 className="w-4 h-4 rounded border-slate-700 bg-black/50 text-emerald-500 focus:ring-emerald-400 focus:ring-offset-0 cursor-pointer accent-emerald-500"
               />
-              <span className="group-hover/rem:text-slate-200 transition-colors font-sans">Remember me</span>
+              <span className="group-hover:text-slate-200 transition-colors font-sans">Remember me</span>
             </label>
 
             <Link
@@ -447,11 +410,8 @@ function LoginForm() {
           <button
             type="submit"
             disabled={loading || isSuccess}
-            className="w-full mt-2 py-3.5 px-4 rounded-xl font-bold text-slate-950 bg-gradient-to-r from-emerald-400 via-teal-400 to-emerald-400 bg-[length:200%_auto] hover:bg-right transition-all duration-300 shadow-[0_0_25px_rgba(16,185,129,0.35)] hover:shadow-[0_0_35px_rgba(16,185,129,0.55)] active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none flex items-center justify-center gap-2 text-sm tracking-wide cursor-pointer relative overflow-hidden group/btn"
+            className="w-full mt-2 py-3.5 px-4 rounded-xl font-bold text-slate-950 bg-gradient-to-r from-emerald-400 via-teal-400 to-emerald-400 bg-[length:200%_auto] hover:bg-right transition-all duration-300 shadow-[0_0_25px_rgba(16,185,129,0.35)] hover:shadow-[0_0_35px_rgba(16,185,129,0.55)] active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none flex items-center justify-center gap-2 text-sm tracking-wide cursor-pointer"
           >
-            {/* Top highlight shine */}
-            <div className="absolute top-0 inset-x-0 h-[1px] bg-white/30" />
-
             {loading ? (
               <>
                 <span className="w-4 h-4 border-2 border-slate-950/30 border-t-slate-950 rounded-full animate-spin" />
@@ -465,7 +425,7 @@ function LoginForm() {
             ) : (
               <>
                 <span>Sign In to UniVerse</span>
-                <ArrowRight size={16} className="group-hover/btn:translate-x-0.5 transition-transform" />
+                <ArrowRight size={16} />
               </>
             )}
           </button>
@@ -484,7 +444,7 @@ function LoginForm() {
             type="button"
             onClick={handleGoogle}
             disabled={loading || isSuccess}
-            className="w-full py-3 px-4 rounded-xl font-medium text-slate-200 bg-[#070b16]/75 hover:bg-[#0c1224] border border-slate-800 hover:border-slate-700 transition-all duration-200 flex items-center justify-center gap-3 text-xs tracking-wide active:scale-[0.99] cursor-pointer"
+            className="w-full py-3 px-4 rounded-xl font-medium text-slate-200 bg-[#070b16]/70 hover:bg-[#0b1122] border border-slate-800 hover:border-slate-700 transition-all duration-200 flex items-center justify-center gap-3 text-xs tracking-wide active:scale-[0.99] cursor-pointer"
           >
             <svg width="17" height="17" viewBox="0 0 24 24">
               <path
@@ -540,7 +500,7 @@ function LoginForm() {
         <span className="text-slate-800 hidden sm:inline">•</span>
         <span className="flex items-center gap-1.5 hover:text-slate-400 transition-colors">
           <Terminal size={13} className="text-cyan-400" />
-          <span>[ HOSTEL DELIVERY ]</span>
+          <span>[ ZERO BROKERAGE ]</span>
         </span>
       </div>
     </div>
@@ -551,7 +511,7 @@ export default function LoginPage() {
   return (
     <Suspense
       fallback={
-        <div className="w-full min-h-screen bg-[#03050c] flex items-center justify-center text-emerald-400">
+        <div className="w-full min-h-screen bg-[#04060d] flex items-center justify-center text-emerald-400">
           <span className="w-8 h-8 border-2 border-emerald-500/30 border-t-emerald-400 rounded-full animate-spin" />
         </div>
       }
