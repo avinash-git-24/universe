@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { ROUTES } from "@/constants/routes";
-import CosmicSpaceBackground from "@/components/auth/CosmicSpaceBackground";
+import EmeraldObsidianBackground from "@/components/auth/EmeraldObsidianBackground";
 import {
   Mail,
   Lock,
@@ -15,13 +15,13 @@ import {
   AlertCircle,
   ArrowRight,
   ShieldCheck,
+  Zap,
   Sparkles,
-  Compass,
   X,
 } from "lucide-react";
 
-// ─── Modern Cosmic Input Field ────────────────────────────────────────────────
-function CosmicField({
+// ─── Modern Input Field ────────────────────────────────────────────────────────
+function ModernField({
   id,
   type,
   label,
@@ -59,7 +59,7 @@ function CosmicField({
       <div className="flex items-center justify-between text-xs min-h-[18px]">
         <label
           htmlFor={id}
-          className="font-semibold tracking-wider text-slate-300 uppercase text-[11px]"
+          className="font-semibold tracking-wider text-neutral-300 uppercase text-[11px]"
         >
           {label}
         </label>
@@ -71,13 +71,13 @@ function CosmicField({
           error
             ? "bg-red-950/20 border border-red-500/60 shadow-[0_0_15px_rgba(239,68,68,0.2)]"
             : focused
-            ? "bg-[#060a1f]/80 border border-indigo-400 shadow-[0_0_20px_rgba(129,140,248,0.25)] ring-1 ring-indigo-400/30"
-            : "bg-[#080d22]/50 border border-slate-700/40 hover:border-slate-600/70 hover:bg-[#0a102b]/60"
+            ? "bg-black/60 border border-[#00E676] shadow-[0_0_20px_rgba(0,230,118,0.25)] ring-1 ring-[#00E676]/30"
+            : "bg-black/40 border border-white/10 hover:border-white/20 hover:bg-black/50"
         }`}
       >
         <span
           className={`absolute left-3.5 flex items-center transition-colors pointer-events-none ${
-            focused ? "text-indigo-400" : "text-slate-400"
+            focused ? "text-[#00E676]" : "text-neutral-400"
           }`}
         >
           {leftIcon}
@@ -94,7 +94,7 @@ function CosmicField({
           onBlur={() => setFocused(false)}
           onKeyDown={onKeyDown}
           onKeyUp={onKeyUp}
-          className="w-full bg-transparent text-white text-sm py-3.5 pl-11 pr-16 outline-none placeholder:text-slate-500 tracking-normal"
+          className="w-full bg-transparent text-white text-sm py-3.5 pl-11 pr-16 outline-none placeholder:text-neutral-500 tracking-normal"
         />
 
         {rightNode && (
@@ -135,6 +135,7 @@ function LoginForm() {
   const [capsLockOn, setCapsLockOn] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
+  // Email helper: check MU domain
   function validateEmail(val: string) {
     return /^[a-zA-Z0-9._%+-]+@marwadiuniversity\.ac\.in$/i.test(val.trim());
   }
@@ -149,6 +150,7 @@ function LoginForm() {
     }
   }
 
+  // Load remembered or query email on mount
   useEffect(() => {
     setMounted(true);
     try {
@@ -204,6 +206,7 @@ function LoginForm() {
         return;
       }
 
+      // Save or clear Remember Me
       try {
         if (remember) {
           localStorage.setItem("universe_remembered_email", normalizedEmail);
@@ -242,47 +245,49 @@ function LoginForm() {
 
   return (
     <div className="w-full min-h-[100dvh] flex flex-col items-center justify-center p-4 sm:p-6 relative overflow-hidden font-sans">
-      {/* ── Option 2: Minimal Cosmic Deep Space & Stardust Background ── */}
-      <CosmicSpaceBackground />
+      {/* ── Option 1: Deep Obsidian + Emerald Aurora Background ── */}
+      <EmeraldObsidianBackground />
 
       {/* ── Top Header Brand Pill ── */}
       <div
-        className={`relative z-10 mb-6 flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-950/40 border border-indigo-500/30 backdrop-blur-xl shadow-[0_0_25px_rgba(99,102,241,0.2)] transition-all duration-500 ${
+        className={`relative z-10 mb-6 flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-950/40 border border-emerald-500/30 backdrop-blur-xl shadow-[0_0_20px_rgba(0,230,118,0.15)] transition-all duration-500 ${
           mounted ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-4"
         }`}
       >
-        <Sparkles size={14} className="text-cyan-400 animate-pulse" />
-        <span className="text-[11px] font-bold text-indigo-200 tracking-wider uppercase">
-          UniVerse · Marwadi University Campus Gateway
+        <span className="relative flex h-2 w-2">
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#00E676] opacity-75"></span>
+          <span className="relative inline-flex rounded-full h-2 w-2 bg-[#00E676]"></span>
+        </span>
+        <span className="text-[11px] font-bold text-emerald-400 tracking-wider uppercase">
+          Marwadi University Campus Hub
         </span>
       </div>
 
-      {/* ── Main Celestial Glass Card ── */}
+      {/* ── Main High-End Glassmorphism Card ── */}
       <div
         className={`relative z-10 w-full max-w-[440px] rounded-3xl p-6 sm:p-8 backdrop-blur-2xl transition-all duration-700 ${
           mounted ? "opacity-100 scale-100 translate-y-0" : "opacity-0 scale-95 translate-y-6"
         }`}
         style={{
-          background: "linear-gradient(145deg, rgba(12, 18, 38, 0.76) 0%, rgba(6, 10, 24, 0.88) 100%)",
-          border: "1px solid rgba(129, 140, 248, 0.22)",
-          boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.85), 0 0 45px -10px rgba(99, 102, 241, 0.2)",
+          background: "linear-gradient(135deg, rgba(12, 22, 16, 0.78) 0%, rgba(6, 12, 9, 0.85) 100%)",
+          border: "1px solid rgba(0, 230, 118, 0.22)",
+          boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.8), 0 0 45px -10px rgba(0, 230, 118, 0.15)",
         }}
       >
-        {/* Subtle Ambient Cosmic Corner Glows */}
-        <div className="absolute -top-12 -right-12 w-36 h-36 bg-purple-500/15 rounded-full blur-2xl pointer-events-none" />
-        <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-cyan-500/15 rounded-full blur-2xl pointer-events-none" />
+        {/* Subtle Card Header Corner Accent Glow */}
+        <div className="absolute -top-12 -right-12 w-32 h-32 bg-[#00E676]/15 rounded-full blur-2xl pointer-events-none" />
 
         {/* ── Brand Logo & Header ── */}
         <div className="text-center mb-7 relative z-10">
-          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-500 via-purple-500 to-cyan-400 text-white shadow-[0_0_25px_rgba(129,140,248,0.4)] mb-4 ring-2 ring-indigo-400/30">
-            <Compass size={28} className="text-white animate-spin-slow" />
+          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-[#00E676] via-teal-500 to-emerald-700 text-black shadow-[0_0_25px_rgba(0,230,118,0.4)] mb-4 ring-2 ring-emerald-400/30">
+            <Zap size={26} className="fill-black stroke-black" />
           </div>
 
           <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
-            Uni<span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-300 to-cyan-300">Verse</span>
+            Uni<span className="text-[#00E676]">Verse</span>
           </h1>
 
-          <p className="text-xs sm:text-sm text-slate-300 mt-1.5 font-medium">
+          <p className="text-xs sm:text-sm text-neutral-400 mt-1.5 font-medium">
             Campus delivery & student marketplace
           </p>
         </div>
@@ -297,7 +302,7 @@ function LoginForm() {
           )}
 
           {/* Email Field */}
-          <CosmicField
+          <ModernField
             id="email"
             type="email"
             label="Student Email"
@@ -316,7 +321,7 @@ function LoginForm() {
                   <button
                     type="button"
                     onClick={() => setEmail("")}
-                    className="text-slate-400 hover:text-white transition-colors p-1"
+                    className="text-neutral-400 hover:text-white transition-colors p-1"
                     title="Clear email"
                   >
                     <X size={14} />
@@ -324,7 +329,7 @@ function LoginForm() {
                 )}
                 {emailValid && (
                   <span title="Valid MU Email">
-                    <CheckCircle2 size={16} className="text-cyan-400 shrink-0" />
+                    <CheckCircle2 size={16} className="text-[#00E676] shrink-0" />
                   </span>
                 )}
               </>
@@ -332,7 +337,7 @@ function LoginForm() {
           />
 
           {/* Password Field */}
-          <CosmicField
+          <ModernField
             id="password"
             type={showPw ? "text" : "password"}
             label="Password"
@@ -358,7 +363,7 @@ function LoginForm() {
                     const el = document.getElementById("password");
                     if (el) el.focus();
                   }}
-                  className="text-[10.5px] font-semibold text-indigo-400 hover:underline"
+                  className="text-[10.5px] font-semibold text-[#00E676] hover:underline"
                 >
                   Clear
                 </button>
@@ -368,7 +373,7 @@ function LoginForm() {
               <button
                 type="button"
                 onClick={() => setShowPw(!showPw)}
-                className="text-slate-400 hover:text-white transition-colors p-1"
+                className="text-neutral-400 hover:text-white transition-colors p-1"
                 title={showPw ? "Hide password" : "Show password"}
               >
                 {showPw ? <EyeOff size={15} /> : <Eye size={15} />}
@@ -378,19 +383,19 @@ function LoginForm() {
 
           {/* Remember Me & Forgot Password */}
           <div className="flex items-center justify-between text-xs pt-1">
-            <label className="flex items-center gap-2 cursor-pointer text-slate-300 select-none group">
+            <label className="flex items-center gap-2 cursor-pointer text-neutral-300 select-none group">
               <input
                 type="checkbox"
                 checked={remember}
                 onChange={(e) => setRemember(e.target.checked)}
-                className="w-4 h-4 rounded border-slate-700 bg-black/50 text-indigo-500 focus:ring-indigo-400 focus:ring-offset-0 cursor-pointer accent-indigo-500"
+                className="w-4 h-4 rounded border-neutral-700 bg-black/50 text-[#00E676] focus:ring-[#00E676] focus:ring-offset-0 cursor-pointer accent-[#00E676]"
               />
               <span className="group-hover:text-white transition-colors">Remember me</span>
             </label>
 
             <Link
               href={ROUTES.FORGOT_PASSWORD}
-              className="text-indigo-400 hover:text-indigo-300 font-semibold transition-colors hover:underline"
+              className="text-[#00E676] hover:text-emerald-300 font-semibold transition-colors hover:underline"
             >
               Forgot password?
             </Link>
@@ -400,16 +405,16 @@ function LoginForm() {
           <button
             type="submit"
             disabled={loading || isSuccess}
-            className="w-full mt-2 py-3.5 px-4 rounded-xl font-bold text-white bg-gradient-to-r from-indigo-600 via-purple-600 to-cyan-500 bg-[length:200%_auto] hover:bg-right transition-all duration-300 shadow-[0_0_25px_rgba(99,102,241,0.35)] hover:shadow-[0_0_35px_rgba(99,102,241,0.5)] active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none flex items-center justify-center gap-2 text-sm tracking-wide cursor-pointer"
+            className="w-full mt-2 py-3.5 px-4 rounded-xl font-black text-black bg-gradient-to-r from-[#00E676] via-[#00f59b] to-[#00E676] bg-[length:200%_auto] hover:bg-right transition-all duration-300 shadow-[0_0_25px_rgba(0,230,118,0.35)] hover:shadow-[0_0_35px_rgba(0,230,118,0.5)] active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none flex items-center justify-center gap-2 text-sm tracking-wide cursor-pointer"
           >
             {loading ? (
               <>
-                <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                <span className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin" />
                 <span>Signing in...</span>
               </>
             ) : isSuccess ? (
               <>
-                <CheckCircle2 size={17} className="text-white" />
+                <CheckCircle2 size={17} className="text-black" />
                 <span>Entering UniVerse...</span>
               </>
             ) : (
@@ -423,7 +428,7 @@ function LoginForm() {
           {/* Divider */}
           <div className="flex items-center gap-3 my-1">
             <div className="flex-1 h-px bg-white/10" />
-            <span className="text-[11px] text-slate-500 uppercase tracking-widest font-semibold">
+            <span className="text-[11px] text-neutral-500 uppercase tracking-widest font-semibold">
               OR
             </span>
             <div className="flex-1 h-px bg-white/10" />
@@ -434,7 +439,7 @@ function LoginForm() {
             type="button"
             onClick={handleGoogle}
             disabled={loading || isSuccess}
-            className="w-full py-3 px-4 rounded-xl font-semibold text-white bg-slate-900/50 hover:bg-slate-800/60 border border-slate-700/50 hover:border-slate-600 transition-all duration-200 flex items-center justify-center gap-3 text-xs tracking-wide active:scale-[0.99] cursor-pointer"
+            className="w-full py-3 px-4 rounded-xl font-semibold text-white bg-black/40 hover:bg-white/5 border border-white/10 hover:border-white/20 transition-all duration-200 flex items-center justify-center gap-3 text-xs tracking-wide active:scale-[0.99] cursor-pointer"
           >
             <svg width="17" height="17" viewBox="0 0 24 24">
               <path
@@ -460,11 +465,11 @@ function LoginForm() {
 
         {/* ── Sign Up Link ── */}
         <div className="text-center mt-6 pt-5 border-t border-white/[0.08]">
-          <p className="text-xs text-slate-400">
+          <p className="text-xs text-neutral-400">
             Don&apos;t have an account?{" "}
             <Link
               href={ROUTES.REGISTER}
-              className="text-indigo-400 hover:text-indigo-300 font-bold transition-colors hover:underline ml-1"
+              className="text-[#00E676] hover:text-emerald-300 font-bold transition-colors hover:underline ml-1"
             >
               Create student account &rarr;
             </Link>
@@ -474,39 +479,25 @@ function LoginForm() {
 
       {/* ── Bottom Campus Verified Trust Footer ── */}
       <div
-        className={`relative z-10 mt-6 flex flex-wrap items-center justify-center gap-3 sm:gap-6 text-[11px] text-slate-400 transition-all duration-700 ${
+        className={`relative z-10 mt-6 flex flex-wrap items-center justify-center gap-3 sm:gap-6 text-[11px] text-neutral-500 transition-all duration-700 ${
           mounted ? "opacity-100" : "opacity-0"
         }`}
       >
-        <span className="flex items-center gap-1.5 hover:text-slate-300 transition-colors">
-          <ShieldCheck size={13} className="text-indigo-400" />
+        <span className="flex items-center gap-1.5 hover:text-neutral-400 transition-colors">
+          <ShieldCheck size={13} className="text-[#00E676]" />
           <span>256-Bit SSL Encrypted</span>
         </span>
-        <span className="text-slate-700 hidden sm:inline">•</span>
-        <span className="flex items-center gap-1.5 hover:text-slate-300 transition-colors">
-          <Sparkles size={13} className="text-cyan-400" />
+        <span className="text-neutral-700 hidden sm:inline">•</span>
+        <span className="flex items-center gap-1.5 hover:text-neutral-400 transition-colors">
+          <Sparkles size={13} className="text-teal-400" />
           <span>Verified MU Students Only</span>
         </span>
-        <span className="text-slate-700 hidden sm:inline">•</span>
-        <span className="flex items-center gap-1.5 hover:text-slate-300 transition-colors">
-          <Compass size={13} className="text-purple-400" />
+        <span className="text-neutral-700 hidden sm:inline">•</span>
+        <span className="flex items-center gap-1.5 hover:text-neutral-400 transition-colors">
+          <Zap size={13} className="text-amber-400" />
           <span>Hostel-to-Hostel Delivery</span>
         </span>
       </div>
-
-      <style jsx global>{`
-        @keyframes spinSlow {
-          from {
-            transform: rotate(0deg);
-          }
-          to {
-            transform: rotate(360deg);
-          }
-        }
-        .animate-spin-slow {
-          animation: spinSlow 20s linear infinite;
-        }
-      `}</style>
     </div>
   );
 }
@@ -515,8 +506,8 @@ export default function LoginPage() {
   return (
     <Suspense
       fallback={
-        <div className="w-full min-h-screen bg-[#02040c] flex items-center justify-center text-indigo-400">
-          <span className="w-8 h-8 border-2 border-indigo-500/30 border-t-indigo-400 rounded-full animate-spin" />
+        <div className="w-full min-h-screen bg-[#030704] flex items-center justify-center text-emerald-400">
+          <span className="w-8 h-8 border-2 border-emerald-500/30 border-t-[#00E676] rounded-full animate-spin" />
         </div>
       }
     >
