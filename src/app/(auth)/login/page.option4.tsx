@@ -72,18 +72,16 @@ function TechField({
       </div>
 
       <div
-        className={`relative flex items-center w-full rounded-xl transition-all duration-200 ${
-          error
+        className={`relative flex items-center w-full rounded-xl transition-all duration-200 ${error
             ? "bg-red-950/20 border border-red-500/60 shadow-[0_0_16px_rgba(239,68,68,0.25)]"
             : focused
-            ? "bg-[#060a14]/90 border border-emerald-400 shadow-[0_0_22px_rgba(16,185,129,0.25)] ring-1 ring-emerald-400/30"
-            : "bg-[#070c18]/65 border border-slate-800/80 hover:border-slate-700 hover:bg-[#0c1222]/75"
-        }`}
+              ? "bg-[#060a14]/90 border border-emerald-400 shadow-[0_0_22px_rgba(16,185,129,0.25)] ring-1 ring-emerald-400/30"
+              : "bg-[#070c18]/65 border border-slate-800/80 hover:border-slate-700 hover:bg-[#0c1222]/75"
+          }`}
       >
         <span
-          className={`absolute left-3.5 flex items-center transition-colors pointer-events-none ${
-            focused ? "text-emerald-400" : "text-slate-500"
-          }`}
+          className={`absolute left-3.5 flex items-center transition-colors pointer-events-none ${focused ? "text-emerald-400" : "text-slate-500"
+            }`}
         >
           {leftIcon}
         </span>
@@ -270,9 +268,8 @@ function LoginForm() {
 
       {/* ── Top High-Tech Status Pill ── */}
       <div
-        className={`relative z-10 mb-6 flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-[#060914]/85 border border-emerald-500/30 backdrop-blur-xl shadow-[0_0_25px_rgba(16,185,129,0.18)] transition-all duration-500 ${
-          mounted ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-4"
-        }`}
+        className={`relative z-10 mb-6 flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-[#060914]/85 border border-emerald-500/30 backdrop-blur-xl shadow-[0_0_25px_rgba(16,185,129,0.18)] transition-all duration-500 ${mounted ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-4"
+          }`}
       >
         <span className="relative flex h-2 w-2">
           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
@@ -285,9 +282,8 @@ function LoginForm() {
 
       {/* ── Main Tech Spotlight Glass Card ── */}
       <div
-        className={`relative z-10 w-full max-w-[440px] rounded-2xl p-6 sm:p-8 backdrop-blur-2xl transition-all duration-700 shadow-2xl group ${
-          mounted ? "opacity-100 scale-100 translate-y-0" : "opacity-0 scale-95 translate-y-6"
-        }`}
+        className={`relative z-10 w-full max-w-[440px] rounded-2xl p-6 sm:p-8 backdrop-blur-2xl transition-all duration-700 shadow-2xl group ${mounted ? "opacity-100 scale-100 translate-y-0" : "opacity-0 scale-95 translate-y-6"
+          }`}
         style={{
           background: "linear-gradient(180deg, rgba(10, 16, 28, 0.85) 0%, rgba(4, 7, 15, 0.95) 100%)",
           border: "1px solid rgba(255, 255, 255, 0.09)",
@@ -524,9 +520,8 @@ function LoginForm() {
 
       {/* ── Bottom Campus Verified Trust Footer ── */}
       <div
-        className={`relative z-10 mt-6 flex flex-wrap items-center justify-center gap-3 sm:gap-6 font-mono text-[10.5px] text-slate-500 transition-all duration-700 ${
-          mounted ? "opacity-100" : "opacity-0"
-        }`}
+        className={`relative z-10 mt-6 flex flex-wrap items-center justify-center gap-3 sm:gap-6 font-mono text-[10.5px] text-slate-500 transition-all duration-700 ${mounted ? "opacity-100" : "opacity-0"
+          }`}
       >
         <span className="flex items-center gap-1.5 hover:text-slate-400 transition-colors">
           <ShieldCheck size={13} className="text-emerald-400" />
