@@ -279,15 +279,6 @@ export default function TechSpotlightBackground() {
       {/* 1. Dynamic Canvas Layer (Spotlight + Dot Matrix + Dust + Crosshairs) */}
       <canvas ref={canvasRef} className="absolute inset-0 w-full h-full block" />
 
-      {/* 2. Top Laser Emitter Fixture (The physical light slit at the top) */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 flex flex-col items-center pointer-events-none z-10">
-        {/* Subtle pulsating halo */}
-        <div className="h-10 w-72 bg-emerald-500/20 blur-xl -mt-5 rounded-full" />
-        {/* Intense horizontal laser line */}
-        <div className="h-[2px] w-72 md:w-[480px] bg-gradient-to-r from-transparent via-emerald-400 to-transparent shadow-[0_0_30px_#10b981]" />
-        {/* Cyan center focal flare */}
-        <div className="h-1 w-28 bg-gradient-to-r from-transparent via-cyan-300 to-transparent blur-[1px] -mt-[1px]" />
-      </div>
 
       {/* 3. High-Tech Edge Vignette & Depth Masking */}
       <div
