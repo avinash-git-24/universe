@@ -7,24 +7,20 @@ import {
   MapPin,
   Package,
   User,
-  IndianRupee,
   FileText,
   MessageSquare,
   ShieldCheck,
   CheckCircle2,
   Clock,
   Truck,
-  Zap,
   Copy,
   Check,
   Radio,
-  Sparkles,
   ArrowUpRight,
   Volume2,
   VolumeX,
   X,
   Store,
-  Compass,
   Navigation,
   Activity,
   Flame,
@@ -563,7 +559,7 @@ export function RequestLiveTracker({ initialRequest }: RequestLiveTrackerProps) 
                 Turbocharge Matching Speed
               </p>
               <p className="text-[11px] text-[#A7B8B0]">
-                Add an extra tip to move your order to the top of nearby runners' screens.
+                Add an extra tip to move your order to the top of nearby runners&apos; screens.
               </p>
             </div>
 

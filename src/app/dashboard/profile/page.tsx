@@ -1,5 +1,4 @@
 import { getUser, getProfile } from "@/lib/supabase/queries";
-import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { ROUTES } from "@/constants/routes";
 import { ProfileForm } from "./ProfileForm";

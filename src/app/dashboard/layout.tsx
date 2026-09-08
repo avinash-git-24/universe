@@ -1,6 +1,5 @@
 import { ReactNode } from "react";
 import { getUser } from "@/lib/supabase/queries";
-import { RealtimeProvider } from "@/providers/RealtimeProvider";
 import { redirect } from "next/navigation";
 import { ROUTES } from "@/constants/routes";
 

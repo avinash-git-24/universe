@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { Package, Bike, CheckCircle2, AlertCircle, ArrowRight, MapPin, Clock, User, Plus, MessageSquare, Utensils, BookOpen, Laptop, Sparkles } from "lucide-react";
+import { Package, Bike, CheckCircle2, AlertCircle, ArrowRight, MapPin, User, Plus, MessageSquare, Utensils, BookOpen, Laptop } from "lucide-react";
 import { getUser, getProfile } from "@/lib/supabase/queries";
 import { getStudentRequests, type Profile } from "@/lib/database/requests";
 import { ROUTES } from "@/constants/routes";

@@ -1,7 +1,7 @@
 import { getUser } from "@/lib/supabase/queries";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { Plus, RefreshCw, Truck, CheckCircle2, ShieldCheck, Sparkles } from "lucide-react";
+import { Plus, RefreshCw, Truck, CheckCircle2, ShieldCheck } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { getStudentRequests } from "@/lib/database/requests";
 import { ROUTES } from "@/constants/routes";

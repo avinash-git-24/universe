@@ -156,7 +156,7 @@ describe("Chat Conversation Deduplication (1 Chat Per Person)", () => {
     );
 
     expect(convId).toBe("conv-new-789");
-    expect(mockSupabase.rpc).toHaveBeenCalledWith("create_delivery_conversation", {
+    expect(mockSupabase.rpc).toHaveBeenCalledWith("get_or_create_delivery_conversation", {
       p_other_user_id: "user-2",
       p_request_id: "req-101",
     });

@@ -25,7 +25,6 @@ import {
   KeyRound,
   Eye,
   EyeOff,
-  Sparkles,
   RefreshCw,
   ShieldCheck,
   Check,

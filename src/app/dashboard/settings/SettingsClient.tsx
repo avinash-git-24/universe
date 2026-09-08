@@ -299,7 +299,6 @@ export function SettingsClient({
         <div className="flex items-center gap-4 relative z-10">
           <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#00E676] via-teal-500 to-emerald-700 flex items-center justify-center text-black font-black text-2xl shrink-0 shadow-[0_0_20px_rgba(0,230,118,0.35)] overflow-hidden">
             {initialProfile.avatar_url ? (
-              // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={initialProfile.avatar_url}
                 alt="Avatar"

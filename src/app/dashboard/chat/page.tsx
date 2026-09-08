@@ -66,13 +66,11 @@ export default async function ChatPage({
 
     if (requesterRequests) {
       for (const req of requesterRequests) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const activeAssign = (req.assignments as any[])?.find(
           (a) => a.status === "active" || a.status === "completed"
         );
         if (activeAssign?.runner) {
           const runnerId = activeAssign.runner.id;
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const itemNames = (req.items as any[])?.map((i) => i.name).join(", ") || "Delivery";
 
           if (!contactMap.has(runnerId)) {
@@ -115,11 +113,9 @@ export default async function ChatPage({
 
     if (runnerAssignments) {
       for (const a of runnerAssignments) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const req = (a as any).request;
         if (req?.requester) {
           const requesterId = req.requester.id;
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const itemNames = (req.items as any[])?.map((i) => i.name).join(", ") || "Delivery";
 
           if (!contactMap.has(requesterId)) {

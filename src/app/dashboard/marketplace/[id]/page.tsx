@@ -53,7 +53,7 @@ async function ListingContent({ id }: { id: string }) {
   let listing;
   try {
     listing = await getResaleListingById(supabase, id);
-  } catch (error) {
+  } catch (_error) {
     // If unauthorized or database error, show error page
     return <ResaleDetailError />;
   }
@@ -133,7 +133,7 @@ async function ListingContent({ id }: { id: string }) {
   } catch {}
 
   // Fetch linked delivery request if reserved or sold
-  let linkedDeliveryRequest = null;
+  let _linkedDeliveryRequest = null;
   if (listing.status === "sold" || listing.status === "reserved") {
     try {
       const { data: request } = await supabase
@@ -145,7 +145,7 @@ async function ListingContent({ id }: { id: string }) {
         .single();
         
       if (request) {
-        linkedDeliveryRequest = request;
+        _linkedDeliveryRequest = request;
       }
     } catch {}
   }

@@ -2,7 +2,6 @@
 
 import { useState, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { User, Mail, CheckCircle2, Upload, Trash2, Camera, Save, ShieldCheck, X, BookOpen, GraduationCap, ChevronDown } from "lucide-react";
 import { useRouter } from "next/navigation";
