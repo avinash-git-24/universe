@@ -71,16 +71,16 @@ function TechField({
       </div>
 
       <div
-        className={`relative flex items-center w-full rounded-xl transition-all duration-200 ${
+        className={`relative flex items-center w-full rounded-xl transition-all duration-200 overflow-hidden ${
           error
             ? "bg-red-950/20 border border-red-500/60 shadow-[0_0_18px_rgba(239,68,68,0.22)]"
             : focused
-            ? "bg-[#060a14]/95 border border-emerald-400 shadow-[0_0_24px_rgba(16,185,129,0.28)] ring-1 ring-emerald-400/30"
-            : "bg-[#070c18]/70 border border-slate-800/80 hover:border-slate-700 hover:bg-[#0c1222]/80"
+            ? "bg-black/50 border border-emerald-400 shadow-[0_0_24px_rgba(16,185,129,0.3)] ring-1 ring-emerald-400/30 backdrop-blur-md"
+            : "bg-black/30 border border-white/[0.09] hover:border-white/[0.18] hover:bg-black/40 backdrop-blur-sm"
         }`}
       >
         <span
-          className={`absolute left-3.5 flex items-center transition-colors pointer-events-none ${
+          className={`absolute left-3.5 flex items-center transition-colors pointer-events-none z-10 ${
             focused ? "text-emerald-400" : "text-slate-400"
           }`}
         >
@@ -100,11 +100,11 @@ function TechField({
           onBlur={() => setFocused(false)}
           onKeyDown={onKeyDown}
           onKeyUp={onKeyUp}
-          className="w-full bg-transparent text-white text-sm py-3.5 pl-11 pr-20 sm:pr-24 outline-none placeholder:text-slate-500 tracking-normal font-sans"
+          className="w-full bg-transparent text-white text-sm py-3.5 pl-11 pr-20 sm:pr-24 outline-none placeholder:text-slate-500 tracking-normal font-sans relative z-10"
         />
 
         {rightNode && (
-          <div className="absolute right-3 sm:right-3.5 flex items-center gap-2">
+          <div className="absolute right-3 sm:right-3.5 flex items-center gap-2 z-10">
             {rightNode}
           </div>
         )}
@@ -289,9 +289,9 @@ function LoginForm() {
           mounted ? "opacity-100 scale-100 translate-y-0" : "opacity-0 scale-95 translate-y-6"
         }`}
         style={{
-          background: "linear-gradient(180deg, rgba(10, 16, 28, 0.88) 0%, rgba(4, 7, 15, 0.96) 100%)",
-          border: "1px solid rgba(255, 255, 255, 0.08)",
-          boxShadow: "0 25px 65px -15px rgba(0, 0, 0, 0.95), 0 0 50px -10px rgba(16, 185, 129, 0.16)",
+          background: "linear-gradient(180deg, rgba(8, 14, 28, 0.45) 0%, rgba(4, 7, 16, 0.58) 100%)",
+          border: "1px solid rgba(255, 255, 255, 0.12)",
+          boxShadow: "0 25px 70px -15px rgba(0, 0, 0, 0.85), 0 0 50px -10px rgba(16, 185, 129, 0.18)",
         }}
       >
         {/* Soft Ambient Inner Highlight */}
@@ -505,7 +505,7 @@ function LoginForm() {
             type="button"
             onClick={handleGoogle}
             disabled={loading || isSuccess}
-            className="w-full py-3 px-4 rounded-xl font-medium text-slate-200 bg-[#070c18]/80 hover:bg-[#0c1428] border border-slate-800/90 hover:border-emerald-500/40 hover:shadow-[0_0_20px_rgba(16,185,129,0.12)] transition-all duration-200 flex items-center justify-center gap-3 text-xs tracking-wide active:scale-[0.99] cursor-pointer"
+            className="w-full py-3 px-4 rounded-xl font-medium text-slate-200 bg-black/35 hover:bg-black/55 border border-white/[0.09] hover:border-emerald-500/40 hover:shadow-[0_0_20px_rgba(16,185,129,0.14)] backdrop-blur-sm transition-all duration-200 flex items-center justify-center gap-3 text-xs tracking-wide active:scale-[0.99] cursor-pointer"
           >
             <svg width="17" height="17" viewBox="0 0 24 24">
               <path
