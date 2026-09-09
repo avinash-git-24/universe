@@ -75,8 +75,8 @@ function TechField({
           error
             ? "bg-red-950/25 border border-red-500/60 shadow-[0_0_18px_rgba(239,68,68,0.25)]"
             : focused
-            ? "bg-black/60 border border-emerald-400 shadow-[0_0_22px_rgba(16,185,129,0.32),inset_0_0_12px_rgba(16,185,129,0.06)] ring-1 ring-emerald-400/40 backdrop-blur-md"
-            : "bg-black/35 border border-white/[0.10] hover:border-white/[0.20] hover:bg-black/45 backdrop-blur-sm"
+            ? "bg-black/60 border border-emerald-400 shadow-[0_0_24px_rgba(16,185,129,0.35),inset_0_0_12px_rgba(16,185,129,0.08)] ring-1 ring-emerald-400/40 backdrop-blur-md"
+            : "bg-black/35 border border-white/[0.10] hover:border-white/[0.22] hover:bg-black/45 backdrop-blur-sm"
         }`}
       >
         <span
@@ -87,7 +87,7 @@ function TechField({
           {leftIcon}
         </span>
 
-        {/* Generous right padding (pr-16) so long university emails never collide with right icons */}
+        {/* Generous right padding (pr-16) ensures complete email visibility with zero overlap */}
         <input
           ref={inputRef}
           id={id}
@@ -100,7 +100,7 @@ function TechField({
           onBlur={() => setFocused(false)}
           onKeyDown={onKeyDown}
           onKeyUp={onKeyUp}
-          className="tech-input w-full bg-transparent text-white text-[13px] sm:text-[13.5px] py-3.5 pl-10 pr-16 outline-none placeholder:text-slate-500 tracking-normal font-sans relative z-10"
+          className="tech-input w-full bg-transparent text-white text-[13.5px] py-3.5 pl-10 pr-16 outline-none placeholder:text-slate-500 tracking-normal font-sans relative z-10 font-normal"
         />
 
         {rightNode && (
@@ -290,7 +290,7 @@ function LoginForm() {
       {/* ── Main Tech Spotlight Frosted Glass Card Wrapper with 3D Ambient Aura ── */}
       <div className="relative w-full max-w-[440px] group">
         {/* Ambient Back Glow */}
-        <div className="absolute -inset-1 rounded-3xl bg-gradient-to-b from-emerald-500/20 via-teal-500/10 to-transparent blur-xl opacity-75 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none -z-10" />
+        <div className="absolute -inset-1.5 rounded-3xl bg-gradient-to-b from-emerald-500/20 via-teal-500/10 to-transparent blur-2xl opacity-75 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none -z-10" />
 
         {/* Main Card */}
         <div
@@ -298,7 +298,7 @@ function LoginForm() {
             mounted ? "opacity-100 scale-100 translate-y-0" : "opacity-0 scale-95 translate-y-6"
           }`}
           style={{
-            background: "linear-gradient(180deg, rgba(8, 14, 28, 0.6) 0%, rgba(4, 7, 16, 0.72) 100%)",
+            background: "linear-gradient(180deg, rgba(8, 14, 28, 0.65) 0%, rgba(4, 7, 16, 0.8) 100%)",
             border: "1px solid rgba(255, 255, 255, 0.12)",
             boxShadow: "0 30px 80px -15px rgba(0, 0, 0, 0.95), inset 0 1px 0 rgba(255, 255, 255, 0.15)",
           }}
@@ -312,7 +312,7 @@ function LoginForm() {
           {/* ── Brand Header with Glowing UniVerse Orbital Emblem ── */}
           <div className="text-center mb-6 relative z-10">
             <div className="relative inline-flex items-center justify-center mb-3">
-              <div className="absolute -inset-2 rounded-2xl bg-emerald-500/25 blur-md animate-pulse pointer-events-none" />
+              <div className="absolute -inset-2 rounded-2xl bg-emerald-500/30 blur-md animate-pulse pointer-events-none" />
               <div className="relative inline-flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-400 via-teal-500 to-emerald-600 text-white shadow-[0_0_25px_rgba(16,185,129,0.45)] ring-1 ring-white/30 p-2.5 group-hover:scale-105 transition-transform duration-300">
                 {/* Custom UniVerse Interconnected Student Orbit Monogram */}
                 <svg
@@ -401,11 +401,11 @@ function LoginForm() {
 
               {/* Smart 1-Tap Autocomplete Chip */}
               {showDomainAutocomplete && (
-                <div className="mt-2 flex items-center justify-between">
+                <div className="mt-2 flex items-center justify-between animate-in fade-in slide-in-from-top-1 duration-200">
                   <button
                     type="button"
                     onClick={handleAutocompleteDomain}
-                    className="px-2.5 py-1 rounded-md bg-emerald-950/70 hover:bg-emerald-900/90 border border-emerald-500/40 hover:border-emerald-400 text-[11px] font-medium text-emerald-300 hover:text-white transition-all flex items-center gap-1.5 shadow-[0_0_15px_rgba(16,185,129,0.22)] group/chip cursor-pointer"
+                    className="px-2.5 py-1 rounded-md bg-emerald-950/80 hover:bg-emerald-900 border border-emerald-500/50 hover:border-emerald-400 text-[11px] font-medium text-emerald-300 hover:text-white transition-all flex items-center gap-1.5 shadow-[0_0_15px_rgba(16,185,129,0.25)] group/chip cursor-pointer"
                   >
                     <Sparkles size={11} className="text-emerald-400 group-hover/chip:rotate-12 transition-transform" />
                     <span>
@@ -482,32 +482,32 @@ function LoginForm() {
               </Link>
             </div>
 
-            {/* High-End Luminous Fintech/Cyberpunk Sign In Button */}
+            {/* ── Next-Gen Ultra-Premium Luminous Sign In Button ── */}
             <button
               type="submit"
               disabled={loading || isSuccess}
-              className="w-full mt-2 py-3.5 px-5 rounded-xl font-bold text-white bg-gradient-to-r from-emerald-600 via-emerald-500 to-teal-500 hover:from-emerald-500 hover:to-teal-400 transition-all duration-300 shadow-[0_0_25px_rgba(16,185,129,0.35)] hover:shadow-[0_0_40px_rgba(16,185,129,0.6)] active:scale-[0.985] disabled:opacity-50 disabled:pointer-events-none flex items-center justify-center gap-2.5 text-[13.5px] tracking-wide cursor-pointer relative overflow-hidden group/btn border border-emerald-400/40"
+              className="w-full mt-2 py-3.5 px-5 rounded-xl font-bold text-[#022c22] bg-gradient-to-r from-emerald-400 via-teal-300 to-emerald-400 hover:brightness-105 transition-all duration-300 shadow-[0_0_28px_rgba(52,211,153,0.38)] hover:shadow-[0_0_42px_rgba(52,211,153,0.6)] active:scale-[0.985] disabled:opacity-50 disabled:pointer-events-none flex items-center justify-center gap-2.5 text-[13.5px] tracking-wide cursor-pointer relative overflow-hidden group/btn"
             >
               {/* Top Razor Shine Line */}
-              <div className="absolute top-0 inset-x-0 h-[1px] bg-gradient-to-r from-transparent via-white/60 to-transparent pointer-events-none" />
+              <div className="absolute top-0 inset-x-0 h-[1px] bg-white/50 pointer-events-none" />
 
               {/* Diagonal Shimmer Sweep on Hover */}
-              <div className="absolute inset-0 -translate-x-full group-hover/btn:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/25 to-transparent pointer-events-none" />
+              <div className="absolute inset-0 -translate-x-full group-hover/btn:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/30 to-transparent pointer-events-none" />
 
               {loading ? (
                 <>
-                  <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  <span className="w-4 h-4 border-2 border-[#022c22]/30 border-t-[#022c22] rounded-full animate-spin" />
                   <span>Authenticating Student ID...</span>
                 </>
               ) : isSuccess ? (
                 <>
-                  <CheckCircle2 size={17} className="text-white" />
+                  <CheckCircle2 size={17} className="text-[#022c22]" />
                   <span>Access Granted</span>
                 </>
               ) : (
                 <>
                   <span>Sign In to UniVerse</span>
-                  <ArrowRight size={16} className="group-hover/btn:translate-x-1 transition-transform" />
+                  <ArrowRight size={16} className="group-hover/btn:translate-x-1 transition-transform stroke-[2.5]" />
                 </>
               )}
             </button>
