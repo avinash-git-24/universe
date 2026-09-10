@@ -130,76 +130,99 @@ function MobileMenu({
   return (
     <AnimatePresence>
       {open && (
-        <motion.div
-          initial={{ opacity: 0, y: -12, scale: 0.97 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={{ opacity: 0, y: -8, scale: 0.97 }}
-          transition={{ duration: 0.2, ease: "easeOut" }}
-          className="absolute top-full left-4 right-4 mt-2 md:hidden rounded-2xl overflow-hidden border border-emerald-500/20 shadow-2xl z-50"
-          style={{
-            background: "rgba(8, 14, 11, 0.95)",
-            backdropFilter: "blur(24px) saturate(200%)",
-            WebkitBackdropFilter: "blur(24px) saturate(200%)",
-          }}
-        >
-          <nav aria-label="Mobile navigation" className="p-3">
-            <ul className="flex flex-col gap-1" role="list">
-              {NAV_LINKS.map(({ label, href }) => (
-                <li key={label}>
-                  <Link
-                    href={href}
-                    onClick={onClose}
-                    className="block px-4 py-3 text-sm font-medium text-white/80 rounded-xl hover:bg-white/10 font-[family-name:var(--font-inter)] transition-colors duration-150"
-                  >
-                    {label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
+        <>
+          {/* Backdrop overlay */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 md:hidden pointer-events-auto"
+            onClick={onClose}
+            aria-hidden="true"
+          />
 
-            {/* Divider */}
-            <div className="my-2 border-t border-white/10" />
-
-            {/* Auth */}
-            <div className="flex flex-col gap-2 p-1">
-              {hasUser ? (
-                <>
-                  <Link
-                    href={ROUTES.DASHBOARD}
-                    onClick={onClose}
-                    className="flex items-center justify-center gap-2 px-4 py-3 text-sm font-bold text-center bg-gradient-to-r from-emerald-400 to-teal-400 text-black rounded-xl shadow-md shadow-emerald-500/20 active:scale-98 transition-transform duration-150"
-                  >
-                    <span>Go to Dashboard</span>
-                    <ArrowRight size={14} strokeWidth={2.5} />
-                  </Link>
-                  <LogoutButton
-                    variant="ghost"
-                    showIcon={true}
-                    label="Log out"
-                    className="w-full justify-center px-4 py-2.5 h-auto text-xs font-semibold text-white/70 hover:text-red-400 hover:bg-red-500/10 border border-white/10 rounded-xl transition-colors duration-150"
-                  />
-                </>
-              ) : (
-                <>
-                  <Link
-                    href={ROUTES.LOGIN}
-                    onClick={onClose}
-                    className="block px-4 py-2.5 text-sm font-semibold text-center text-white/80 rounded-xl hover:bg-white/10 border border-white/10 transition-colors duration-150"
-                  >
-                    Login
-                  </Link>
-                  <Link
-                    href={ROUTES.REGISTER}
-                    onClick={onClose}
-                    className="block px-4 py-2.5 text-sm font-bold text-center bg-gradient-to-r from-emerald-400 to-teal-400 text-black rounded-xl shadow-md shadow-emerald-500/20 transition-colors duration-150"
-                  >
-                    Sign Up — It&apos;s Free
-                  </Link>
-                </>
+          {/* Menu Dropdown Card */}
+          <motion.div
+            initial={{ opacity: 0, y: -10, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -8, scale: 0.98 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+            className="absolute top-full left-3 right-3 sm:left-4 sm:right-4 mt-2 md:hidden rounded-2xl overflow-hidden border border-emerald-500/25 shadow-2xl z-50 pointer-events-auto"
+            style={{
+              background: "rgba(8, 16, 12, 0.97)",
+              backdropFilter: "blur(24px) saturate(200%)",
+              WebkitBackdropFilter: "blur(24px) saturate(200%)",
+            }}
+          >
+            <nav aria-label="Mobile navigation" className="p-3">
+              {hasUser && (
+                <div className="flex items-center justify-between px-3 py-1.5 mb-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
+                  <span className="text-[11px] font-semibold text-emerald-400 flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                    Verified Student Logged In
+                  </span>
+                </div>
               )}
-            </div>
-          </nav>
-        </motion.div>
+
+              <ul className="flex flex-col gap-1" role="list">
+                {NAV_LINKS.map(({ label, href }) => (
+                  <li key={label}>
+                    <Link
+                      href={href}
+                      onClick={onClose}
+                      className="block px-4 py-2.5 text-sm font-medium text-white/80 rounded-xl hover:bg-white/10 font-[family-name:var(--font-inter)] transition-colors duration-150"
+                    >
+                      {label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+
+              {/* Divider */}
+              <div className="my-2 border-t border-white/10" />
+
+              {/* Auth */}
+              <div className="flex flex-col gap-2 p-1">
+                {hasUser ? (
+                  <>
+                    <Link
+                      href={ROUTES.DASHBOARD}
+                      onClick={onClose}
+                      className="flex items-center justify-center gap-2 px-4 py-3 text-sm font-bold text-center bg-gradient-to-r from-emerald-400 to-teal-400 text-black rounded-xl shadow-md shadow-emerald-500/20 active:scale-98 transition-transform duration-150"
+                    >
+                      <span>Go to Dashboard</span>
+                      <ArrowRight size={14} strokeWidth={2.5} />
+                    </Link>
+                    <LogoutButton
+                      variant="ghost"
+                      showIcon={true}
+                      label="Log out"
+                      className="w-full justify-center px-4 py-2.5 h-auto text-xs font-semibold text-white/70 hover:text-red-400 hover:bg-red-500/10 border border-white/10 rounded-xl transition-colors duration-150"
+                    />
+                  </>
+                ) : (
+                  <>
+                    <Link
+                      href={ROUTES.LOGIN}
+                      onClick={onClose}
+                      className="block px-4 py-2.5 text-sm font-semibold text-center text-white/80 rounded-xl hover:bg-white/10 border border-white/10 transition-colors duration-150"
+                    >
+                      Login
+                    </Link>
+                    <Link
+                      href={ROUTES.REGISTER}
+                      onClick={onClose}
+                      className="block px-4 py-2.5 text-sm font-bold text-center bg-gradient-to-r from-emerald-400 to-teal-400 text-black rounded-xl shadow-md shadow-emerald-500/20 transition-colors duration-150"
+                    >
+                      Sign Up — It&apos;s Free
+                    </Link>
+                  </>
+                )}
+              </div>
+            </nav>
+          </motion.div>
+        </>
       )}
     </AnimatePresence>
   );
