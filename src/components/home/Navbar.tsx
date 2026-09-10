@@ -74,21 +74,20 @@ function NavLinks() {
 function NavCTAs({ hasUser }: { hasUser: boolean }) {
   if (hasUser) {
     return (
-      <div className="flex items-center gap-1.5 sm:gap-2.5">
+      <div className="flex items-center gap-1 sm:gap-2.5">
         <Link
           href={ROUTES.DASHBOARD}
-          className="inline-flex items-center gap-1 px-3 py-1.5 sm:px-4 sm:py-2 text-[11px] sm:text-xs font-bold rounded-lg sm:rounded-xl bg-gradient-to-r from-emerald-400 to-teal-400 text-black shadow-md shadow-emerald-500/20 hover:shadow-emerald-500/40 hover:scale-105 active:scale-95 transition-all duration-200"
+          className="inline-flex items-center gap-1 px-2.5 py-1.5 sm:px-4 sm:py-2 text-[11px] sm:text-xs font-bold rounded-lg sm:rounded-xl bg-gradient-to-r from-emerald-400 to-teal-400 text-black shadow-md shadow-emerald-500/20 hover:shadow-emerald-500/40 hover:scale-105 active:scale-95 transition-all duration-200"
         >
           <span>Dashboard</span>
           <ArrowRight size={12} strokeWidth={2.5} />
         </Link>
-        <div className="hidden md:block">
-          <LogoutButton
-            variant="ghost"
-            showIcon={false}
-            className="px-3 py-2 text-xs font-semibold h-auto rounded-xl bg-transparent border border-white/15 text-white/70 hover:text-red-400 hover:border-red-500/30 hover:bg-red-500/10 transition-all duration-200"
-          />
-        </div>
+        <LogoutButton
+          variant="ghost"
+          showIcon={false}
+          label="Sign out"
+          className="px-2 py-1.5 sm:px-3 sm:py-2 text-[10.5px] sm:text-xs font-semibold h-auto rounded-lg sm:rounded-xl bg-transparent border border-white/15 text-white/70 hover:text-red-400 hover:border-red-500/30 hover:bg-red-500/10 transition-all duration-200"
+        />
       </div>
     );
   }
