@@ -74,35 +74,46 @@ function NavLinks() {
 function NavCTAs({ hasUser }: { hasUser: boolean }) {
   if (hasUser) {
     return (
-      <div className="hidden md:flex items-center gap-2.5">
+      <div className="flex items-center gap-1.5 sm:gap-2.5">
         <Link
           href={ROUTES.DASHBOARD}
-          className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-bold rounded-xl bg-gradient-to-r from-emerald-400 to-teal-400 text-black shadow-md shadow-emerald-500/20 hover:shadow-emerald-500/40 hover:scale-105 active:scale-95 transition-all duration-200"
+          className="inline-flex items-center gap-1 px-3 py-1.5 sm:px-4 sm:py-2 text-[11px] sm:text-xs font-bold rounded-lg sm:rounded-xl bg-gradient-to-r from-emerald-400 to-teal-400 text-black shadow-md shadow-emerald-500/20 hover:shadow-emerald-500/40 hover:scale-105 active:scale-95 transition-all duration-200"
         >
           <span>Dashboard</span>
-          <ArrowRight size={13} strokeWidth={2.5} />
+          <ArrowRight size={12} strokeWidth={2.5} />
         </Link>
-        <LogoutButton
-          variant="ghost"
-          showIcon={false}
-          className="px-3 py-2 text-xs font-semibold h-auto rounded-xl bg-transparent border border-white/15 text-white/70 hover:text-red-400 hover:border-red-500/30 hover:bg-red-500/10 transition-all duration-200"
-        />
+        <div className="hidden md:block">
+          <LogoutButton
+            variant="ghost"
+            showIcon={false}
+            className="px-3 py-2 text-xs font-semibold h-auto rounded-xl bg-transparent border border-white/15 text-white/70 hover:text-red-400 hover:border-red-500/30 hover:bg-red-500/10 transition-all duration-200"
+          />
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="hidden md:flex items-center gap-2.5">
-      {/* Login — ghost */}
+    <div className="flex items-center gap-1.5 sm:gap-2.5">
+      {/* Login — ghost (desktop) */}
       <Link
         href={ROUTES.LOGIN}
-        className="px-4 py-2 text-xs font-semibold rounded-xl text-white/80 hover:text-white hover:bg-white/10 transition-all duration-200"
+        className="hidden md:inline-flex px-4 py-2 text-xs font-semibold rounded-xl text-white/80 hover:text-white hover:bg-white/10 transition-all duration-200"
       >
         Login
       </Link>
 
-      {/* Register — primary */}
-      <motion.div whileTap={{ scale: 0.97 }}>
+      {/* Mobile: Sign In */}
+      <Link
+        href={ROUTES.LOGIN}
+        className="inline-flex md:hidden items-center gap-1 px-3 py-1.5 text-[11px] font-bold rounded-lg bg-gradient-to-r from-emerald-400 to-teal-400 text-black shadow-md shadow-emerald-500/20 active:scale-95 transition-all duration-200"
+      >
+        <span>Sign In</span>
+        <ArrowRight size={12} strokeWidth={2.5} />
+      </Link>
+
+      {/* Desktop: Register — primary */}
+      <motion.div className="hidden md:block" whileTap={{ scale: 0.97 }}>
         <Link
           href={ROUTES.REGISTER}
           className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-bold rounded-xl bg-gradient-to-r from-emerald-400 to-teal-400 text-black shadow-md shadow-emerald-500/20 hover:shadow-emerald-500/40 hover:scale-105 active:scale-95 transition-all duration-200"
@@ -207,9 +218,8 @@ export function Navbar() {
   const [hasUser, setHasUser] = useState(false);
   const [visible, setVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
-  const supabase = createClient();
-
   useEffect(() => {
+    const supabase = createClient();
     supabase.auth.getUser().then(({ data: { user } }) => {
       setHasUser(!!user);
     });
@@ -221,7 +231,7 @@ export function Navbar() {
     });
 
     return () => subscription.unsubscribe();
-  }, [supabase]);
+  }, []);
 
   // Smart Auto-Hide on Scroll Down / Reveal on Scroll Up
   useEffect(() => {
@@ -279,43 +289,46 @@ export function Navbar() {
           transition: "all 0.3s ease",
         }}
       >
-        <div className="relative flex items-center justify-between px-5 py-3">
+        <div className="relative flex items-center justify-between px-3 sm:px-5 py-2.5 sm:py-3">
           <Logo />
           <NavLinks />
-          <NavCTAs hasUser={hasUser} />
 
-          {/* Hamburger */}
-          <motion.button
-            className="md:hidden flex items-center justify-center w-9 h-9 rounded-[var(--radius-md)] text-white hover:bg-white/15 transition-colors duration-200"
-            onClick={() => setMenuOpen((o) => !o)}
-            whileTap={{ scale: 0.92 }}
-            aria-label={menuOpen ? "Close menu" : "Open menu"}
-            aria-expanded={menuOpen}
-          >
-            <AnimatePresence mode="wait" initial={false}>
-              {menuOpen ? (
-                <motion.span
-                  key="x"
-                  initial={{ rotate: -90, opacity: 0 }}
-                  animate={{ rotate: 0, opacity: 1 }}
-                  exit={{ rotate: 90, opacity: 0 }}
-                  transition={{ duration: 0.15 }}
-                >
-                  <X size={20} />
-                </motion.span>
-              ) : (
-                <motion.span
-                  key="menu"
-                  initial={{ rotate: 90, opacity: 0 }}
-                  animate={{ rotate: 0, opacity: 1 }}
-                  exit={{ rotate: -90, opacity: 0 }}
-                  transition={{ duration: 0.15 }}
-                >
-                  <Menu size={20} />
-                </motion.span>
-              )}
-            </AnimatePresence>
-          </motion.button>
+          <div className="flex items-center gap-1.5 sm:gap-2.5">
+            <NavCTAs hasUser={hasUser} />
+
+            {/* Hamburger */}
+            <motion.button
+              className="md:hidden flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-[var(--radius-md)] text-white hover:bg-white/15 transition-colors duration-200"
+              onClick={() => setMenuOpen((o) => !o)}
+              whileTap={{ scale: 0.92 }}
+              aria-label={menuOpen ? "Close menu" : "Open menu"}
+              aria-expanded={menuOpen}
+            >
+              <AnimatePresence mode="wait" initial={false}>
+                {menuOpen ? (
+                  <motion.span
+                    key="x"
+                    initial={{ rotate: -90, opacity: 0 }}
+                    animate={{ rotate: 0, opacity: 1 }}
+                    exit={{ rotate: 90, opacity: 0 }}
+                    transition={{ duration: 0.15 }}
+                  >
+                    <X size={18} className="sm:w-5 sm:h-5" />
+                  </motion.span>
+                ) : (
+                  <motion.span
+                    key="menu"
+                    initial={{ rotate: 90, opacity: 0 }}
+                    animate={{ rotate: 0, opacity: 1 }}
+                    exit={{ rotate: -90, opacity: 0 }}
+                    transition={{ duration: 0.15 }}
+                  >
+                    <Menu size={18} className="sm:w-5 sm:h-5" />
+                  </motion.span>
+                )}
+              </AnimatePresence>
+            </motion.button>
+          </div>
         </div>
       </div>
 
