@@ -493,8 +493,6 @@ export default function RegisterPage() {
       </div>
 
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&family=Space+Mono:wght@400;700&display=swap');
-        
         .scifi-btn:hover:not(:disabled) {
           background: rgba(255, 255, 255, 0.1) !important;
           border-color: rgba(255, 255, 255, 0.6) !important;

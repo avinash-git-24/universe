@@ -272,7 +272,7 @@ export default function BlackHoleBackground({ isWarping = false }: { isWarping?:
 
     // Animation & Parallax variables
     let animationFrameId: number;
-    const clock = new THREE.Clock();
+    let lastTime = performance.now();
     let targetX = 0;
     let targetY = 0;
     let mouseX = 0;
@@ -303,7 +303,9 @@ export default function BlackHoleBackground({ isWarping = false }: { isWarping?:
     // Render loop
     const animate = () => {
       animationFrameId = requestAnimationFrame(animate);
-      const delta = clock.getDelta();
+      const now = performance.now();
+      const delta = Math.min((now - lastTime) / 1000, 0.1);
+      lastTime = now;
 
       if (isWarpingRef.current) {
         if (!audioPlayed) {
@@ -382,7 +384,7 @@ export default function BlackHoleBackground({ isWarping = false }: { isWarping?:
       if (document.hidden) {
         cancelAnimationFrame(animationFrameId);
       } else {
-        clock.getDelta();
+        lastTime = performance.now();
         animationFrameId = requestAnimationFrame(animate);
       }
     };

@@ -8,7 +8,6 @@
  */
 
 import * as React from "react";
-import { AnimatePresence } from "framer-motion";
 import { UIStateProvider } from "@/providers/UIStateProvider";
 import { RealtimeProvider } from "@/providers/RealtimeProvider";
 
@@ -20,9 +19,7 @@ export function AppProviders({ children }: AppProvidersProps) {
   return (
     <UIStateProvider>
       <RealtimeProvider>
-        <AnimatePresence mode="wait" initial={false}>
-          {children}
-        </AnimatePresence>
+        {children}
       </RealtimeProvider>
     </UIStateProvider>
   );

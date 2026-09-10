@@ -39,6 +39,7 @@ export default function RootLayout({
     <html
       lang="en"
       className={fontClassNames}
+      data-scroll-behavior="smooth"
       suppressHydrationWarning
     >
       <head>

@@ -15,6 +15,42 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 export async function updateSession(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+
+  // Auth pages (where logged-in users generally shouldn't be)
+  const authRoutes = ["/login", "/register", "/forgot-password", "/verify-email"];
+
+  // Protected pages (must be fully authenticated and email-verified)
+  const protectedRoutes = [
+    "/dashboard",
+    "/complete-profile",
+    "/profile",
+    "/requests",
+    "/deliver",
+    "/request",
+    "/settings",
+    "/admin",
+  ];
+
+  const isAuthRoute = authRoutes.some((route) => pathname === route || pathname.startsWith(`${route}/`));
+  const isProtectedRoute = protectedRoutes.some((route) => pathname === route || pathname.startsWith(`${route}/`));
+
+  const allCookies = request.cookies.getAll();
+  const hasAuthCookie = allCookies.some((c) => c.name.includes("auth-token") || c.name.startsWith("sb-"));
+
+  // Fast-path 1: Unauthenticated request on protected route -> instant redirect without network call
+  if (!hasAuthCookie && isProtectedRoute) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/login";
+    url.searchParams.set("redirectTo", pathname);
+    return NextResponse.redirect(url);
+  }
+
+  // Fast-path 2: Unauthenticated request on public route -> instant pass-through without network call
+  if (!hasAuthCookie && !isAuthRoute) {
+    return NextResponse.next({ request });
+  }
+
   let supabaseResponse = NextResponse.next({ request });
 
   const supabase = createServerClient(
@@ -43,26 +79,6 @@ export async function updateSession(request: NextRequest) {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-
-  const { pathname } = request.nextUrl;
-
-  // Auth pages (where logged-in users generally shouldn't be)
-  const authRoutes = ["/login", "/register", "/forgot-password", "/verify-email"];
-
-  // Protected pages (must be fully authenticated and email-verified)
-  const protectedRoutes = [
-    "/dashboard",
-    "/complete-profile",
-    "/profile",
-    "/requests",
-    "/deliver",
-    "/request",
-    "/settings",
-    "/admin",
-  ];
-
-  const isAuthRoute = authRoutes.some((route) => pathname === route || pathname.startsWith(`${route}/`));
-  const isProtectedRoute = protectedRoutes.some((route) => pathname === route || pathname.startsWith(`${route}/`));
 
   // Determine if email confirmation is required & verified
   // OAuth accounts usually have email_verified or provider != email
