@@ -111,15 +111,23 @@ export default async function DashboardPage() {
       <div className="max-w-[1400px] mx-auto relative z-10">
         
         {/* TOP BAR */}
-        <div className="flex justify-between sm:justify-end gap-3 sm:gap-4 mb-4 sm:mb-6 items-center">
+        <div className="flex justify-between sm:justify-end gap-2 sm:gap-4 mb-4 sm:mb-6 items-center">
           {/* Bell */}
-          <div className="relative bg-[#0a0f0c]/40 border border-white/10 p-2.5 rounded-xl backdrop-blur-md hover:border-emerald-500/30 transition-colors">
+          <div className="relative bg-[#0a0f0c]/60 border border-white/10 p-2 sm:p-2.5 rounded-xl backdrop-blur-md hover:border-emerald-500/30 transition-colors shrink-0">
             <NotificationBell />
           </div>
+
+          {/* Mobile Center Status Pill */}
+          <div className="sm:hidden flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/[0.03] border border-white/10 text-[11px] font-semibold text-white/70">
+            <span className="w-2 h-2 rounded-full bg-[#00E676] animate-pulse" />
+            <span>{activeRequests.length > 0 ? `${activeRequests.length} Active Orders` : "Campus Open"}</span>
+          </div>
+
           {/* New Request Button */}
-          <Link href="/request/new" className="no-underline">
-            <button className="flex items-center gap-2 bg-gradient-to-r from-emerald-500 to-emerald-400 hover:from-emerald-400 hover:to-emerald-300 text-black font-extrabold text-xs sm:text-sm rounded-xl px-4 sm:px-5 py-2.5 sm:py-3 cursor-pointer shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:shadow-[0_0_30px_rgba(16,185,129,0.5)] transition-all active:scale-95">
-              <Plus size={16} /> New Request
+          <Link href="/request/new" className="no-underline shrink-0">
+            <button className="flex items-center gap-1.5 sm:gap-2 bg-gradient-to-r from-emerald-500 to-emerald-400 hover:from-emerald-400 hover:to-emerald-300 text-black font-extrabold text-xs sm:text-sm rounded-xl px-3.5 sm:px-5 py-2 sm:py-2.5 cursor-pointer shadow-[0_0_15px_rgba(16,185,129,0.3)] hover:shadow-[0_0_25px_rgba(16,185,129,0.5)] transition-all active:scale-95">
+              <Plus size={15} className="stroke-[2.5]" /> 
+              <span>New Request</span>
             </button>
           </Link>
         </div>
@@ -128,27 +136,54 @@ export default async function DashboardPage() {
         <div className="grid grid-cols-1 xl:grid-cols-[1fr_340px] gap-6 items-start">
 
           {/* LEFT: Requests & Charts */}
-          <div className="flex flex-col gap-6 min-w-0">
+          <div className="flex flex-col gap-5 sm:gap-6 min-w-0">
             
             {/* Header */}
             <DashboardHeader displayName={displayName} />
 
-            {/* Stats Row */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+            {/* Quick Action Chips (Mobile-First Scrollable Bar) */}
+            <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar sm:hidden -mt-1">
+              <Link href="/request/new" className="no-underline shrink-0">
+                <div className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-500/15 border border-emerald-500/35 text-[#00E676] text-xs font-bold shadow-[0_0_10px_rgba(0,230,118,0.15)] active:scale-95 transition-all">
+                  <Plus size={13} className="stroke-[3]" />
+                  <span>Order Snacks</span>
+                </div>
+              </Link>
+              <Link href="/dashboard/marketplace" className="no-underline shrink-0">
+                <div className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 text-white/80 text-xs font-semibold active:scale-95 transition-all">
+                  <span>🛍️ Resale</span>
+                </div>
+              </Link>
+              <Link href="/dashboard/runner" className="no-underline shrink-0">
+                <div className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 text-white/80 text-xs font-semibold active:scale-95 transition-all">
+                  <span>🏃 Runner Mode</span>
+                </div>
+              </Link>
+              <Link href="/dashboard/wallet" className="no-underline shrink-0">
+                <div className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 text-white/80 text-xs font-semibold active:scale-95 transition-all">
+                  <span>💳 Wallet</span>
+                </div>
+              </Link>
+              <Link href="/dashboard/chat" className="no-underline shrink-0">
+                <div className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 text-white/80 text-xs font-semibold active:scale-95 transition-all">
+                  <span>💬 Chat</span>
+                </div>
+              </Link>
+            </div>
+
+            {/* Stats Row: 2x2 on mobile, 4 columns on lg+ */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
               {stats.map(s => (
                 <StatsCard key={s.label} {...s} />
               ))}
             </div>
 
-            {/* Charts Row */}
-            <DashboardCharts requests={requests} />
-
-            {/* Active Deliveries */}
+            {/* Active Deliveries (Placed right above charts so user sees live orders first!) */}
             <section>
               <div className="flex justify-between items-center mb-3 sm:mb-4">
-                <h2 className="font-extrabold text-base sm:text-lg flex items-center gap-2 text-white">
-                  Active Deliveries
-                  <span className="bg-emerald-500 text-black text-[11px] sm:text-xs font-extrabold rounded-full px-2 py-0.5">
+                <h2 className="font-extrabold text-base sm:text-lg flex items-center gap-2 text-white m-0">
+                  <span>Active Deliveries</span>
+                  <span className="bg-emerald-500 text-black text-[11px] sm:text-xs font-extrabold rounded-full px-2 py-0.5 shadow-sm">
                     {activeRequests.length}
                   </span>
                 </h2>
@@ -161,8 +196,8 @@ export default async function DashboardPage() {
 
               <div className={`grid ${activeRequests.length > 0 ? "grid-cols-1 md:grid-cols-2" : "grid-cols-1"} gap-3 sm:gap-4`}>
                 {activeRequests.length === 0 ? (
-                  <div className="bg-[#0b120e]/60 border border-dashed border-white/10 rounded-2xl sm:rounded-3xl p-8 sm:p-12 text-center text-white/50 text-sm backdrop-blur-xl">
-                    No active deliveries right now.
+                  <div className="bg-[#0b120e]/60 border border-dashed border-white/10 rounded-2xl sm:rounded-3xl p-6 sm:p-10 text-center text-white/50 text-xs sm:text-sm backdrop-blur-xl">
+                    No active deliveries right now. Tap &ldquo;New Request&rdquo; to order snacks!
                   </div>
                 ) : (
                   activeRequests.slice(0, 2).map((req) => {
@@ -182,7 +217,7 @@ export default async function DashboardPage() {
                           style={{
                             borderLeftColor: meta.color,
                           }}
-                          className="bg-[#0a0f0c]/40 border border-white/10 border-l-4 rounded-2xl sm:rounded-3xl p-4 sm:p-5 cursor-pointer transition-all duration-300 backdrop-blur-xl relative overflow-hidden group hover:border-emerald-500/40 hover:-translate-y-1 hover:shadow-[0_10px_35px_rgba(16,185,129,0.1)]"
+                          className="bg-[#0a0f0c]/60 border border-white/10 border-l-4 rounded-2xl sm:rounded-3xl p-4 sm:p-5 cursor-pointer transition-all duration-300 backdrop-blur-xl relative overflow-hidden group hover:border-emerald-500/40 hover:-translate-y-0.5 hover:shadow-[0_10px_35px_rgba(16,185,129,0.12)]"
                         >
                           {/* Glow background on hover */}
                           <div
@@ -191,7 +226,7 @@ export default async function DashboardPage() {
                           />
 
                           {/* Status & PIN badge */}
-                          <div className="flex justify-between items-center mb-3.5 relative z-10 gap-2">
+                          <div className="flex justify-between items-center mb-3 relative z-10 gap-2">
                             <div className="flex items-center gap-2 flex-wrap">
                               <span
                                 style={{
@@ -217,19 +252,19 @@ export default async function DashboardPage() {
                           </div>
 
                           {/* Route info */}
-                          <div className="flex flex-col gap-2 mb-3.5 relative z-10">
+                          <div className="flex flex-col gap-1.5 sm:gap-2 mb-3 relative z-10">
                             <div className="flex items-center gap-2 text-xs sm:text-sm text-white/60 min-w-0">
-                              <MapPin size={14} className="text-emerald-400 shrink-0" />
+                              <MapPin size={13} className="text-emerald-400 shrink-0" />
                               <span className="truncate"><b className="text-white/85">From:</b> {req.pickup_location}</span>
                             </div>
                             <div className="flex items-center gap-2 text-xs sm:text-sm text-white/60 min-w-0">
-                              <MapPin size={14} className="text-teal-400 shrink-0" />
+                              <MapPin size={13} className="text-teal-400 shrink-0" />
                               <span className="truncate"><b className="text-white/85">To:</b> {req.dropoff_location}</span>
                             </div>
                           </div>
 
                           {/* Runner info */}
-                          <div className="flex items-center justify-between pt-3 border-t border-white/[0.07] relative z-10">
+                          <div className="flex items-center justify-between pt-2.5 border-t border-white/[0.07] relative z-10">
                             <div className="flex items-center gap-2 min-w-0">
                               <div className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 text-xs font-bold ${runner ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/40" : "bg-white/10 text-white/50"}`}>
                                 {runnerInitial || <User size={12} />}
@@ -238,11 +273,9 @@ export default async function DashboardPage() {
                                 Runner: <b className="text-white">{runnerCleanName}</b>
                               </span>
                             </div>
-                            {runner && (
-                              <span className="inline-flex items-center gap-1 text-[11px] font-bold text-black bg-emerald-400 hover:bg-emerald-300 px-2.5 py-1 rounded-lg shrink-0 shadow-sm transition-colors">
-                                <MessageSquare size={11} /> Chat
-                              </span>
-                            )}
+                            <span className="inline-flex items-center gap-1 text-[11px] font-bold text-black bg-emerald-400 hover:bg-emerald-300 px-2.5 py-1 rounded-lg shrink-0 shadow-sm transition-colors">
+                              {runner ? <><MessageSquare size={11} /> Chat</> : <>Track Live <ArrowRight size={11} /></>}
+                            </span>
                           </div>
                         </div>
                       </Link>
@@ -251,6 +284,9 @@ export default async function DashboardPage() {
                 )}
               </div>
             </section>
+
+            {/* Charts Row */}
+            <DashboardCharts requests={requests} />
 
             {/* Recent Completed Table */}
             <section className="mt-2">

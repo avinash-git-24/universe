@@ -50,10 +50,12 @@ function Planet({ position, size, color, speed, wireframe = false }: { position:
       <meshStandardMaterial 
         color={color} 
         wireframe={wireframe} 
-        roughness={0.8}
-        metalness={0.2}
+        roughness={0.85}
+        metalness={0.15}
         emissive={color}
-        emissiveIntensity={0.2}
+        emissiveIntensity={0.12}
+        transparent
+        opacity={0.65}
       />
     </Sphere>
   );
@@ -96,11 +98,11 @@ function SpaceScene() {
       <directionalLight position={[5, 5, 5]} intensity={1} color="#66FFB2" />
       <pointLight position={[-5, -5, -5]} intensity={0.5} color="#00C853" />
 
-      {/* Main Large Planet (Bottom Left) */}
-      <Planet position={[-1.6, -0.6, -1]} size={0.5} color="#00E676" speed={0.03} />
+      {/* Main Celestial Planet (Positioned lower and deeper in space to avoid text collision on mobile) */}
+      <Planet position={[-2.4, -1.6, -1.8]} size={0.42} color="#00E676" speed={0.02} />
       
-      {/* Small Wireframe Planet (Top Left) */}
-      <Planet position={[-1.2, 1.4, -2]} size={0.15} color="#66FFB2" speed={0.08} wireframe />
+      {/* Small Wireframe Planet (Top Right) */}
+      <Planet position={[1.6, 1.4, -2.5]} size={0.18} color="#66FFB2" speed={0.06} wireframe />
 
       <Starfield />
     </group>
