@@ -164,23 +164,21 @@ function StepCard({
       whileHover={{ y: -6, transition: { duration: 0.25, ease: "easeOut" } }}
       className="group relative flex flex-col rounded-2xl sm:rounded-[var(--radius-xl)] p-5 sm:p-7 cursor-default"
       style={{
-        background: `rgba(255,255,255,0.03)`,
+        background: `rgba(255, 255, 255, 0.72)`,
         backdropFilter: "blur(16px) saturate(180%)",
         WebkitBackdropFilter: "blur(16px) saturate(180%)",
         border: `1px solid`,
         borderColor: borderGlow,
-        boxShadow: `0 4px 24px ${bgGlow}`,
-        transition: "all 0.3s ease",
+        boxShadow: `0 4px 24px ${bgGlow}, 0 1px 4px rgba(0,0,0,0.04)`,
+        transition: "box-shadow 0.3s ease",
       }}
       onMouseEnter={(e) => {
         (e.currentTarget as HTMLDivElement).style.boxShadow =
-          `0 12px 40px ${bgGlow.replace("0.06", "0.18")}, 0 4px 16px rgba(0,0,0,0.2)`;
-        (e.currentTarget as HTMLDivElement).style.background = `rgba(255,255,255,0.06)`;
+          `0 12px 40px ${bgGlow.replace("0.06", "0.18")}, 0 4px 16px rgba(0,0,0,0.06)`;
       }}
       onMouseLeave={(e) => {
         (e.currentTarget as HTMLDivElement).style.boxShadow =
-          `0 4px 24px ${bgGlow}`;
-        (e.currentTarget as HTMLDivElement).style.background = `rgba(255,255,255,0.03)`;
+          `0 4px 24px ${bgGlow}, 0 1px 4px rgba(0,0,0,0.04)`;
       }}
     >
       {/* Step number */}
@@ -188,7 +186,7 @@ function StepCard({
         className="absolute top-4 right-5 sm:top-5 sm:right-6 text-4xl sm:text-5xl font-extrabold leading-none select-none"
         style={{
           color: accentColor,
-          opacity: 0.12,
+          opacity: 0.08,
           fontFamily: "var(--font-plus-jakarta-sans)",
         }}
       >
@@ -204,7 +202,7 @@ function StepCard({
       <span
         className="inline-flex items-center mb-2.5 sm:mb-3 px-2.5 py-0.5 rounded-full text-[10.5px] sm:text-[11px] font-bold uppercase tracking-wider w-fit"
         style={{
-          background: `${accentColor}22`,
+          background: `${accentColor}18`,
           color: accentColor,
           fontFamily: "var(--font-inter)",
         }}
@@ -214,7 +212,7 @@ function StepCard({
 
       {/* Title */}
       <h3
-        className="text-lg sm:text-xl font-bold text-white mb-2 leading-snug"
+        className="text-lg sm:text-xl font-bold text-[var(--color-text)] mb-2 leading-snug"
         style={{ fontFamily: "var(--font-plus-jakarta-sans)" }}
       >
         {title}
@@ -222,7 +220,7 @@ function StepCard({
 
       {/* Description */}
       <p
-        className="text-xs sm:text-sm text-white/60 leading-relaxed"
+        className="text-xs sm:text-sm text-[var(--color-text-muted)] leading-relaxed"
         style={{ fontFamily: "var(--font-inter)" }}
       >
         {description}
@@ -245,7 +243,7 @@ export function HowItWorksSection() {
       id="how-it-works"
       aria-label="How UniVerse works"
       className="relative py-14 sm:py-24 md:py-32 overflow-hidden"
-      style={{ background: "#060A08" }}
+      style={{ background: "var(--color-bg)" }}
     >
       {/* Background glow blobs */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
@@ -275,7 +273,7 @@ export function HowItWorksSection() {
             style={{
               background: "rgba(16,185,129,0.1)",
               border: "1px solid rgba(16,185,129,0.25)",
-              color: "#10B981",
+              color: "#059669",
               fontFamily: "var(--font-inter)",
             }}
           >
@@ -283,7 +281,7 @@ export function HowItWorksSection() {
           </span>
 
           <h2
-            className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white leading-tight"
+            className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-[var(--color-text)] leading-tight"
             style={{ fontFamily: "var(--font-plus-jakarta-sans)" }}
           >
             How UniVerse{" "}
@@ -300,7 +298,7 @@ export function HowItWorksSection() {
           </h2>
 
           <p
-            className="mt-3 sm:mt-4 text-sm sm:text-lg text-white/50 max-w-xl mx-auto"
+            className="mt-3 sm:mt-4 text-sm sm:text-lg text-[var(--color-text-muted)] max-w-xl mx-auto"
             style={{ fontFamily: "var(--font-inter)" }}
           >
             Four effortless steps from craving to delivery.
