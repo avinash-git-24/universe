@@ -238,6 +238,8 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
   const [dropoffRoom, setDropoffRoom] = useState("");
   const [roomError, setRoomError] = useState(false);
   const [urgency, setUrgency] = useState<"standard" | "urgent">("standard");
+  // Step 3 State: Extras
+  const [instructions, setInstructions] = useState("");
 
   // Prefill default delivery location and notes from Settings defaults
   useEffect(() => {
@@ -280,9 +282,6 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
   // Delivery Reward: strictly chosen by requester with minimum ₹5 per item
   const currentReward =
     customReward.trim() !== "" ? Math.max(minRequiredReward, Number(customReward) || minRequiredReward) : minRequiredReward;
-
-  // Step 3 State: Extras
-  const [instructions, setInstructions] = useState("");
 
   const totalEstimatedItemsAmount = items.reduce(
     (sum, item) => sum + (item.estimatedPrice || 0) * item.quantity,

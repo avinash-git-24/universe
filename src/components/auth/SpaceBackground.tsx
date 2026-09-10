@@ -61,24 +61,6 @@ function Planet({ position, size, color, speed, wireframe = false }: { position:
   );
 }
 
-function OrbitRing({ position, radius, color, rotationSpeed }: { position: [number, number, number], radius: number, color: string, rotationSpeed: number }) {
-  const ringRef = useRef<THREE.Mesh>(null);
-
-  useFrame((state, delta) => {
-    if (ringRef.current) {
-      ringRef.current.rotation.z += rotationSpeed * delta;
-      ringRef.current.rotation.x += rotationSpeed * 0.5 * delta;
-    }
-  });
-
-  return (
-    <mesh ref={ringRef} position={position} rotation={[Math.PI / 2.5, 0, 0]}>
-      <torusGeometry args={[radius, 0.003, 16, 100]} />
-      <meshBasicMaterial color={color} transparent opacity={0.6} />
-    </mesh>
-  );
-}
-
 function SpaceScene() {
   const groupRef = useRef<THREE.Group>(null);
 
