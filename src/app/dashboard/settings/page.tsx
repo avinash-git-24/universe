@@ -81,6 +81,7 @@ export default async function SettingsPage() {
           email={user.email || ""} 
           initialProfile={profile || {}} 
           initialSettings={settings || {}}
+          userMetadata={user.user_metadata || {}}
         />
         
       </div>

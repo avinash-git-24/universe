@@ -68,6 +68,8 @@ const HOSTELS = [
   "Hostel B",
   "Hostel C",
   "Hostel D",
+  "Girls Hostel",
+  "Faculty Block",
   "Other",
 ];
 
@@ -236,6 +238,25 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
   const [dropoffRoom, setDropoffRoom] = useState("");
   const [roomError, setRoomError] = useState(false);
   const [urgency, setUrgency] = useState<"standard" | "urgent">("standard");
+
+  // Prefill default delivery location and notes from Settings defaults
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const savedHostel = localStorage.getItem("universe_default_hostel");
+      const savedRoom = localStorage.getItem("universe_default_room");
+      const savedInstructions = localStorage.getItem("universe_default_instructions");
+
+      if (savedHostel && (HOSTELS as readonly string[]).includes(savedHostel)) {
+        setDropoffHostel(savedHostel);
+      }
+      if (savedRoom) {
+        setDropoffRoom(savedRoom);
+      }
+      if (savedInstructions) {
+        setInstructions((prev) => prev || savedInstructions);
+      }
+    }
+  }, []);
 
   // Total item count across all selected products
   const totalItemCount = items.reduce((sum, item) => sum + item.quantity, 0);
