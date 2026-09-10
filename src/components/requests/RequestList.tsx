@@ -118,12 +118,12 @@ export function RequestList({ initialRequests }: RequestListProps) {
   };
 
   return (
-    <div className="space-y-6">
-      {/* Category Tabs */}
-      <div className="flex flex-wrap gap-2 sm:gap-4 pb-4 sm:pb-6">
+    <div className="space-y-4 sm:space-y-6">
+      {/* Category Tabs (Single row horizontal scroll on mobile) */}
+      <div className="flex items-center gap-2 sm:gap-3 pb-2 sm:pb-5 overflow-x-auto no-scrollbar scrollbar-none">
         <button
           className={cn(
-            "flex items-center px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 border",
+            "shrink-0 flex items-center px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 border",
             activeTab === "active" 
               ? "bg-[#082a18]/40 border-emerald-500/40 text-emerald-400"
               : "bg-transparent border-[#1c2420] text-white/50 hover:border-white/20 hover:text-white/80"
@@ -142,7 +142,7 @@ export function RequestList({ initialRequests }: RequestListProps) {
 
         <button
           className={cn(
-            "flex items-center px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 border",
+            "shrink-0 flex items-center px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 border",
             activeTab === "completed" 
               ? "bg-white/5 border-white/30 text-white"
               : "bg-transparent border-[#1c2420] text-white/50 hover:border-white/20 hover:text-white/80"
@@ -161,7 +161,7 @@ export function RequestList({ initialRequests }: RequestListProps) {
 
         <button
           className={cn(
-            "flex items-center px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 border",
+            "shrink-0 flex items-center px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 border",
             activeTab === "cancelled" 
               ? "bg-red-500/10 border-red-500/40 text-red-400"
               : "bg-transparent border-[#1c2420] text-white/50 hover:border-white/20 hover:text-white/80"
@@ -180,7 +180,7 @@ export function RequestList({ initialRequests }: RequestListProps) {
 
         <button
           className={cn(
-            "flex items-center px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 border",
+            "shrink-0 flex items-center px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 border",
             activeTab === "all" 
               ? "bg-white/5 border-white/30 text-white"
               : "bg-transparent border-[#1c2420] text-white/50 hover:border-white/20 hover:text-white/80"
@@ -199,7 +199,7 @@ export function RequestList({ initialRequests }: RequestListProps) {
       </div>
 
       {/* Controls: Search, Status Filter, Sort */}
-      <div className="flex flex-col md:flex-row justify-between items-stretch md:items-center gap-3 sm:gap-4 mb-6">
+      <div className="flex flex-col md:flex-row justify-between items-stretch md:items-center gap-2.5 sm:gap-4 mb-4 sm:mb-6">
         <div className="flex-1 w-full md:w-auto relative group">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30 group-focus-within:text-emerald-400 transition-colors" />
           <Input
@@ -235,7 +235,7 @@ export function RequestList({ initialRequests }: RequestListProps) {
       {filteredRequests.length === 0 ? (
         <EmptyRequests category={activeTab} showCreate={initialRequests.length === 0 || activeTab === "active"} />
       ) : (
-        <div className="grid gap-8">
+        <div className="grid gap-3.5 sm:gap-6 lg:gap-8">
           {currentRequests.map((req) => (
             <StudentRequestCard
               key={req.id}
