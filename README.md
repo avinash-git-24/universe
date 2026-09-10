@@ -18,6 +18,7 @@
 
 ### 🎓 Student Experience
 - **Request Creation**: Create delivery requests with item lists, quantities, price estimates, and pickup/drop-off locations.
+- **Hostel & Room Autofill**: Saved room defaults for fast 1-tap checkout.
 - **Request Management**: Track request statuses in real-time (`Pending`, `Accepted`, `Picked Up`, `In Transit`, `Delivered`, `Cancelled`).
 - **Interactive Details Modal**: Deep-dive into item specifications, runner details, and timelines.
 
