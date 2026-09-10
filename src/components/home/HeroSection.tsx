@@ -33,7 +33,7 @@ function StatItem({
   color: string;
 }) {
   return (
-    <div className="flex items-center gap-1.5 sm:gap-3 px-1.5 sm:px-4 py-1.5 sm:py-2 justify-center">
+    <div className="flex items-center gap-3 px-4 py-2">
       {/* Pulsing dot + icon */}
       <div className="relative flex-shrink-0">
         <span
@@ -41,7 +41,7 @@ function StatItem({
           style={{ background: color, opacity: 0.35 }}
         />
         <span
-          className="relative flex items-center justify-center w-5 h-5 sm:w-7 sm:h-7 rounded-full"
+          className="relative flex items-center justify-center w-7 h-7 rounded-full"
           style={{ background: `${color}25` }}
         >
           <span style={{ color }}>{icon}</span>
@@ -49,16 +49,16 @@ function StatItem({
       </div>
 
       {/* Text */}
-      <div className="flex flex-col min-w-0">
+      <div className="flex flex-col">
         <motion.span
-          className="text-sm sm:text-lg font-bold text-white leading-none font-[family-name:var(--font-plus-jakarta-sans)]"
+          className="text-lg font-bold text-white leading-none font-[family-name:var(--font-plus-jakarta-sans)]"
           initial={{ opacity: 0, y: 6 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 1.6 }}
         >
           {value}
         </motion.span>
-        <span className="text-[8.5px] sm:text-[11px] text-white/60 font-[family-name:var(--font-inter)] leading-tight mt-0.5 whitespace-nowrap truncate">
+        <span className="text-[11px] text-white/55 font-[family-name:var(--font-inter)] leading-tight mt-0.5 whitespace-nowrap">
           {label}
         </span>
       </div>
@@ -70,33 +70,33 @@ function StatItem({
 
 function LiveStatusStrip() {
   const stats = [
-    { icon: <Users size={12} className="sm:w-3.5 sm:h-3.5" />, label: "Students Online", value: "142", color: "#10B981" },
-    { icon: <Bike  size={12} className="sm:w-3.5 sm:h-3.5" />, label: "Active Runners",  value: "38",  color: "#F59E0B" },
-    { icon: <Package size={12} className="sm:w-3.5 sm:h-3.5" />, label: "Active Requests", value: "27", color: "#10B981" },
+    { icon: <Users size={14}/>, label: "Students Online", value: "142", color: "#10B981" },
+    { icon: <Bike  size={14}/>, label: "Active Runners",  value: "38",  color: "#F59E0B" },
+    { icon: <Package size={14}/>, label: "Active Requests", value: "27", color: "#10B981" },
   ];
 
   return (
     <motion.div
-      className="w-full max-w-sm sm:max-w-lg px-3 sm:px-4 z-20 mt-6 sm:mt-0 sm:absolute sm:bottom-16 sm:left-1/2 sm:-translate-x-1/2"
-      initial={{ opacity: 0, y: 20 }}
+      className="absolute bottom-24 left-1/2 -translate-x-1/2 w-full max-w-lg px-4 z-20"
+      initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.7, delay: 1.2, ease: [0.4, 0, 0.2, 1] }}
+      transition={{ duration: 0.7, delay: 1.4, ease: [0.4, 0, 0.2, 1] }}
     >
       <div
-        className="rounded-xl sm:rounded-2xl flex items-center justify-around py-1 px-1 sm:px-2 sm:py-0"
+        className="rounded-[var(--radius-xl)] flex items-center justify-around"
         style={{
-          background: "rgba(8, 18, 12, 0.85)",
-          backdropFilter: "blur(24px) saturate(190%)",
-          WebkitBackdropFilter: "blur(24px) saturate(190%)",
-          border: "1px solid rgba(16, 185, 129, 0.2)",
-          boxShadow: "0 8px 32px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,255,255,0.08)",
+          background: "rgba(10, 20, 15, 0.52)",
+          backdropFilter: "blur(20px) saturate(180%)",
+          WebkitBackdropFilter: "blur(20px) saturate(180%)",
+          border: "1px solid rgba(255,255,255,0.12)",
+          boxShadow: "0 8px 32px rgba(0,0,0,0.3)",
         }}
       >
         {stats.map((s, i) => (
-          <div key={s.label} className="flex items-center flex-1 justify-center min-w-0">
+          <div key={s.label} className="flex items-center flex-1">
             <StatItem {...s} />
             {i < stats.length - 1 && (
-              <div className="h-5 sm:h-8 w-px bg-white/10 flex-shrink-0"/>
+              <div className="h-8 w-px bg-white/12 flex-shrink-0"/>
             )}
           </div>
         ))}
@@ -110,7 +110,7 @@ function LiveStatusStrip() {
 function ScrollIndicator() {
   return (
     <motion.div
-      className="hidden sm:flex sm:absolute sm:bottom-6 sm:left-1/2 sm:-translate-x-1/2 flex-col items-center gap-1.5 z-20"
+      className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1.5 z-20"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.6, delay: 2.0 }}
@@ -136,60 +136,69 @@ function ScrollIndicator() {
 function HeroButtons() {
   return (
     <motion.div
-      className="flex flex-col sm:flex-row items-center justify-center gap-2.5 sm:gap-4 mt-6 sm:mt-9 w-full max-w-[280px] sm:max-w-none mx-auto"
+      className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-10"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, delay: 0.9, ease: [0.4, 0, 0.2, 1] }}
     >
       {/* Primary CTA */}
-      <motion.div className="w-full sm:w-auto" whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
+      <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
         <Link
           href={ROUTES.REGISTER}
           id="hero-cta-register"
           className={cn(
-            "group flex items-center justify-center gap-2 w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4",
-            "text-sm sm:text-base font-bold text-white rounded-xl sm:rounded-[var(--radius-md)]",
+            "group inline-flex items-center gap-2.5 px-8 py-4",
+            "text-base font-semibold text-white rounded-[var(--radius-md)]",
             "font-[family-name:var(--font-inter)]",
-            "transition-all duration-300 shadow-[0_0_25px_rgba(16,185,129,0.35)] hover:shadow-[0_0_35px_rgba(16,185,129,0.55)]",
+            "transition-all duration-300",
             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
           )}
           style={{
             background: "linear-gradient(135deg, #10B981 0%, #059669 100%)",
+            boxShadow: "0 0 0 1px rgba(16,185,129,0.3), 0 8px 32px rgba(16,185,129,0.45)",
+          }}
+          onMouseEnter={(e) => {
+            (e.currentTarget as HTMLAnchorElement).style.boxShadow =
+              "0 0 0 1px rgba(16,185,129,0.5), 0 12px 40px rgba(16,185,129,0.6)";
+          }}
+          onMouseLeave={(e) => {
+            (e.currentTarget as HTMLAnchorElement).style.boxShadow =
+              "0 0 0 1px rgba(16,185,129,0.3), 0 8px 32px rgba(16,185,129,0.45)";
           }}
         >
           Get Started
           <ArrowRight
-            size={16}
+            size={18}
             className="transition-transform duration-200 group-hover:translate-x-1"
           />
         </Link>
       </motion.div>
 
       {/* Secondary CTA — glass */}
-      <motion.div className="w-full sm:w-auto" whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
+      <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
         <Link
           href="#how-it-works"
           id="hero-cta-how-it-works"
           className={cn(
-            "flex items-center justify-center gap-2 w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4",
-            "text-sm sm:text-base font-semibold text-white/90 rounded-xl sm:rounded-[var(--radius-md)]",
+            "inline-flex items-center gap-2 px-8 py-4",
+            "text-base font-semibold text-white rounded-[var(--radius-md)]",
             "font-[family-name:var(--font-inter)]",
             "transition-all duration-300",
             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50"
           )}
           style={{
-            background: "rgba(255,255,255,0.08)",
+            background: "rgba(255,255,255,0.1)",
             backdropFilter: "blur(12px)",
             WebkitBackdropFilter: "blur(12px)",
-            border: "1px solid rgba(255,255,255,0.18)",
+            border: "1px solid rgba(255,255,255,0.22)",
           }}
           onMouseEnter={(e) => {
-            (e.currentTarget as HTMLAnchorElement).style.background = "rgba(255,255,255,0.16)";
-            (e.currentTarget as HTMLAnchorElement).style.borderColor = "rgba(255,255,255,0.32)";
+            (e.currentTarget as HTMLAnchorElement).style.background = "rgba(255,255,255,0.18)";
+            (e.currentTarget as HTMLAnchorElement).style.borderColor = "rgba(255,255,255,0.38)";
           }}
           onMouseLeave={(e) => {
-            (e.currentTarget as HTMLAnchorElement).style.background = "rgba(255,255,255,0.08)";
-            (e.currentTarget as HTMLAnchorElement).style.borderColor = "rgba(255,255,255,0.18)";
+            (e.currentTarget as HTMLAnchorElement).style.background = "rgba(255,255,255,0.1)";
+            (e.currentTarget as HTMLAnchorElement).style.borderColor = "rgba(255,255,255,0.22)";
           }}
         >
           How It Works
@@ -206,18 +215,18 @@ export function HeroSection() {
     <section
       id="home"
       aria-label="UniVerse hero"
-      className="relative w-full min-h-[100dvh] overflow-hidden flex flex-col justify-center items-center pt-20 pb-12 sm:py-0"
+      className="relative w-full min-h-screen overflow-hidden flex items-center justify-center"
     >
       {/* ── Campus Background ── */}
       <CampusBackground />
 
-      {/* ── Dark overlay — radial from center with rich contrast ── */}
+      {/* ── Dark overlay — radial from center ── */}
       <div
         className="absolute inset-0 z-10"
         style={{
           background: `
-            radial-gradient(ellipse 92% 75% at 50% 35%, rgba(4,14,9,0.76) 0%, rgba(3,10,7,0.92) 100%),
-            linear-gradient(to bottom, rgba(4,14,9,0.70) 0%, rgba(4,14,9,0.48) 40%, rgba(4,14,9,0.92) 100%)
+            radial-gradient(ellipse 80% 60% at 50% 40%, rgba(5,15,10,0.35) 0%, rgba(5,15,10,0.68) 100%),
+            linear-gradient(to bottom, rgba(5,15,10,0.55) 0%, rgba(5,15,10,0.30) 40%, rgba(5,15,10,0.70) 100%)
           `,
         }}
         aria-hidden="true"
@@ -233,13 +242,13 @@ export function HeroSection() {
 
         {/* Overline badge */}
         <motion.div
-          className="inline-flex items-center gap-2 mb-3 sm:mb-6"
+          className="inline-flex items-center gap-2 mb-6"
           initial={{ opacity: 0, y: -14 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
         >
           <span
-            className="inline-flex items-center gap-1.5 px-3 sm:px-4 py-1 sm:py-1.5 rounded-full text-[10.5px] sm:text-xs font-semibold tracking-wider uppercase max-w-[92vw]"
+            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold tracking-wide uppercase"
             style={{
               background: "rgba(16,185,129,0.15)",
               border: "1px solid rgba(16,185,129,0.35)",
@@ -248,18 +257,18 @@ export function HeroSection() {
               backdropFilter: "blur(8px)",
             }}
           >
-            <span className="w-1.5 h-1.5 rounded-full bg-[#4ADE80] animate-pulse flex-shrink-0"/>
-            <span className="truncate">Exclusively for Marwadi University Students</span>
+            <span className="w-1.5 h-1.5 rounded-full bg-[#4ADE80] animate-pulse"/>
+            Exclusively for Marwadi University Students
           </span>
         </motion.div>
 
         {/* Headline */}
         <motion.h1
-          className="font-extrabold leading-[1.1] sm:leading-[1.08] tracking-tight text-white"
+          className="font-extrabold leading-[1.05] tracking-tight text-white"
           style={{
             fontFamily: "var(--font-plus-jakarta-sans)",
-            fontSize: "clamp(2.15rem, 7vw, 5.5rem)",
-            textShadow: "0 2px 25px rgba(0,0,0,0.85)",
+            fontSize: "clamp(2.75rem, 8vw, 5.5rem)",
+            textShadow: "0 2px 40px rgba(0,0,0,0.4)",
           }}
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
@@ -281,9 +290,10 @@ export function HeroSection() {
 
         {/* Subheading */}
         <motion.p
-          className="mt-3 sm:mt-5 text-white/75 leading-relaxed max-w-xl mx-auto px-3 text-xs sm:text-base"
+          className="mt-6 text-white/72 leading-relaxed max-w-2xl mx-auto"
           style={{
             fontFamily: "var(--font-inter)",
+            fontSize: "clamp(0.95rem, 2.2vw, 1.15rem)",
           }}
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
@@ -297,25 +307,24 @@ export function HeroSection() {
         {/* CTA Buttons */}
         <HeroButtons />
 
-        {/* Trust indicators (Pill chips on mobile) */}
+        {/* Trust indicators */}
         <motion.div
-          className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-4 mt-5 sm:mt-7"
+          className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 mt-8"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 0.6, delay: 1.0 }}
+          transition={{ duration: 0.6, delay: 1.1 }}
         >
           {[
-            { icon: "🛡️", text: "Verified Students" },
-            { icon: "⚡", text: "5-Min Delivery" },
-            { icon: "🏫", text: "Campus Exclusive" },
+            "✅ Verified Students Only",
+            "⚡ 5-Minute Delivery",
+            "🏫 Campus Exclusive",
           ].map((item) => (
             <span
-              key={item.text}
-              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white/[0.05] border border-white/10 text-[10.5px] sm:text-xs text-white/70 font-medium backdrop-blur-sm shadow-sm"
+              key={item}
+              className="text-xs text-white/45 font-medium"
               style={{ fontFamily: "var(--font-inter)" }}
             >
-              <span className="text-[11px] sm:text-xs">{item.icon}</span>
-              <span>{item.text}</span>
+              {item}
             </span>
           ))}
         </motion.div>
@@ -329,4 +338,3 @@ export function HeroSection() {
     </section>
   );
 }
-

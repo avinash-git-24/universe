@@ -247,7 +247,7 @@ const ITEMS: FloatItem[] = [
 
 export function FloatingObjects() {
   return (
-    <div className="hidden md:block absolute inset-0 pointer-events-none overflow-hidden" style={{ zIndex: 10 }}>
+    <div className="absolute inset-0 pointer-events-none overflow-hidden" style={{ zIndex: 10 }}>
       {ITEMS.map((item) => (
         <motion.div
           key={item.id}
