@@ -233,20 +233,31 @@ export default function AboutPage() {
   const [activePhase, setActivePhase] = useState(0);
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#FAFCFA] dark:bg-[#060A08] text-slate-900 dark:text-slate-100 font-[family-name:var(--font-inter)] selection:bg-emerald-500 selection:text-white overflow-x-hidden">
-      {/* Background ambient mesh gradients */}
+    <div className="min-h-screen flex flex-col bg-[#FFFFFF] text-slate-900 font-[family-name:var(--font-inter)] selection:bg-emerald-500 selection:text-white overflow-x-hidden relative">
+      {/* Crisp clean dot grid pattern */}
+      <div
+        className="fixed inset-0 pointer-events-none z-0"
+        style={{
+          backgroundImage: "radial-gradient(#CBD5E1 1.25px, transparent 1.25px)",
+          backgroundSize: "32px 32px",
+          opacity: 0.45,
+        }}
+        aria-hidden="true"
+      />
+
+      {/* Soft ambient aura glows */}
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden" aria-hidden="true">
         <div
-          className="absolute -top-40 -left-40 w-[600px] h-[600px] rounded-full blur-[100px] opacity-40"
+          className="absolute -top-32 -left-32 w-[600px] h-[600px] rounded-full blur-[100px] opacity-25"
+          style={{ background: "radial-gradient(circle, rgba(16,185,129,0.3) 0%, transparent 70%)" }}
+        />
+        <div
+          className="absolute top-1/2 -right-32 w-[500px] h-[500px] rounded-full blur-[110px] opacity-20"
+          style={{ background: "radial-gradient(circle, rgba(245,158,11,0.2) 0%, transparent 70%)" }}
+        />
+        <div
+          className="absolute -bottom-32 left-1/4 w-[600px] h-[600px] rounded-full blur-[120px] opacity-20"
           style={{ background: "radial-gradient(circle, rgba(16,185,129,0.2) 0%, transparent 70%)" }}
-        />
-        <div
-          className="absolute top-1/3 -right-40 w-[500px] h-[500px] rounded-full blur-[110px] opacity-35"
-          style={{ background: "radial-gradient(circle, rgba(59,130,246,0.15) 0%, transparent 70%)" }}
-        />
-        <div
-          className="absolute -bottom-40 left-1/3 w-[600px] h-[600px] rounded-full blur-[120px] opacity-30"
-          style={{ background: "radial-gradient(circle, rgba(16,185,129,0.18) 0%, transparent 70%)" }}
         />
       </div>
 
