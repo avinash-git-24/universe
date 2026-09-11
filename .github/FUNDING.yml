@@ -1,0 +1,5 @@
+# GitHub Sponsors & Funding configuration for UniVerse
+# https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/displaying-a-sponsor-button-in-your-repository
+
+github: [avinash-git-24]
+custom: ['https://universe-brown-seven.vercel.app', 'https://github.com/avinash-git-24']
