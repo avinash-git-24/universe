@@ -91,7 +91,7 @@ function LiveStatusStrip() {
           { count: runnerCount },
           { count: requestCount },
         ] = await Promise.all([
-          supabase.from("profiles").select("*", { count: "exact", head: true }),
+          supabase.from("profiles").select("*", { count: "exact", head: true }).not("full_name", "is", null),
           supabase.from("profiles").select("*", { count: "exact", head: true }).eq("role", "runner"),
           supabase.from("delivery_requests").select("*", { count: "exact", head: true }).in("status", ["pending", "accepted", "picked_up", "in_transit"]),
         ]);
