@@ -11,6 +11,7 @@
  * - Scroll indicator
  */
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight, ChevronDown, Users, Bike, Package } from "lucide-react";
@@ -18,6 +19,7 @@ import { CampusBackground } from "./CampusBackground";
 import { FloatingObjects } from "./FloatingObjects";
 import { ROUTES } from "@/constants/routes";
 import { cn } from "@/lib/utils";
+import { createClient } from "@/lib/supabase/client";
 
 // ─── Animated Stat Item ───────────────────────────────────────────────────────
 
@@ -29,7 +31,7 @@ function StatItem({
 }: {
   icon: React.ReactNode;
   label: string;
-  value: string;
+  value: string | number;
   color: string;
 }) {
   return (
@@ -69,10 +71,63 @@ function StatItem({
 // ─── Live Status Strip ────────────────────────────────────────────────────────
 
 function LiveStatusStrip() {
+  const [counts, setCounts] = useState<{
+    students: number | null;
+    runners: number | null;
+    requests: number | null;
+  }>({
+    students: null,
+    runners: null,
+    requests: null,
+  });
+
+  useEffect(() => {
+    const supabase = createClient();
+
+    async function loadLiveStats() {
+      try {
+        const [
+          { count: studentCount },
+          { count: runnerCount },
+          { count: requestCount },
+        ] = await Promise.all([
+          supabase.from("profiles").select("*", { count: "exact", head: true }),
+          supabase.from("profiles").select("*", { count: "exact", head: true }).eq("role", "runner"),
+          supabase.from("delivery_requests").select("*", { count: "exact", head: true }).in("status", ["pending", "accepted", "picked_up", "in_transit"]),
+        ]);
+
+        setCounts({
+          students: studentCount ?? 0,
+          runners: runnerCount ?? 0,
+          requests: requestCount ?? 0,
+        });
+      } catch (err) {
+        console.error("Failed to load real stats:", err);
+      }
+    }
+
+    loadLiveStats();
+  }, []);
+
   const stats = [
-    { icon: <Users size={14}/>, label: "Students Online", value: "142", color: "#10B981" },
-    { icon: <Bike  size={14}/>, label: "Active Runners",  value: "38",  color: "#F59E0B" },
-    { icon: <Package size={14}/>, label: "Active Requests", value: "27", color: "#10B981" },
+    {
+      icon: <Users size={14} />,
+      label: "Students Online",
+      value: counts.students !== null ? String(counts.students) : "...",
+      color: "#10B981",
+    },
+    {
+      icon: <Bike size={14} />,
+      label: "Active Runners",
+      value: counts.runners !== null ? String(counts.runners) : "...",
+      color: "#F59E0B",
+    },
+    {
+      icon: <Package size={14} />,
+      label: "Active Requests",
+      value: counts.requests !== null ? String(counts.requests) : "...",
+      color: "#10B981",
+    },
   ];
 
   return (
@@ -108,15 +163,27 @@ function LiveStatusStrip() {
 // ─── Scroll Indicator ─────────────────────────────────────────────────────────
 
 function ScrollIndicator() {
+  const handleScroll = () => {
+    const target = document.getElementById("why") || document.getElementById("how-it-works");
+    if (target) {
+      target.scrollIntoView({ behavior: "smooth" });
+    } else {
+      window.scrollTo({ top: window.innerHeight, behavior: "smooth" });
+    }
+  };
+
   return (
-    <motion.div
-      className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1.5 z-20"
+    <motion.button
+      type="button"
+      onClick={handleScroll}
+      className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1.5 z-20 bg-transparent border-0 cursor-pointer group focus:outline-none p-2"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.6, delay: 2.0 }}
+      aria-label="Scroll to next section"
     >
       <span
-        className="text-[10px] uppercase tracking-[0.2em] text-white/40 font-medium"
+        className="text-[10px] uppercase tracking-[0.2em] text-white/40 font-medium group-hover:text-emerald-400 transition-colors"
         style={{ fontFamily: "var(--font-inter)" }}
       >
         Scroll
@@ -125,9 +192,9 @@ function ScrollIndicator() {
         animate={{ y: [0, 7, 0] }}
         transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
       >
-        <ChevronDown size={18} className="text-white/40" />
+        <ChevronDown size={18} className="text-white/40 group-hover:text-emerald-400 transition-colors" />
       </motion.div>
-    </motion.div>
+    </motion.button>
   );
 }
 
