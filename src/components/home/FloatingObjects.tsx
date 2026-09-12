@@ -259,8 +259,8 @@ export function FloatingObjects() {
           }}
           initial={{ opacity: 0, scale: 0.5 }}
           animate={{
-            opacity: [0, 1, 1],
-            scale: [0.5, 1, 1],
+            opacity: 1,
+            scale: 1,
             y: item.floatY,
             rotate: [
               item.rotate,
