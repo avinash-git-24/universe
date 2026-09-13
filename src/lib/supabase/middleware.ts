@@ -61,9 +61,26 @@ export async function updateSession(request: NextRequest) {
     supabaseUrl,
     process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
     {
+      cookieOptions: {
+        name: "universe-auth-token",
+      },
       cookies: {
         getAll() {
-          return request.cookies.getAll();
+          const all = request.cookies.getAll();
+          const hasCustom = all.some((c) => c.name.startsWith("universe-auth-token"));
+          if (!hasCustom) {
+            const legacy = all.filter((c) => c.name.startsWith("sb-127-auth-token") || c.name.startsWith("sb-localhost-auth-token"));
+            if (legacy.length > 0) {
+              return [
+                ...all,
+                ...legacy.map((c) => ({
+                  name: c.name.replace(/sb-(?:127|localhost)-auth-token/, "universe-auth-token"),
+                  value: c.value,
+                })),
+              ];
+            }
+          }
+          return all;
         },
         setAll(cookiesToSet) {
           cookiesToSet.forEach(({ name, value }) =>
