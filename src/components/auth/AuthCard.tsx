@@ -97,9 +97,9 @@ export function AuthCard({ title, subtitle, children }: AuthCardProps) {
           </div>
 
           {/* Title row */}
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-2 sm:gap-2.5">
             <h1
-              className="text-2xl sm:text-[1.75rem] font-bold text-white leading-tight"
+              className="text-[1.35rem] min-[380px]:text-[1.55rem] sm:text-[1.75rem] font-bold text-white leading-tight"
               style={{ fontFamily: "var(--font-plus-jakarta-sans)", letterSpacing: "-0.02em" }}
             >
               {title}
@@ -109,7 +109,7 @@ export function AuthCard({ title, subtitle, children }: AuthCardProps) {
 
           {/* Subtitle */}
           <p
-            className="mt-1.5 text-xs sm:text-sm"
+            className="mt-1.5 text-xs sm:text-sm leading-relaxed"
             style={{ color: "rgba(167,184,176,0.85)", fontFamily: "var(--font-inter)" }}
           >
             {subtitle}
@@ -124,22 +124,22 @@ export function AuthCard({ title, subtitle, children }: AuthCardProps) {
 
       {/* ── Trust bar (below card) ── */}
       <div
-        className="flex items-center justify-center gap-3 sm:gap-6 mt-6 sm:mt-8 flex-wrap px-2"
-        style={{ opacity: 0.65 }}
+        className="flex items-center justify-center gap-2.5 sm:gap-6 mt-5 sm:mt-8 flex-wrap px-2 text-[#A7B8B0]"
+        style={{ opacity: 0.7 }}
       >
         <div className="flex items-center gap-1.5">
-          <Shield size={13} color="#00E676" />
-          <span className="text-[11px] sm:text-xs text-[#A7B8B0]" style={{ fontFamily: "var(--font-inter)" }}>256-bit Encrypted</span>
+          <Shield size={12} className="text-emerald-400 shrink-0 sm:w-3.5 sm:h-3.5" />
+          <span className="text-[10.5px] sm:text-xs" style={{ fontFamily: "var(--font-inter)" }}>256-bit Encrypted</span>
         </div>
-        <span className="text-[#A7B8B0] text-xs hidden sm:inline">•</span>
+        <span className="text-[#A7B8B0]/40 text-xs hidden sm:inline">•</span>
         <div className="flex items-center gap-1.5">
-          <Lock size={13} color="#00E676" />
-          <span className="text-[11px] sm:text-xs text-[#A7B8B0]" style={{ fontFamily: "var(--font-inter)" }}>Your Data is Private</span>
+          <Lock size={12} className="text-emerald-400 shrink-0 sm:w-3.5 sm:h-3.5" />
+          <span className="text-[10.5px] sm:text-xs" style={{ fontFamily: "var(--font-inter)" }}>Your Data is Private</span>
         </div>
-        <span className="text-[#A7B8B0] text-xs hidden sm:inline">•</span>
+        <span className="text-[#A7B8B0]/40 text-xs hidden sm:inline">•</span>
         <div className="flex items-center gap-1.5">
-          <Users size={13} color="#00E676" />
-          <span className="text-[11px] sm:text-xs text-[#A7B8B0]" style={{ fontFamily: "var(--font-inter)" }}>Trusted by Students</span>
+          <Users size={12} className="text-emerald-400 shrink-0 sm:w-3.5 sm:h-3.5" />
+          <span className="text-[10.5px] sm:text-xs" style={{ fontFamily: "var(--font-inter)" }}>Trusted by Students</span>
         </div>
       </div>
     </motion.div>

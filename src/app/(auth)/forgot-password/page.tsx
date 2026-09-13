@@ -90,6 +90,16 @@ function CosmicNebulaCanvas() {
     };
     window.addEventListener("mousemove", handleMouseMove, { passive: true });
 
+    // Smooth Mobile Touch Parallax
+    const handleTouchMove = (e: TouchEvent) => {
+      if (e.touches && e.touches.length > 0) {
+        const touch = e.touches[0];
+        targetMouseX = (touch.clientX - width / 2) * 0.06;
+        targetMouseY = (touch.clientY - height / 2) * 0.06;
+      }
+    };
+    window.addEventListener("touchmove", handleTouchMove, { passive: true });
+
     const handleResize = () => {
       if (!canvas) return;
       width = canvas.width = window.innerWidth;
@@ -105,8 +115,9 @@ function CosmicNebulaCanvas() {
       "rgba(255, 245, 195,", // Warm Golden Starlight
     ];
 
-    // High Density Multi-Depth Stars (230 Stars)
-    const numStars = 230;
+    // High Density Multi-Depth Stars (Adaptive count: 120 on mobile for 60fps & battery conservation, 230 on desktop)
+    const isMobile = typeof window !== "undefined" && window.innerWidth < 640;
+    const numStars = isMobile ? 120 : 230;
     const stars = Array.from({ length: numStars }, () => ({
       x: (Math.random() - 0.5) * 2800,
       y: (Math.random() - 0.5) * 2800,
@@ -335,6 +346,7 @@ function CosmicNebulaCanvas() {
     return () => {
       window.removeEventListener("resize", handleResize);
       window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("touchmove", handleTouchMove);
       cancelAnimationFrame(animId);
     };
   }, []);
@@ -371,6 +383,15 @@ export default function ForgotPasswordPage() {
 
   const isEmailValid = validateEmail(email);
   const pwStrength = getPasswordStrength(newPassword);
+
+  const [hasClipboard, setHasClipboard] = useState(false);
+
+  // Check clipboard API availability on mount (SSR safe)
+  useEffect(() => {
+    if (typeof navigator !== "undefined" && navigator.clipboard && typeof navigator.clipboard.readText === "function") {
+      setHasClipboard(true);
+    }
+  }, []);
 
   // Countdown timer for resend OTP
   useEffect(() => {
@@ -438,15 +459,43 @@ export default function ForgotPasswordPage() {
     inputRefs.current[nextFocus]?.focus();
   };
 
+  // Mobile 1-Tap Clipboard Quick Paste
+  const handlePasteClipboard = async () => {
+    try {
+      if (!navigator?.clipboard?.readText) return;
+      const pasted = await navigator.clipboard.readText();
+      const cleaned = pasted.replace(/\D/g, "").slice(0, 6);
+      if (!cleaned) return;
+      const chars = cleaned.split("");
+      const updated = ["", "", "", "", "", ""];
+      chars.forEach((c, i) => {
+        if (i < 6) updated[i] = c;
+      });
+      setOtpDigits(updated);
+      setOtp(updated.join(""));
+      const nextFocus = Math.min(chars.length, 5);
+      inputRefs.current[nextFocus]?.focus();
+    } catch {
+      // User dismissed or denied clipboard permission
+    }
+  };
+
   // ── STEP 1: SEND 6-DIGIT SECRET OTP TO GMAIL INBOX ──
   async function handleSendOtp(e: React.FormEvent) {
     e.preventDefault();
-    const normalizedEmail = sanitizeEmail(email);
+    let normalizedEmail = sanitizeEmail(email);
 
     if (!normalizedEmail) {
       setError("College email address is required.");
       return;
     }
+
+    // Smart auto-completion: If user entered username or enrollment without domain, automatically complete it
+    if (!normalizedEmail.includes("@")) {
+      normalizedEmail = `${normalizedEmail}@marwadiuniversity.ac.in`;
+      setEmail(normalizedEmail);
+    }
+
     if (!validateEmail(normalizedEmail)) {
       setError("Only @marwadiuniversity.ac.in email addresses are accepted.");
       return;
@@ -657,9 +706,9 @@ export default function ForgotPasswordPage() {
         {/* ── HIGH-TECH STEP TRACKER WITH RESPONSIVE TYPOGRAPHY ── */}
         {step < 4 && (
           <div className="mb-5 px-0.5">
-            <div className="flex items-center justify-between text-[9.5px] sm:text-[11px] font-mono tracking-wider text-white/50 mb-2.5">
+            <div className="flex items-center justify-between text-[8.5px] min-[360px]:text-[9.5px] sm:text-[11px] font-mono tracking-wider text-white/50 mb-2.5 gap-1">
               <span
-                className={`flex items-center gap-1 sm:gap-1.5 px-1.5 sm:px-2.5 py-1 rounded-md transition-all ${
+                className={`flex items-center gap-1 sm:gap-1.5 px-1.5 sm:px-2.5 py-1 rounded-md transition-all whitespace-nowrap shrink-0 ${
                   step === 1
                     ? "text-emerald-400 bg-emerald-500/15 border border-emerald-500/30 font-bold"
                     : step > 1
@@ -668,14 +717,14 @@ export default function ForgotPasswordPage() {
                 }`}
               >
                 {step === 1 && (
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(0,230,118,1)] animate-pulse" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(0,230,118,1)] animate-pulse shrink-0" />
                 )}
-                {step > 1 && <Check size={11} className="text-emerald-400" />}
+                {step > 1 && <Check size={11} className="text-emerald-400 shrink-0" />}
                 01. EMAIL
               </span>
 
               <span
-                className={`flex items-center gap-1 sm:gap-1.5 px-1.5 sm:px-2.5 py-1 rounded-md transition-all ${
+                className={`flex items-center gap-1 sm:gap-1.5 px-1.5 sm:px-2.5 py-1 rounded-md transition-all whitespace-nowrap shrink-0 ${
                   step === 2
                     ? "text-emerald-400 bg-emerald-500/15 border border-emerald-500/30 font-bold"
                     : step > 2
@@ -684,21 +733,21 @@ export default function ForgotPasswordPage() {
                 }`}
               >
                 {step === 2 && (
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(0,230,118,1)] animate-pulse" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(0,230,118,1)] animate-pulse shrink-0" />
                 )}
-                {step > 2 && <Check size={11} className="text-emerald-400" />}
+                {step > 2 && <Check size={11} className="text-emerald-400 shrink-0" />}
                 02. VERIFY
               </span>
 
               <span
-                className={`flex items-center gap-1 sm:gap-1.5 px-1.5 sm:px-2.5 py-1 rounded-md transition-all ${
+                className={`flex items-center gap-1 sm:gap-1.5 px-1.5 sm:px-2.5 py-1 rounded-md transition-all whitespace-nowrap shrink-0 ${
                   step === 3
                     ? "text-emerald-400 bg-emerald-500/15 border border-emerald-500/30 font-bold"
                     : "text-white/40"
                 }`}
               >
                 {step === 3 && (
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(0,230,118,1)] animate-pulse" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(0,230,118,1)] animate-pulse shrink-0" />
                 )}
                 03. PASSWORD
               </span>
@@ -773,6 +822,11 @@ export default function ForgotPasswordPage() {
                 <input
                   id="forgot-email"
                   type="email"
+                  inputMode="email"
+                  autoCapitalize="none"
+                  autoCorrect="off"
+                  spellCheck={false}
+                  enterKeyHint="send"
                   placeholder="avinash.128203@marwadiuniversity.ac.in"
                   autoComplete="email"
                   required
@@ -797,9 +851,28 @@ export default function ForgotPasswordPage() {
                   </button>
                 )}
               </div>
-              <div className="flex items-center gap-1.5 text-[10.5px] sm:text-[11px] text-white/50 pt-0.5">
-                <Lock size={11} className="text-emerald-400 shrink-0" />
-                <span className="truncate">Strictly restricted to registered Marwadi University students</span>
+
+              {/* Smart Quick-Fill Domain Chip for Mobile Touch Keyboards */}
+              {email.trim().length > 0 && !email.toLowerCase().endsWith("@marwadiuniversity.ac.in") && (
+                <div className="pt-0.5">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const prefix = email.includes("@") ? email.split("@")[0] : email.trim();
+                      setEmail(`${prefix}@marwadiuniversity.ac.in`);
+                      if (error) setError(null);
+                    }}
+                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/35 text-emerald-300 text-[10.5px] sm:text-[11px] font-mono transition-all active:scale-95 cursor-pointer shadow-[0_0_12px_rgba(0,230,118,0.15)] group"
+                  >
+                    <span className="text-emerald-400 font-bold group-hover:scale-110 transition-transform">+</span>
+                    <span>Tap to add <strong className="text-white font-semibold">@marwadiuniversity.ac.in</strong></span>
+                  </button>
+                </div>
+              )}
+
+              <div className="flex items-start gap-1.5 text-[10px] min-[360px]:text-[10.5px] sm:text-[11px] text-white/50 pt-0.5 leading-normal">
+                <Lock size={12} className="text-emerald-400 shrink-0 mt-0.5" />
+                <span>Strictly restricted to registered Marwadi University students</span>
               </div>
             </div>
 
@@ -854,15 +927,27 @@ export default function ForgotPasswordPage() {
               </div>
 
               {/* Recipient Chip Badge */}
-              <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#071712]/90 border border-emerald-500/25 text-xs text-white/70 max-w-full overflow-hidden shadow-[0_0_15px_rgba(0,230,118,0.08)]">
-                <Mail size={13} className="text-emerald-400 shrink-0" />
-                <span className="text-white/40 shrink-0">Sent to:</span>
-                <span className="text-emerald-400 font-mono text-[11px] truncate min-w-0 font-semibold">{email}</span>
+              <div className="flex items-center justify-between gap-2 px-3 py-1.5 rounded-xl bg-[#071712]/90 border border-emerald-500/25 text-xs text-white/70 max-w-full overflow-hidden shadow-[0_0_15px_rgba(0,230,118,0.08)]">
+                <div className="flex items-center gap-1.5 min-w-0 overflow-hidden">
+                  <Mail size={13} className="text-emerald-400 shrink-0" />
+                  <span className="text-white/40 shrink-0 text-[11px]">Sent to:</span>
+                  <span className="text-emerald-400 font-mono text-[11px] truncate min-w-0 font-semibold">{email}</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setStep(1);
+                    setError(null);
+                  }}
+                  className="text-[10.5px] text-emerald-400/80 hover:text-emerald-300 underline font-sans shrink-0 ml-1 cursor-pointer"
+                >
+                  Edit
+                </button>
               </div>
 
               {/* 6-Digit Fluid Adaptive PIN Boxes */}
               <div
-                className="flex items-center justify-between gap-1.5 sm:gap-2.5 pt-2 pb-1 w-full max-w-full"
+                className="flex items-center justify-between gap-1 min-[360px]:gap-1.5 sm:gap-2.5 pt-2 pb-1 w-full max-w-full"
                 onPaste={handleOtpPaste}
               >
                 {otpDigits.map((digit, index) => {
@@ -875,11 +960,13 @@ export default function ForgotPasswordPage() {
                       }}
                       type="text"
                       inputMode="numeric"
+                      pattern="[0-9]*"
+                      autoComplete={index === 0 ? "one-time-code" : "off"}
                       maxLength={1}
                       value={digit}
                       onChange={(e) => handleOtpChange(index, e.target.value)}
                       onKeyDown={(e) => handleOtpKeyDown(index, e)}
-                      className={`flex-1 min-w-0 max-w-[48px] h-12 sm:h-14 rounded-2xl text-center text-lg sm:text-2xl font-mono font-extrabold transition-all duration-200 outline-none ${
+                      className={`flex-1 min-w-0 max-w-[42px] min-[380px]:max-w-[48px] h-11 min-[380px]:h-12 sm:h-14 rounded-xl min-[380px]:rounded-2xl text-center text-base min-[380px]:text-xl sm:text-2xl font-mono font-extrabold transition-all duration-200 outline-none select-all ${
                         digit
                           ? "bg-[#081b15]/90 border-2 border-emerald-400 text-emerald-400 shadow-[0_0_18px_rgba(0,230,118,0.35)]"
                           : isActive
@@ -892,9 +979,18 @@ export default function ForgotPasswordPage() {
                 })}
               </div>
 
-              <p className="text-[10.5px] sm:text-[11px] text-white/45 text-center">
-                Paste or enter the 6-digit code received on your college email
-              </p>
+              <div className="flex items-center justify-between text-[10.5px] sm:text-[11px] text-white/50 px-0.5 pt-0.5">
+                <span className="truncate">Enter 6 digits from Gmail</span>
+                {hasClipboard && (
+                  <button
+                    type="button"
+                    onClick={handlePasteClipboard}
+                    className="text-emerald-400 hover:text-emerald-300 font-semibold transition-colors cursor-pointer shrink-0 ml-2"
+                  >
+                    Paste Code
+                  </button>
+                )}
+              </div>
             </div>
 
             {/* Verify CTA Button */}
@@ -979,6 +1075,11 @@ export default function ForgotPasswordPage() {
                 <Lock className="absolute left-3.5 w-4 h-4 text-white/40 group-focus-within:text-emerald-400 transition-colors pointer-events-none" />
                 <input
                   type={showPassword ? "text" : "password"}
+                  inputMode="text"
+                  autoCapitalize="none"
+                  autoCorrect="off"
+                  spellCheck={false}
+                  enterKeyHint="next"
                   placeholder="At least 6 characters"
                   value={newPassword}
                   onChange={(e) => {
@@ -991,7 +1092,7 @@ export default function ForgotPasswordPage() {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 text-white/40 hover:text-white p-1 transition-colors cursor-pointer"
+                  className="absolute right-1 text-white/40 hover:text-white p-2.5 transition-colors cursor-pointer rounded-lg flex items-center justify-center min-w-[40px] min-h-[40px]"
                 >
                   {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
@@ -1021,6 +1122,11 @@ export default function ForgotPasswordPage() {
                 <Lock className="absolute left-3.5 w-4 h-4 text-white/40 group-focus-within:text-emerald-400 transition-colors pointer-events-none" />
                 <input
                   type={showPassword ? "text" : "password"}
+                  inputMode="text"
+                  autoCapitalize="none"
+                  autoCorrect="off"
+                  spellCheck={false}
+                  enterKeyHint="done"
                   placeholder="Repeat new password"
                   value={confirmPassword}
                   onChange={(e) => {
