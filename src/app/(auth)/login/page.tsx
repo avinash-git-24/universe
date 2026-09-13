@@ -233,12 +233,11 @@ function LoginForm() {
         // ignore
       }
 
+      setLoading(false);
       setIsSuccess(true);
       const redirectTarget = searchParams.get("redirectTo") ?? ROUTES.DASHBOARD;
-      setTimeout(() => {
-        router.refresh();
-        router.push(redirectTarget);
-      }, 500);
+      router.refresh();
+      router.push(redirectTarget);
     } catch (err: any) {
       setLoading(false);
       setErrors({ form: err?.message || "Failed to sign in. Please try again." });
@@ -494,15 +493,15 @@ function LoginForm() {
               {/* Diagonal Shimmer Sweep on Hover */}
               <div className="absolute inset-0 -translate-x-full group-hover/btn:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/30 to-transparent pointer-events-none" />
 
-              {loading ? (
-                <>
-                  <span className="w-4 h-4 border-2 border-[#022c22]/30 border-t-[#022c22] rounded-full animate-spin" />
-                  <span>Authenticating Student ID...</span>
-                </>
-              ) : isSuccess ? (
+              {isSuccess ? (
                 <>
                   <CheckCircle2 size={17} className="text-[#022c22]" />
                   <span>Access Granted</span>
+                </>
+              ) : loading ? (
+                <>
+                  <span className="w-4 h-4 border-2 border-[#022c22]/30 border-t-[#022c22] rounded-full animate-spin" />
+                  <span>Authenticating Student ID...</span>
                 </>
               ) : (
                 <>
