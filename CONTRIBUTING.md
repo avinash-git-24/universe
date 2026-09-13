@@ -49,3 +49,17 @@ Commit messages must be clear, concise, and written in the imperative mood:
 - **Styling**: Use Tailwind CSS utility classes alongside existing CSS variable tokens (`var(--color-primary)`).
 - **Accessibility**: Enforce ARIA roles, `focus-visible` outline rings, and keyboard navigation (`onKeyDown` Enter/Space triggers).
 - **Security**: Always sanitize user input (`sanitizeString`) and validate redirect paths (`isSafeRedirectUrl`).
+
+---
+
+## 👥 Collaboration & Co-Authoring
+
+We actively encourage collaborative development and pair programming on UniVerse!
+When co-authoring commits with team members, include the Git co-author trailer at the end of your commit message:
+
+```text
+Co-authored-by: Name <username@users.noreply.github.com>
+```
+
+This ensures proper attribution across GitHub profiles, contribution graphs, and repository insights.
+
