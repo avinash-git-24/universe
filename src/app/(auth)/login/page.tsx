@@ -236,8 +236,9 @@ function LoginForm() {
       setLoading(false);
       setIsSuccess(true);
       const redirectTarget = searchParams.get("redirectTo") ?? ROUTES.DASHBOARD;
-      router.refresh();
-      router.push(redirectTarget);
+      setTimeout(() => {
+        window.location.href = redirectTarget;
+      }, 400);
     } catch (err: any) {
       setLoading(false);
       setErrors({ form: err?.message || "Failed to sign in. Please try again." });
