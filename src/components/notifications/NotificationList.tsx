@@ -7,10 +7,8 @@ import {
   CheckCircle2, 
   MapPin, 
   AlertCircle, 
-  Info, 
   Truck, 
   Bike, 
-  BellRing, 
   FileText, 
   Trash2, 
   BellOff 

@@ -11,8 +11,6 @@ import {
   Utensils,
   BookOpen,
   Laptop,
-  Radio,
-  Sparkles,
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { MyRequestTimeline } from "../requests/MyRequestTimeline";

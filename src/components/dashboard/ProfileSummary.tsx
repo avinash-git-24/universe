@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Mail, Phone, Edit, ShieldCheck } from "lucide-react";
+import { Mail, Phone, Edit } from "lucide-react";
 import type { Profile } from "@/lib/database/requests";
 import { formatStudentName } from "@/lib/utils";
 

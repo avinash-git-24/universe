@@ -53,7 +53,7 @@ async function ListingContent({ id }: { id: string }) {
   let listing;
   try {
     listing = await getResaleListingById(supabase, id);
-  } catch (_error) {
+  } catch {
     // If unauthorized or database error, show error page
     return <ResaleDetailError />;
   }

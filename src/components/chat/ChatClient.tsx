@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
-import { MessageSquare, Zap, X, ArrowRight, MessageCircle } from "lucide-react";
+import { MessageSquare, Zap, X, ArrowRight } from "lucide-react";
 import { 
   ConversationWithDetails, 
   getConversationById,

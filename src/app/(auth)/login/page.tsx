@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, Suspense, useRef } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { ROUTES } from "@/constants/routes";
@@ -128,7 +128,6 @@ function TechField({
 
 // ─── Login Form Component ──────────────────────────────────────────────────────
 function LoginForm() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const passwordInputRef = useRef<HTMLInputElement>(null);
 

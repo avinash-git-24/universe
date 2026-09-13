@@ -1,6 +1,3 @@
-import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
-
 export function ResaleDetailSkeleton() {
   return (
     <div className="min-h-[calc(100vh-4rem)] bg-background">

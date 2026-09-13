@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 
 /**
  * Option 3: Modern Tech Dot-Grid + Spotlight Beam (Enhanced Edition)
@@ -31,7 +31,6 @@ export default function TechSpotlightBackground() {
     let curMouseY = Math.min(height * 0.45, 420);
     let targetMouseX = curMouseX;
     let targetMouseY = curMouseY;
-    let isUserActive = false;
     let lastActiveTime = Date.now();
 
     const handleResize = () => {
@@ -44,7 +43,6 @@ export default function TechSpotlightBackground() {
     const updatePointer = (x: number, y: number) => {
       targetMouseX = x;
       targetMouseY = y;
-      isUserActive = true;
       lastActiveTime = Date.now();
     };
 

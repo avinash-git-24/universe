@@ -1,7 +1,7 @@
 "use client";
 
 import { ReactNode } from "react";
-import { ArrowDownRight, ArrowUpRight, Minus, CheckCircle2 } from "lucide-react";
+import { ArrowDownRight, ArrowUpRight } from "lucide-react";
 
 interface StatCardProps {
   title: string;

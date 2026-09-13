@@ -13,7 +13,6 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, Zap, ArrowRight } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { ROUTES } from "@/constants/routes";
 import { createClient } from "@/lib/supabase/client";
 import { LogoutButton } from "@/components/auth/LogoutButton";

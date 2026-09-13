@@ -1,6 +1,6 @@
 "use client";
 
-import { Calculator, TrendingUp, TrendingDown, CheckCircle2, XCircle, IndianRupee } from "lucide-react";
+import { Calculator, TrendingUp, TrendingDown, CheckCircle2, XCircle } from "lucide-react";
 
 interface AnalyticsSummaryBarProps {
   avgSpending: number;

@@ -1,19 +1,18 @@
 "use client";
 
-import { useState, useEffect, useRef, useTransition } from "react";
+import { useState, useEffect, useTransition } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import {
   getMyResaleListings,
   getSignedImageUrls,
   type ResaleListingWithImages,
-  type ResaleListingRow,
 } from "@/lib/database/resale";
 import { ResaleListingCard } from "./ResaleListingCard";
 import { ResaleSkeleton } from "./ResaleSkeleton";
 import { ResaleEmptyState } from "./ResaleEmptyState";
 import { ResaleErrorState } from "./ResaleErrorState";
-import { Edit2, Package, Tag, Layers, RefreshCw } from "lucide-react";
+import { Edit2, Package, RefreshCw } from "lucide-react";
 
 // ─── State Type ───────────────────────────────────────────────────────────────
 

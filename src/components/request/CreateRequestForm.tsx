@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import {
   Plus,
   Minus,
@@ -210,7 +209,6 @@ const POPULAR_ITEMS: Record<Category, QuickItem[]> = {
 };
 
 export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
-  const router = useRouter();
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);

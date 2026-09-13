@@ -13,8 +13,6 @@ interface StatsCardProps {
 
 export const StatsCard = memo(function StatsCard({
   label, value, icon: Icon,
-  gradient = "rgba(10,15,12,0.4)",
-  iconBg = "rgba(0,230,118,0.1)",
   trend,
 }: StatsCardProps) {
   const isActiveCard = label.toLowerCase().includes("active") && value > 0;
