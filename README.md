@@ -166,6 +166,13 @@ See [TESTING.md](TESTING.md) for testing guidelines and mock helpers.
 
 ---
 
+## 🤝 Community & Collaboration
+
+We welcome open-source contributions to UniVerse! Check out [CONTRIBUTING.md](CONTRIBUTING.md) to get started with issue discussions, feature requests, and pull requests.
+
+---
+
 ## 📜 License
 
 This project is licensed under the [MIT License](LICENSE).
+
