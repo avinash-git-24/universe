@@ -15,6 +15,7 @@ services:
     environment:
       NODE_ENV: production
       PORT: 3000
+      NODE_OPTIONS: "--max-http-header-size=65536"
       SUPABASE_INTERNAL_URL: ${SUPABASE_INTERNAL_URL:-http://host.docker.internal:54321}
     extra_hosts:
       - "host.docker.internal:host-gateway"

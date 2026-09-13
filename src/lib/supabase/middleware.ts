@@ -68,19 +68,18 @@ export async function updateSession(request: NextRequest) {
         getAll() {
           const all = request.cookies.getAll();
           const hasCustom = all.some((c) => c.name.startsWith("universe-auth-token"));
-          if (!hasCustom) {
-            const legacy = all.filter((c) => c.name.startsWith("sb-127-auth-token") || c.name.startsWith("sb-localhost-auth-token"));
-            if (legacy.length > 0) {
-              return [
-                ...all,
-                ...legacy.map((c) => ({
-                  name: c.name.replace(/sb-(?:127|localhost)-auth-token/, "universe-auth-token"),
-                  value: c.value,
-                })),
-              ];
-            }
+          if (hasCustom) {
+            return all.filter((c) => !(c.name.startsWith("sb-") && c.name.includes("auth-token")));
           }
-          return all;
+          return all.map((c) => {
+            if (c.name.startsWith("sb-") && c.name.includes("auth-token")) {
+              return {
+                name: c.name.replace(/^sb-.*-auth-token/, "universe-auth-token"),
+                value: c.value,
+              };
+            }
+            return c;
+          });
         },
         setAll(cookiesToSet) {
           cookiesToSet.forEach(({ name, value }) =>
@@ -119,8 +118,32 @@ export async function updateSession(request: NextRequest) {
         secure: cookie.secure,
       });
     });
+
+    // If unauthenticated, aggressively clear any stale/corrupted auth tokens
+    if (!user) {
+      request.cookies.getAll()
+        .filter((c) => c.name.includes("auth-token") || c.name.startsWith("sb-"))
+        .forEach((c) => {
+          redirectRes.cookies.set(c.name, "", { maxAge: 0, path: "/" });
+        });
+    } else {
+      // Expire legacy cookies to keep headers small
+      request.cookies.getAll()
+        .filter((c) => (c.name.startsWith("sb-") && c.name.includes("auth-token")) || c.name.startsWith("sb-127") || c.name.startsWith("sb-localhost") || c.name.startsWith("sb-host"))
+        .forEach((c) => {
+          redirectRes.cookies.set(c.name, "", { maxAge: 0, path: "/" });
+        });
+    }
+
     return redirectRes;
   };
+
+  // Also expire legacy cookies on normal responses
+  request.cookies.getAll()
+    .filter((c) => (c.name.startsWith("sb-") && c.name.includes("auth-token")) || c.name.startsWith("sb-127") || c.name.startsWith("sb-localhost") || c.name.startsWith("sb-host"))
+    .forEach((c) => {
+      supabaseResponse.cookies.set(c.name, "", { maxAge: 0, path: "/" });
+    });
 
   // 1. Protected routes protection
   if (isProtectedRoute) {
