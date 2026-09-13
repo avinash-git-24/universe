@@ -168,7 +168,7 @@ See [TESTING.md](TESTING.md) for testing guidelines and mock helpers.
 
 ## 🤝 Community & Collaboration
 
-We welcome open-source contributions to UniVerse! Check out [CONTRIBUTING.md](CONTRIBUTING.md) to get started with issue discussions, feature requests, and pull requests.
+We welcome open-source contributions to UniVerse! Check out [CONTRIBUTING.md](CONTRIBUTING.md) to get started with issue discussions, feature requests, and pull requests. Built with active open-source collaboration across the campus community.
 
 ---
 
