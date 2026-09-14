@@ -176,3 +176,9 @@ We welcome open-source contributions to UniVerse! Check out [CONTRIBUTING.md](CO
 
 This project is licensed under the [MIT License](LICENSE).
 
+---
+
+## ⭐ Show Your Support
+
+If you find UniVerse helpful or interesting, please consider giving the repository a star!
+
