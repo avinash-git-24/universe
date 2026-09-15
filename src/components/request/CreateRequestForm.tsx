@@ -517,6 +517,24 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
         }
       }
 
+      // Notify requester that request was created & broadcasting on campus radar
+      try {
+        const itemSummary = items.map((i) => i.name).join(", ");
+        await fetch("/api/notifications/create", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            userId: currentUserId,
+            title: "🚀 Request Broadcasted",
+            message: `Your request for ${itemSummary || "items"} is live on campus radar! Looking for nearby runners.`,
+            type: "status_broadcasted",
+            referenceId: request.id,
+          }),
+        });
+      } catch (notifErr) {
+        console.error("Non-blocking notification create error:", notifErr);
+      }
+
       // Redirect immediately to live tracking page
       window.location.href = `/dashboard/requests/${request.id}`;
     } catch (error) {

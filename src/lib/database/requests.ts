@@ -289,6 +289,19 @@ export async function acceptRequest(
         p_other_user_id: reqData.requester_id,
         p_request_id: requestId,
       });
+
+      // Send immediate notification to requester
+      fetch("/api/notifications/create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId: reqData.requester_id,
+          title: "🎉 Request Accepted!",
+          message: "A campus runner has accepted your delivery request and is on the way!",
+          type: "status_accepted",
+          referenceId: requestId,
+        }),
+      }).catch((e) => console.error("Non-blocking notification error on accept:", e));
     }
   } catch (convErr) {
     console.error("Non-blocking error initializing conversation on accept:", convErr);

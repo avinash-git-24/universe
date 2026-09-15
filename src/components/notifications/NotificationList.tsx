@@ -177,6 +177,12 @@ export function NotificationList({ onClose }: NotificationListProps) {
         glow: "bg-amber-500/15 border-amber-500/30",
       };
     }
+    if (t === "status_broadcasted" || t.includes("broadcast")) {
+      return {
+        icon: <Radio size={16} className="text-[#00E676] animate-pulse" />,
+        glow: "bg-emerald-500/20 border-emerald-500/40 shadow-[0_0_12px_rgba(0,230,118,0.3)]",
+      };
+    }
 
     const cat = getCategory(notif);
     if (cat === "delivery") {

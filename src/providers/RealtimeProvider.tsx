@@ -109,8 +109,61 @@ export function RealtimeProvider({ children, userId }: { children: ReactNode; us
 
     const supabase = createClient();
 
-    // 1. Initial notifications fetch
-    getUserNotifications(supabase, currentUserId).then((data) => {
+    // 1. Initial notifications fetch with active request auto-sync
+    getUserNotifications(supabase, currentUserId).then(async (data) => {
+      try {
+        const { data: activeReqs } = await supabase
+          .from("delivery_requests")
+          .select("id, status, created_at, items:request_items(name)")
+          .eq("requester_id", currentUserId)
+          .in("status", ["pending", "accepted", "picked_up", "in_transit"])
+          .order("created_at", { ascending: false })
+          .limit(3);
+
+        if (activeReqs && activeReqs.length > 0) {
+          for (const req of activeReqs) {
+            const hasNotif = data.some((n) => n.reference_id === req.id);
+            if (!hasNotif) {
+              const itemNames =
+                (req.items as any[])?.map((i: any) => i.name).join(", ") || "Delivery Request";
+              const isAccepted = req.status === "accepted";
+              const isPending = req.status === "pending";
+              const title = isAccepted
+                ? "🎉 Request Accepted!"
+                : isPending
+                ? "🚀 Request Broadcasted"
+                : "🛵 Order In Transit";
+              const message = isAccepted
+                ? `A student runner has accepted your order for ${itemNames}!`
+                : isPending
+                ? `Your request for ${itemNames} is live on campus radar! Looking for runners.`
+                : `Your order for ${itemNames} is on the way.`;
+
+              const res = await fetch("/api/notifications/create", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  userId: currentUserId,
+                  title,
+                  message,
+                  type: isAccepted ? "status_accepted" : "status_broadcasted",
+                  referenceId: req.id,
+                }),
+              });
+
+              if (res.ok) {
+                const resJson = await res.json();
+                if (resJson.notification) {
+                  data = [resJson.notification, ...data];
+                }
+              }
+            }
+          }
+        }
+      } catch (checkErr) {
+        console.error("Active request notification sync error:", checkErr);
+      }
+
       setNotifications(data);
     });
 
@@ -157,6 +210,15 @@ export function RealtimeProvider({ children, userId }: { children: ReactNode; us
               title: "✅ Order Delivered!",
               message: newNotif.message || "Your items have been delivered successfully.",
               actionLabel: "View Details",
+              actionUrl: refId ? `/dashboard/requests/${refId}` : "/dashboard/requests",
+            });
+          } else if (notifType === "status_broadcasted") {
+            sounds.playSend();
+            showToast({
+              type: "system",
+              title: newNotif.title || "🚀 Request Broadcasted",
+              message: newNotif.message || "Your request is live on campus radar!",
+              actionLabel: "Track Radar",
               actionUrl: refId ? `/dashboard/requests/${refId}` : "/dashboard/requests",
             });
           } else {
