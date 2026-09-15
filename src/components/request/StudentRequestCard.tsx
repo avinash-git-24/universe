@@ -2,6 +2,8 @@
 
 import { memo, useState } from "react";
 import { formatDistanceToNow } from "date-fns";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   Package,
   MapPin,
@@ -11,6 +13,7 @@ import {
   Utensils,
   BookOpen,
   Laptop,
+  Radio,
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { MyRequestTimeline } from "../requests/MyRequestTimeline";
@@ -107,6 +110,7 @@ export const StudentRequestCard = memo(function StudentRequestCard({
   className,
 }: StudentRequestCardProps) {
   const [copied, setCopied] = useState(false);
+  const router = useRouter();
 
   const itemCount = request.items.reduce((acc, item) => acc + item.quantity, 0);
   const itemNames = request.items.map((i) => i.name).join(", ");
@@ -125,20 +129,28 @@ export const StudentRequestCard = memo(function StudentRequestCard({
     }
   };
 
+  const handleCardClick = () => {
+    if (isActive) {
+      router.push(`/dashboard/requests/${request.id}`);
+    } else if (onClick) {
+      onClick();
+    }
+  };
+
   return (
     <Card
-      onClick={onClick}
-      role={onClick ? "button" : undefined}
-      tabIndex={onClick ? 0 : undefined}
-      aria-label={onClick ? `View details for request: ${itemNames}` : undefined}
+      onClick={handleCardClick}
+      role="button"
+      tabIndex={0}
+      aria-label={`View details for request: ${itemNames}`}
       onKeyDown={(e) => {
-        if (onClick && (e.key === "Enter" || e.key === " ")) {
+        if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
-          onClick();
+          handleCardClick();
         }
       }}
       className={cn(
-        "w-full flex flex-col lg:flex-row overflow-hidden transition-all duration-300 focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-none bg-[#0b110e]/90 border rounded-[22px] relative group backdrop-blur-xl",
+        "w-full flex flex-col lg:flex-row overflow-hidden transition-all duration-300 focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-none bg-[#0b110e]/90 border rounded-[22px] relative group backdrop-blur-xl cursor-pointer",
         isActive
           ? isInTransit
             ? "border-blue-500/40 shadow-[0_0_35px_rgba(59,130,246,0.08)] hover:border-blue-400/60 hover:shadow-[0_0_50px_rgba(59,130,246,0.16)]"
@@ -299,38 +311,58 @@ export const StudentRequestCard = memo(function StudentRequestCard({
                     <a
                       href={`/dashboard/chat?requestId=${request.id}&startWithUserId=${runner.id}`}
                       onClick={(e) => e.stopPropagation()}
-                      className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-400 hover:from-emerald-400 hover:to-emerald-300 text-black font-bold text-xs shadow-lg shadow-emerald-950/50 hover:shadow-emerald-500/30 hover:brightness-105 active:scale-[0.98] transition-all cursor-pointer z-10 w-full sm:w-auto text-center"
+                      className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl bg-white/[0.06] hover:bg-white/[0.1] border border-white/10 text-white font-bold text-xs shadow transition-all cursor-pointer z-10 w-full sm:w-auto text-center"
                     >
-                      💬 Message Runner
+                      💬 Message
                     </a>
-                    {onClick && (
-                      <div className="w-[36px] h-[36px] rounded-xl bg-[#131b17] border border-[#1c2420] flex items-center justify-center text-white/40 group-hover:text-white group-hover:bg-[#1a241f] group-hover:border-white/10 transition-all shrink-0">
-                        <svg
-                          width="20"
-                          height="20"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2.5"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          <path d="m9 18 6-6-6-6" />
-                        </svg>
-                      </div>
-                    )}
+                    <Link
+                      href={`/dashboard/requests/${request.id}`}
+                      onClick={(e) => e.stopPropagation()}
+                      className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-400 hover:from-emerald-400 hover:to-emerald-300 text-black font-black text-xs shadow-[0_0_15px_rgba(0,230,118,0.3)] transition-all cursor-pointer whitespace-nowrap active:scale-95"
+                    >
+                      <Radio className="w-3.5 h-3.5 animate-pulse" />
+                      <span>Live Tracker ➔</span>
+                    </Link>
                   </div>
                 </div>
               );
             }
 
-            if (onClick) {
-              return request.status === "in_transit" ? (
-                <div className="px-5 py-2.5 rounded-xl bg-blue-500/10 border border-blue-500/50 text-blue-400 text-[13px] font-bold hover:bg-blue-500/20 transition-all cursor-pointer text-center whitespace-nowrap w-full lg:w-auto shadow-[0_0_15px_rgba(59,130,246,0.2)]">
-                  Track Delivery ➔
+            if (isActive) {
+              return (
+                <div className="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-end">
+                  <Link
+                    href={`/dashboard/requests/${request.id}`}
+                    onClick={(e) => e.stopPropagation()}
+                    className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-400 hover:from-emerald-400 hover:to-emerald-300 text-black font-black text-xs shadow-[0_0_20px_rgba(16,185,129,0.35)] hover:shadow-[0_0_30px_rgba(16,185,129,0.5)] transition-all cursor-pointer whitespace-nowrap active:scale-95"
+                  >
+                    <Radio className="w-3.5 h-3.5 animate-pulse" />
+                    <span>Open Live Radar ➔</span>
+                  </Link>
+                  {onClick && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onClick();
+                      }}
+                      title="Request Details"
+                      type="button"
+                      className="px-3 py-2 rounded-xl bg-white/[0.04] border border-white/10 text-white/70 hover:text-white hover:bg-white/[0.08] hover:border-white/20 text-xs font-semibold transition-all shrink-0"
+                    >
+                      Details
+                    </button>
+                  )}
                 </div>
-              ) : (
-                <div className="w-[36px] sm:w-[42px] h-[36px] sm:h-[42px] rounded-xl bg-[#131b17] border border-[#1c2420] flex items-center justify-center text-white/40 group-hover:text-white group-hover:bg-[#1a241f] group-hover:border-white/10 transition-all ml-auto">
+              );
+            }
+
+            if (onClick) {
+              return (
+                <button
+                  onClick={onClick}
+                  type="button"
+                  className="w-[36px] sm:w-[42px] h-[36px] sm:h-[42px] rounded-xl bg-[#131b17] border border-[#1c2420] flex items-center justify-center text-white/40 group-hover:text-white group-hover:bg-[#1a241f] group-hover:border-white/10 transition-all ml-auto"
+                >
                   <svg
                     width="20"
                     height="20"
@@ -343,7 +375,7 @@ export const StudentRequestCard = memo(function StudentRequestCard({
                   >
                     <path d="m9 18 6-6-6-6" />
                   </svg>
-                </div>
+                </button>
               );
             }
 

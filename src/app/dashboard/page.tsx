@@ -15,6 +15,9 @@ import type { Metadata } from "next";
 import LazySpaceBackground from "@/components/auth/LazySpaceBackground";
 import { formatStudentName, cn } from "@/lib/utils";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export const metadata: Metadata = {
   title: "Dashboard · UniVerse",
   description: "Your UniVerse campus dashboard.",

@@ -40,6 +40,7 @@ export function Sidebar() {
   const router = useRouter();
   const isProfilePage = pathname === "/dashboard/profile";
   const [unreadCount, setUnreadCount] = useState(0);
+  const [activeRequestsCount, setActiveRequestsCount] = useState(0);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
 
   // Toast Notification State
@@ -99,6 +100,14 @@ export function Sidebar() {
         );
         setUnreadCount(counts.reduce((acc, c) => acc + c, 0));
       }
+
+      // Active requests count
+      const { count: reqCount } = await supabase
+        .from("delivery_requests")
+        .select("*", { count: "exact", head: true })
+        .eq("requester_id", userId)
+        .in("status", ["pending", "accepted", "picked_up", "in_transit"]);
+      setActiveRequestsCount(reqCount || 0);
     }
 
     init();
@@ -144,6 +153,32 @@ export function Sidebar() {
           }
         }
       )
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "delivery_requests" },
+        async () => {
+          if (!userId) return;
+          const { count: freshReqCount } = await supabase
+            .from("delivery_requests")
+            .select("*", { count: "exact", head: true })
+            .eq("requester_id", userId)
+            .in("status", ["pending", "accepted", "picked_up", "in_transit"]);
+          setActiveRequestsCount(freshReqCount || 0);
+        }
+      )
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "delivery_assignments" },
+        async () => {
+          if (!userId) return;
+          const { count: freshReqCount } = await supabase
+            .from("delivery_requests")
+            .select("*", { count: "exact", head: true })
+            .eq("requester_id", userId)
+            .in("status", ["pending", "accepted", "picked_up", "in_transit"]);
+          setActiveRequestsCount(freshReqCount || 0);
+        }
+      )
       .subscribe();
 
     return () => {
@@ -176,7 +211,13 @@ export function Sidebar() {
                   {unreadCount > 99 ? "99+" : unreadCount}
                 </div>
               )}
-              {item.dot && item.name !== "Chat" && (
+              {item.name === "My Requests" && activeRequestsCount > 0 && (
+                <div className="ml-auto flex items-center gap-1.5 bg-emerald-500/20 text-[#00E676] border border-emerald-500/40 text-[10px] font-black px-2 py-0.5 rounded-full shadow-[0_0_10px_rgba(0,230,118,0.3)]">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#00E676] animate-pulse" />
+                  <span>{activeRequestsCount} live</span>
+                </div>
+              )}
+              {item.dot && item.name !== "Chat" && item.name !== "My Requests" && (
                 <div className="absolute right-4 w-1.5 h-1.5 rounded-full bg-[#00E676] shadow-[0_0_5px_#00E676]" />
               )}
             </div>
@@ -221,6 +262,15 @@ export function Sidebar() {
         </Link>
 
         <div className="flex items-center gap-2">
+          {activeRequestsCount > 0 && (
+            <Link
+              href="/dashboard/requests"
+              className="px-2.5 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-[#00E676] text-xs font-bold flex items-center gap-1.5 shadow-[0_0_10px_rgba(0,230,118,0.2)]"
+            >
+              <span className="w-1.5 h-1.5 rounded-full bg-[#00E676] animate-pulse" />
+              <span>{activeRequestsCount} Active</span>
+            </Link>
+          )}
           {unreadCount > 0 && (
             <Link
               href="/dashboard/chat"

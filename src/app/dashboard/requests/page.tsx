@@ -10,6 +10,9 @@ import { RequestList } from "@/components/requests/RequestList";
 import { NotificationBell } from "@/components/notifications/NotificationBell";
 import type { Metadata } from "next";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export const metadata: Metadata = {
   title: "My Requests · UniVerse",
   description: "View and manage all your delivery requests.",

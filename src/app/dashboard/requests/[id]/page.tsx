@@ -8,6 +8,9 @@ import { ROUTES } from "@/constants/routes";
 import { RequestLiveTracker } from "@/components/requests/RequestLiveTracker";
 import type { Metadata } from "next";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export const metadata: Metadata = {
   title: "Live Order Tracking · UniVerse",
   description: "Real-time tracking of your campus delivery request.",

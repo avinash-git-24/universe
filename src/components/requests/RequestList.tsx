@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import { format } from "date-fns";
-import { MapPin, Package, Clock, IndianRupee, MessageSquare, CheckCircle2, History, AlertCircle, Search, SlidersHorizontal } from "lucide-react";
+import { MapPin, Package, Clock, IndianRupee, MessageSquare, CheckCircle2, History, AlertCircle, Search, SlidersHorizontal, Radio, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Database } from "@/types/database";
-import type { StudentRequestWithDetails } from "@/lib/database/requests";
+import { getStudentRequests, type StudentRequestWithDetails } from "@/lib/database/requests";
+import { createClient } from "@/lib/supabase/client";
 import { StudentRequestCard } from "@/components/request/StudentRequestCard";
 import { RequestFilters } from "./RequestFilters";
 import { Pagination } from "./Pagination";
@@ -36,6 +37,7 @@ interface RequestListProps {
 const ITEMS_PER_PAGE = 5;
 
 export function RequestList({ initialRequests }: RequestListProps) {
+  const [requests, setRequests] = useState<StudentRequestWithDetails[]>(initialRequests);
   const [activeTab, setActiveTab] = useState<CategoryTab>("active");
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<RequestStatus | "all">("all");
@@ -43,19 +45,65 @@ export function RequestList({ initialRequests }: RequestListProps) {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedRequest, setSelectedRequest] = useState<StudentRequestWithDetails | null>(null);
 
+  // Sync with initialRequests when prop updates
+  useEffect(() => {
+    setRequests(initialRequests);
+  }, [initialRequests]);
+
+  // Realtime Supabase updates: auto-refresh when runner accepts or status changes
+  useEffect(() => {
+    const supabase = createClient();
+    const channel = supabase
+      .channel("student_requests_list_realtime")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "delivery_requests" },
+        async () => {
+          const { data: { user } } = await supabase.auth.getUser();
+          if (user) {
+            const fresh = await getStudentRequests(supabase, user.id);
+            setRequests(fresh);
+          }
+        }
+      )
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "delivery_assignments" },
+        async () => {
+          const { data: { user } } = await supabase.auth.getUser();
+          if (user) {
+            const fresh = await getStudentRequests(supabase, user.id);
+            setRequests(fresh);
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
+
   // Category counts
   const counts = useMemo(() => {
-    const active = initialRequests.filter((r) =>
+    const active = requests.filter((r) =>
       ["pending", "accepted", "picked_up", "in_transit"].includes(r.status)
     ).length;
-    const completed = initialRequests.filter((r) => r.status === "delivered").length;
-    const cancelled = initialRequests.filter((r) => r.status === "cancelled").length;
-    return { active, completed, cancelled, all: initialRequests.length };
-  }, [initialRequests]);
+    const completed = requests.filter((r) => r.status === "delivered").length;
+    const cancelled = requests.filter((r) => r.status === "cancelled").length;
+    return { active, completed, cancelled, all: requests.length };
+  }, [requests]);
+
+  // Active in-flight requests (pinned at top so user NEVER loses their live radar)
+  const activeRequests = useMemo(() => {
+    return requests.filter((r) =>
+      ["pending", "accepted", "picked_up", "in_transit"].includes(r.status)
+    );
+  }, [requests]);
 
   // Filter and Search Logic
   const filteredRequests = useMemo(() => {
-    return initialRequests
+    return requests
       .filter((req) => {
         // Tab Category Filter
         if (activeTab === "active" && !["pending", "accepted", "picked_up", "in_transit"].includes(req.status)) {
@@ -92,7 +140,7 @@ export function RequestList({ initialRequests }: RequestListProps) {
         const dateB = new Date(b.created_at).getTime();
         return sortBy === "newest" ? dateB - dateA : dateA - dateB;
       });
-  }, [initialRequests, activeTab, statusFilter, searchQuery, sortBy]);
+  }, [requests, activeTab, statusFilter, searchQuery, sortBy]);
 
   // Pagination Logic
   const totalPages = Math.max(1, Math.ceil(filteredRequests.length / ITEMS_PER_PAGE));
@@ -119,6 +167,49 @@ export function RequestList({ initialRequests }: RequestListProps) {
 
   return (
     <div className="space-y-4 sm:space-y-6">
+      {/* ── Active Order Live Radar HUD Banner (Pinned so user can return anytime) ── */}
+      {activeRequests.length > 0 && (
+        <div className="relative overflow-hidden p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-emerald-950/80 via-[#0a1e12] to-emerald-950/80 border-2 border-emerald-500/40 shadow-[0_0_35px_rgba(0,230,118,0.18)]">
+          <div className="absolute -top-12 -right-12 w-48 h-48 bg-emerald-500/20 rounded-full blur-2xl pointer-events-none" />
+
+          <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="flex items-start gap-3.5">
+              <div className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-500/20 border border-emerald-500/40 text-[#00E676] shadow-[0_0_15px_rgba(0,230,118,0.25)]">
+                <Radio className="h-5 w-5 animate-pulse" />
+                <span className="animate-ping absolute -top-1 -right-1 h-3 w-3 rounded-full bg-emerald-400 opacity-75" />
+              </div>
+              <div className="space-y-1">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="text-[10px] sm:text-[11px] font-mono font-black text-[#00E676] uppercase tracking-wider bg-emerald-500/15 px-2.5 py-0.5 rounded-full border border-emerald-500/30">
+                    ● Live Radar Active
+                  </span>
+                  <span className="text-xs text-white/50 font-mono">
+                    ID: #{activeRequests[0].id.substring(0, 8).toUpperCase()}
+                  </span>
+                </div>
+                <h3 className="text-sm sm:text-base font-extrabold text-white">
+                  {activeRequests[0].items?.map((i) => i.name).join(", ") || "Delivery Request"}
+                </h3>
+                <p className="text-xs text-slate-300">
+                  {activeRequests[0].status === "pending"
+                    ? "Broadcasting on campus radar... Tap to view live radar & see if any student runner accepts."
+                    : activeRequests[0].status === "accepted"
+                    ? "Runner matched! Tap to track delivery progress in real time."
+                    : "Runner is on the way! Tap to track live order on campus map."}
+                </p>
+              </div>
+            </div>
+
+            <Link
+              href={`/dashboard/requests/${activeRequests[0].id}`}
+              className="w-full sm:w-auto shrink-0 inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-[#00E676] hover:bg-emerald-400 text-[#041208] font-black text-xs sm:text-sm shadow-[0_0_20px_rgba(0,230,118,0.4)] hover:shadow-[0_0_30px_rgba(0,230,118,0.6)] transition-all active:scale-95 whitespace-nowrap cursor-pointer"
+            >
+              <Radio className="w-4 h-4 text-black animate-pulse" />
+              <span>Open Live Radar Screen ➔</span>
+            </Link>
+          </div>
+        </div>
+      )}
       {/* Category Tabs (Single row horizontal scroll on mobile) */}
       <div className="flex items-center gap-2 sm:gap-3 pb-2 sm:pb-5 overflow-x-auto no-scrollbar scrollbar-none">
         <button
@@ -391,15 +482,23 @@ export function RequestList({ initialRequests }: RequestListProps) {
               })()}
             </ModalBody>
 
-            <ModalFooter className="flex justify-between items-center">
-              <div>
+            <ModalFooter className="flex flex-col sm:flex-row justify-between items-center gap-3">
+              <div className="w-full sm:w-auto">
+                <Link href={`/dashboard/requests/${selectedRequest.id}`} className="w-full sm:w-auto block">
+                  <Button className="w-full sm:w-auto bg-[#00E676] hover:bg-emerald-400 text-[#041208] font-black text-xs sm:text-sm gap-2 shadow-[0_0_15px_rgba(0,230,118,0.3)]">
+                    <Radio className="w-4 h-4 animate-pulse text-black" />
+                    <span>Open Live Radar & Tracking Screen ➔</span>
+                  </Button>
+                </Link>
+              </div>
+              <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
                 {selectedRequest.status === "pending" && (
                   <CancelRequestButton requestId={selectedRequest.id} />
                 )}
+                <Button variant="secondary" onClick={() => setSelectedRequest(null)}>
+                  Close
+                </Button>
               </div>
-              <Button variant="secondary" onClick={() => setSelectedRequest(null)}>
-                Close
-              </Button>
             </ModalFooter>
           </ModalContent>
         )}
