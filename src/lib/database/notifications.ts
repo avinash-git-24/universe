@@ -86,3 +86,23 @@ export async function deleteNotification(
 
   return true;
 }
+
+/**
+ * Clears all notifications for a specific user.
+ */
+export async function clearAllNotifications(
+  supabase: SupabaseClient<Database>,
+  userId: string
+): Promise<boolean> {
+  const { error } = await supabase
+    .from("notifications")
+    .delete()
+    .eq("user_id", userId);
+
+  if (error) {
+    console.error("Error clearing all notifications:", error);
+    return false;
+  }
+
+  return true;
+}

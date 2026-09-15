@@ -26,6 +26,7 @@ interface RealtimeContextType {
   markAsRead: (id: string) => Promise<void>;
   markAllAsRead: () => Promise<void>;
   deleteNotification: (id: string) => Promise<void>;
+  clearAllNotifications: () => Promise<void>;
   showToast: (toast: Omit<GlobalInAppToast, "id" | "timestamp">) => void;
 }
 
@@ -282,6 +283,13 @@ export function RealtimeProvider({ children, userId }: { children: ReactNode; us
     await supabase.from("notifications").delete().eq("id", id);
   };
 
+  const clearAllNotifications = async () => {
+    if (!currentUserId) return;
+    setNotifications([]);
+    const supabase = createClient();
+    await supabase.from("notifications").delete().eq("user_id", currentUserId);
+  };
+
   return (
     <RealtimeContext.Provider
       value={{
@@ -290,6 +298,7 @@ export function RealtimeProvider({ children, userId }: { children: ReactNode; us
         markAsRead,
         markAllAsRead,
         deleteNotification,
+        clearAllNotifications,
         showToast,
       }}
     >
