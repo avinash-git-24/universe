@@ -29,160 +29,88 @@ const featureGrid = [
 
 export default function TermsPage() {
   return (
-    <div
-      style={{
-        minHeight: "100dvh",
-        background: "linear-gradient(135deg, #060b14 0%, #0a0f1e 50%, #060b14 100%)",
-        color: "#fff",
-        fontFamily: "'Inter', sans-serif",
-        paddingBottom: 80,
-      }}
-    >
-      {/* Header */}
-      <header
-        style={{
-          borderBottom: "1px solid rgba(255,255,255,0.08)",
-          background: "rgba(6,11,20,0.92)",
-          backdropFilter: "blur(20px)",
-          WebkitBackdropFilter: "blur(20px)",
-          position: "sticky",
-          top: 0,
-          zIndex: 50,
-          padding: "14px 24px",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          gap: 16,
-        }}
-      >
-        <Link href="/" style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: 10 }}>
-          <div
-            style={{
-              width: 32, height: 32, borderRadius: 8,
-              background: "linear-gradient(135deg, #00d2ff 0%, #0077ff 100%)",
-              display: "flex", alignItems: "center", justifyContent: "center",
-              boxShadow: "0 0 16px rgba(0,210,255,0.4)", flexShrink: 0,
-            }}
-          >
+    <div className="min-h-screen bg-gradient-to-br from-[#060b14] via-[#0a0f1e] to-[#060b14] text-white font-sans pb-16 sm:pb-24 selection:bg-cyan-500/20 selection:text-cyan-200">
+      {/* ── Sticky Header ── */}
+      <header className="border-b border-white/10 bg-[#060b14]/90 backdrop-blur-xl sticky top-0 z-50 px-3.5 sm:px-6 py-2.5 sm:py-3.5 flex items-center justify-between gap-3">
+        <Link href="/" className="flex items-center gap-2 sm:gap-2.5 text-white no-underline shrink-0 group">
+          <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-gradient-to-br from-[#00d2ff] to-[#0077ff] flex items-center justify-center shadow-[0_0_16px_rgba(0,210,255,0.4)] shrink-0 transition-transform group-hover:scale-105">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="black" stroke="black" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
               <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
             </svg>
           </div>
-          <span style={{ fontSize: 20, fontWeight: 700, color: "#fff", letterSpacing: "1.5px" }}>UniVerse</span>
+          <span className="text-lg sm:text-xl font-bold tracking-widest text-white">UniVerse</span>
         </Link>
         <Link
           href="/"
-          style={{
-            textDecoration: "none", padding: "7px 16px", borderRadius: 6,
-            border: "1px solid rgba(0,210,255,0.4)", color: "#00d2ff",
-            fontSize: 11, fontFamily: "'Space Mono', monospace", letterSpacing: "1px",
-          }}
+          className="no-underline px-3 py-1.5 sm:px-4 sm:py-2 rounded-md border border-cyan-400/40 text-cyan-400 hover:bg-cyan-400/10 transition-colors text-[11px] sm:text-xs font-mono tracking-wider shrink-0 flex items-center gap-1"
         >
-          &larr; Back to UniVerse
+          <span>&larr;</span>
+          <span className="hidden sm:inline">Back to UniVerse</span>
+          <span className="sm:hidden">Back</span>
         </Link>
       </header>
 
-      <div style={{ maxWidth: 860, margin: "0 auto", padding: "48px 20px 0" }}>
-        {/* Hero */}
-        <div style={{ textAlign: "center", marginBottom: 40 }}>
-          <div
-            style={{
-              display: "inline-flex", alignItems: "center", gap: 8,
-              padding: "6px 16px", borderRadius: 100,
-              background: "rgba(0,210,255,0.08)", border: "1px solid rgba(0,210,255,0.22)",
-              marginBottom: 20,
-            }}
-          >
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#00d2ff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      {/* ── Main Container ── */}
+      <main className="max-w-4xl mx-auto px-3.5 sm:px-6 pt-6 sm:pt-12 w-full">
+        {/* ── Hero Section ── */}
+        <section className="text-center mb-8 sm:mb-12">
+          <div className="inline-flex items-center gap-2 px-3 py-1 sm:px-4 sm:py-1.5 rounded-full bg-cyan-400/10 border border-cyan-400/25 mb-4 sm:mb-5">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#00d2ff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
               <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
             </svg>
-            <span style={{ fontSize: 10, color: "#00d2ff", fontFamily: "'Space Mono', monospace", letterSpacing: "2px", textTransform: "uppercase" }}>
+            <span className="text-[9px] sm:text-[10px] md:text-xs text-cyan-400 font-mono tracking-widest uppercase">
               Legal Shield &amp; Campus Guidelines
             </span>
           </div>
 
-          <h1
-            style={{
-              fontSize: "clamp(26px, 5vw, 40px)", fontWeight: 700, margin: "0 0 12px",
-              background: "linear-gradient(135deg, #ffffff 0%, #a0c4ff 100%)",
-              WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", lineHeight: 1.2,
-            }}
-          >
+          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 tracking-tight bg-gradient-to-br from-white via-slate-100 to-blue-200 bg-clip-text text-transparent leading-[1.2]">
             Terms of Service &amp;<br />Campus Rules
           </h1>
-          <p style={{ fontSize: 14, color: "rgba(255,255,255,0.5)", lineHeight: 1.7, maxWidth: 520, margin: "0 auto 20px" }}>
+          <p className="text-xs sm:text-sm text-white/50 leading-relaxed max-w-lg mx-auto mb-5 sm:mb-6 px-1">
             UniVerse ek peer-to-peer campus platform hai exclusively Marwadi University students ke liye.
             Account banane se pehle in rules ko padhna zaroori hai.
           </p>
 
           {/* Badges */}
-          <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 10, marginBottom: 28 }}>
-            <div
-              style={{
-                display: "inline-flex", alignItems: "center", gap: 8,
-                padding: "8px 16px", borderRadius: 8,
-                background: "rgba(0,200,100,0.07)", border: "1px solid rgba(0,200,100,0.22)",
-              }}
-            >
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#4ade80" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <div className="flex flex-wrap justify-center gap-2 sm:gap-2.5 mb-6 sm:mb-8">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg bg-emerald-500/10 border border-emerald-500/25">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#4ade80" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
                 <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
                 <polyline points="22 4 12 14.01 9 11.01" />
               </svg>
-              <span style={{ fontSize: 11, color: "#4ade80", fontFamily: "'Space Mono', monospace", letterSpacing: "0.8px" }}>
-                IT Act 2000 &mdash; Section 79 (Safe Harbor)
+              <span className="text-[10px] sm:text-xs text-emerald-400 font-mono tracking-wide">
+                IT Act 2000 &mdash; Sec 79 (Safe Harbor)
               </span>
             </div>
-            <div
-              style={{
-                display: "inline-flex", alignItems: "center", gap: 8,
-                padding: "8px 16px", borderRadius: 8,
-                background: "rgba(168,85,247,0.07)", border: "1px solid rgba(168,85,247,0.22)",
-              }}
-            >
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#c084fc" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg bg-purple-500/10 border border-purple-500/25">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#c084fc" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
                 <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
                 <line x1="16" y1="2" x2="16" y2="6" />
                 <line x1="8" y1="2" x2="8" y2="6" />
                 <line x1="3" y1="10" x2="21" y2="10" />
               </svg>
-              <span style={{ fontSize: 11, color: "#c084fc", fontFamily: "'Space Mono', monospace", letterSpacing: "0.8px" }}>
+              <span className="text-[10px] sm:text-xs text-purple-300 font-mono tracking-wide">
                 Effective: September 2026
               </span>
             </div>
           </div>
 
-          {/* Feature Grid */}
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
-              gap: 12, marginBottom: 28, textAlign: "left",
-            }}
-          >
+          {/* Feature Grid (2 cols on mobile, 4 cols on tablet/desktop) */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3 mb-6 sm:mb-8 text-left">
             {featureGrid.map((f, i) => (
               <div
                 key={i}
-                style={{
-                  padding: "16px 18px", borderRadius: 10,
-                  background: "rgba(255,255,255,0.03)",
-                  border: "1px solid rgba(255,255,255,0.07)",
-                  display: "flex", flexDirection: "column", gap: 8,
-                }}
+                className="p-3 sm:p-4 rounded-xl bg-white/[0.03] border border-white/[0.07] flex flex-col gap-1.5 sm:gap-2 transition-colors hover:border-white/15"
               >
-                <span style={{ fontSize: 22 }}>{f.icon}</span>
-                <span style={{ fontSize: 12, fontWeight: 700, color: f.color }}>{f.title}</span>
-                <span style={{ fontSize: 11, color: "rgba(255,255,255,0.45)", lineHeight: 1.5 }}>{f.desc}</span>
+                <span className="text-xl sm:text-2xl">{f.icon}</span>
+                <span className="text-xs sm:text-sm font-bold" style={{ color: f.color }}>{f.title}</span>
+                <span className="text-[10px] sm:text-xs text-white/45 leading-snug sm:leading-relaxed">{f.desc}</span>
               </div>
             ))}
           </div>
 
           {/* Quick-Jump Pills */}
-          <div
-            style={{
-              display: "flex", flexWrap: "wrap", justifyContent: "center",
-              gap: 8, maxWidth: 720, margin: "0 auto",
-            }}
-          >
+          <div className="flex flex-wrap justify-center gap-1.5 sm:gap-2 max-w-2xl mx-auto">
             {[
               { label: "Safe Harbor", href: "#safe-harbor" },
               { label: "Eligibility", href: "#eligibility" },
@@ -198,38 +126,37 @@ export default function TermsPage() {
               <a
                 key={i}
                 href={pill.href}
-                style={{
-                  padding: "6px 12px", borderRadius: 100,
-                  background: pill.accent === "red" ? "rgba(255,60,60,0.08)" : pill.accent === "blue" ? "rgba(0,210,255,0.08)" : "rgba(255,255,255,0.03)",
-                  border: pill.accent === "red" ? "1px solid rgba(255,60,60,0.25)" : pill.accent === "blue" ? "1px solid rgba(0,210,255,0.25)" : "1px solid rgba(255,255,255,0.09)",
-                  color: pill.accent === "red" ? "#ff8b8b" : pill.accent === "blue" ? "#00d2ff" : "rgba(255,255,255,0.7)",
-                  fontSize: 11, fontFamily: "'Space Mono', monospace", textDecoration: "none",
-                  whiteSpace: "nowrap",
-                }}
+                className={`px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-mono no-underline transition-all active:scale-95 whitespace-nowrap ${
+                  pill.accent === "red"
+                    ? "bg-red-500/10 border border-red-500/30 text-red-300 hover:bg-red-500/20"
+                    : pill.accent === "blue"
+                    ? "bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 hover:bg-cyan-500/20"
+                    : "bg-white/[0.03] border border-white/10 text-white/70 hover:bg-white/[0.08]"
+                }`}
               >
                 {pill.label}
               </a>
             ))}
           </div>
-        </div>
+        </section>
 
-        {/* Section 1 */}
+        {/* ── Section 1 ── */}
         <Section id="safe-harbor" title="1. Platform Nature — Safe Harbor (IT Act Section 79)">
           <p>
             UniVerse ek <strong>peer-to-peer intermediary platform</strong> hai jo Marwadi University students ko aapas mein connect karta hai.
             Hum ek marketplace facilitator hain — na koi party seller, buyer, ya delivery agent.
           </p>
-          <p style={{ marginTop: 12 }}>
+          <p className="mt-3">
             India ke <strong>Information Technology Act, 2000 — Section 79</strong> ke under, UniVerse ek Intermediary hai.
             Kisi bhi do students ke beech ki transaction, jhagda, ya nuksan ke liye UniVerse, uske founders, ya employees
             zimmedar nahi honge, jab tak humne kisi illegal kaam mein actively participate na kiya ho.
           </p>
-          <p style={{ marginTop: 12 }}>
+          <p className="mt-3">
             <strong>Aap (student)</strong> poori zimmedari lete hain apni listing, delivery request, ya kisi bhi deal ke liye.
           </p>
         </Section>
 
-        {/* Section 2 */}
+        {/* ── Section 2 ── */}
         <Section id="eligibility" title="2. Eligibility — Kaun Use Kar Sakta Hai">
           <RuleList items={[
             <span key="1">Valid <strong>@marwadiuniversity.ac.in</strong> email hona chahiye</span>,
@@ -242,7 +169,7 @@ export default function TermsPage() {
           </Callout>
         </Section>
 
-        {/* Section 3 */}
+        {/* ── Section 3 ── */}
         <Section id="conduct" title="3. Acceptable Use &amp; User Conduct">
           <p>Platform use karte waqt aap agree karte hain ki aap:</p>
           <RuleList items={[
@@ -258,60 +185,42 @@ export default function TermsPage() {
           </Callout>
         </Section>
 
-        {/* Section 4: Prohibited Items */}
+        {/* ── Section 4: Prohibited Items ── */}
         <div
           id="prohibited-items"
-          style={{
-            background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)",
-            borderRadius: 12, padding: "28px", marginBottom: 24, scrollMarginTop: 90,
-          }}
+          className="bg-white/[0.03] border border-white/[0.08] rounded-xl p-4 sm:p-6 md:p-7 mb-4 sm:mb-6 scroll-mt-24"
         >
-          <h2 style={{ margin: "0 0 8px", fontSize: 16, fontWeight: 600, color: "#fff" }}>
+          <h2 className="text-sm sm:text-base font-semibold text-white mb-2">
             4. Prohibited Items — Zero Tolerance Policy
           </h2>
-          <p style={{ margin: "0 0 20px", fontSize: 13, color: "rgba(255,255,255,0.55)", lineHeight: 1.7 }}>
+          <p className="text-xs sm:text-sm text-white/55 leading-relaxed mb-4 sm:mb-5">
             Neeche diye gaye items platform par bilkul BANNED hain. Inhe post karna turant account ban
             aur college ID university administration ko report karne ka kaaran banega:
           </p>
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-              gap: 10,
-            }}
-          >
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-2.5">
             {prohibitedItems.map((item, i) => (
               <div
                 key={i}
-                style={{
-                  display: "flex", alignItems: "center", gap: 14,
-                  padding: "11px 16px", borderRadius: 8,
-                  background: "rgba(255,60,60,0.06)", border: "1px solid rgba(255,60,60,0.18)",
-                }}
+                className="flex items-center gap-2.5 sm:gap-3 p-2.5 sm:p-3 rounded-lg bg-red-500/[0.06] border border-red-500/20"
               >
-                <span style={{ fontSize: 20, flexShrink: 0 }}>{item.emoji}</span>
-                <span style={{ fontSize: 12, color: "rgba(255,200,200,0.9)", fontWeight: 500, lineHeight: 1.4 }}>{item.label}</span>
-                <div style={{ marginLeft: "auto", flexShrink: 0 }}>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ff4444" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
-                  </svg>
-                </div>
+                <span className="text-lg sm:text-xl shrink-0">{item.emoji}</span>
+                <span className="text-xs sm:text-[13px] text-red-200/90 font-medium leading-snug break-words min-w-0 flex-1">
+                  {item.label}
+                </span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ff4444" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 ml-auto text-red-500">
+                  <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
               </div>
             ))}
           </div>
-          <div
-            style={{
-              marginTop: 16, padding: "12px 16px", borderRadius: 8,
-              background: "rgba(255,150,0,0.07)", border: "1px solid rgba(255,150,0,0.25)",
-            }}
-          >
-            <p style={{ margin: 0, fontSize: 12, color: "#fbbf24", lineHeight: 1.7 }}>
-              Zero Tolerance: Koi bhi prohibited item list karne par account turant permanently ban hoga aur student ka college enrollment ID university administration ko report kar di jayegi.
+          <div className="mt-3.5 sm:mt-4 p-3 sm:p-3.5 rounded-lg bg-amber-500/10 border border-amber-500/25">
+            <p className="m-0 text-xs text-amber-300 leading-relaxed">
+              <strong>Zero Tolerance:</strong> Koi bhi prohibited item list karne par account turant permanently ban hoga aur student ka college enrollment ID university administration ko report kar di jayegi.
             </p>
           </div>
         </div>
 
-        {/* Section 5 */}
+        {/* ── Section 5 ── */}
         <Section id="delivery" title="5. Delivery &amp; Campus Runner Rules">
           <RuleList items={[
             "Runners apni marzi se orders accept ya reject kar sakte hain",
@@ -323,7 +232,7 @@ export default function TermsPage() {
           ]} />
         </Section>
 
-        {/* Section 6 */}
+        {/* ── Section 6 ── */}
         <Section id="resale" title="6. Resale Marketplace &amp; Escrow OTP">
           <RuleList items={[
             "Seller authentic photos aur accurate condition details dega",
@@ -334,7 +243,7 @@ export default function TermsPage() {
           ]} />
         </Section>
 
-        {/* Section 7 */}
+        {/* ── Section 7 ── */}
         <Section id="termination" title="7. Account Suspension &amp; Termination">
           <p>UniVerse kisi bhi account ko suspend ya terminate kar sakta hai agar:</p>
           <RuleList items={[
@@ -348,7 +257,7 @@ export default function TermsPage() {
           </Callout>
         </Section>
 
-        {/* Section 8 */}
+        {/* ── Section 8 ── */}
         <Section id="liability" title="8. Disclaimer of Liability">
           <p>UniVerse &quot;AS IS&quot; provide kiya jata hai. Hum explicitly disclaim karte hain:</p>
           <RuleList items={[
@@ -357,15 +266,15 @@ export default function TermsPage() {
             "Third-party links ya services ki accuracy",
             "Kisi bhi student ki identity verification (sirf email verify hota hai)",
           ]} />
-          <p style={{ marginTop: 12, color: "rgba(255,255,255,0.5)", fontSize: 12 }}>
-            Maximum liability: <strong>₹0</strong> — kyunki UniVerse ek free, non-commercial student project hai.
+          <p className="mt-3 text-white/50 text-xs">
+            Maximum liability: <strong className="text-white">₹0</strong> — kyunki UniVerse ek free, non-commercial student project hai.
           </p>
         </Section>
 
-        {/* Section 9 */}
+        {/* ── Section 9 ── */}
         <Section id="governing-law" title="9. Governing Law">
           <p>Ye Terms India ke laws ke anusaar govern ki jayengi:</p>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 10, marginTop: 16 }}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2 sm:gap-2.5 mt-3.5">
             {[
               { label: "IT Act, 2000", sub: "Section 79 — Safe Harbor", color: "#00d2ff" },
               { label: "Consumer Protection Act, 2019", sub: "Buyer rights protection", color: "#4ade80" },
@@ -374,58 +283,44 @@ export default function TermsPage() {
             ].map((act, i) => (
               <div
                 key={i}
-                style={{
-                  padding: "10px 16px", borderRadius: 8,
-                  background: "rgba(255,255,255,0.03)",
-                  border: `1px solid ${act.color}33`,
-                  display: "flex", flexDirection: "column", gap: 3, minWidth: 180,
-                }}
+                className="p-2.5 sm:p-3 rounded-lg bg-white/[0.03] flex flex-col gap-1 border transition-colors"
+                style={{ borderColor: `${act.color}33` }}
               >
-                <span style={{ fontSize: 12, fontWeight: 700, color: act.color }}>{act.label}</span>
-                <span style={{ fontSize: 11, color: "rgba(255,255,255,0.45)" }}>{act.sub}</span>
+                <span className="text-xs sm:text-[13px] font-bold" style={{ color: act.color }}>{act.label}</span>
+                <span className="text-[10px] sm:text-xs text-white/45">{act.sub}</span>
               </div>
             ))}
           </div>
-          <p style={{ marginTop: 14, fontSize: 13 }}>
-            Jurisdiction: <strong>Rajkot, Gujarat, India.</strong>
+          <p className="mt-3.5 text-xs sm:text-sm">
+            Jurisdiction: <strong className="text-white">Rajkot, Gujarat, India.</strong>
           </p>
         </Section>
 
-        {/* Section 10 */}
+        {/* ── Section 10 ── */}
         <Section id="changes" title="10. Changes to Terms">
           <p>
             UniVerse in terms ko kisi bhi waqt update kar sakta hai. Material changes par aapko email notification milega.
             Continued use of platform = acceptance of new terms.
           </p>
-          <p style={{ marginTop: 12, color: "rgba(255,255,255,0.45)", fontSize: 12, fontFamily: "'Space Mono', monospace" }}>
+          <p className="mt-3 text-white/45 text-[11px] sm:text-xs font-mono">
             Last updated: September 2026 &middot; Effective: From account creation date
           </p>
         </Section>
 
-        {/* Section 11: Grievance */}
+        {/* ── Section 11: Grievance ── */}
         <div
           id="grievance"
-          style={{
-            background: "rgba(0,210,255,0.04)",
-            border: "1px solid rgba(0,210,255,0.18)",
-            borderRadius: 12, padding: "28px", marginBottom: 24, scrollMarginTop: 90,
-          }}
+          className="bg-cyan-500/[0.04] border border-cyan-500/20 rounded-xl p-4 sm:p-6 md:p-7 mb-4 sm:mb-6 scroll-mt-24"
         >
-          <h2 style={{ margin: "0 0 8px", fontSize: 16, fontWeight: 600, color: "#fff" }}>
+          <h2 className="text-sm sm:text-base font-semibold text-white mb-2">
             11. Grievance Redressal — DPDPA 2023
           </h2>
-          <p style={{ margin: "0 0 16px", fontSize: 13, color: "rgba(255,255,255,0.55)", lineHeight: 1.7 }}>
+          <p className="text-xs sm:text-sm text-white/55 leading-relaxed mb-4">
             Digital Personal Data Protection Act (DPDPA), 2023 ke compliance mein, UniVerse ek{" "}
-            <strong style={{ color: "rgba(255,255,255,0.8)" }}>Grievance Officer</strong> niyukt karta hai
+            <strong className="text-white/80">Grievance Officer</strong> niyukt karta hai
             jo student complaints 30 din ke andar resolve karega.
           </p>
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(2, 1fr)",
-              gap: 12, marginBottom: 16,
-            }}
-          >
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-2.5 mb-4">
             {[
               { label: "Designation", value: "Grievance Officer — UniVerse" },
               { label: "Platform", value: "UniVerse Campus App (MU)" },
@@ -434,30 +329,21 @@ export default function TermsPage() {
             ].map((item, i) => (
               <div
                 key={i}
-                style={{
-                  padding: "12px 16px", borderRadius: 8,
-                  background: "rgba(0,210,255,0.05)", border: "1px solid rgba(0,210,255,0.14)",
-                }}
+                className="p-2.5 sm:p-3 rounded-lg bg-cyan-500/[0.05] border border-cyan-500/15"
               >
-                <p style={{ margin: "0 0 4px", fontSize: 10, color: "rgba(0,210,255,0.6)", fontFamily: "'Space Mono', monospace", letterSpacing: "0.8px", textTransform: "uppercase" }}>
+                <p className="m-0 mb-1 text-[9px] sm:text-[10px] text-cyan-400/70 font-mono tracking-wider uppercase">
                   {item.label}
                 </p>
-                <p style={{ margin: 0, fontSize: 12, color: "rgba(255,255,255,0.8)", fontWeight: 500 }}>{item.value}</p>
+                <p className="m-0 text-xs sm:text-[13px] text-white/85 font-medium">{item.value}</p>
               </div>
             ))}
           </div>
-          <div style={{ textAlign: "center" }}>
+          <div className="text-center pt-1">
             <a
               href="mailto:grievance@universe.mu.ac.in"
-              style={{
-                display: "inline-flex", alignItems: "center", gap: 8,
-                padding: "10px 22px", borderRadius: 6,
-                background: "rgba(0,210,255,0.1)", border: "1px solid rgba(0,210,255,0.28)",
-                color: "#00d2ff", textDecoration: "none",
-                fontSize: 12, fontFamily: "'Space Mono', monospace", letterSpacing: "0.5px",
-              }}
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 sm:py-3 rounded-lg bg-cyan-500/10 border border-cyan-400/30 text-cyan-300 hover:bg-cyan-500/20 text-xs sm:text-sm font-mono tracking-wide no-underline transition-all break-all"
             >
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
                 <rect x="2" y="4" width="20" height="16" rx="2" /><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
               </svg>
               grievance@universe.mu.ac.in
@@ -465,107 +351,91 @@ export default function TermsPage() {
           </div>
         </div>
 
-        {/* Contact */}
+        {/* ── Contact ── */}
         <div
           id="contact"
-          style={{
-            background: "rgba(168,85,247,0.04)", border: "1px solid rgba(168,85,247,0.18)",
-            borderRadius: 12, padding: "28px", textAlign: "center", marginBottom: 24, scrollMarginTop: 90,
-          }}
+          className="bg-purple-500/[0.04] border border-purple-500/20 rounded-xl p-4 sm:p-6 md:p-7 text-center mb-6 scroll-mt-24"
         >
-          <h2 style={{ margin: "0 0 8px", fontSize: 16, fontWeight: 600, color: "#fff" }}>Koi Sawaal Hai?</h2>
-          <p style={{ margin: "0 0 16px", fontSize: 13, color: "rgba(255,255,255,0.5)", lineHeight: 1.6 }}>
+          <h2 className="text-sm sm:text-base font-semibold text-white mb-2">Koi Sawaal Hai?</h2>
+          <p className="text-xs sm:text-sm text-white/50 leading-relaxed mb-4 max-w-md mx-auto">
             Terms ke baare mein koi confusion ho to contact karein. Hum 48 ghante ke andar jawab denge.
           </p>
           <a
             href="mailto:support@universe.mu.ac.in"
-            style={{
-              display: "inline-flex", alignItems: "center", gap: 8,
-              padding: "10px 20px", borderRadius: 6,
-              background: "rgba(168,85,247,0.1)", border: "1px solid rgba(168,85,247,0.28)",
-              color: "#c084fc", textDecoration: "none",
-              fontSize: 12, fontFamily: "'Space Mono', monospace", letterSpacing: "0.5px",
-            }}
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 sm:py-3 rounded-lg bg-purple-500/10 border border-purple-400/30 text-purple-300 hover:bg-purple-500/20 text-xs sm:text-sm font-mono tracking-wide no-underline transition-all break-all"
           >
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
               <rect x="2" y="4" width="20" height="16" rx="2" /><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
             </svg>
             support@universe.mu.ac.in
           </a>
         </div>
 
-        {/* Footer Nav */}
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 20, flexWrap: "wrap" }}>
-          <Link href="/privacy" style={{ color: "rgba(255,255,255,0.45)", textDecoration: "none", fontSize: 12, fontFamily: "'Space Mono', monospace" }}>Privacy Policy</Link>
-          <span style={{ color: "rgba(255,255,255,0.15)" }}>&bull;</span>
-          <Link href="/register" style={{ color: "#00d2ff", textDecoration: "none", fontSize: 12, fontFamily: "'Space Mono', monospace" }}>Create Account &rarr;</Link>
-          <span style={{ color: "rgba(255,255,255,0.15)" }}>&bull;</span>
-          <Link href="/" style={{ color: "rgba(255,255,255,0.45)", textDecoration: "none", fontSize: 12, fontFamily: "'Space Mono', monospace" }}>Home</Link>
+        {/* ── Footer Nav ── */}
+        <div className="flex items-center justify-center gap-3 sm:gap-5 flex-wrap text-xs font-mono pt-4">
+          <Link href="/privacy" className="text-white/45 hover:text-white no-underline transition-colors">Privacy Policy</Link>
+          <span className="text-white/15">&bull;</span>
+          <Link href="/register" className="text-cyan-400 hover:text-cyan-300 no-underline transition-colors">Create Account &rarr;</Link>
+          <span className="text-white/15">&bull;</span>
+          <Link href="/" className="text-white/45 hover:text-white no-underline transition-colors">Home</Link>
         </div>
-        {/* Copyright */}
-        <p style={{ textAlign: "center", marginTop: 20, fontSize: 11, color: "rgba(255,255,255,0.18)", fontFamily: "'Space Mono', monospace", letterSpacing: "0.5px" }}>
+
+        {/* ── Copyright ── */}
+        <p className="text-center mt-4 text-[10px] sm:text-xs text-white/25 font-mono tracking-wide">
           &copy; 2026 UniVerse &middot; Crafted with &hearts; for Marwadi University Students
         </p>
-      </div>
+      </main>
     </div>
   );
 }
 
 function Section({ id, title, children }: { id?: string; title: string; children: React.ReactNode }) {
   return (
-    <div
+    <section
       id={id}
-      style={{
-        background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)",
-        borderRadius: 12, padding: "28px", marginBottom: 24, scrollMarginTop: 90,
-      }}
+      className="bg-white/[0.03] border border-white/[0.08] rounded-xl p-4 sm:p-6 md:p-7 mb-4 sm:mb-6 scroll-mt-24"
     >
-      <h2 style={{ margin: "0 0 16px", fontSize: 16, fontWeight: 600, color: "#fff" }}>{title}</h2>
-      <div style={{ fontSize: 13, color: "rgba(255,255,255,0.6)", lineHeight: 1.8 }}>{children}</div>
-    </div>
+      <h2 className="text-sm sm:text-base font-semibold text-white mb-3">{title}</h2>
+      <div className="text-xs sm:text-sm text-white/60 leading-relaxed">{children}</div>
+    </section>
   );
 }
 
 function Callout({ children, color, tag }: { children: React.ReactNode; color: "orange" | "red"; tag?: string }) {
-  const colors = {
-    orange: { bg: "rgba(255,150,0,0.07)", border: "rgba(255,150,0,0.25)", text: "#fbbf24" },
-    red: { bg: "rgba(255,60,60,0.07)", border: "rgba(255,60,60,0.25)", text: "#ff8b8b" },
-  };
-  const c = colors[color];
+  const isRed = color === "red";
   return (
-    <div style={{ marginTop: 14, padding: "12px 16px", borderRadius: 8, background: c.bg, border: `1px solid ${c.border}` }}>
+    <div
+      className={`mt-3.5 p-3 sm:p-3.5 rounded-lg border ${
+        isRed
+          ? "bg-red-500/[0.07] border-red-500/25 text-red-300"
+          : "bg-amber-500/[0.07] border-amber-500/25 text-amber-300"
+      }`}
+    >
       {tag && (
-        <p style={{ margin: "0 0 5px", fontSize: 9, color: c.text, fontFamily: "'Space Mono', monospace", letterSpacing: "1.5px", opacity: 0.8 }}>
-          {color === "red" ? "🚨" : "⚠️"} {tag}
+        <p className="m-0 mb-1 text-[9px] sm:text-[10px] font-mono tracking-wider opacity-85 uppercase flex items-center gap-1">
+          <span>{isRed ? "🚨" : "⚠️"}</span>
+          <span>{tag}</span>
         </p>
       )}
-      <p style={{ margin: 0, fontSize: 12, color: c.text, lineHeight: 1.7 }}>{children}</p>
+      <p className="m-0 text-xs leading-relaxed">{children}</p>
     </div>
   );
 }
 
 function RuleList({ items }: { items: (string | React.ReactNode)[] }) {
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 0, margin: "12px 0 0" }}>
+    <div className="flex flex-col mt-2.5 sm:mt-3 divide-y divide-white/[0.04]">
       {items.map((item, i) => (
         <div
           key={i}
-          style={{
-            display: "flex", alignItems: "flex-start", gap: 10,
-            padding: "7px 0",
-            borderBottom: i < items.length - 1 ? "1px solid rgba(255,255,255,0.04)" : "none",
-          }}
+          className="flex items-start gap-2.5 sm:gap-3 py-2 sm:py-2.5 first:pt-0 last:pb-0"
         >
-          <span
-            style={{
-              flexShrink: 0, marginTop: 2,
-              fontSize: 10, color: "#00d2ff",
-              fontWeight: 700, letterSpacing: "1px",
-            }}
-          >
+          <span className="shrink-0 mt-0.5 text-[9px] sm:text-[10px] text-cyan-400 font-bold">
             ✦
           </span>
-          <span style={{ fontSize: 13, color: "rgba(255,255,255,0.65)", lineHeight: 1.7 }}>{item}</span>
+          <span className="text-xs sm:text-sm text-white/65 leading-relaxed min-w-0 flex-1">
+            {item}
+          </span>
         </div>
       ))}
     </div>
