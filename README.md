@@ -170,6 +170,11 @@ See [TESTING.md](TESTING.md) for testing guidelines and mock helpers.
 
 We welcome open-source contributions to UniVerse! Check out [CONTRIBUTING.md](CONTRIBUTING.md) to get started with issue discussions, feature requests, and pull requests. Built with active open-source collaboration across the campus community.
 
+## 👥 Team & Contributors
+
+- **Avinash Kumar** ([@avinash-git-24](https://github.com/avinash-git-24)) — Lead Architect & Full-Stack Developer
+- **Archi Kumari** ([@Archi-22108](https://github.com/Archi-22108)) — Core Collaborator & Architecture Contributor
+
 ---
 
 ## 📜 License
