@@ -1,4 +1,4 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -17,6 +17,7 @@ const prohibitedItems = [
   { emoji: "🔞", label: "Adult Content / Obscene Material" },
   { emoji: "💰", label: "Counterfeit Currency / Fake Documents / IDs" },
   { emoji: "📡", label: "Hacking Tools / Pirated Software / Malware" },
+  { emoji: "🎰", label: "Gambling, Betting Apps / Ponzi Schemes / MLM Chains" },
 ];
 
 const featureGrid = [
@@ -230,13 +231,13 @@ export default function TermsPage() {
 
         {/* Section 2 */}
         <Section id="eligibility" title="2. Eligibility — Kaun Use Kar Sakta Hai">
-          <ul style={{ paddingLeft: 20, margin: 0, lineHeight: 2 }}>
-            <li>Valid <strong>@marwadiuniversity.ac.in</strong> email hona chahiye</li>
-            <li>Active enrolled student hona chahiye</li>
-            <li>18 saal ya usse zyada ki age honi chahiye</li>
-            <li>Ek student sirf <strong>ek account</strong> rakh sakta hai</li>
-          </ul>
-          <Callout color="orange">
+          <RuleList items={[
+            <span key="1">Valid <strong>@marwadiuniversity.ac.in</strong> email hona chahiye</span>,
+            "Active enrolled student hona chahiye",
+            "18 saal ya usse zyada ki age honi chahiye",
+            <span key="4">Ek student sirf <strong>ek account</strong> rakh sakta hai</span>,
+          ]} />
+          <Callout color="orange" tag="NOTICE">
             Galat information par account permanently ban aur university ko report kiya jayega.
           </Callout>
         </Section>
@@ -244,15 +245,15 @@ export default function TermsPage() {
         {/* Section 3 */}
         <Section id="conduct" title="3. Acceptable Use &amp; User Conduct">
           <p>Platform use karte waqt aap agree karte hain ki aap:</p>
-          <ul style={{ paddingLeft: 20, margin: "12px 0 0", lineHeight: 2 }}>
-            <li>Sirf legal aur genuine items/services list karenge</li>
-            <li>Doosre students ke saath respect se behave karenge</li>
-            <li>Koi fraud, scam, ya misleading listing nahi karenge</li>
-            <li>Prohibited items bilkul nahi post karenge (Section 4 dekhein)</li>
-            <li>Platform ko spam, phishing, ya harassment ke liye use nahi karenge</li>
-            <li>Kisi bhi student ka personal data share ya leak nahi karenge</li>
-          </ul>
-          <Callout color="orange">
+          <RuleList items={[
+            "Sirf legal aur genuine items/services list karenge",
+            "Doosre students ke saath respect se behave karenge",
+            "Koi fraud, scam, ya misleading listing nahi karenge",
+            "Prohibited items bilkul nahi post karenge (Section 4 dekhein)",
+            "Platform ko spam, phishing, ya harassment ke liye use nahi karenge",
+            "Kisi bhi student ka personal data share ya leak nahi karenge",
+          ]} />
+          <Callout color="orange" tag="STRICT PENALTY">
             Violations: <strong>1st offense</strong> — 7 din suspension. <strong>2nd offense</strong> — Permanent ban + university report.
           </Callout>
         </Section>
@@ -312,37 +313,37 @@ export default function TermsPage() {
 
         {/* Section 5 */}
         <Section id="delivery" title="5. Delivery &amp; Campus Runner Rules">
-          <ul style={{ paddingLeft: 20, margin: 0, lineHeight: 2 }}>
-            <li>Runners apni marzi se orders accept ya reject kar sakte hain</li>
-            <li>Runner aur requester ke beech deal unki personal zimmedari hai</li>
-            <li>UniVerse delivery ka guarantee nahi deta — hum sirf connect karte hain</li>
-            <li>Food orders: sirf canteen/mess ka food; bahar se prohibited items bilkul nahi</li>
-            <li>Tip voluntary hai — koi forced nahi kar sakta</li>
-            <li>Delivery dispute mein UniVerse koi financial compensation nahi dega</li>
-          </ul>
+          <RuleList items={[
+            "Runners apni marzi se orders accept ya reject kar sakte hain",
+            "Runner aur requester ke beech deal unki personal zimmedari hai",
+            "UniVerse delivery ka guarantee nahi deta — hum sirf connect karte hain",
+            "Food orders: sirf canteen/mess ka food; bahar se prohibited items bilkul nahi",
+            "Tip voluntary hai — koi forced nahi kar sakta",
+            "Delivery dispute mein UniVerse koi financial compensation nahi dega",
+          ]} />
         </Section>
 
         {/* Section 6 */}
         <Section id="resale" title="6. Resale Marketplace &amp; Escrow OTP">
-          <ul style={{ paddingLeft: 20, margin: 0, lineHeight: 2 }}>
-            <li>Seller authentic photos aur accurate condition details dega</li>
-            <li>Buyer <strong>OTP verification</strong> ke baad hi handover complete hoga</li>
-            <li>OTP confirm hone ke baad deal final — koi refund ya cancellation nahi</li>
-            <li>UniVerse kisi bhi product ki quality, authenticity, ya condition guarantee nahi deta</li>
-            <li>Scam reports par dono parties ka account investigate kiya jayega</li>
-          </ul>
+          <RuleList items={[
+            "Seller authentic photos aur accurate condition details dega",
+            <span key="2">Buyer <strong>OTP verification</strong> ke baad hi handover complete hoga</span>,
+            "OTP confirm hone ke baad deal final — koi refund ya cancellation nahi",
+            "UniVerse kisi bhi product ki quality, authenticity, ya condition guarantee nahi deta",
+            "Scam reports par dono parties ka account investigate kiya jayega",
+          ]} />
         </Section>
 
         {/* Section 7 */}
         <Section id="termination" title="7. Account Suspension &amp; Termination">
           <p>UniVerse kisi bhi account ko suspend ya terminate kar sakta hai agar:</p>
-          <ul style={{ paddingLeft: 20, margin: "12px 0 0", lineHeight: 2 }}>
-            <li>Terms ka violation ho (especially prohibited items)</li>
-            <li>Fraudulent activity prove ho</li>
-            <li>Multiple legitimate complaints aaye</li>
-            <li>University administration ne request ki ho</li>
-          </ul>
-          <Callout color="red">
+          <RuleList items={[
+            "Terms ka violation ho (especially prohibited items)",
+            "Fraudulent activity prove ho",
+            "Multiple legitimate complaints aaye",
+            "University administration ne request ki ho",
+          ]} />
+          <Callout color="red" tag="STRICT PENALTY">
             <strong>Permanent ban:</strong> College ID (enrollment number) university administration ko report ki jayegi aur disciplinary action ho sakta hai.
           </Callout>
         </Section>
@@ -350,12 +351,12 @@ export default function TermsPage() {
         {/* Section 8 */}
         <Section id="liability" title="8. Disclaimer of Liability">
           <p>UniVerse &quot;AS IS&quot; provide kiya jata hai. Hum explicitly disclaim karte hain:</p>
-          <ul style={{ paddingLeft: 20, margin: "12px 0 0", lineHeight: 2 }}>
-            <li>Kisi bhi peer-to-peer transaction ki guarantee</li>
-            <li>Platform downtime se hone wale kisi bhi nuksan ki zimmedari</li>
-            <li>Third-party links ya services ki accuracy</li>
-            <li>Kisi bhi student ki identity verification (sirf email verify hota hai)</li>
-          </ul>
+          <RuleList items={[
+            "Kisi bhi peer-to-peer transaction ki guarantee",
+            "Platform downtime se hone wale kisi bhi nuksan ki zimmedari",
+            "Third-party links ya services ki accuracy",
+            "Kisi bhi student ki identity verification (sirf email verify hota hai)",
+          ]} />
           <p style={{ marginTop: 12, color: "rgba(255,255,255,0.5)", fontSize: 12 }}>
             Maximum liability: <strong>₹0</strong> — kyunki UniVerse ek free, non-commercial student project hai.
           </p>
@@ -364,13 +365,28 @@ export default function TermsPage() {
         {/* Section 9 */}
         <Section id="governing-law" title="9. Governing Law">
           <p>Ye Terms India ke laws ke anusaar govern ki jayengi:</p>
-          <ul style={{ paddingLeft: 20, margin: "12px 0 0", lineHeight: 2 }}>
-            <li>Information Technology Act, 2000 (Section 79 — Safe Harbor)</li>
-            <li>Consumer Protection Act, 2019</li>
-            <li>Digital Personal Data Protection Act (DPDPA), 2023</li>
-            <li>Indian Contract Act, 1872</li>
-          </ul>
-          <p style={{ marginTop: 12 }}>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 10, marginTop: 16 }}>
+            {[
+              { label: "IT Act, 2000", sub: "Section 79 — Safe Harbor", color: "#00d2ff" },
+              { label: "Consumer Protection Act, 2019", sub: "Buyer rights protection", color: "#4ade80" },
+              { label: "DPDPA, 2023", sub: "Digital personal data privacy", color: "#c084fc" },
+              { label: "Indian Contract Act, 1872", sub: "Transaction enforceability", color: "#fbbf24" },
+            ].map((act, i) => (
+              <div
+                key={i}
+                style={{
+                  padding: "10px 16px", borderRadius: 8,
+                  background: "rgba(255,255,255,0.03)",
+                  border: `1px solid ${act.color}33`,
+                  display: "flex", flexDirection: "column", gap: 3, minWidth: 180,
+                }}
+              >
+                <span style={{ fontSize: 12, fontWeight: 700, color: act.color }}>{act.label}</span>
+                <span style={{ fontSize: 11, color: "rgba(255,255,255,0.45)" }}>{act.sub}</span>
+              </div>
+            ))}
+          </div>
+          <p style={{ marginTop: 14, fontSize: 13 }}>
             Jurisdiction: <strong>Rajkot, Gujarat, India.</strong>
           </p>
         </Section>
@@ -406,7 +422,7 @@ export default function TermsPage() {
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+              gridTemplateColumns: "repeat(2, 1fr)",
               gap: 12, marginBottom: 16,
             }}
           >
@@ -486,6 +502,10 @@ export default function TermsPage() {
           <span style={{ color: "rgba(255,255,255,0.15)" }}>&bull;</span>
           <Link href="/" style={{ color: "rgba(255,255,255,0.45)", textDecoration: "none", fontSize: 12, fontFamily: "'Space Mono', monospace" }}>Home</Link>
         </div>
+        {/* Copyright */}
+        <p style={{ textAlign: "center", marginTop: 20, fontSize: 11, color: "rgba(255,255,255,0.18)", fontFamily: "'Space Mono', monospace", letterSpacing: "0.5px" }}>
+          &copy; 2026 UniVerse &middot; Crafted with &hearts; for Marwadi University Students
+        </p>
       </div>
     </div>
   );
@@ -506,15 +526,48 @@ function Section({ id, title, children }: { id?: string; title: string; children
   );
 }
 
-function Callout({ children, color }: { children: React.ReactNode; color: "orange" | "red" }) {
+function Callout({ children, color, tag }: { children: React.ReactNode; color: "orange" | "red"; tag?: string }) {
   const colors = {
     orange: { bg: "rgba(255,150,0,0.07)", border: "rgba(255,150,0,0.25)", text: "#fbbf24" },
     red: { bg: "rgba(255,60,60,0.07)", border: "rgba(255,60,60,0.25)", text: "#ff8b8b" },
   };
   const c = colors[color];
   return (
-    <div style={{ marginTop: 14, padding: "11px 16px", borderRadius: 8, background: c.bg, border: `1px solid ${c.border}` }}>
+    <div style={{ marginTop: 14, padding: "12px 16px", borderRadius: 8, background: c.bg, border: `1px solid ${c.border}` }}>
+      {tag && (
+        <p style={{ margin: "0 0 5px", fontSize: 9, color: c.text, fontFamily: "'Space Mono', monospace", letterSpacing: "1.5px", opacity: 0.8 }}>
+          {color === "red" ? "🚨" : "⚠️"} {tag}
+        </p>
+      )}
       <p style={{ margin: 0, fontSize: 12, color: c.text, lineHeight: 1.7 }}>{children}</p>
+    </div>
+  );
+}
+
+function RuleList({ items }: { items: (string | React.ReactNode)[] }) {
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 0, margin: "12px 0 0" }}>
+      {items.map((item, i) => (
+        <div
+          key={i}
+          style={{
+            display: "flex", alignItems: "flex-start", gap: 10,
+            padding: "7px 0",
+            borderBottom: i < items.length - 1 ? "1px solid rgba(255,255,255,0.04)" : "none",
+          }}
+        >
+          <span
+            style={{
+              flexShrink: 0, marginTop: 2,
+              fontSize: 10, color: "#00d2ff",
+              fontWeight: 700, letterSpacing: "1px",
+            }}
+          >
+            ✦
+          </span>
+          <span style={{ fontSize: 13, color: "rgba(255,255,255,0.65)", lineHeight: 1.7 }}>{item}</span>
+        </div>
+      ))}
     </div>
   );
 }
