@@ -427,7 +427,6 @@ export function RequestLiveTracker({ initialRequest }: RequestLiveTrackerProps) 
           <div className="relative w-56 h-56 sm:w-72 sm:h-72 flex items-center justify-center my-6">
             {/* Coordinate Ring 4 (Outermost) */}
             <div className="absolute inset-0 rounded-full border border-emerald-500/25 shadow-[0_0_25px_rgba(0,230,118,0.15)]" />
-            <div className="absolute inset-0 rounded-full border border-dashed border-emerald-500/35 animate-[spin_35s_linear_infinite]" />
 
             {/* Coordinate Ring 3 */}
             <div className="absolute inset-8 sm:inset-10 rounded-full border border-emerald-500/20" />
