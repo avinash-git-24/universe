@@ -41,20 +41,20 @@ export default async function RequestDetailsPage({ params }: RequestPageProps) {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#090e14] via-[#0c1219] to-[#090e14] text-white pt-4 sm:pt-8 pb-16 px-3 sm:px-6">
+    <div className="min-h-screen bg-[#080b09] text-white pt-4 sm:pt-8 pb-16 px-3 sm:px-6">
       <div className="max-w-4xl mx-auto space-y-6">
         <div className="flex items-center justify-between">
           <Link
             href="/dashboard/requests"
-            className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white/[0.04] border border-white/10 hover:border-emerald-500/30 text-xs font-semibold text-zinc-400 hover:text-white transition-all cursor-pointer"
+            className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white/5 border border-white/10 hover:border-emerald-500/30 text-xs font-semibold text-[#A7B8B0] hover:text-white transition-all cursor-pointer"
           >
-            <ArrowLeft className="w-4 h-4 text-emerald-400" />
+            <ArrowLeft className="w-4 h-4 text-[#00E676]" />
             Back to My Requests
           </Link>
 
           <div className="flex items-center gap-2">
             <span className="inline-flex items-center gap-1.5 text-[11px] font-mono text-emerald-400/80 bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/20">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+              <span className="w-1.5 h-1.5 rounded-full bg-[#00E676] animate-pulse" />
               UniVerse Runner Network
             </span>
           </div>

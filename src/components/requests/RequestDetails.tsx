@@ -42,18 +42,18 @@ export function RequestDetails({ request }: RequestDetailsProps) {
 
       {/* Handover Security PIN Card */}
       {request.delivery_otp && !["delivered", "cancelled"].includes(request.status) && (
-        <Card className="bg-zinc-900/60 border border-white/10 rounded-2xl shadow-sm overflow-hidden backdrop-blur-md">
+        <Card className="bg-gradient-to-r from-emerald-950/50 via-[#0a180f] to-emerald-950/50 border-2 border-emerald-500/50 shadow-[0_0_30px_rgba(0,230,118,0.15)] overflow-hidden">
           <CardContent className="p-6 flex flex-col sm:flex-row items-center justify-between gap-6">
             <div className="space-y-1.5 text-center sm:text-left">
               <div className="flex items-center justify-center sm:justify-start gap-2">
-                <span className="text-[11px] font-bold uppercase tracking-widest text-emerald-300 bg-emerald-500/10 px-2.5 py-0.5 rounded-full border border-emerald-500/20">
+                <span className="text-[11px] font-black uppercase tracking-widest text-emerald-400 bg-emerald-500/20 px-2.5 py-0.5 rounded-full border border-emerald-500/40">
                   🔐 Delivery Handover PIN
                 </span>
               </div>
-              <h3 className="text-base sm:text-lg font-bold text-white">
+              <h3 className="text-lg sm:text-xl font-extrabold text-white">
                 Share this PIN with your runner
               </h3>
-              <p className="text-xs sm:text-sm text-zinc-400 max-w-md">
+              <p className="text-xs sm:text-sm text-zinc-300 max-w-md">
                 Runner cannot mark this order as completed without this PIN. Only share it when you physically receive your items.
               </p>
             </div>
@@ -62,7 +62,7 @@ export function RequestDetails({ request }: RequestDetailsProps) {
               {request.delivery_otp.split("").map((digit, i) => (
                 <div
                   key={i}
-                  className="w-12 h-14 sm:w-14 sm:h-16 rounded-xl bg-zinc-950/80 border border-emerald-500/30 flex items-center justify-center font-mono text-2xl sm:text-3xl font-bold text-emerald-300 shadow-sm select-all"
+                  className="w-12 h-14 sm:w-14 sm:h-16 rounded-2xl bg-black/80 border-2 border-emerald-500/60 flex items-center justify-center font-mono text-3xl font-black text-emerald-400 shadow-[0_0_20px_rgba(0,230,118,0.3)] select-all"
                 >
                   {digit}
                 </div>
