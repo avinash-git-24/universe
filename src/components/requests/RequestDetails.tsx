@@ -163,7 +163,7 @@ export function RequestDetails({ request }: RequestDetailsProps) {
       </div>
 
       {/* Actions */}
-      {request.status === "pending" && (
+      {["pending", "accepted", "picked_up", "in_transit"].includes(request.status) && (
         <div className="flex justify-end pt-4">
           <CancelRequestButton requestId={request.id} />
         </div>

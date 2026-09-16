@@ -1,7 +1,7 @@
 "use client";
 
 import { memo, useState } from "react";
-import { formatDistanceToNow } from "date-fns";
+import { differenceInHours, formatDistanceToNow } from "date-fns";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -14,10 +14,13 @@ import {
   BookOpen,
   Laptop,
   Radio,
+  X,
+  AlertTriangle,
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { MyRequestTimeline } from "../requests/MyRequestTimeline";
-import type { StudentRequestWithDetails } from "@/lib/database/requests";
+import { updateRequestStatus, type StudentRequestWithDetails } from "@/lib/database/requests";
+import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
 
 // Custom badge renderer strictly for this card to match the dark premium aesthetic perfectly.
@@ -101,16 +104,56 @@ function getItemCategoryIcon(names: string) {
 interface StudentRequestCardProps {
   request: StudentRequestWithDetails;
   onClick?: () => void;
+  onCancelSuccess?: (requestId: string) => void;
   className?: string;
 }
 
 export const StudentRequestCard = memo(function StudentRequestCard({
   request,
   onClick,
+  onCancelSuccess,
   className,
 }: StudentRequestCardProps) {
   const [copied, setCopied] = useState(false);
+  const [isCancelling, setIsCancelling] = useState(false);
   const router = useRouter();
+
+  const hoursOld = differenceInHours(new Date(), new Date(request.created_at));
+  const isStalePending = request.status === "pending" && hoursOld >= 2;
+  const isStaleAccepted = ["accepted", "picked_up", "in_transit"].includes(request.status) && hoursOld >= 12;
+
+  const handleCancelRequest = async (e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+
+    const isAccepted = ["accepted", "picked_up", "in_transit"].includes(request.status);
+    const confirmMessage = isAccepted
+      ? "Kya aap is delivery order ko cancel karna chahte hain? Runner ne ise kaafi der se complete nahi kiya hai."
+      : "Kya aap is delivery request ko cancel karna chahte hain?";
+
+    if (!window.confirm(confirmMessage)) {
+      return;
+    }
+
+    setIsCancelling(true);
+    try {
+      const supabase = createClient();
+      const success = await updateRequestStatus(supabase, request.id, "cancelled");
+      if (success) {
+        if (onCancelSuccess) {
+          onCancelSuccess(request.id);
+        } else {
+          router.refresh();
+        }
+      } else {
+        alert("Request cancel karne me dikkat aayi. Kripya dubara koshish karein.");
+      }
+    } catch (err) {
+      console.error("Error cancelling request:", err);
+      alert("Error occurred while cancelling request.");
+    } finally {
+      setIsCancelling(false);
+    }
+  };
 
   const itemCount = request.items.reduce((acc, item) => acc + item.quantity, 0);
   const itemNames = request.items.map((i) => i.name).join(", ");
@@ -196,7 +239,19 @@ export const StudentRequestCard = memo(function StudentRequestCard({
 
               <div className="flex items-center gap-2 flex-wrap">
                 <CardStatusBadge status={request.status} />
-                {isActive && (
+                {isStalePending && (
+                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-amber-500/15 border border-amber-500/30 text-amber-300">
+                    <AlertTriangle className="w-3 h-3" />
+                    Stale (No Runner)
+                  </span>
+                )}
+                {isStaleAccepted && (
+                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-red-500/15 border border-red-500/30 text-red-300">
+                    <AlertTriangle className="w-3 h-3" />
+                    Inactive Runner
+                  </span>
+                )}
+                {isActive && !isStalePending && !isStaleAccepted && (
                   <span className="flex items-center gap-1 text-[10px] font-mono text-emerald-400 uppercase tracking-wider">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
                     Live
@@ -307,7 +362,7 @@ export const StudentRequestCard = memo(function StudentRequestCard({
                   </div>
 
                   {/* Message Runner & Details */}
-                  <div className="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-end">
+                  <div className="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-end flex-wrap">
                     <a
                       href={`/dashboard/chat?requestId=${request.id}&startWithUserId=${runner.id}`}
                       onClick={(e) => e.stopPropagation()}
@@ -323,6 +378,18 @@ export const StudentRequestCard = memo(function StudentRequestCard({
                       <Radio className="w-3.5 h-3.5 animate-pulse" />
                       <span>Live Tracker ➔</span>
                     </Link>
+                    {isStaleAccepted && (
+                      <button
+                        type="button"
+                        onClick={handleCancelRequest}
+                        disabled={isCancelling}
+                        title="Cancel abandoned order"
+                        className="inline-flex items-center justify-center gap-1 px-3 py-2 rounded-xl bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-400 hover:text-red-300 font-bold text-xs transition-all cursor-pointer whitespace-nowrap active:scale-95 disabled:opacity-50"
+                      >
+                        <X className="w-3.5 h-3.5" />
+                        <span>{isCancelling ? "Cancelling..." : "Cancel Order"}</span>
+                      </button>
+                    )}
                   </div>
                 </div>
               );
@@ -330,11 +397,21 @@ export const StudentRequestCard = memo(function StudentRequestCard({
 
             if (isActive) {
               return (
-                <div className="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-end">
+                <div className="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-end flex-wrap">
+                  <button
+                    type="button"
+                    onClick={handleCancelRequest}
+                    disabled={isCancelling}
+                    title="Cancel this unfulfilled request"
+                    className="inline-flex items-center justify-center gap-1 px-3 py-2 rounded-xl bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 hover:border-red-500/50 text-red-400 hover:text-red-300 font-bold text-xs transition-all cursor-pointer whitespace-nowrap active:scale-95 disabled:opacity-50"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                    <span>{isCancelling ? "Cancelling..." : "Cancel"}</span>
+                  </button>
                   <Link
                     href={`/dashboard/requests/${request.id}`}
                     onClick={(e) => e.stopPropagation()}
-                    className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-400 hover:from-emerald-400 hover:to-emerald-300 text-black font-black text-xs shadow-[0_0_20px_rgba(16,185,129,0.35)] hover:shadow-[0_0_30px_rgba(16,185,129,0.5)] transition-all cursor-pointer whitespace-nowrap active:scale-95"
+                    className="inline-flex items-center justify-center gap-2 px-3.5 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-400 hover:from-emerald-400 hover:to-emerald-300 text-black font-black text-xs shadow-[0_0_20px_rgba(16,185,129,0.35)] hover:shadow-[0_0_30px_rgba(16,185,129,0.5)] transition-all cursor-pointer whitespace-nowrap active:scale-95"
                   >
                     <Radio className="w-3.5 h-3.5 animate-pulse" />
                     <span>Open Live Radar ➔</span>

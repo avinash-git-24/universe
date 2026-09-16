@@ -347,6 +347,38 @@ export async function updateRequestStatus(
 }
 
 /**
+ * Cancels multiple delivery requests owned by the student in one batch (e.g. stale or unfulfilled requests).
+ */
+export async function cancelMultipleRequests(
+  supabase: SupabaseClient<Database>,
+  requestIds: string[]
+): Promise<boolean> {
+  if (!requestIds || requestIds.length === 0) return true;
+
+  const { error: reqError } = await supabase
+    .from("delivery_requests")
+    .update({ status: "cancelled" })
+    .in("id", requestIds);
+
+  if (reqError) {
+    console.error("Error cancelling multiple requests:", reqError);
+    return false;
+  }
+
+  // Also cancel any active assignments for these requests
+  await supabase
+    .from("delivery_assignments")
+    .update({
+      status: "cancelled",
+      completed_at: new Date().toISOString(),
+    })
+    .in("request_id", requestIds)
+    .eq("status", "active");
+
+  return true;
+}
+
+/**
  * Verifies 4-digit PIN with database RPC and securely completes delivery.
  */
 export async function completeDeliveryWithOtp(

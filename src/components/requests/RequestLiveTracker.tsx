@@ -28,7 +28,7 @@ import {
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
-import type { StudentRequestWithDetails } from "@/lib/database/requests";
+import { updateRequestStatus, type StudentRequestWithDetails } from "@/lib/database/requests";
 
 interface RequestLiveTrackerProps {
   initialRequest: StudentRequestWithDetails;
@@ -245,12 +245,8 @@ export function RequestLiveTracker({ initialRequest }: RequestLiveTrackerProps) 
     setIsCancelling(true);
     try {
       const supabase = createClient();
-      const { error } = await supabase
-        .from("delivery_requests")
-        .update({ status: "cancelled" })
-        .eq("id", request.id);
-
-      if (!error) {
+      const success = await updateRequestStatus(supabase, request.id, "cancelled");
+      if (success) {
         setRequest((prev) => ({ ...prev, status: "cancelled" }));
       }
     } catch (err) {
@@ -921,6 +917,19 @@ export function RequestLiveTracker({ initialRequest }: RequestLiveTrackerProps) 
             </span>
             <span className="font-mono">{format(new Date(request.created_at), "MMM d, h:mm a")}</span>
           </div>
+
+          {["accepted", "picked_up", "in_transit"].includes(request.status) && (
+            <div className="text-center pt-2">
+              <button
+                type="button"
+                disabled={isCancelling}
+                onClick={handleCancel}
+                className="text-xs text-red-400/70 hover:text-red-400 underline cursor-pointer disabled:opacity-50 transition-colors"
+              >
+                {isCancelling ? "Cancelling order..." : "Cancel this order (Runner Inactive / Abandoned)"}
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>

@@ -2,11 +2,11 @@
 
 import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
-import { format } from "date-fns";
-import { MapPin, Package, Clock, IndianRupee, MessageSquare, CheckCircle2, History, AlertCircle, Search, SlidersHorizontal, Radio, ArrowRight } from "lucide-react";
+import { differenceInHours, format } from "date-fns";
+import { MapPin, Package, Clock, IndianRupee, MessageSquare, CheckCircle2, History, AlertCircle, Search, SlidersHorizontal, Radio, AlertTriangle, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Database } from "@/types/database";
-import { getStudentRequests, type StudentRequestWithDetails } from "@/lib/database/requests";
+import { cancelMultipleRequests, getStudentRequests, type StudentRequestWithDetails } from "@/lib/database/requests";
 import { createClient } from "@/lib/supabase/client";
 import { StudentRequestCard } from "@/components/request/StudentRequestCard";
 import { RequestFilters } from "./RequestFilters";
@@ -44,6 +44,7 @@ export function RequestList({ initialRequests }: RequestListProps) {
   const [sortBy, setSortBy] = useState<"newest" | "oldest">("newest");
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedRequest, setSelectedRequest] = useState<StudentRequestWithDetails | null>(null);
+  const [isBulkCancelling, setIsBulkCancelling] = useState(false);
 
   // Sync with initialRequests when prop updates
   useEffect(() => {
@@ -94,12 +95,63 @@ export function RequestList({ initialRequests }: RequestListProps) {
     return { active, completed, cancelled, all: requests.length };
   }, [requests]);
 
-  // Active in-flight requests (pinned at top so user NEVER loses their live radar)
+  // Active in-flight requests (sort newest first so recent orders take priority)
   const activeRequests = useMemo(() => {
-    return requests.filter((r) =>
-      ["pending", "accepted", "picked_up", "in_transit"].includes(r.status)
-    );
+    return requests
+      .filter((r) => ["pending", "accepted", "picked_up", "in_transit"].includes(r.status))
+      .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
   }, [requests]);
+
+  // Detect stale unfulfilled requests: pending > 2h old or accepted > 12h old
+  const staleRequests = useMemo(() => {
+    return requests.filter((r) => {
+      const hoursOld = differenceInHours(new Date(), new Date(r.created_at));
+      if (r.status === "pending" && hoursOld >= 2) return true;
+      if (["accepted", "picked_up", "in_transit"].includes(r.status) && hoursOld >= 12) return true;
+      return false;
+    });
+  }, [requests]);
+
+  const handleCardCancelSuccess = (requestId: string) => {
+    setRequests((prev) =>
+      prev.map((r) => (r.id === requestId ? { ...r, status: "cancelled" } : r))
+    );
+    if (selectedRequest && selectedRequest.id === requestId) {
+      setSelectedRequest((prev) => prev ? { ...prev, status: "cancelled" } : null);
+    }
+  };
+
+  const handleCancelAllStale = async () => {
+    if (staleRequests.length === 0) return;
+
+    if (
+      !window.confirm(
+        `Kya aap saari ${staleRequests.length} puraani / unfulfilled requests ko cancel karna chahte hain? Isse aapka active delivery dashboard ekdum clean ho jayega.`
+      )
+    ) {
+      return;
+    }
+
+    setIsBulkCancelling(true);
+    try {
+      const supabase = createClient();
+      const ids = staleRequests.map((r) => r.id);
+      const success = await cancelMultipleRequests(supabase, ids);
+      if (success) {
+        setRequests((prev) =>
+          prev.map((r) => (ids.includes(r.id) ? { ...r, status: "cancelled" } : r))
+        );
+        alert(`Success! ${staleRequests.length} puraane requests cancel kar diye gaye hain.`);
+      } else {
+        alert("Requests cancel karne me dikkat aayi. Kripya dubara try karein.");
+      }
+    } catch (err) {
+      console.error("Error bulk cancelling requests:", err);
+      alert("Error occurred while cancelling stale requests.");
+    } finally {
+      setIsBulkCancelling(false);
+    }
+  };
 
   // Filter and Search Logic
   const filteredRequests = useMemo(() => {
@@ -210,6 +262,41 @@ export function RequestList({ initialRequests }: RequestListProps) {
           </div>
         </div>
       )}
+
+      {/* ── Stale Orders Warning & Bulk Cleanup Banner ── */}
+      {staleRequests.length > 0 && (activeTab === "active" || activeTab === "all") && (
+        <div className="relative overflow-hidden p-3.5 sm:p-4 rounded-2xl bg-amber-950/30 border border-amber-500/35 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-[0_0_25px_rgba(245,158,11,0.08)]">
+          <div className="flex items-start gap-3">
+            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400 shrink-0 mt-0.5">
+              <AlertTriangle className="w-4 h-4 sm:w-5 sm:h-5 animate-pulse" />
+            </div>
+            <div className="space-y-0.5">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-xs sm:text-sm font-bold text-amber-300">
+                  {staleRequests.length} Puraani / Unfulfilled Requests Detected
+                </span>
+                <span className="text-[10px] font-mono text-amber-400/90 bg-amber-500/15 px-2 py-0.5 rounded border border-amber-500/30">
+                  Stale Orders
+                </span>
+              </div>
+              <p className="text-[11px] sm:text-xs text-zinc-300 leading-relaxed">
+                In orders ko kisi campus runner ne accept ya deliver nahi kiya. Inhe 1-click me cancel karke active orders list clean karein.
+              </p>
+            </div>
+          </div>
+
+          <Button
+            type="button"
+            onClick={handleCancelAllStale}
+            disabled={isBulkCancelling}
+            className="w-full sm:w-auto shrink-0 bg-red-500/20 hover:bg-red-500/30 border border-red-500/40 text-red-300 hover:text-red-200 font-bold text-xs gap-1.5 py-2 px-4 rounded-xl cursor-pointer active:scale-95 transition-all"
+          >
+            <Trash2 className="w-3.5 h-3.5" />
+            <span>{isBulkCancelling ? "Cancelling..." : `Cancel All ${staleRequests.length} Stale Orders`}</span>
+          </Button>
+        </div>
+      )}
+
       {/* Category Tabs (Single row horizontal scroll on mobile) */}
       <div className="flex items-center gap-2 sm:gap-3 pb-2 sm:pb-5 overflow-x-auto no-scrollbar scrollbar-none">
         <button
@@ -332,6 +419,7 @@ export function RequestList({ initialRequests }: RequestListProps) {
               key={req.id}
               request={req}
               onClick={() => setSelectedRequest(req)}
+              onCancelSuccess={handleCardCancelSuccess}
             />
           ))}
         </div>
@@ -492,7 +580,7 @@ export function RequestList({ initialRequests }: RequestListProps) {
                 </Link>
               </div>
               <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
-                {selectedRequest.status === "pending" && (
+                {["pending", "accepted", "picked_up", "in_transit"].includes(selectedRequest.status) && (
                   <CancelRequestButton requestId={selectedRequest.id} />
                 )}
                 <Button variant="secondary" onClick={() => setSelectedRequest(null)}>
