@@ -122,3 +122,14 @@ Before finalizing any code change, generating a pull request, or claiming comple
    - Never make false or misleading claims about external systems (e.g., GitHub background sync queues, third-party APIs). If an operation takes time or has external dependencies, state the exact technical reality upfront.
 3. **Consent on High-Impact Changes:**
    - Never delete production files, drop database tables, or rewrite working core modules without explicitly confirming with the user first.
+
+---
+
+### 🎯 Protocol 7: Strict Page Scope & Zero Unintended Modifications (USER'S GOLDEN RULE)
+1. **Target-Only Execution (Single Page / Component Scope):**
+   - **Aap jis specific page ya component par kaam karne ko kahenge, sirf aur sirf usi file me kaam hoga.**
+   - **Baaki kisi bhi doosre page ya component ko haath bhi nahi lagaya jaayega. Zero untouched changes.**
+2. **Never Touch Working Unrelated Features:**
+   - Even if visual polish, contrast tuning, or refactoring seems beneficial, NEVER modify another screen, component, or flow without explicit user request.
+3. **Explicit Consent for Shared Changes:**
+   - If a change strictly requires touching a shared component, schema, or provider, STOP and ask the user for approval first before touching that file.
