@@ -92,8 +92,11 @@ export function RequestLiveTracker({ initialRequest }: RequestLiveTrackerProps) 
   const [isBoosting, setIsBoosting] = useState(false);
   const [isCancelling, setIsCancelling] = useState(false);
   const [copiedOtp, setCopiedOtp] = useState(false);
+  const [copiedLink, setCopiedLink] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [showCelebration, setShowCelebration] = useState(false);
+  const [showItemsPreview, setShowItemsPreview] = useState(false);
+  const [showCancelModal, setShowCancelModal] = useState(false);
   const [boostSuccessMsg, setBoostSuccessMsg] = useState<string | null>(null);
 
   const prevStatusRef = useRef(initialRequest.status);
@@ -239,9 +242,21 @@ export function RequestLiveTracker({ initialRequest }: RequestLiveTrackerProps) 
     }
   };
 
-  // Handle cancel request
-  const handleCancel = async () => {
-    if (!confirm("Are you sure you want to cancel this delivery request?")) return;
+  const handleCopyLink = () => {
+    if (typeof window !== "undefined") {
+      navigator.clipboard.writeText(window.location.href);
+      setCopiedLink(true);
+      setTimeout(() => setCopiedLink(false), 2000);
+    }
+  };
+
+  const confirmCancel = () => {
+    setShowCancelModal(true);
+  };
+
+  // Handle cancel request execution from modal
+  const executeCancel = async () => {
+    setShowCancelModal(false);
     setIsCancelling(true);
     try {
       const supabase = createClient();
@@ -307,34 +322,55 @@ export function RequestLiveTracker({ initialRequest }: RequestLiveTrackerProps) 
           </span>
         </div>
 
-        <button
-          type="button"
-          onClick={() => setSoundEnabled(!soundEnabled)}
-          className={cn(
-            "flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-semibold transition-all cursor-pointer",
-            soundEnabled
-              ? "bg-emerald-500/15 border-emerald-500/40 text-emerald-300 shadow-[0_0_15px_rgba(0,230,118,0.15)]"
-              : "bg-white/5 border-white/10 text-white/40 hover:text-white"
-          )}
-          title={soundEnabled ? "Notification sound active" : "Sound muted"}
-        >
-          {soundEnabled ? (
-            <>
-              <Volume2 size={14} className="text-[#00E676]" />
-              <span className="hidden sm:inline">Chime Active</span>
-              <span className="flex gap-0.5 items-end h-3 ml-0.5">
-                <span className="w-0.5 h-1.5 bg-[#00E676] animate-pulse rounded-full" />
-                <span className="w-0.5 h-3 bg-[#00E676] animate-pulse rounded-full" />
-                <span className="w-0.5 h-2 bg-[#00E676] animate-pulse rounded-full" />
-              </span>
-            </>
-          ) : (
-            <>
-              <VolumeX size={14} className="text-white/40" />
-              <span className="hidden sm:inline">Muted</span>
-            </>
-          )}
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={handleCopyLink}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 text-white/70 hover:text-white text-xs font-semibold transition-all cursor-pointer"
+            title="Copy Request Link to Share"
+          >
+            {copiedLink ? (
+              <>
+                <Check size={13} className="text-[#00E676]" />
+                <span className="text-[#00E676]">Link Copied!</span>
+              </>
+            ) : (
+              <>
+                <Copy size={13} />
+                <span className="hidden sm:inline">Share Link</span>
+              </>
+            )}
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setSoundEnabled(!soundEnabled)}
+            className={cn(
+              "flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-semibold transition-all cursor-pointer",
+              soundEnabled
+                ? "bg-emerald-500/15 border-emerald-500/40 text-emerald-300 shadow-[0_0_15px_rgba(0,230,118,0.15)]"
+                : "bg-white/5 border-white/10 text-white/40 hover:text-white"
+            )}
+            title={soundEnabled ? "Notification sound active" : "Sound muted"}
+          >
+            {soundEnabled ? (
+              <>
+                <Volume2 size={14} className="text-[#00E676]" />
+                <span className="hidden sm:inline">Chime Active</span>
+                <span className="flex gap-0.5 items-end h-3 ml-0.5">
+                  <span className="w-0.5 h-1.5 bg-[#00E676] animate-pulse rounded-full" />
+                  <span className="w-0.5 h-3 bg-[#00E676] animate-pulse rounded-full" />
+                  <span className="w-0.5 h-2 bg-[#00E676] animate-pulse rounded-full" />
+                </span>
+              </>
+            ) : (
+              <>
+                <VolumeX size={14} className="text-white/40" />
+                <span className="hidden sm:inline">Muted</span>
+              </>
+            )}
+          </button>
+        </div>
       </div>
 
       {/* Celebration Banner when runner is matched */}
@@ -384,7 +420,7 @@ export function RequestLiveTracker({ initialRequest }: RequestLiveTrackerProps) 
             <span className="bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20 text-[#00E676] font-bold">
               ● 14 CAMPUS RUNNERS NEARBY
             </span>
-            <span className="hidden sm:inline">LATENCY: ~18ms MESH</span>
+            <span className="hidden sm:inline">CAMPUS MESH: ~500m</span>
           </div>
 
           {/* ── High-Tech Circular Holographic Radar ── */}
@@ -509,6 +545,52 @@ export function RequestLiveTracker({ initialRequest }: RequestLiveTrackerProps) 
                 </div>
               </div>
             </div>
+
+            {/* Quick Order Items Collapsible Drawer */}
+            {request.items && request.items.length > 0 && (
+              <div className="w-full pt-1">
+                <button
+                  type="button"
+                  onClick={() => setShowItemsPreview(!showItemsPreview)}
+                  className="w-full py-2 px-3 rounded-2xl bg-black/60 hover:bg-black/80 border border-white/10 hover:border-emerald-500/30 text-xs font-medium text-[#A7B8B0] hover:text-white flex items-center justify-between transition-all cursor-pointer shadow-inner"
+                >
+                  <span className="flex items-center gap-2 min-w-0">
+                    <Package size={13} className="text-emerald-400 shrink-0" />
+                    <span className="text-white font-bold shrink-0">
+                      {request.items.length} {request.items.length === 1 ? "Item" : "Items"}:
+                    </span>
+                    <span className="truncate text-[11px] text-zinc-300">
+                      {request.items.map((i) => `${i.quantity}x ${i.name}`).join(", ")}
+                    </span>
+                  </span>
+                  <span className="text-emerald-400 text-[10px] font-mono shrink-0 ml-2">
+                    {showItemsPreview ? "Hide ▲" : `~₹${request.total_estimated_amount} ▼`}
+                  </span>
+                </button>
+
+                {showItemsPreview && (
+                  <div className="mt-2 p-3.5 rounded-2xl bg-black/80 border border-emerald-500/25 space-y-2 text-left animate-in fade-in slide-in-from-top-1 text-xs">
+                    <div className="space-y-1.5 max-h-40 overflow-y-auto pr-1">
+                      {request.items.map((it) => (
+                        <div key={it.id} className="flex justify-between items-center text-[11px]">
+                          <span className="text-white font-medium">
+                            <span className="text-[#00E676] font-mono font-bold mr-1.5">{it.quantity}x</span>
+                            {it.name}
+                          </span>
+                          <span className="text-emerald-400 font-mono">
+                            {it.estimated_price ? `~₹${it.estimated_price * it.quantity}` : "Custom"}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="pt-2 border-t border-white/10 flex justify-between text-[11px] text-[#A7B8B0]">
+                      <span>Estimated Items Total</span>
+                      <span className="text-white font-mono font-bold">~₹{request.total_estimated_amount}</span>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Live Metrics HUD */}
@@ -591,7 +673,7 @@ export function RequestLiveTracker({ initialRequest }: RequestLiveTrackerProps) 
             <button
               type="button"
               disabled={isCancelling}
-              onClick={handleCancel}
+              onClick={confirmCancel}
               className="text-xs text-red-400/70 hover:text-red-400 underline cursor-pointer disabled:opacity-50 transition-colors"
             >
               {isCancelling ? "Cancelling request..." : "Cancel this request"}
@@ -923,7 +1005,7 @@ export function RequestLiveTracker({ initialRequest }: RequestLiveTrackerProps) 
               <button
                 type="button"
                 disabled={isCancelling}
-                onClick={handleCancel}
+                onClick={confirmCancel}
                 className="text-xs text-red-400/70 hover:text-red-400 underline cursor-pointer disabled:opacity-50 transition-colors"
               >
                 {isCancelling ? "Cancelling order..." : "Cancel this order (Runner Inactive / Abandoned)"}
@@ -932,6 +1014,42 @@ export function RequestLiveTracker({ initialRequest }: RequestLiveTrackerProps) 
           )}
         </div>
       </div>
+
+      {/* ── Sleek Dark Glassmorphic Cancel Confirmation Modal ── */}
+      {showCancelModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-150">
+          <div className="relative w-full max-w-sm rounded-3xl bg-[#0a100c] border-2 border-red-500/30 p-6 text-center space-y-4 shadow-[0_0_50px_rgba(239,68,68,0.2)]">
+            <div className="w-12 h-12 rounded-2xl bg-red-500/15 border border-red-500/30 text-red-400 flex items-center justify-center mx-auto text-xl font-bold">
+              ⚠️
+            </div>
+
+            <div className="space-y-1.5">
+              <h3 className="text-lg font-black text-white">Cancel This Request?</h3>
+              <p className="text-xs text-[#A7B8B0] leading-relaxed">
+                Runners are actively scanning the network. If you cancel, this order will be permanently closed.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-2 gap-2.5 pt-2">
+              <button
+                type="button"
+                onClick={() => setShowCancelModal(false)}
+                className="w-full py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold text-xs transition-all cursor-pointer"
+              >
+                Keep Waiting
+              </button>
+              <button
+                type="button"
+                disabled={isCancelling}
+                onClick={executeCancel}
+                className="w-full py-2.5 rounded-xl bg-red-500/20 hover:bg-red-500/30 border border-red-500/40 text-red-400 font-black text-xs transition-all cursor-pointer disabled:opacity-50"
+              >
+                {isCancelling ? "Cancelling..." : "Yes, Cancel"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
