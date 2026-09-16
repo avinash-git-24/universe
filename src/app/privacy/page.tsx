@@ -51,20 +51,21 @@ export default function PrivacyPage() {
           <span style={{ fontSize: 20, fontWeight: 700, color: "#fff", letterSpacing: "1.5px" }}>UniVerse</span>
         </Link>
         <Link
-          href="/register"
+          href="/"
           style={{
             textDecoration: "none", padding: "7px 16px", borderRadius: 6,
             border: "1px solid rgba(0,210,255,0.4)", color: "#00d2ff",
             fontSize: 11, fontFamily: "'Space Mono', monospace", letterSpacing: "1px",
+            transition: "all 0.2s ease",
           }}
         >
-          ← Sign Up
+          ← Back to UniVerse
         </Link>
       </header>
 
-      <div style={{ maxWidth: 800, margin: "0 auto", padding: "48px 20px 0" }}>
+      <div style={{ maxWidth: 840, margin: "0 auto", padding: "48px 20px 0" }}>
         {/* ── Hero ── */}
-        <div style={{ textAlign: "center", marginBottom: 48 }}>
+        <div style={{ textAlign: "center", marginBottom: 36 }}>
           <div
             style={{
               display: "inline-flex", alignItems: "center", gap: 8,
@@ -78,7 +79,7 @@ export default function PrivacyPage() {
               <path d="M7 11V7a5 5 0 0 1 10 0v4" />
             </svg>
             <span style={{ fontSize: 10, color: "#00d2ff", fontFamily: "'Space Mono', monospace", letterSpacing: "2px", textTransform: "uppercase" }}>
-              Data Privacy
+              Data Privacy & Security
             </span>
           </div>
 
@@ -91,9 +92,9 @@ export default function PrivacyPage() {
           >
             Privacy Policy
           </h1>
-          <p style={{ fontSize: 14, color: "rgba(255,255,255,0.5)", lineHeight: 1.7, maxWidth: 500, margin: "0 auto 20px" }}>
+          <p style={{ fontSize: 14, color: "rgba(255,255,255,0.5)", lineHeight: 1.7, maxWidth: 520, margin: "0 auto 20px" }}>
             Aapka data aapka hai. UniVerse aapki privacy ko seriously leta hai.
-            Yahan padhein ki hum kya collect karte hain aur kyun.
+            Yahan transparently padhein ki hum kya collect karte hain aur kyun.
           </p>
 
           <div
@@ -101,6 +102,7 @@ export default function PrivacyPage() {
               display: "inline-flex", alignItems: "center", gap: 10,
               padding: "10px 20px", borderRadius: 8,
               background: "rgba(0,200,100,0.07)", border: "1px solid rgba(0,200,100,0.22)",
+              marginBottom: 24,
             }}
           >
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#4ade80" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -110,15 +112,43 @@ export default function PrivacyPage() {
               We do NOT sell your data to any third party
             </span>
           </div>
+
+          {/* Quick-Jump Navigation Pills */}
+          <div
+            style={{
+              display: "flex", flexWrap: "wrap", justifyContent: "center",
+              gap: 8, maxWidth: 650, margin: "0 auto",
+            }}
+          >
+            {[
+              { label: "Data Collected", href: "#data-collected" },
+              { label: "Usage", href: "#data-usage" },
+              { label: "Sharing", href: "#data-sharing" },
+              { label: "Security", href: "#security" },
+              { label: "Your Rights", href: "#your-rights" },
+              { label: "Cookies", href: "#cookies" },
+              { label: "Retention", href: "#retention" },
+              { label: "Grievance", href: "#grievance" },
+            ].map((pill, i) => (
+              <a
+                key={i}
+                href={pill.href}
+                style={{
+                  padding: "6px 12px", borderRadius: 100,
+                  background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.09)",
+                  color: "rgba(255,255,255,0.7)", fontSize: 11,
+                  fontFamily: "'Space Mono', monospace", textDecoration: "none",
+                  transition: "all 0.15s ease",
+                }}
+              >
+                {pill.label}
+              </a>
+            ))}
+          </div>
         </div>
 
-        {/* ── Summary Cards ── */}
-        <div
-          style={{
-            display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
-            gap: 16, marginBottom: 40,
-          }}
-        >
+        {/* ── Summary Cards Grid (2x2 on Mobile, 4x1 on Desktop) ── */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5 mb-10">
           {[
             { icon: "🔐", title: "Encrypted Storage", desc: "Supabase PostgreSQL with RLS — sirf aap apna data dekh sakte hain" },
             { icon: "🚫", title: "No Data Selling", desc: "Hum kabhi bhi aapka data advertisers ya third-parties ko nahi bechte" },
@@ -129,19 +159,20 @@ export default function PrivacyPage() {
               key={i}
               style={{
                 background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)",
-                borderRadius: 10, padding: "20px 16px", textAlign: "center",
+                borderRadius: 10, padding: "20px 14px", textAlign: "center",
+                display: "flex", flexDirection: "column", alignItems: "center",
               }}
             >
-              <div style={{ fontSize: 28, marginBottom: 10 }}>{card.icon}</div>
-              <div style={{ fontSize: 13, fontWeight: 600, color: "#fff", marginBottom: 6 }}>{card.title}</div>
-              <div style={{ fontSize: 11.5, color: "rgba(255,255,255,0.5)", lineHeight: 1.6 }}>{card.desc}</div>
+              <div style={{ fontSize: 26, marginBottom: 10 }}>{card.icon}</div>
+              <div style={{ fontSize: 12.5, fontWeight: 600, color: "#fff", marginBottom: 6 }}>{card.title}</div>
+              <div style={{ fontSize: 11, color: "rgba(255,255,255,0.5)", lineHeight: 1.5 }}>{card.desc}</div>
             </div>
           ))}
         </div>
 
         {/* ── Sections ── */}
 
-        <PSection title="1. Data Jo Hum Collect Karte Hain">
+        <PSection id="data-collected" title="1. Data Jo Hum Collect Karte Hain">
           <p>Jab aap UniVerse use karte hain, hum yeh information collect karte hain:</p>
 
           <div style={{ marginTop: 16, display: "flex", flexDirection: "column", gap: 10 }}>
@@ -188,7 +219,7 @@ export default function PrivacyPage() {
           </div>
         </PSection>
 
-        <PSection title="2. Hum Data Ka Use Kaise Karte Hain">
+        <PSection id="data-usage" title="2. Hum Data Ka Use Kaise Karte Hain">
           <ul style={{ paddingLeft: 20, margin: 0, lineHeight: 2 }}>
             <li><strong>Account management:</strong> Login, verification, aur security</li>
             <li><strong>Platform functionality:</strong> Delivery matching, marketplace listings, chat</li>
@@ -208,7 +239,7 @@ export default function PrivacyPage() {
           </div>
         </PSection>
 
-        <PSection title="3. Data Sharing — Kab Aur Kiske Saath">
+        <PSection id="data-sharing" title="3. Data Sharing — Kab Aur Kiske Saath">
           <p>Hum aapka data <strong>sirf</strong> inke saath share kar sakte hain:</p>
           <ul style={{ paddingLeft: 20, margin: "12px 0 0", lineHeight: 2 }}>
             <li><strong>Supabase (Database Provider):</strong> Aapka data securely store karta hai — EU data protection standards follow karta hai</li>
@@ -228,7 +259,7 @@ export default function PrivacyPage() {
           </div>
         </PSection>
 
-        <PSection title="4. Data Security">
+        <PSection id="security" title="4. Data Security">
           <ul style={{ paddingLeft: 20, margin: 0, lineHeight: 2 }}>
             <li><strong>Row Level Security (RLS):</strong> Supabase database mein — aap sirf apna data dekh sakte hain</li>
             <li><strong>HTTPS Encryption:</strong> Sab communication end-to-end encrypted</li>
@@ -238,7 +269,7 @@ export default function PrivacyPage() {
           </ul>
         </PSection>
 
-        <PSection title="5. Aapke Rights (Aapka Data, Aapka Control)">
+        <PSection id="your-rights" title="5. Aapke Rights (Aapka Data, Aapka Control)">
           <ul style={{ paddingLeft: 20, margin: 0, lineHeight: 2 }}>
             <li>
               <strong>Access:</strong> Apna data download karne ka right — settings se request karein
@@ -272,7 +303,7 @@ export default function PrivacyPage() {
           </div>
         </PSection>
 
-        <PSection title="6. Cookies & Local Storage">
+        <PSection id="cookies" title="6. Cookies & Local Storage">
           <p>UniVerse sirf zaroorat ki cookies use karta hai:</p>
           <ul style={{ paddingLeft: 20, margin: "12px 0 0", lineHeight: 2 }}>
             <li><strong>Session Cookie:</strong> Aapको logged in rakhne ke liye (authentication)</li>
@@ -283,7 +314,7 @@ export default function PrivacyPage() {
           </p>
         </PSection>
 
-        <PSection title="7. Data Retention">
+        <PSection id="retention" title="7. Data Retention">
           <ul style={{ paddingLeft: 20, margin: 0, lineHeight: 2 }}>
             <li><strong>Active account:</strong> Jab tak aap use karte hain</li>
             <li><strong>Inactive account:</strong> 1 saal inactivity ke baad email notification, phir 30 din mein delete</li>
@@ -293,7 +324,7 @@ export default function PrivacyPage() {
           </ul>
         </PSection>
 
-        <PSection title="8. Changes to Privacy Policy">
+        <PSection id="updates" title="8. Changes to Privacy Policy">
           <p>
             Hum is policy ko update kar sakte hain. Significant changes ke liye aapko email se notify kiya jayega
             kam se kam 14 din pehle.
@@ -303,32 +334,59 @@ export default function PrivacyPage() {
           </p>
         </PSection>
 
-        {/* ── Contact ── */}
+        {/* ── Grievance Redressal & Contact (DPDPA 2023 Compliance) ── */}
         <div
+          id="grievance"
           style={{
             background: "rgba(0,210,255,0.04)", border: "1px solid rgba(0,210,255,0.18)",
-            borderRadius: 12, padding: "28px", textAlign: "center", marginBottom: 24,
+            borderRadius: 12, padding: "28px", marginBottom: 24, scrollMarginTop: 90,
           }}
         >
-          <h2 style={{ margin: "0 0 8px", fontSize: 16, fontWeight: 600, color: "#fff" }}>Privacy Concerns?</h2>
-          <p style={{ margin: "0 0 16px", fontSize: 13, color: "rgba(255,255,255,0.5)", lineHeight: 1.6 }}>
-            Koi bhi privacy concern ya data request ke liye humse contact karein.
-          </p>
-          <a
-            href="mailto:support@universe.mu.ac.in"
+          <div style={{ textAlign: "center", marginBottom: 20 }}>
+            <h2 style={{ margin: "0 0 8px", fontSize: 16, fontWeight: 600, color: "#fff" }}>
+              ⚖️ Grievance Redressal Officer (DPDPA 2023)
+            </h2>
+            <p style={{ margin: 0, fontSize: 13, color: "rgba(255,255,255,0.5)", lineHeight: 1.6 }}>
+              Digital Personal Data Protection Act, 2023 ke anusaar designated campus grievance contact:
+            </p>
+          </div>
+
+          <div
             style={{
-              display: "inline-flex", alignItems: "center", gap: 8,
-              padding: "10px 20px", borderRadius: 6,
-              background: "rgba(0,210,255,0.1)", border: "1px solid rgba(0,210,255,0.28)",
-              color: "#00d2ff", textDecoration: "none",
-              fontSize: 12, fontFamily: "'Space Mono', monospace", letterSpacing: "0.5px",
+              display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+              gap: 12, marginBottom: 20,
             }}
           >
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <rect x="2" y="4" width="20" height="16" rx="2" /><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
-            </svg>
-            support@universe.mu.ac.in
-          </a>
+            <div style={{ padding: "14px", borderRadius: 8, background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)" }}>
+              <div style={{ fontSize: 10, color: "#00d2ff", fontFamily: "'Space Mono', monospace", letterSpacing: "1px", marginBottom: 4 }}>DESIGNATED OFFICER</div>
+              <div style={{ fontSize: 13, fontWeight: 600, color: "#fff" }}>Lead Platform Administrator</div>
+              <div style={{ fontSize: 11.5, color: "rgba(255,255,255,0.5)", marginTop: 2 }}>Marwadi University, Rajkot</div>
+            </div>
+
+            <div style={{ padding: "14px", borderRadius: 8, background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)" }}>
+              <div style={{ fontSize: 10, color: "#4ade80", fontFamily: "'Space Mono', monospace", letterSpacing: "1px", marginBottom: 4 }}>RESOLUTION TIMELINE</div>
+              <div style={{ fontSize: 13, fontWeight: 600, color: "#4ade80" }}>48 Hours Acknowledgment</div>
+              <div style={{ fontSize: 11.5, color: "rgba(255,255,255,0.5)", marginTop: 2 }}>Max 15 working days resolution</div>
+            </div>
+          </div>
+
+          <div style={{ textAlign: "center" }}>
+            <a
+              href="mailto:support@universe.mu.ac.in"
+              style={{
+                display: "inline-flex", alignItems: "center", gap: 8,
+                padding: "10px 20px", borderRadius: 6,
+                background: "rgba(0,210,255,0.1)", border: "1px solid rgba(0,210,255,0.28)",
+                color: "#00d2ff", textDecoration: "none",
+                fontSize: 12, fontFamily: "'Space Mono', monospace", letterSpacing: "0.5px",
+              }}
+            >
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="2" y="4" width="20" height="16" rx="2" /><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+              </svg>
+              support@universe.mu.ac.in
+            </a>
+          </div>
         </div>
 
         {/* ── Footer Nav ── */}
@@ -346,12 +404,14 @@ export default function PrivacyPage() {
 
 // ─── Helper Component ─────────────────────────────────────────────────────────
 
-function PSection({ title, children }: { title: string; children: React.ReactNode }) {
+function PSection({ id, title, children }: { id?: string; title: string; children: React.ReactNode }) {
   return (
     <div
+      id={id}
       style={{
         background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)",
         borderRadius: 12, padding: "28px", marginBottom: 24,
+        scrollMarginTop: 90,
       }}
     >
       <h2 style={{ margin: "0 0 16px", fontSize: 16, fontWeight: 600, color: "#fff" }}>{title}</h2>
@@ -359,4 +419,3 @@ function PSection({ title, children }: { title: string; children: React.ReactNod
     </div>
   );
 }
-

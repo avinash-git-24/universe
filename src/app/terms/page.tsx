@@ -62,20 +62,21 @@ export default function TermsPage() {
           <span style={{ fontSize: 20, fontWeight: 700, color: "#fff", letterSpacing: "1.5px" }}>UniVerse</span>
         </Link>
         <Link
-          href="/register"
+          href="/"
           style={{
             textDecoration: "none", padding: "7px 16px", borderRadius: 6,
             border: "1px solid rgba(0,210,255,0.4)", color: "#00d2ff",
             fontSize: 11, fontFamily: "'Space Mono', monospace", letterSpacing: "1px",
+            transition: "all 0.2s ease",
           }}
         >
-          ← Sign Up
+          ← Back to UniVerse
         </Link>
       </header>
 
-      <div style={{ maxWidth: 800, margin: "0 auto", padding: "48px 20px 0" }}>
+      <div style={{ maxWidth: 840, margin: "0 auto", padding: "48px 20px 0" }}>
         {/* ── Hero ── */}
-        <div style={{ textAlign: "center", marginBottom: 48 }}>
+        <div style={{ textAlign: "center", marginBottom: 36 }}>
           <div
             style={{
               display: "inline-flex", alignItems: "center", gap: 8,
@@ -88,7 +89,7 @@ export default function TermsPage() {
               <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
             </svg>
             <span style={{ fontSize: 10, color: "#00d2ff", fontFamily: "'Space Mono', monospace", letterSpacing: "2px", textTransform: "uppercase" }}>
-              Legal Shield
+              Legal Shield & Campus Guidelines
             </span>
           </div>
 
@@ -101,7 +102,7 @@ export default function TermsPage() {
           >
             Terms of Service &amp;<br />Campus Rules
           </h1>
-          <p style={{ fontSize: 14, color: "rgba(255,255,255,0.5)", lineHeight: 1.7, maxWidth: 500, margin: "0 auto 20px" }}>
+          <p style={{ fontSize: 14, color: "rgba(255,255,255,0.5)", lineHeight: 1.7, maxWidth: 520, margin: "0 auto 20px" }}>
             UniVerse ek peer-to-peer campus platform hai exclusively Marwadi University students ke liye.
             Account banane se pehle in rules ko padhna zaroori hai.
           </p>
@@ -112,6 +113,7 @@ export default function TermsPage() {
               display: "inline-flex", alignItems: "center", gap: 10,
               padding: "10px 20px", borderRadius: 8,
               background: "rgba(0,200,100,0.07)", border: "1px solid rgba(0,200,100,0.22)",
+              marginBottom: 24,
             }}
           >
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#4ade80" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -122,10 +124,44 @@ export default function TermsPage() {
               Protected under India IT Act 2000 — Section 79 (Safe Harbor)
             </span>
           </div>
+
+          {/* Quick-Jump Navigation Pills */}
+          <div
+            style={{
+              display: "flex", flexWrap: "wrap", justifyContent: "center",
+              gap: 8, maxWidth: 680, margin: "0 auto",
+            }}
+          >
+            {[
+              { label: "Safe Harbor", href: "#safe-harbor" },
+              { label: "Eligibility", href: "#eligibility" },
+              { label: "User Conduct", href: "#conduct" },
+              { label: "Prohibited Items ❌", href: "#prohibited-items", accent: true },
+              { label: "Delivery Rules", href: "#delivery" },
+              { label: "Resale OTP", href: "#resale" },
+              { label: "Termination", href: "#termination" },
+              { label: "Liability", href: "#liability" },
+            ].map((pill, i) => (
+              <a
+                key={i}
+                href={pill.href}
+                style={{
+                  padding: "6px 12px", borderRadius: 100,
+                  background: pill.accent ? "rgba(255,60,60,0.08)" : "rgba(255,255,255,0.03)",
+                  border: pill.accent ? "1px solid rgba(255,60,60,0.25)" : "1px solid rgba(255,255,255,0.09)",
+                  color: pill.accent ? "#ff8b8b" : "rgba(255,255,255,0.7)", fontSize: 11,
+                  fontFamily: "'Space Mono', monospace", textDecoration: "none",
+                  transition: "all 0.15s ease",
+                }}
+              >
+                {pill.label}
+              </a>
+            ))}
+          </div>
         </div>
 
         {/* ── Section 1: Platform Nature ── */}
-        <Section title="1. 🛡️ Platform Nature — Safe Harbor (IT Act Section 79)">
+        <Section id="safe-harbor" title="1. 🛡️ Platform Nature — Safe Harbor (IT Act Section 79)">
           <p>
             UniVerse ek <strong>peer-to-peer intermediary platform</strong> hai jo Marwadi University students ko aapas mein connect karta hai.
             Hum ek marketplace facilitator hain — na koi party seller, buyer, ya delivery agent.
@@ -141,7 +177,7 @@ export default function TermsPage() {
         </Section>
 
         {/* ── Section 2: Eligibility ── */}
-        <Section title="2. Eligibility — Kaun Use Kar Sakta Hai">
+        <Section id="eligibility" title="2. Eligibility — Kaun Use Kar Sakta Hai">
           <ul style={{ paddingLeft: 20, margin: 0, lineHeight: 2 }}>
             <li>Valid <strong>@marwadiuniversity.ac.in</strong> email hona chahiye</li>
             <li>Active enrolled student hona chahiye</li>
@@ -154,7 +190,7 @@ export default function TermsPage() {
         </Section>
 
         {/* ── Section 3: Acceptable Use ── */}
-        <Section title="3. Acceptable Use & User Conduct">
+        <Section id="conduct" title="3. Acceptable Use & User Conduct">
           <p>Platform use karte waqt aap agree karte hain ki aap:</p>
           <ul style={{ paddingLeft: 20, margin: "12px 0 0", lineHeight: 2 }}>
             <li>Sirf legal aur genuine items/services list karenge</li>
@@ -171,9 +207,10 @@ export default function TermsPage() {
 
         {/* ── Section 4: Prohibited Items ── */}
         <div
+          id="prohibited-items"
           style={{
             background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)",
-            borderRadius: 12, padding: "28px", marginBottom: 24,
+            borderRadius: 12, padding: "28px", marginBottom: 24, scrollMarginTop: 90,
           }}
         >
           <h2 style={{ margin: "0 0 8px", fontSize: 16, fontWeight: 600, color: "#fff" }}>
@@ -220,7 +257,7 @@ export default function TermsPage() {
         </div>
 
         {/* ── Section 5: Delivery Rules ── */}
-        <Section title="5. Delivery & Campus Runner Rules">
+        <Section id="delivery" title="5. Delivery & Campus Runner Rules">
           <ul style={{ paddingLeft: 20, margin: 0, lineHeight: 2 }}>
             <li>Runners apni marzi se orders accept ya reject kar sakte hain</li>
             <li>Runner aur requester ke beech deal unki personal zimmedari hai</li>
@@ -232,7 +269,7 @@ export default function TermsPage() {
         </Section>
 
         {/* ── Section 6: Marketplace ── */}
-        <Section title="6. Resale Marketplace & Escrow OTP">
+        <Section id="resale" title="6. Resale Marketplace & Escrow OTP">
           <ul style={{ paddingLeft: 20, margin: 0, lineHeight: 2 }}>
             <li>Seller authentic photos aur accurate condition details dega</li>
             <li>Buyer <strong>OTP verification</strong> ke baad hi handover complete hoga</li>
@@ -243,7 +280,7 @@ export default function TermsPage() {
         </Section>
 
         {/* ── Section 7: Termination ── */}
-        <Section title="7. Account Suspension & Termination">
+        <Section id="termination" title="7. Account Suspension & Termination">
           <p>UniVerse kisi bhi account ko suspend ya terminate kar sakta hai agar:</p>
           <ul style={{ paddingLeft: 20, margin: "12px 0 0", lineHeight: 2 }}>
             <li>Terms ka violation ho (especially prohibited items)</li>
@@ -257,7 +294,7 @@ export default function TermsPage() {
         </Section>
 
         {/* ── Section 8: Disclaimer ── */}
-        <Section title="8. Disclaimer of Liability">
+        <Section id="liability" title="8. Disclaimer of Liability">
           <p>UniVerse &quot;AS IS&quot; provide kiya jata hai. Hum explicitly disclaim karte hain:</p>
           <ul style={{ paddingLeft: 20, margin: "12px 0 0", lineHeight: 2 }}>
             <li>Kisi bhi peer-to-peer transaction ki guarantee</li>
@@ -296,9 +333,10 @@ export default function TermsPage() {
 
         {/* ── Contact ── */}
         <div
+          id="contact"
           style={{
             background: "rgba(0,210,255,0.04)", border: "1px solid rgba(0,210,255,0.18)",
-            borderRadius: 12, padding: "28px", textAlign: "center", marginBottom: 24,
+            borderRadius: 12, padding: "28px", textAlign: "center", marginBottom: 24, scrollMarginTop: 90,
           }}
         >
           <h2 style={{ margin: "0 0 8px", fontSize: 16, fontWeight: 600, color: "#fff" }}>Koi Sawaal Hai?</h2>
@@ -337,12 +375,14 @@ export default function TermsPage() {
 
 // ─── Helper Components ────────────────────────────────────────────────────────
 
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
+function Section({ id, title, children }: { id?: string; title: string; children: React.ReactNode }) {
   return (
     <div
+      id={id}
       style={{
         background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)",
         borderRadius: 12, padding: "28px", marginBottom: 24,
+        scrollMarginTop: 90,
       }}
     >
       <h2 style={{ margin: "0 0 16px", fontSize: 16, fontWeight: 600, color: "#fff" }}>{title}</h2>
@@ -363,4 +403,3 @@ function Callout({ children, color }: { children: React.ReactNode; color: "orang
     </div>
   );
 }
-
