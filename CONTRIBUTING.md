@@ -63,3 +63,6 @@ Co-authored-by: Name <username@users.noreply.github.com>
 
 This ensures proper attribution across GitHub profiles, contribution graphs, and repository insights.
 
+### 🤝 Pair Contributors & Architecture Reviewers
+- **Archi Kumari** ([@Archi-22108](https://github.com/Archi-22108)) — Core Contributor & Co-Author
+
