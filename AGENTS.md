@@ -100,7 +100,7 @@ Before finalizing any code change, generating a pull request, or claiming comple
 
 ---
 
-### 🌿 Protocol 5: Git Hygiene & Release Standards
+### 🌿 Protocol 5: Git Hygiene, Auto-Push & Profile Contribution Standards
 1. **Conventional Commit Format:**
    - All commits must follow standard convention:
      - `feat(scope): brief description`
@@ -108,9 +108,12 @@ Before finalizing any code change, generating a pull request, or claiming comple
      - `docs(scope): brief description`
      - `refactor(scope): brief description`
      - `perf(scope): brief description`
-2. **Zero Repository Pollution:**
+2. **GitHub Push & Daily Contribution Integrity (MANDATORY):**
+   - After completing any task, verified edits, or feature pass, **always commit with the user's verified identity (`Avinash Kumar <abhiavi619@gmail.com>`) and push to `origin main`**.
+   - Ensure every approved change is pushed directly to the default `main` branch so that GitHub tracks daily activity and builds the user's green contribution squares (`🟩`).
+3. **Zero Repository Pollution:**
    - Never commit `.env` files, temporary scratch scripts, test output artifacts, or machine-specific absolute paths (`C:/Users/...`).
-3. **Branch Cleanup:**
+4. **Branch Cleanup:**
    - Immediately delete temporary feature branches both locally and remotely upon successful PR merge.
 
 ---
