@@ -1,13 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { Plus, ChevronRight, FileText, Bike, Wallet, MessageSquare, BarChart2 } from "lucide-react";
+import { Plus, ChevronRight, FileText, Bike, ShoppingBag, MessageSquare, BarChart2 } from "lucide-react";
 
 export function QuickActions() {
   const actions = [
     { label: "My Requests", icon: FileText, href: "/dashboard/requests" },
     { label: "Runner Mode", icon: Bike, href: "/dashboard/runner" },
-    { label: "Wallet", icon: Wallet, href: "/dashboard/wallet" },
+    { label: "Marketplace", icon: ShoppingBag, href: "/dashboard/marketplace" },
     { label: "Chat Support", icon: MessageSquare, href: "/dashboard/chat" },
     { label: "Analytics", icon: BarChart2, href: "/dashboard/analytics" },
   ];

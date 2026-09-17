@@ -504,9 +504,9 @@ export function RunnerDashboardClient({
               <IndianRupee className="w-5 h-5 mr-0.5 text-emerald-400" />
               {totalEarnings}
             </p>
-            <Link href="/dashboard/wallet" className="text-[11px] text-emerald-300 hover:text-emerald-200 font-bold flex items-center gap-0.5 transition-colors">
-              Go to Wallet ➔
-            </Link>
+            <p className="text-[11px] text-emerald-400/80 font-medium">
+              Direct UPI / Cash received
+            </p>
           </div>
         </div>
 
