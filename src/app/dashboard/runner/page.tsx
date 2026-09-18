@@ -30,7 +30,7 @@ export default async function RunnerDashboardPage() {
   ]);
 
   return (
-    <div className="relative min-h-screen bg-[#0a0f0d] pt-24 pb-14 px-3 sm:px-6 text-white selection:bg-emerald-500/30 overflow-x-hidden">
+    <div className="relative min-h-screen bg-[#0a0f0d] pt-4 sm:pt-8 pb-14 px-3 sm:px-6 text-white selection:bg-emerald-500/30 overflow-x-hidden">
       {/* ── Atmospheric Ambient Cosmic Glow Background ── */}
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden select-none">
         {/* Soft Volumetric Emerald Glow at Top */}

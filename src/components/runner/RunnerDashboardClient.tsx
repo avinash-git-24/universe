@@ -158,7 +158,7 @@ function RunnerHowItWorksGuide() {
                 Handover & Instant Cash
               </h4>
               <p className="text-xs text-white/60 mt-1 leading-relaxed">
-                Item deliver karke student se 6-digit OTP lein. OTP verify hote hi paise seedha aapke UniVerse Wallet me transfer ho jayenge!
+                Item deliver karke student se 4-digit PIN lein. PIN verify hote hi paise seedha aapke UniVerse Wallet me transfer ho jayenge!
               </p>
             </div>
           </div>
@@ -518,24 +518,24 @@ export function RunnerDashboardClient({
     <div className="space-y-8">
       {/* ── Page Header with Interactive Status Switcher ── */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center border border-emerald-500/25 shadow-[0_0_20px_rgba(16,185,129,0.2)]">
-            <Bike className="w-6 h-6 text-emerald-400" />
+        <div className="flex items-center gap-3 sm:gap-4">
+          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center border border-emerald-500/25 shadow-[0_0_20px_rgba(16,185,129,0.2)] shrink-0">
+            <Bike className="w-5 h-5 sm:w-6 sm:h-6 text-emerald-400" />
           </div>
           <div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white flex items-center gap-2">
+            <h1 className="text-xl sm:text-3xl font-extrabold tracking-tight text-white flex items-center gap-2">
               Runner Dashboard
-              <span className="text-emerald-400 text-xl">✦</span>
+              <span className="text-emerald-400 text-lg sm:text-xl">✦</span>
             </h1>
             <p className="text-white/60 flex items-center gap-1.5 text-xs sm:text-sm mt-0.5 font-medium">
               Deliver on campus, help peers, and earn instant cash.
-              <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
+              <Sparkles className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
             </p>
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full flex items-center justify-center text-white/70 hover:text-white hover:bg-white/5 transition-colors">
+        <div className="flex items-center justify-between sm:justify-end gap-2.5 w-full sm:w-auto">
+          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-white/70 hover:text-white hover:bg-white/5 transition-colors shrink-0">
             <NotificationBell />
           </div>
           {/* Interactive Online/Offline Duty Switcher (Ultra-Tactile Apple/Tesla Style) */}
@@ -543,7 +543,7 @@ export function RunnerDashboardClient({
             type="button"
             onClick={() => toggleOnline()}
             className={cn(
-              "flex items-center gap-3 pl-2.5 pr-4 py-1.5 sm:py-2 rounded-full border transition-all duration-300 cursor-pointer select-none active:scale-95 group relative overflow-hidden backdrop-blur-xl",
+              "flex-1 sm:flex-initial flex items-center justify-between sm:justify-start gap-2.5 sm:gap-3 pl-2 sm:pl-2.5 pr-3 sm:pr-4 py-1.5 sm:py-2 rounded-full border transition-all duration-300 cursor-pointer select-none active:scale-95 group relative overflow-hidden backdrop-blur-xl",
               isOnline
                 ? "border-emerald-500/40 bg-[#0a1610]/95 hover:border-emerald-400/60 shadow-[0_0_25px_rgba(16,185,129,0.18)] hover:shadow-[0_0_35px_rgba(16,185,129,0.3)]"
                 : "border-amber-500/35 bg-[#14120e]/95 hover:border-amber-400/50 shadow-[0_0_20px_rgba(245,158,11,0.12)] hover:shadow-[0_0_30px_rgba(245,158,11,0.22)]"
@@ -598,7 +598,7 @@ export function RunnerDashboardClient({
                   </span>
                   <div className="flex items-baseline gap-1 whitespace-nowrap">
                     <span className="font-black text-xs sm:text-sm text-[#00E676] tracking-tight">Online</span>
-                    <span className="text-white/50 text-[11px] sm:text-xs font-mono font-medium">· Accepting Orders</span>
+                    <span className="text-white/50 text-[10px] sm:text-xs font-mono font-medium">· Accepting Orders</span>
                   </div>
                 </>
               ) : (
@@ -606,7 +606,7 @@ export function RunnerDashboardClient({
                   <span className="w-2 h-2 rounded-full bg-amber-400 shrink-0 shadow-[0_0_6px_rgba(251,191,36,0.8)]" />
                   <div className="flex items-baseline gap-1 whitespace-nowrap">
                     <span className="font-black text-xs sm:text-sm text-amber-300 tracking-tight">Offline</span>
-                    <span className="text-white/40 text-[11px] sm:text-xs font-mono font-medium">· Mode Paused</span>
+                    <span className="text-white/40 text-[10px] sm:text-xs font-mono font-medium">· Mode Paused</span>
                   </div>
                 </>
               )}
@@ -615,19 +615,19 @@ export function RunnerDashboardClient({
         </div>
       </div>
 
-      {/* Navigation Tabs */}
-      <div className="flex flex-wrap gap-2 sm:gap-3 pb-2">
+      {/* Navigation Tabs (Single-row 3-segment grid on mobile) */}
+      <div className="grid grid-cols-3 sm:flex sm:flex-wrap gap-1.5 sm:gap-3 pb-1 sm:pb-2">
         <button
           onClick={() => setActiveTab("available")}
-          className={`flex items-center px-4 sm:px-6 py-2.5 sm:py-3 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 border ${activeTab === "available"
+          className={`flex items-center justify-center px-2 sm:px-6 py-2 sm:py-3 rounded-xl sm:rounded-full text-xs sm:text-sm font-medium transition-all duration-300 border ${activeTab === "available"
               ? "bg-emerald-500/15 border-emerald-500/40 text-emerald-300 shadow-[0_0_15px_rgba(16,185,129,0.2)]"
               : "bg-white/5 border-white/10 text-white/70 hover:bg-white/10 hover:text-white"
             }`}
         >
-          <Package className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-2" />
-          Available
+          <Package className="w-3.5 h-3.5 mr-1 sm:mr-2 shrink-0" />
+          <span className="truncate">Available</span>
           {availableOthers.length > 0 && (
-            <span className={`ml-2 px-1.5 sm:px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-bold ${activeTab === "available" ? "bg-emerald-500 text-[#0a0f0d]" : "bg-white/20 text-white"}`}>
+            <span className={`ml-1 sm:ml-2 px-1.5 py-0.2 rounded-full text-[10px] font-bold shrink-0 ${activeTab === "available" ? "bg-emerald-500 text-[#0a0f0d]" : "bg-white/20 text-white"}`}>
               {availableOthers.length}
             </span>
           )}
@@ -635,91 +635,96 @@ export function RunnerDashboardClient({
 
         <button
           onClick={() => setActiveTab("active")}
-          className={`flex items-center px-4 sm:px-6 py-2.5 sm:py-3 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 border ${activeTab === "active"
+          className={`flex items-center justify-center px-2 sm:px-6 py-2 sm:py-3 rounded-xl sm:rounded-full text-xs sm:text-sm font-medium transition-all duration-300 border ${activeTab === "active"
               ? "bg-emerald-500/15 border-emerald-500/40 text-emerald-300 shadow-[0_0_15px_rgba(16,185,129,0.2)]"
               : "bg-white/5 border-white/10 text-white/70 hover:bg-white/10 hover:text-white"
             }`}
         >
-          <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-2" />
-          Active ({activeDeliveries.length})
+          <Clock className="w-3.5 h-3.5 mr-1 sm:mr-2 shrink-0" />
+          <span className="truncate">Active</span>
+          {activeDeliveries.length > 0 && (
+            <span className={`ml-1 sm:ml-2 px-1.5 py-0.2 rounded-full text-[10px] font-bold shrink-0 ${activeTab === "active" ? "bg-emerald-500 text-[#0a0f0d]" : "bg-white/20 text-white"}`}>
+              {activeDeliveries.length}
+            </span>
+          )}
         </button>
 
         <button
           onClick={() => setActiveTab("history")}
-          className={`flex items-center px-4 sm:px-6 py-2.5 sm:py-3 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 border ${activeTab === "history"
+          className={`flex items-center justify-center px-2 sm:px-6 py-2 sm:py-3 rounded-xl sm:rounded-full text-xs sm:text-sm font-medium transition-all duration-300 border ${activeTab === "history"
               ? "bg-emerald-500/15 border-emerald-500/40 text-emerald-300 shadow-[0_0_15px_rgba(16,185,129,0.2)]"
               : "bg-white/5 border-white/10 text-white/70 hover:bg-white/10 hover:text-white"
             }`}
         >
-          <History className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-2" />
-          History
+          <History className="w-3.5 h-3.5 mr-1 sm:mr-2 shrink-0" />
+          <span className="truncate">History</span>
         </button>
       </div>
 
-      {/* ── Summary Stat Cards ── */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* ── Summary Stat Cards (Mobile-first 2x2 compact grid) ── */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
         {/* Stat 1: Available Requests */}
-        <div className="bg-[#0b120e]/90 border border-white/5 hover:border-emerald-500/25 rounded-2xl p-5 flex items-start gap-4 transition-all backdrop-blur-xl group">
-          <div className="w-11 h-11 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center shrink-0 text-emerald-400 group-hover:scale-105 transition-transform">
-            <Package className="w-5 h-5" />
+        <div className="bg-[#0b120e]/90 border border-white/5 hover:border-emerald-500/25 rounded-2xl p-3.5 sm:p-5 flex items-start gap-3 sm:gap-4 transition-all backdrop-blur-xl group">
+          <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center shrink-0 text-emerald-400 group-hover:scale-105 transition-transform">
+            <Package className="w-4 h-4 sm:w-5 sm:h-5" />
           </div>
-          <div className="space-y-0.5">
-            <p className="text-xs text-white/50 font-mono uppercase tracking-wider font-bold">Available</p>
-            <p className="text-2xl font-black text-white font-mono">{availableOthers.length}</p>
-            <p className="text-[11px] text-emerald-400 flex items-center gap-1 font-medium">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              New orders ready
+          <div className="space-y-0.5 min-w-0">
+            <p className="text-[10px] sm:text-xs text-white/50 font-mono uppercase tracking-wider font-bold truncate">Available</p>
+            <p className="text-xl sm:text-2xl font-black text-white font-mono">{availableOthers.length}</p>
+            <p className="text-[10px] sm:text-[11px] text-emerald-400 flex items-center gap-1 font-medium truncate">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+              <span className="truncate">New orders</span>
             </p>
           </div>
         </div>
 
         {/* Stat 2: Active Deliveries */}
         <div className={cn(
-          "bg-[#0b120e]/90 border rounded-2xl p-5 flex items-start gap-4 transition-all backdrop-blur-xl group",
+          "bg-[#0b120e]/90 border rounded-2xl p-3.5 sm:p-5 flex items-start gap-3 sm:gap-4 transition-all backdrop-blur-xl group",
           activeDeliveries.length > 0 ? "border-emerald-500/30 shadow-[0_0_20px_rgba(16,185,129,0.06)]" : "border-white/5"
         )}>
-          <div className="w-11 h-11 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center shrink-0 text-emerald-400 group-hover:scale-105 transition-transform">
-            <Clock className="w-5 h-5" />
+          <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center shrink-0 text-emerald-400 group-hover:scale-105 transition-transform">
+            <Clock className="w-4 h-4 sm:w-5 sm:h-5" />
           </div>
-          <div className="space-y-0.5">
-            <p className="text-xs text-white/50 font-mono uppercase tracking-wider font-bold">Active Deliveries</p>
-            <p className="text-2xl font-black text-white font-mono">{activeDeliveries.length}</p>
-            <p className="text-[11px] text-emerald-400 font-medium">
-              {activeDeliveries.length > 0 ? "● In progress" : "No active missions"}
+          <div className="space-y-0.5 min-w-0">
+            <p className="text-[10px] sm:text-xs text-white/50 font-mono uppercase tracking-wider font-bold truncate">Active</p>
+            <p className="text-xl sm:text-2xl font-black text-white font-mono">{activeDeliveries.length}</p>
+            <p className="text-[10px] sm:text-[11px] text-emerald-400 font-medium truncate">
+              {activeDeliveries.length > 0 ? "● In progress" : "No missions"}
             </p>
           </div>
         </div>
 
         {/* Stat 3: Today's Earnings (HERO CARD) */}
-        <div className="bg-gradient-to-br from-[#0c1611] to-[#080d0a] border border-emerald-500/35 hover:border-emerald-400/60 rounded-2xl p-5 flex items-start gap-4 transition-all backdrop-blur-xl shadow-[0_0_25px_rgba(16,185,129,0.08)] group relative overflow-hidden">
+        <div className="bg-gradient-to-br from-[#0c1611] to-[#080d0a] border border-emerald-500/35 hover:border-emerald-400/60 rounded-2xl p-3.5 sm:p-5 flex items-start gap-3 sm:gap-4 transition-all backdrop-blur-xl shadow-[0_0_25px_rgba(16,185,129,0.08)] group relative overflow-hidden">
           <div className="absolute -right-6 -bottom-6 w-20 h-20 bg-emerald-500/10 rounded-full blur-xl pointer-events-none" />
-          <div className="w-11 h-11 rounded-xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center shrink-0 text-emerald-300 shadow-[0_0_12px_rgba(16,185,129,0.3)] group-hover:scale-105 transition-transform">
-            <Wallet className="w-5 h-5" />
+          <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center shrink-0 text-emerald-300 shadow-[0_0_12px_rgba(16,185,129,0.3)] group-hover:scale-105 transition-transform">
+            <Wallet className="w-4 h-4 sm:w-5 sm:h-5" />
           </div>
           <div className="space-y-0.5 min-w-0">
-            <p className="text-xs text-emerald-400/80 font-mono uppercase tracking-wider font-bold">Total Earnings</p>
-            <p className="text-2xl font-black text-white font-mono flex items-center tracking-tight">
-              <IndianRupee className="w-5 h-5 mr-0.5 text-emerald-400" />
+            <p className="text-[10px] sm:text-xs text-emerald-400/80 font-mono uppercase tracking-wider font-bold truncate">Earnings</p>
+            <p className="text-xl sm:text-2xl font-black text-white font-mono flex items-center tracking-tight">
+              <IndianRupee className="w-4 h-4 sm:w-5 sm:h-5 mr-0.5 text-emerald-400" />
               {totalEarnings}
             </p>
-            <Link href="/dashboard/wallet" className="text-[11px] text-emerald-300 hover:text-emerald-200 font-bold flex items-center gap-0.5 transition-colors">
-              Go to Wallet ➔
+            <Link href="/dashboard/wallet" className="text-[10px] sm:text-[11px] text-emerald-300 hover:text-emerald-200 font-bold flex items-center gap-0.5 transition-colors truncate">
+              Wallet ➔
             </Link>
           </div>
         </div>
 
         {/* Stat 4: Rating */}
-        <div className="bg-[#0b120e]/90 border border-white/5 hover:border-amber-500/25 rounded-2xl p-5 flex items-start gap-4 transition-all backdrop-blur-xl group">
-          <div className="w-11 h-11 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center shrink-0 text-amber-400 group-hover:scale-105 transition-transform">
-            <Star className="w-5 h-5 fill-amber-400" />
+        <div className="bg-[#0b120e]/90 border border-white/5 hover:border-amber-500/25 rounded-2xl p-3.5 sm:p-5 flex items-start gap-3 sm:gap-4 transition-all backdrop-blur-xl group">
+          <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center shrink-0 text-amber-400 group-hover:scale-105 transition-transform">
+            <Star className="w-4 h-4 sm:w-5 sm:h-5 fill-amber-400" />
           </div>
-          <div className="space-y-0.5">
-            <p className="text-xs text-white/50 font-mono uppercase tracking-wider font-bold">Rating</p>
-            <p className="text-2xl font-black text-white font-mono">
+          <div className="space-y-0.5 min-w-0">
+            <p className="text-[10px] sm:text-xs text-white/50 font-mono uppercase tracking-wider font-bold truncate">Rating</p>
+            <p className="text-xl sm:text-2xl font-black text-white font-mono">
               {deliveryHistory.length > 0 ? "5.0" : "New"}
             </p>
-            <p className="text-[11px] text-amber-300 font-medium">
-              {deliveryHistory.length > 0 ? "★ Verified Campus Runner" : "★ Ready for 1st Mission"}
+            <p className="text-[10px] sm:text-[11px] text-amber-300 font-medium truncate">
+              {deliveryHistory.length > 0 ? "★ Verified" : "★ Starter"}
             </p>
           </div>
         </div>
@@ -960,45 +965,45 @@ export function RunnerDashboardClient({
                     {/* Subtle top neon rim highlight */}
                     <div className="absolute top-0 left-8 right-8 h-[1px] bg-gradient-to-r from-transparent via-emerald-400/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
 
-                    <div className="p-5 relative z-10">
+                    <div className="p-4 sm:p-5 relative z-10">
                       <div className="flex justify-between items-center">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-bold uppercase tracking-wide bg-blue-500/10 border border-blue-500/30 text-blue-400">
+                        <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
+                          <div className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1 rounded-full text-[11px] sm:text-xs font-mono font-bold uppercase tracking-wide bg-blue-500/10 border border-blue-500/30 text-blue-400">
                             <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse" />
                             Requested
                           </div>
-                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/25 text-amber-300 text-[10.5px] font-semibold">
+                          <span className="inline-flex items-center gap-1 px-2 sm:px-2.5 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/25 text-amber-300 text-[10px] sm:text-[10.5px] font-semibold">
                             ⚡ Campus Express
                           </span>
                         </div>
 
                         {/* High-contrast Reward Payout Badge */}
-                        <div className="flex items-center gap-1 px-3 py-1 rounded-xl bg-gradient-to-r from-emerald-500/20 via-emerald-500/15 to-emerald-500/20 border border-emerald-500/40 text-emerald-300 font-mono font-black text-base sm:text-lg shadow-[0_0_15px_rgba(16,185,129,0.2)]">
-                          <IndianRupee className="w-4 h-4 text-emerald-400" />
+                        <div className="flex items-center gap-1 px-2.5 sm:px-3 py-1 rounded-xl bg-gradient-to-r from-emerald-500/20 via-emerald-500/15 to-emerald-500/20 border border-emerald-500/40 text-emerald-300 font-mono font-black text-sm sm:text-lg shadow-[0_0_15px_rgba(16,185,129,0.2)]">
+                          <IndianRupee className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-400" />
                           <span>{req.delivery_fee}</span>
-                          <span className="text-[9.5px] font-sans font-bold uppercase tracking-wider text-emerald-400/80 ml-1">
+                          <span className="text-[9px] sm:text-[9.5px] font-sans font-bold uppercase tracking-wider text-emerald-400/80 ml-0.5 sm:ml-1">
                             Payout
                           </span>
                         </div>
                       </div>
 
-                      <div className="flex items-start gap-3 mt-4">
-                        <div className={cn("w-11 h-11 rounded-xl flex items-center justify-center shrink-0 border", category.bg)}>
-                          <CategoryIcon className="w-5 h-5" />
+                      <div className="flex items-start gap-3 mt-3.5 sm:mt-4">
+                        <div className={cn("w-10 h-10 sm:w-11 sm:h-11 rounded-xl flex items-center justify-center shrink-0 border", category.bg)}>
+                          <CategoryIcon className="w-4 h-4 sm:w-5 sm:h-5" />
                         </div>
                         <div className="min-w-0 flex-1">
-                          <h3 className="text-lg sm:text-xl font-bold text-white truncate capitalize group-hover:text-emerald-300 transition-colors">
+                          <h3 className="text-base sm:text-xl font-bold text-white truncate capitalize group-hover:text-emerald-300 transition-colors">
                             {itemNames}
                           </h3>
                           <div className="flex items-center text-xs text-white/40 pt-0.5">
-                            <Calendar className="w-3.5 h-3.5 mr-1" />
-                            Posted {formatDistanceToNow(new Date(req.created_at))} ago
+                            <Calendar className="w-3.5 h-3.5 mr-1 shrink-0" />
+                            <span className="truncate">Posted {formatDistanceToNow(new Date(req.created_at))} ago</span>
                           </div>
                         </div>
                       </div>
 
                       {/* Route Map Connector Visualizer */}
-                      <div className="p-3 rounded-xl bg-[#070b09]/90 border border-white/5 space-y-2 mt-4">
+                      <div className="p-3 rounded-xl bg-[#070b09]/90 border border-white/5 space-y-2 mt-3.5 sm:mt-4">
                         {/* Pickup */}
                         <div className="flex items-center gap-2.5 text-xs sm:text-sm">
                           <div className="w-5 h-5 rounded-md bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0">
@@ -1043,18 +1048,18 @@ export function RunnerDashboardClient({
                       </div>
 
                       {/* Motivator Footer */}
-                      <div className="flex items-center justify-between text-[11px] text-white/40 pt-3 font-mono">
-                        <span className="text-emerald-400/80 font-medium">💚 100% Peer Tips Kept</span>
-                        <span>Direct Handover</span>
+                      <div className="flex items-center justify-between text-[10.5px] sm:text-[11px] text-white/40 pt-3 font-mono">
+                        <span className="text-emerald-400/80 font-medium truncate mr-2">💚 100% Peer Tips Kept</span>
+                        <span className="shrink-0">Direct Handover</span>
                       </div>
                     </div>
 
-                    <div className="p-5 pt-0 flex gap-3 relative z-10">
+                    <div className="p-4 sm:p-5 pt-0 flex gap-2.5 sm:gap-3 relative z-10">
                       <button
                         onClick={() => setSelectedRequest(req)}
-                        className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl border border-white/10 text-white/70 hover:text-white hover:bg-white/5 transition-colors font-medium text-xs sm:text-sm cursor-pointer"
+                        className="flex-1 flex items-center justify-center gap-1.5 sm:gap-2 py-2.5 rounded-xl border border-white/10 text-white/70 hover:text-white hover:bg-white/5 transition-colors font-medium text-xs sm:text-sm cursor-pointer"
                       >
-                        <Eye className="w-4 h-4" /> Details
+                        <Eye className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> Details
                       </button>
                       {req.requester_id === runnerId ? (
                         <div className="flex-[1.5] flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white/40 font-semibold text-xs text-center select-none">
@@ -1064,10 +1069,10 @@ export function RunnerDashboardClient({
                         <button
                           onClick={() => handleAccept(req.id)}
                           disabled={isAccepting === req.id}
-                          className="flex-[1.5] flex items-center justify-center gap-2 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-400 hover:from-emerald-400 hover:to-emerald-300 text-black font-extrabold text-xs sm:text-sm shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:shadow-[0_0_30px_rgba(16,185,129,0.5)] transition-all cursor-pointer disabled:opacity-50 active:scale-[0.98]"
+                          className="flex-[1.5] flex items-center justify-center gap-1.5 sm:gap-2 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-400 hover:from-emerald-400 hover:to-emerald-300 text-black font-extrabold text-xs sm:text-sm shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:shadow-[0_0_30px_rgba(16,185,129,0.5)] transition-all cursor-pointer disabled:opacity-50 active:scale-[0.98]"
                         >
                           {isAccepting === req.id ? "Accepting..." : "Accept Request"}
-                          <ArrowRight className="w-4 h-4" />
+                          <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                         </button>
                       )}
                     </div>
@@ -1127,26 +1132,26 @@ export function RunnerDashboardClient({
                     {/* Top glowing neon accent */}
                     <div className="absolute top-0 left-8 right-8 h-[1px] bg-gradient-to-r from-transparent via-emerald-400/40 to-transparent pointer-events-none" />
 
-                    <div className="p-5 relative z-10">
+                    <div className="p-4 sm:p-5 relative z-10">
                       <div className="flex justify-between items-center">
                         <RequestStatusBadge status={req.status} />
 
                         {/* Glowing Payout */}
-                        <div className="flex items-center gap-1 px-3 py-1 rounded-xl bg-gradient-to-r from-emerald-500/20 via-emerald-500/15 to-emerald-500/20 border border-emerald-500/40 text-emerald-300 font-mono font-black text-base sm:text-lg shadow-[0_0_15px_rgba(16,185,129,0.2)]">
-                          <IndianRupee className="w-4 h-4 text-emerald-400" />
+                        <div className="flex items-center gap-1 px-2.5 sm:px-3 py-1 rounded-xl bg-gradient-to-r from-emerald-500/20 via-emerald-500/15 to-emerald-500/20 border border-emerald-500/40 text-emerald-300 font-mono font-black text-sm sm:text-lg shadow-[0_0_15px_rgba(16,185,129,0.2)]">
+                          <IndianRupee className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-400" />
                           <span>{req.delivery_fee}</span>
-                          <span className="text-[9.5px] font-sans font-bold uppercase tracking-wider text-emerald-400/80 ml-1">
+                          <span className="text-[9px] sm:text-[9.5px] font-sans font-bold uppercase tracking-wider text-emerald-400/80 ml-0.5 sm:ml-1">
                             Payout
                           </span>
                         </div>
                       </div>
 
-                      <div className="flex items-start gap-3 mt-4">
-                        <div className={cn("w-11 h-11 rounded-xl flex items-center justify-center shrink-0 border", category.bg)}>
-                          <CategoryIcon className="w-5 h-5" />
+                      <div className="flex items-start gap-3 mt-3.5 sm:mt-4">
+                        <div className={cn("w-10 h-10 sm:w-11 sm:h-11 rounded-xl flex items-center justify-center shrink-0 border", category.bg)}>
+                          <CategoryIcon className="w-4 h-4 sm:w-5 sm:h-5" />
                         </div>
                         <div className="min-w-0 flex-1">
-                          <h3 className="text-lg sm:text-xl font-bold text-white truncate capitalize group-hover:text-emerald-300 transition-colors">
+                          <h3 className="text-base sm:text-xl font-bold text-white truncate capitalize group-hover:text-emerald-300 transition-colors">
                             {itemNames}
                           </h3>
                           <div className="flex items-center gap-2 text-xs text-white/50 pt-0.5">
@@ -1158,7 +1163,7 @@ export function RunnerDashboardClient({
                       </div>
 
                       {/* Route Map Connector Visualizer */}
-                      <div className="p-3 rounded-xl bg-[#070b09]/90 border border-white/5 space-y-2 mt-4">
+                      <div className="p-3 rounded-xl bg-[#070b09]/90 border border-white/5 space-y-2 mt-3.5 sm:mt-4">
                         {/* Pickup */}
                         <div className="flex items-center gap-2.5 text-xs sm:text-sm">
                           <div className="w-5 h-5 rounded-md bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0">
@@ -1198,27 +1203,27 @@ export function RunnerDashboardClient({
                       )}
                     </div>
 
-                    <div className="p-5 pt-0 flex flex-wrap gap-2.5 relative z-10">
+                    <div className="p-4 sm:p-5 pt-0 flex flex-wrap gap-2 sm:gap-2.5 relative z-10">
                       <button
                         onClick={() => setSelectedRequest(req)}
-                        className="flex-1 min-w-[85px] flex items-center justify-center gap-1.5 py-2.5 rounded-xl border border-white/10 text-white/70 hover:text-white hover:bg-white/5 transition-colors font-medium text-xs sm:text-sm cursor-pointer"
+                        className="flex-1 min-w-[75px] sm:min-w-[85px] flex items-center justify-center gap-1.5 py-2.5 rounded-xl border border-white/10 text-white/70 hover:text-white hover:bg-white/5 transition-colors font-medium text-xs sm:text-sm cursor-pointer"
                       >
-                        <Eye className="w-4 h-4" /> Details
+                        <Eye className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> Details
                       </button>
                       <Link
                         href={`/dashboard/chat?requestId=${req.id}&startWithUserId=${req.requester_id}`}
-                        className="flex-1 min-w-[85px] flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 hover:bg-emerald-500/25 transition-colors font-semibold text-xs sm:text-sm shadow-[0_0_12px_rgba(16,185,129,0.15)] cursor-pointer"
+                        className="flex-1 min-w-[75px] sm:min-w-[85px] flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 hover:bg-emerald-500/25 transition-colors font-semibold text-xs sm:text-sm shadow-[0_0_12px_rgba(16,185,129,0.15)] cursor-pointer"
                       >
-                        <MessageSquare className="w-4 h-4" /> Chat
+                        <MessageSquare className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> Chat
                       </Link>
                       {action && (
                         <button
                           onClick={() => handleStatusUpdate(req.id, action.nextStatus)}
                           disabled={isUpdatingStatus === req.id}
-                          className="flex-[1.4] min-w-[130px] flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-400 hover:from-emerald-400 hover:to-emerald-300 text-black font-extrabold text-xs sm:text-sm shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:shadow-[0_0_30px_rgba(16,185,129,0.5)] transition-all cursor-pointer disabled:opacity-50 active:scale-[0.98]"
+                          className="flex-[1.4] min-w-[120px] sm:min-w-[130px] flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-400 hover:from-emerald-400 hover:to-emerald-300 text-black font-extrabold text-xs sm:text-sm shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:shadow-[0_0_30px_rgba(16,185,129,0.5)] transition-all cursor-pointer disabled:opacity-50 active:scale-[0.98]"
                         >
                           {isUpdatingStatus === req.id ? "Updating..." : action.label}
-                          <ArrowRight className="w-4 h-4" />
+                          <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                         </button>
                       )}
                     </div>
@@ -1268,23 +1273,23 @@ export function RunnerDashboardClient({
                 return (
                   <div
                     key={assignment.id}
-                    className="bg-[#0a100d]/90 border border-white/10 hover:border-emerald-500/30 rounded-2xl p-5 flex flex-col sm:flex-row justify-between sm:items-center gap-5 transition-all backdrop-blur-xl group"
+                    className="bg-[#0a100d]/90 border border-white/10 hover:border-emerald-500/30 rounded-2xl p-3.5 sm:p-5 flex flex-col sm:flex-row justify-between sm:items-center gap-3.5 sm:gap-5 transition-all backdrop-blur-xl group"
                   >
-                    <div className="flex items-start gap-4 flex-1 min-w-0">
-                      <div className={cn("w-11 h-11 rounded-xl flex items-center justify-center shrink-0 border mt-0.5", category.bg)}>
-                        <CategoryIcon className="w-5 h-5" />
+                    <div className="flex items-start gap-3 sm:gap-4 flex-1 min-w-0">
+                      <div className={cn("w-10 h-10 sm:w-11 sm:h-11 rounded-xl flex items-center justify-center shrink-0 border mt-0.5", category.bg)}>
+                        <CategoryIcon className="w-4 h-4 sm:w-5 sm:h-5" />
                       </div>
-                      <div className="space-y-1.5 flex-1 min-w-0">
-                        <div className="flex items-center gap-2.5 flex-wrap">
+                      <div className="space-y-1 sm:space-y-1.5 flex-1 min-w-0">
+                        <div className="flex items-center gap-2 sm:gap-2.5 flex-wrap">
                           <RequestStatusBadge status={req.status} />
-                          <span className="text-xs text-white/40 flex items-center font-mono">
+                          <span className="text-[11px] sm:text-xs text-white/40 flex items-center font-mono">
                             <Clock className="w-3.5 h-3.5 mr-1 text-emerald-400/60" />
                             {assignment.completed_at
                               ? `Completed ${format(new Date(assignment.completed_at), "MMM d, h:mm a")}`
                               : `Assigned ${format(new Date(assignment.assigned_at), "MMM d, h:mm a")}`}
                           </span>
                         </div>
-                        <h4 className="font-bold text-base sm:text-lg text-white truncate">
+                        <h4 className="font-bold text-sm sm:text-lg text-white truncate">
                           {itemNames}
                         </h4>
                         <p className="text-xs sm:text-sm text-white/50 truncate">
@@ -1294,24 +1299,24 @@ export function RunnerDashboardClient({
                       </div>
                     </div>
 
-                    <div className="flex flex-row sm:flex-col items-center justify-between sm:items-end gap-3 pt-3 sm:pt-0 border-t border-white/5 sm:border-t-0 shrink-0">
+                    <div className="flex flex-row sm:flex-col items-center justify-between sm:items-end gap-2.5 sm:gap-3 pt-2.5 sm:pt-0 border-t border-white/5 sm:border-t-0 shrink-0">
                       <div className="text-left sm:text-right">
                         <span
                           className={`text-base sm:text-lg font-bold font-mono flex items-center sm:justify-end ${isDelivered ? "text-emerald-400" : "text-white/40"
                             }`}
                         >
                           {isDelivered ? "+" : ""}
-                          <IndianRupee className="w-4 h-4 mr-0.5" />
+                          <IndianRupee className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-0.5" />
                           {req.delivery_fee}
                         </span>
-                        <span className="text-[11px] text-white/40 block mt-0.5 font-sans">
+                        <span className="text-[10px] sm:text-[11px] text-white/40 block mt-0.5 font-sans">
                           {isDelivered ? "Earned & Settled" : "Cancelled"}
                         </span>
                       </div>
 
                       <button
                         onClick={() => setSelectedRequest(req)}
-                        className="flex items-center justify-center gap-1.5 px-3.5 py-1.5 rounded-xl border border-white/10 text-white/70 hover:text-white hover:bg-white/5 transition-colors font-medium text-xs cursor-pointer"
+                        className="flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl border border-white/10 text-white/70 hover:text-white hover:bg-white/5 transition-colors font-medium text-xs cursor-pointer"
                       >
                         <Eye className="w-3.5 h-3.5" /> Details
                       </button>
@@ -1441,23 +1446,24 @@ export function RunnerDashboardClient({
               )}
             </ModalBody>
 
-            <ModalFooter className="flex justify-between items-center gap-2">
+            <ModalFooter className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-2.5">
               <div>
                 {selectedRequest.status !== "pending" && (
                   <Link
                     href={`/dashboard/chat?requestId=${selectedRequest.id}&startWithUserId=${selectedRequest.requester_id}`}
-                    className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/25 transition-colors font-semibold text-sm shadow-[0_0_12px_rgba(16,185,129,0.15)]"
+                    className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/25 transition-colors font-semibold text-xs sm:text-sm shadow-[0_0_12px_rgba(16,185,129,0.15)] w-full sm:w-auto"
                   >
                     <MessageSquare className="w-4 h-4" /> Chat with Student
                   </Link>
                 )}
               </div>
-              <div className="flex gap-2">
-                <Button variant="secondary" onClick={() => setSelectedRequest(null)}>
+              <div className="flex items-center gap-2 w-full sm:w-auto">
+                <Button variant="secondary" className="flex-1 sm:flex-initial" onClick={() => setSelectedRequest(null)}>
                   Close
                 </Button>
                 {selectedRequest.status === "pending" && (
                   <Button
+                    className="flex-1 sm:flex-initial"
                     onClick={() => handleAccept(selectedRequest.id)}
                     disabled={isAccepting === selectedRequest.id}
                   >
@@ -1545,12 +1551,12 @@ export function RunnerDashboardClient({
               </div>
             </ModalBody>
 
-            <ModalFooter className="flex justify-between items-center gap-2 pt-2">
+            <ModalFooter className="flex flex-col-reverse sm:flex-row justify-between items-stretch sm:items-center gap-2 pt-2">
               <Button
                 variant="ghost"
                 onClick={() => setOtpModalAssignment(null)}
                 disabled={isVerifyingOtp}
-                className="text-zinc-400 hover:text-white"
+                className="text-zinc-400 hover:text-white w-full sm:w-auto"
               >
                 Cancel
               </Button>
@@ -1558,7 +1564,7 @@ export function RunnerDashboardClient({
               <Button
                 onClick={handleVerifyOtpAndComplete}
                 disabled={isVerifyingOtp || enteredOtp.length !== 4}
-                className="bg-emerald-500 hover:bg-emerald-400 text-black font-extrabold px-5 gap-2 shadow-[0_0_15px_rgba(0,230,118,0.3)]"
+                className="bg-emerald-500 hover:bg-emerald-400 text-black font-extrabold px-5 py-2.5 gap-2 shadow-[0_0_15px_rgba(0,230,118,0.3)] w-full sm:w-auto justify-center"
               >
                 {isVerifyingOtp ? "Verifying PIN..." : "Verify & Complete Delivery ➔"}
               </Button>
