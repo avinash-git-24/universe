@@ -538,35 +538,79 @@ export function RunnerDashboardClient({
           <div className="w-10 h-10 rounded-full flex items-center justify-center text-white/70 hover:text-white hover:bg-white/5 transition-colors">
             <NotificationBell />
           </div>
-          {/* Interactive Online/Offline Switcher */}
+          {/* Interactive Online/Offline Duty Switcher (Ultra-Tactile Apple/Tesla Style) */}
           <button
             type="button"
             onClick={() => toggleOnline()}
             className={cn(
-              "flex items-center gap-2.5 px-3.5 sm:px-4 py-2 rounded-full border text-xs sm:text-sm font-semibold transition-all cursor-pointer shadow-sm active:scale-95 group",
+              "flex items-center gap-3 pl-2.5 pr-4 py-1.5 sm:py-2 rounded-full border transition-all duration-300 cursor-pointer select-none active:scale-95 group relative overflow-hidden backdrop-blur-xl",
               isOnline
-                ? "border-emerald-500/50 bg-emerald-500/15 text-emerald-300 shadow-[0_0_20px_rgba(16,185,129,0.25)] hover:bg-emerald-500/25"
-                : "border-amber-500/50 bg-amber-500/15 text-amber-300 shadow-[0_0_15px_rgba(245,158,11,0.15)] hover:bg-amber-500/25"
+                ? "border-emerald-500/40 bg-[#0a1610]/95 hover:border-emerald-400/60 shadow-[0_0_25px_rgba(16,185,129,0.18)] hover:shadow-[0_0_35px_rgba(16,185,129,0.3)]"
+                : "border-amber-500/35 bg-[#14120e]/95 hover:border-amber-400/50 shadow-[0_0_20px_rgba(245,158,11,0.12)] hover:shadow-[0_0_30px_rgba(245,158,11,0.22)]"
             )}
             title={isOnline ? "Runner Mode Active · Click to Pause" : "Runner Mode Paused · Click to go Online"}
           >
-            {/* Visual Mini Slider Pill */}
+            {/* Ambient inner rim glow */}
             <div
               className={cn(
-                "w-7 h-4 rounded-full p-0.5 flex items-center transition-colors shrink-0",
-                isOnline ? "bg-emerald-500/40 justify-end" : "bg-white/10 justify-start"
+                "absolute inset-0 pointer-events-none transition-opacity duration-500 opacity-0 group-hover:opacity-100",
+                isOnline
+                  ? "bg-gradient-to-r from-emerald-500/10 via-transparent to-transparent"
+                  : "bg-gradient-to-r from-amber-500/10 via-transparent to-transparent"
+              )}
+            />
+
+            {/* Tactile iOS Slider Track */}
+            <div
+              className={cn(
+                "w-11 h-6 rounded-full p-0.5 relative transition-colors duration-300 shrink-0 flex items-center shadow-inner",
+                isOnline
+                  ? "bg-[#062414] border border-emerald-500/50"
+                  : "bg-[#1f1912] border border-amber-500/30"
               )}
             >
-              <span
+              {/* Smooth Sliding Thumb with Glow */}
+              <div
                 className={cn(
-                  "w-3 h-3 rounded-full shadow-sm transition-all",
+                  "w-5 h-5 rounded-full transition-transform duration-300 ease-out flex items-center justify-center transform",
                   isOnline
-                    ? "bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,1)]"
-                    : "bg-amber-400"
+                    ? "translate-x-5 bg-gradient-to-tr from-[#00E676] to-emerald-300 shadow-[0_0_12px_rgba(0,230,118,0.9),0_2px_4px_rgba(0,0,0,0.5)]"
+                    : "translate-x-0 bg-white/40 shadow-[0_2px_4px_rgba(0,0,0,0.5)]"
                 )}
-              />
+              >
+                {/* Micro Core Dot inside Thumb */}
+                <div
+                  className={cn(
+                    "w-1.5 h-1.5 rounded-full transition-colors",
+                    isOnline ? "bg-[#042411]/80" : "bg-white/30"
+                  )}
+                />
+              </div>
             </div>
-            <span className="whitespace-nowrap">{isOnline ? "Online · Accepting Orders" : "Offline · Mode Paused"}</span>
+
+            {/* Two-Tone Status Label */}
+            <div className="flex items-center gap-1.5 relative z-10">
+              {isOnline ? (
+                <>
+                  <span className="relative flex h-2 w-2 shrink-0">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-[#00E676]" />
+                  </span>
+                  <div className="flex items-baseline gap-1 whitespace-nowrap">
+                    <span className="font-black text-xs sm:text-sm text-[#00E676] tracking-tight">Online</span>
+                    <span className="text-white/50 text-[11px] sm:text-xs font-mono font-medium">· Accepting Orders</span>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <span className="w-2 h-2 rounded-full bg-amber-400 shrink-0 shadow-[0_0_6px_rgba(251,191,36,0.8)]" />
+                  <div className="flex items-baseline gap-1 whitespace-nowrap">
+                    <span className="font-black text-xs sm:text-sm text-amber-300 tracking-tight">Offline</span>
+                    <span className="text-white/40 text-[11px] sm:text-xs font-mono font-medium">· Mode Paused</span>
+                  </div>
+                </>
+              )}
+            </div>
           </button>
         </div>
       </div>
