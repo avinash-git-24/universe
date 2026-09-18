@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, Suspense, useRef } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { ROUTES } from "@/constants/routes";
@@ -129,6 +129,7 @@ function TechField({
 // ─── Login Form Component ──────────────────────────────────────────────────────
 function LoginForm() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const passwordInputRef = useRef<HTMLInputElement>(null);
 
   const [email, setEmail] = useState("");
@@ -169,6 +170,7 @@ function LoginForm() {
 
   useEffect(() => {
     setMounted(true);
+    router.prefetch(ROUTES.DASHBOARD);
     try {
       const qEmail = searchParams.get("email");
       if (qEmail) {
@@ -183,7 +185,7 @@ function LoginForm() {
     } catch {
       // ignore
     }
-  }, [searchParams]);
+  }, [searchParams, router]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -235,9 +237,7 @@ function LoginForm() {
       setLoading(false);
       setIsSuccess(true);
       const redirectTarget = searchParams.get("redirectTo") ?? ROUTES.DASHBOARD;
-      setTimeout(() => {
-        window.location.href = redirectTarget;
-      }, 400);
+      window.location.replace(redirectTarget);
     } catch (err: any) {
       setLoading(false);
       setErrors({ form: err?.message || "Failed to sign in. Please try again." });
@@ -496,12 +496,12 @@ function LoginForm() {
 
               {isSuccess ? (
                 <>
-                  <CheckCircle2 size={17} className="text-[#022c22]" />
-                  <span>Access Granted</span>
+                  <span className="w-4 h-4 border-2 border-[#022c22]/30 border-t-[#022c22] rounded-full animate-spin shrink-0" />
+                  <span>Verified! Opening Dashboard...</span>
                 </>
               ) : loading ? (
                 <>
-                  <span className="w-4 h-4 border-2 border-[#022c22]/30 border-t-[#022c22] rounded-full animate-spin" />
+                  <span className="w-4 h-4 border-2 border-[#022c22]/30 border-t-[#022c22] rounded-full animate-spin shrink-0" />
                   <span>Authenticating Student ID...</span>
                 </>
               ) : (
