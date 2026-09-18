@@ -146,7 +146,10 @@ export function RunnerDashboardClient({
             .single();
 
           if (!error && data) {
-            setPendingRequests((prev) => [data as unknown as RequestWithItems, ...prev]);
+            // Anti-fraud: Do not add current user's own orders to the runner's available feed
+            if (data.requester_id !== runnerId) {
+              setPendingRequests((prev) => [data as unknown as RequestWithItems, ...prev]);
+            }
           }
         }
       )
@@ -155,10 +158,17 @@ export function RunnerDashboardClient({
     return () => {
       supabase.removeChannel(channel);
     };
-  }, []);
+  }, [runnerId]);
 
   // Handle Accepting a Pending Request
   const handleAccept = async (requestId: string) => {
+    // Anti-fraud guard: Ensure runner is not the requester
+    const target = pendingRequests.find((r) => r.id === requestId);
+    if (target && target.requester_id === runnerId) {
+      alert("⚠️ You cannot accept your own delivery request. Another campus runner will fulfill it.");
+      return;
+    }
+
     setIsAccepting(requestId);
     try {
       const supabase = createClient();
@@ -169,7 +179,7 @@ export function RunnerDashboardClient({
         setActiveTab("active");
         router.refresh();
       } else {
-        alert("Failed to accept request. It might have been taken by another runner.");
+        alert("Failed to accept request. It might have been taken by another runner, or you cannot accept your own order.");
         setPendingRequests((prev) => prev.filter((r) => r.id !== requestId));
       }
     } catch (error) {
@@ -300,28 +310,33 @@ export function RunnerDashboardClient({
     }
   };
 
-  // Category counts
+  // Exclude current user's own requests from available pool (Anti-Fraud)
+  const availableOthers = useMemo(() => {
+    return pendingRequests.filter((r) => r.requester_id !== runnerId);
+  }, [pendingRequests, runnerId]);
+
+  // Category counts based on available requests
   const foodCount = useMemo(() => {
-    return pendingRequests.filter(
+    return availableOthers.filter(
       (r) => getRunnerCategoryIcon(r.items.map((i) => i.name).join(" ")).label === "Food & Snack"
     ).length;
-  }, [pendingRequests]);
+  }, [availableOthers]);
 
   const academicCount = useMemo(() => {
-    return pendingRequests.filter(
+    return availableOthers.filter(
       (r) => getRunnerCategoryIcon(r.items.map((i) => i.name).join(" ")).label === "Academic"
     ).length;
-  }, [pendingRequests]);
+  }, [availableOthers]);
 
   const gadgetCount = useMemo(() => {
-    return pendingRequests.filter(
+    return availableOthers.filter(
       (r) => getRunnerCategoryIcon(r.items.map((i) => i.name).join(" ")).label === "Gadgets"
     ).length;
-  }, [pendingRequests]);
+  }, [availableOthers]);
 
   // Filtered and sorted available requests
   const filteredPendingRequests = useMemo(() => {
-    let list = [...pendingRequests];
+    let list = [...availableOthers];
 
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase();
@@ -358,7 +373,7 @@ export function RunnerDashboardClient({
     }
 
     return list;
-  }, [pendingRequests, searchQuery, categoryFilter, sortBy]);
+  }, [availableOthers, searchQuery, categoryFilter, sortBy]);
 
   // Calculate total earnings from delivered requests
   const totalEarnings = deliveryHistory
@@ -425,9 +440,9 @@ export function RunnerDashboardClient({
         >
           <Package className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-2" />
           Available
-          {pendingRequests.length > 0 && (
+          {availableOthers.length > 0 && (
             <span className={`ml-2 px-1.5 sm:px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-bold ${activeTab === "available" ? "bg-emerald-500 text-[#0a0f0d]" : "bg-white/20 text-white"}`}>
-              {pendingRequests.length}
+              {availableOthers.length}
             </span>
           )}
         </button>
@@ -464,7 +479,7 @@ export function RunnerDashboardClient({
           </div>
           <div className="space-y-0.5">
             <p className="text-xs text-white/50 font-mono uppercase tracking-wider font-bold">Available</p>
-            <p className="text-2xl font-black text-white font-mono">{pendingRequests.length}</p>
+            <p className="text-2xl font-black text-white font-mono">{availableOthers.length}</p>
             <p className="text-[11px] text-emerald-400 flex items-center gap-1 font-medium">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
               New orders ready
@@ -514,8 +529,12 @@ export function RunnerDashboardClient({
           </div>
           <div className="space-y-0.5">
             <p className="text-xs text-white/50 font-mono uppercase tracking-wider font-bold">Rating</p>
-            <p className="text-2xl font-black text-white font-mono">4.8</p>
-            <p className="text-[11px] text-amber-300 font-medium">★ Top 5% Runner</p>
+            <p className="text-2xl font-black text-white font-mono">
+              {deliveryHistory.length > 0 ? "5.0" : "New"}
+            </p>
+            <p className="text-[11px] text-amber-300 font-medium">
+              {deliveryHistory.length > 0 ? "★ Verified Campus Runner" : "★ Ready for 1st Mission"}
+            </p>
           </div>
         </div>
       </div>
@@ -598,7 +617,7 @@ export function RunnerDashboardClient({
               {/* Category Filter Chips */}
               <div className="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0 scrollbar-none">
                 {[
-                  { id: "all", label: "All", count: pendingRequests.length },
+                  { id: "all", label: "All", count: availableOthers.length },
                   { id: "food", label: "🍔 Food & Snacks", count: foodCount },
                   { id: "academic", label: "📚 Academic", count: academicCount },
                   { id: "gadgets", label: "🔌 Gadgets", count: gadgetCount },
@@ -633,7 +652,7 @@ export function RunnerDashboardClient({
           </div>
 
           {/* Empty State */}
-          {pendingRequests.length === 0 ? (
+          {availableOthers.length === 0 ? (
             <div className="bg-[#111614] border border-white/5 rounded-2xl p-12 text-center">
               <Package className="w-12 h-12 mx-auto mb-4 text-white/20" />
               <p className="text-white/60 font-medium">No pending requests available right now.</p>
@@ -754,14 +773,20 @@ export function RunnerDashboardClient({
                       >
                         <Eye className="w-4 h-4" /> Details
                       </button>
-                      <button
-                        onClick={() => handleAccept(req.id)}
-                        disabled={isAccepting === req.id}
-                        className="flex-[1.5] flex items-center justify-center gap-2 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-400 hover:from-emerald-400 hover:to-emerald-300 text-black font-extrabold text-xs sm:text-sm shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:shadow-[0_0_30px_rgba(16,185,129,0.5)] transition-all cursor-pointer disabled:opacity-50 active:scale-[0.98]"
-                      >
-                        {isAccepting === req.id ? "Accepting..." : "Accept Request"}
-                        <ArrowRight className="w-4 h-4" />
-                      </button>
+                      {req.requester_id === runnerId ? (
+                        <div className="flex-[1.5] flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white/40 font-semibold text-xs text-center select-none">
+                          Your Request
+                        </div>
+                      ) : (
+                        <button
+                          onClick={() => handleAccept(req.id)}
+                          disabled={isAccepting === req.id}
+                          className="flex-[1.5] flex items-center justify-center gap-2 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-400 hover:from-emerald-400 hover:to-emerald-300 text-black font-extrabold text-xs sm:text-sm shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:shadow-[0_0_30px_rgba(16,185,129,0.5)] transition-all cursor-pointer disabled:opacity-50 active:scale-[0.98]"
+                        >
+                          {isAccepting === req.id ? "Accepting..." : "Accept Request"}
+                          <ArrowRight className="w-4 h-4" />
+                        </button>
+                      )}
                     </div>
                   </div>
                 );
@@ -1023,13 +1048,18 @@ export function RunnerDashboardClient({
           <div className="space-y-1">
             <div className="flex items-center gap-2 flex-wrap">
               <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-[10px] font-mono font-bold uppercase tracking-wider">
-                Level 2 Campus Runner
+                {deliveryHistory.length >= 10 ? "Level 3 Pro Runner" : deliveryHistory.length >= 3 ? "Level 2 Campus Runner" : "Level 1 Starter Runner"}
               </span>
-              <span className="text-xs text-white/50">• 4/10 Deliveries to unlock VIP 0% Platform Fee</span>
+              <span className="text-xs text-white/50">
+                • {deliveryHistory.length} completed {deliveryHistory.length === 1 ? "delivery" : "deliveries"} (100% Tips kept)
+              </span>
             </div>
-            {/* Progress bar */}
+            {/* Progress bar based on real history */}
             <div className="w-full max-w-xs h-2 rounded-full bg-white/5 border border-white/10 overflow-hidden mt-1.5">
-              <div className="h-full bg-gradient-to-r from-emerald-500 to-emerald-400 rounded-full w-[40%]" />
+              <div 
+                className="h-full bg-gradient-to-r from-emerald-500 to-emerald-400 rounded-full transition-all duration-500" 
+                style={{ width: `${Math.min(100, Math.max(8, (deliveryHistory.length / 10) * 100))}%` }}
+              />
             </div>
           </div>
         </div>

@@ -22,9 +22,9 @@ export default async function RunnerDashboardPage() {
     redirect("/login?redirectTo=/dashboard/runner");
   }
 
-  // Fetch all runner dashboard data concurrently in parallel
+  // Fetch all runner dashboard data concurrently in parallel (exclude user's own requests)
   const [pendingRequests, activeDeliveries, deliveryHistory] = await Promise.all([
-    getPendingRequestsWithItems(supabase),
+    getPendingRequestsWithItems(supabase, user.id),
     getRunnerActiveDeliveries(supabase, user.id),
     getRunnerDeliveryHistory(supabase, user.id),
   ]);

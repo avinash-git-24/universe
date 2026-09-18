@@ -104,18 +104,25 @@ export async function createDeliveryRequest(
 
 /**
  * Retrieves pending requests with their items for the runner dashboard.
+ * Optionally filters out requests created by the current user to prevent self-delivery.
  */
 export async function getPendingRequestsWithItems(
-  supabase: SupabaseClient<Database>
+  supabase: SupabaseClient<Database>,
+  currentUserId?: string
 ): Promise<RequestWithItems[]> {
-  const { data, error } = await supabase
+  let query = supabase
     .from("delivery_requests")
     .select(`
       *,
       items:request_items(*)
     `)
-    .eq("status", "pending")
-    .order("created_at", { ascending: false });
+    .eq("status", "pending");
+
+  if (currentUserId) {
+    query = query.neq("requester_id", currentUserId);
+  }
+
+  const { data, error } = await query.order("created_at", { ascending: false });
 
   if (error) {
     console.error("Error fetching pending requests:", error);
@@ -223,8 +230,28 @@ export async function acceptRequest(
   requestId: string,
   runnerId: string
 ): Promise<boolean> {
-  if (!requestId || !runnerId) {
-    console.error("acceptRequest – missing parameters:", { requestId, runnerId });
+  // 0. Anti-fraud check: Ensure request exists, is pending, and runner is NOT requester
+  const { data: targetReq, error: fetchErr } = await supabase
+    .from("delivery_requests")
+    .select("requester_id, status")
+    .eq("id", requestId)
+    .single();
+
+  if (fetchErr || !targetReq) {
+    console.error("acceptRequest – request not found:", fetchErr);
+    return false;
+  }
+
+  if (targetReq.status !== "pending") {
+    console.warn("acceptRequest – request is not pending:", targetReq.status);
+    return false;
+  }
+
+  if (targetReq.requester_id === runnerId) {
+    console.warn("acceptRequest – self-delivery blocked: requester cannot be runner for their own order", {
+      requester_id: targetReq.requester_id,
+      runner_id: runnerId,
+    });
     return false;
   }
 
