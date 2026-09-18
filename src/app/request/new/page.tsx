@@ -2,7 +2,6 @@ import { getUser } from "@/lib/supabase/queries";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { CreateRequestForm } from "@/components/request/CreateRequestForm";
-import { NotificationBell } from "@/components/notifications/NotificationBell";
 import { ArrowLeft, Sparkles, Zap } from "lucide-react";
 import Link from "next/link";
 
@@ -79,9 +78,19 @@ export default async function NewRequestPage() {
             </Link>
           </div>
 
-          {/* Right: Notification Bell */}
-          <div className="relative bg-[#0a0f0c]/70 border border-white/10 hover:border-emerald-500/30 p-2 sm:p-2.5 rounded-xl backdrop-blur-md transition-colors shadow-sm">
-            <NotificationBell />
+          {/* Right: Live Runners Active Pulse Badge */}
+          <div
+            className="flex items-center gap-2 bg-[#0a0f0c]/80 border border-emerald-500/30 shadow-[0_0_15px_rgba(0,230,118,0.18)] px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl backdrop-blur-md"
+            title="Live student runners active across Marwadi University campus"
+          >
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#00E676] opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-[#00E676]" />
+            </span>
+            <span className="text-emerald-400 font-bold text-[11px] sm:text-xs tracking-wide select-none">
+              <span className="sm:hidden">12+ Active</span>
+              <span className="hidden sm:inline">12+ Runners Online</span>
+            </span>
           </div>
         </div>
 
