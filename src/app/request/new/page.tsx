@@ -36,6 +36,14 @@ export default async function NewRequestPage() {
     );
   }
 
+  // Fetch real count of registered campus runners from Supabase (Zero fake data)
+  const { count: realRunnersCount } = await supabase
+    .from("profiles")
+    .select("id", { count: "exact", head: true })
+    .eq("role", "runner");
+
+  const runnerCount = realRunnersCount ?? 0;
+
   return (
     <div className="min-h-screen bg-[#050805] px-3 py-4 sm:px-6 sm:py-8 lg:p-10 relative overflow-x-hidden">
       {/* ── Sleek 2D Ambient Glow Background (No 3D Canvas / No Floating Balls) ── */}
@@ -78,18 +86,31 @@ export default async function NewRequestPage() {
             </Link>
           </div>
 
-          {/* Right: Live Runners Active Pulse Badge */}
+          {/* Right: Live Real-Time Runners Active Pulse Badge (Real Supabase Data) */}
           <div
             className="flex items-center gap-2 bg-[#0a0f0c]/80 border border-emerald-500/30 shadow-[0_0_15px_rgba(0,230,118,0.18)] px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl backdrop-blur-md"
-            title="Live student runners active across Marwadi University campus"
+            title={
+              runnerCount > 0
+                ? `${runnerCount} verified student runner${runnerCount > 1 ? "s" : ""} registered on campus`
+                : "Campus delivery network online"
+            }
           >
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#00E676] opacity-75" />
               <span className="relative inline-flex rounded-full h-2 w-2 bg-[#00E676]" />
             </span>
             <span className="text-emerald-400 font-bold text-[11px] sm:text-xs tracking-wide select-none">
-              <span className="sm:hidden">12+ Active</span>
-              <span className="hidden sm:inline">12+ Runners Online</span>
+              {runnerCount > 0 ? (
+                <>
+                  <span className="sm:hidden">{runnerCount} {runnerCount === 1 ? "Runner" : "Runners"}</span>
+                  <span className="hidden sm:inline">{runnerCount} {runnerCount === 1 ? "Runner" : "Runners"} Online</span>
+                </>
+              ) : (
+                <>
+                  <span className="sm:hidden">Campus Active</span>
+                  <span className="hidden sm:inline">Campus Network Active</span>
+                </>
+              )}
             </span>
           </div>
         </div>
