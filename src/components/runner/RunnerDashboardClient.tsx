@@ -664,68 +664,76 @@ export function RunnerDashboardClient({
       {/* ── Summary Stat Cards (Mobile-first 2x2 compact grid) ── */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
         {/* Stat 1: Available Requests */}
-        <div className="bg-[#0b120e]/90 border border-white/5 hover:border-emerald-500/25 rounded-2xl p-3.5 sm:p-5 flex items-start gap-3 sm:gap-4 transition-all backdrop-blur-xl group">
-          <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center shrink-0 text-emerald-400 group-hover:scale-105 transition-transform">
-            <Package className="w-4 h-4 sm:w-5 sm:h-5" />
-          </div>
-          <div className="space-y-0.5 min-w-0">
-            <p className="text-[10px] sm:text-xs text-white/50 font-mono uppercase tracking-wider font-bold truncate">Available</p>
-            <p className="text-xl sm:text-2xl font-black text-white font-mono">{availableOthers.length}</p>
-            <p className="text-[10px] sm:text-[11px] text-emerald-400 flex items-center gap-1 font-medium truncate">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
-              <span className="truncate">New orders</span>
-            </p>
+        <div className="bg-[#0b120e]/90 border border-white/5 hover:border-emerald-500/25 rounded-2xl p-3.5 sm:p-5 transition-all backdrop-blur-xl group">
+          <div className="flex items-start justify-between gap-2">
+            <div className="space-y-0.5 min-w-0 flex-1">
+              <p className="text-[10px] sm:text-xs text-white/50 font-mono uppercase tracking-wider font-bold truncate">Available</p>
+              <p className="text-xl sm:text-2xl font-black text-white font-mono">{availableOthers.length}</p>
+              <p className="text-[10px] sm:text-[11px] text-emerald-400 flex items-center gap-1 font-medium truncate">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+                <span className="truncate">New orders</span>
+              </p>
+            </div>
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center shrink-0 text-emerald-400 group-hover:scale-105 transition-transform">
+              <Package className="w-4 h-4 sm:w-5 sm:h-5" />
+            </div>
           </div>
         </div>
 
         {/* Stat 2: Active Deliveries */}
         <div className={cn(
-          "bg-[#0b120e]/90 border rounded-2xl p-3.5 sm:p-5 flex items-start gap-3 sm:gap-4 transition-all backdrop-blur-xl group",
+          "bg-[#0b120e]/90 border rounded-2xl p-3.5 sm:p-5 transition-all backdrop-blur-xl group",
           activeDeliveries.length > 0 ? "border-emerald-500/30 shadow-[0_0_20px_rgba(16,185,129,0.06)]" : "border-white/5"
         )}>
-          <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center shrink-0 text-emerald-400 group-hover:scale-105 transition-transform">
-            <Clock className="w-4 h-4 sm:w-5 sm:h-5" />
-          </div>
-          <div className="space-y-0.5 min-w-0">
-            <p className="text-[10px] sm:text-xs text-white/50 font-mono uppercase tracking-wider font-bold truncate">Active</p>
-            <p className="text-xl sm:text-2xl font-black text-white font-mono">{activeDeliveries.length}</p>
-            <p className="text-[10px] sm:text-[11px] text-emerald-400 font-medium truncate">
-              {activeDeliveries.length > 0 ? "● In progress" : "No missions"}
-            </p>
+          <div className="flex items-start justify-between gap-2">
+            <div className="space-y-0.5 min-w-0 flex-1">
+              <p className="text-[10px] sm:text-xs text-white/50 font-mono uppercase tracking-wider font-bold truncate">Active</p>
+              <p className="text-xl sm:text-2xl font-black text-white font-mono">{activeDeliveries.length}</p>
+              <p className="text-[10px] sm:text-[11px] text-emerald-400 font-medium truncate">
+                {activeDeliveries.length > 0 ? "● In progress" : "No missions"}
+              </p>
+            </div>
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center shrink-0 text-emerald-400 group-hover:scale-105 transition-transform">
+              <Clock className="w-4 h-4 sm:w-5 sm:h-5" />
+            </div>
           </div>
         </div>
 
         {/* Stat 3: Today's Earnings (HERO CARD) */}
-        <div className="bg-gradient-to-br from-[#0c1611] to-[#080d0a] border border-emerald-500/35 hover:border-emerald-400/60 rounded-2xl p-3.5 sm:p-5 flex items-start gap-3 sm:gap-4 transition-all backdrop-blur-xl shadow-[0_0_25px_rgba(16,185,129,0.08)] group relative overflow-hidden">
+        <div className="bg-gradient-to-br from-[#0c1611] to-[#080d0a] border border-emerald-500/35 hover:border-emerald-400/60 rounded-2xl p-3.5 sm:p-5 transition-all backdrop-blur-xl shadow-[0_0_25px_rgba(16,185,129,0.08)] group relative overflow-hidden">
           <div className="absolute -right-6 -bottom-6 w-20 h-20 bg-emerald-500/10 rounded-full blur-xl pointer-events-none" />
-          <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center shrink-0 text-emerald-300 shadow-[0_0_12px_rgba(16,185,129,0.3)] group-hover:scale-105 transition-transform">
-            <Wallet className="w-4 h-4 sm:w-5 sm:h-5" />
-          </div>
-          <div className="space-y-0.5 min-w-0">
-            <p className="text-[10px] sm:text-xs text-emerald-400/80 font-mono uppercase tracking-wider font-bold truncate">Earnings</p>
-            <p className="text-xl sm:text-2xl font-black text-white font-mono flex items-center tracking-tight">
-              <IndianRupee className="w-4 h-4 sm:w-5 sm:h-5 mr-0.5 text-emerald-400" />
-              {totalEarnings}
-            </p>
-            <Link href="/dashboard/wallet" className="text-[10px] sm:text-[11px] text-emerald-300 hover:text-emerald-200 font-bold flex items-center gap-0.5 transition-colors truncate">
-              Wallet ➔
-            </Link>
+          <div className="flex items-start justify-between gap-2 relative z-10">
+            <div className="space-y-0.5 min-w-0 flex-1">
+              <p className="text-[10px] sm:text-xs text-emerald-400/80 font-mono uppercase tracking-wider font-bold truncate">Earnings</p>
+              <p className="text-xl sm:text-2xl font-black text-white font-mono flex items-center tracking-tight">
+                <IndianRupee className="w-4 h-4 sm:w-5 sm:h-5 mr-0.5 text-emerald-400" />
+                {totalEarnings}
+              </p>
+              <Link href="/dashboard/wallet" className="text-[10px] sm:text-[11px] text-emerald-300 hover:text-emerald-200 font-bold flex items-center gap-0.5 transition-colors truncate">
+                Wallet ➔
+              </Link>
+            </div>
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center shrink-0 text-emerald-300 shadow-[0_0_12px_rgba(16,185,129,0.3)] group-hover:scale-105 transition-transform">
+              <Wallet className="w-4 h-4 sm:w-5 sm:h-5" />
+            </div>
           </div>
         </div>
 
         {/* Stat 4: Rating */}
-        <div className="bg-[#0b120e]/90 border border-white/5 hover:border-amber-500/25 rounded-2xl p-3.5 sm:p-5 flex items-start gap-3 sm:gap-4 transition-all backdrop-blur-xl group">
-          <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center shrink-0 text-amber-400 group-hover:scale-105 transition-transform">
-            <Star className="w-4 h-4 sm:w-5 sm:h-5 fill-amber-400" />
-          </div>
-          <div className="space-y-0.5 min-w-0">
-            <p className="text-[10px] sm:text-xs text-white/50 font-mono uppercase tracking-wider font-bold truncate">Rating</p>
-            <p className="text-xl sm:text-2xl font-black text-white font-mono">
-              {deliveryHistory.length > 0 ? "5.0" : "New"}
-            </p>
-            <p className="text-[10px] sm:text-[11px] text-amber-300 font-medium truncate">
-              {deliveryHistory.length > 0 ? "★ Verified" : "★ Starter"}
-            </p>
+        <div className="bg-[#0b120e]/90 border border-white/5 hover:border-amber-500/25 rounded-2xl p-3.5 sm:p-5 transition-all backdrop-blur-xl group">
+          <div className="flex items-start justify-between gap-2">
+            <div className="space-y-0.5 min-w-0 flex-1">
+              <p className="text-[10px] sm:text-xs text-white/50 font-mono uppercase tracking-wider font-bold truncate">Rating</p>
+              <p className="text-xl sm:text-2xl font-black text-white font-mono">
+                {deliveryHistory.length > 0 ? "5.0" : "New"}
+              </p>
+              <p className="text-[10px] sm:text-[11px] text-amber-300 font-medium truncate">
+                {deliveryHistory.length > 0 ? "★ Verified" : "★ Starter"}
+              </p>
+            </div>
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center shrink-0 text-amber-400 group-hover:scale-105 transition-transform">
+              <Star className="w-4 h-4 sm:w-5 sm:h-5 fill-amber-400" />
+            </div>
           </div>
         </div>
       </div>
@@ -768,173 +776,186 @@ export function RunnerDashboardClient({
               {/* How it works 3-step playbook */}
               <RunnerHowItWorksGuide />
             </div>
-          ) : (
-            <>
-              {/* Optional collapsible How It Works bar when orders exist */}
-              {availableOthers.length > 0 && (
-                <div className="flex justify-between items-center bg-[#0d1310] border border-white/10 rounded-2xl px-4 py-2.5">
-                  <div className="flex items-center gap-2 text-xs text-white/70">
-                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                    <span className="font-mono uppercase text-[11px] text-emerald-400 font-bold">Runner Guide</span>
-                    <span className="hidden sm:inline text-white/40">· Earn cash on campus walks</span>
+          ) : availableOthers.length === 0 ? (
+            /* ── EMPTY STATE: Direct Radar Scanning HUD & Compact Guide ── */
+                <div className="space-y-6">
+                  {/* Live Radar Scanning HUD */}
+                  <div className="relative overflow-hidden rounded-3xl bg-gradient-to-b from-[#0e1713] via-[#0a110e] to-[#070b09] border border-emerald-500/30 p-6 sm:p-12 text-center shadow-[0_0_35px_rgba(16,185,129,0.08)]">
+                    <div className="relative w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-4 sm:mb-5 flex items-center justify-center">
+                      <div className="absolute inset-0 rounded-full border border-emerald-500/20 animate-ping" />
+                      <div className="absolute -inset-3 rounded-full border border-emerald-500/15" />
+                      <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-emerald-500/15 border-2 border-emerald-500/40 flex items-center justify-center text-emerald-400 shadow-[0_0_25px_rgba(0,230,118,0.3)]">
+                        <Radio className="w-6 h-6 sm:w-7 sm:h-7 animate-pulse" />
+                      </div>
+                    </div>
+
+                    <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-xs font-mono font-bold uppercase tracking-wider mb-2">
+                      <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+                      <span>Campus Radar Active · Listening for Orders</span>
+                    </div>
+
+                    <h3 className="text-xl sm:text-2xl font-black text-white tracking-tight">
+                      No Active Requests on Radar Right Now
+                    </h3>
+
+                    <p className="text-white/60 text-xs sm:text-sm max-w-md mx-auto mt-2 leading-relaxed">
+                      Aapka Runner Mode <span className="text-emerald-400 font-bold">ONLINE</span> hai! Jaise hi campus me koi student food, snacks ya notes order karega, yaha instant sound & visual alert aayega.
+                    </p>
+
+                    <div className="mt-5 max-w-lg mx-auto p-3 rounded-2xl bg-white/[0.03] border border-white/10 text-white/50 text-xs flex items-center justify-center gap-2 font-mono">
+                      <span>💡 Peak orders time: Lunch (1 PM - 3 PM) & Late Night (9 PM - 1 AM)</span>
+                    </div>
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => setShowHowItWorks((prev) => !prev)}
-                    className="inline-flex items-center gap-1.5 text-xs text-emerald-400 hover:text-emerald-300 transition-colors font-semibold cursor-pointer"
-                  >
-                    <span>{showHowItWorks ? "Hide Guide" : "How it Works (3 Steps)"}</span>
-                    <ChevronDown className={cn("w-3.5 h-3.5 transition-transform", showHowItWorks && "rotate-180")} />
-                  </button>
-                </div>
-              )}
 
-              {showHowItWorks && availableOthers.length > 0 && (
-                <RunnerHowItWorksGuide />
-              )}
-
-          {/* Controls & Search Header */}
-          <div className="flex flex-col gap-4">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-              <div>
-                <h2 className="text-xl font-bold tracking-tight text-white flex items-center gap-2">
-                  Available Requests
-                  <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-xs font-mono font-bold">
-                    {filteredPendingRequests.length}
-                  </span>
-                </h2>
-                <p className="text-white/40 text-xs mt-0.5">Instant campus pickup requests ready to accept</p>
-              </div>
-
-              <div className="flex items-center gap-2.5 w-full sm:w-auto">
-                {/* Grid/List Toggle */}
-                <div className="flex items-center bg-[#0d1310] border border-white/10 rounded-xl p-1 shrink-0">
-                  <button
-                    onClick={() => setIsGridView(true)}
-                    className={`p-1.5 rounded-lg transition-colors cursor-pointer ${isGridView ? "bg-emerald-500/20 text-emerald-400" : "text-white/40 hover:text-white"}`}
-                    title="Grid View"
-                  >
-                    <LayoutGrid className="w-4 h-4" />
-                  </button>
-                  <button
-                    onClick={() => setIsGridView(false)}
-                    className={`p-1.5 rounded-lg transition-colors cursor-pointer ${!isGridView ? "bg-emerald-500/20 text-emerald-400" : "text-white/40 hover:text-white"}`}
-                    title="List View"
-                  >
-                    <List className="w-4 h-4" />
-                  </button>
-                </div>
-
-                {/* Real Sort Dropdown */}
-                <div className="relative flex-1 sm:flex-initial">
-                  <select
-                    value={sortBy}
-                    onChange={(e) => setSortBy(e.target.value as any)}
-                    className="appearance-none bg-[#0d1310] border border-white/10 text-white/80 text-xs sm:text-sm rounded-xl pl-3.5 pr-9 py-2 outline-none focus:border-emerald-500/50 hover:text-white transition-colors cursor-pointer w-full font-medium"
-                  >
-                    <option value="newest">Sort by: Newest</option>
-                    <option value="oldest">Sort by: Oldest</option>
-                    <option value="highest_pay">Sort by: Highest Pay</option>
-                  </select>
-                  <ChevronDown className="w-3.5 h-3.5 text-white/40 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
-                </div>
-              </div>
-            </div>
-
-            {/* Search Input & Category Filter Chips */}
-            <div className="flex flex-col md:flex-row gap-3 items-stretch md:items-center">
-              {/* Search Bar */}
-              <div className="relative flex-1">
-                <Search className="w-4 h-4 text-white/40 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search item, pickup, or hostel room..."
-                  className="w-full bg-[#080d0a]/90 border border-white/10 rounded-xl pl-9 pr-8 py-2 text-xs sm:text-sm text-white placeholder-white/40 focus:border-emerald-500/50 outline-none transition-all shadow-inner"
-                />
-                {searchQuery && (
-                  <button
-                    onClick={() => setSearchQuery("")}
-                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-white/40 hover:text-white p-0.5 rounded-full cursor-pointer"
-                  >
-                    <X className="w-3.5 h-3.5" />
-                  </button>
-                )}
-              </div>
-
-              {/* Category Filter Chips */}
-              <div className="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0 scrollbar-none">
-                {[
-                  { id: "all", label: "All", count: availableOthers.length },
-                  { id: "food", label: "🍔 Food & Snacks", count: foodCount },
-                  { id: "academic", label: "📚 Academic", count: academicCount },
-                  { id: "gadgets", label: "🔌 Gadgets", count: gadgetCount },
-                ].map((cat) => {
-                  const isActive = categoryFilter === cat.id;
-                  return (
+                  {/* Collapsible Playbook Guide */}
+                  <div className="flex justify-between items-center bg-[#0d1310] border border-white/10 rounded-2xl px-4 py-2.5">
+                    <div className="flex items-center gap-2 text-xs text-white/70">
+                      <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                      <span className="font-mono uppercase text-[11px] text-emerald-400 font-bold">Runner Guide</span>
+                      <span className="hidden sm:inline text-white/40">· Earn cash on campus walks</span>
+                    </div>
                     <button
-                      key={cat.id}
                       type="button"
-                      onClick={() => setCategoryFilter(cat.id as any)}
-                      className={cn(
-                        "px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all flex items-center gap-1.5 cursor-pointer",
-                        isActive
-                          ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 shadow-[0_0_12px_rgba(16,185,129,0.15)]"
-                          : "bg-white/5 border border-white/5 text-white/60 hover:text-white hover:bg-white/10"
-                      )}
+                      onClick={() => setShowHowItWorks((prev) => !prev)}
+                      className="inline-flex items-center gap-1.5 text-xs text-emerald-400 hover:text-emerald-300 transition-colors font-semibold cursor-pointer"
                     >
-                      <span>{cat.label}</span>
-                      <span
-                        className={cn(
-                          "text-[10px] font-mono px-1.5 py-0.2 rounded-full",
-                          isActive ? "bg-emerald-500/30 text-emerald-200" : "bg-white/10 text-white/50"
-                        )}
-                      >
-                        {cat.count}
-                      </span>
+                      <span>{showHowItWorks ? "Hide Guide" : "How it Works (3 Steps)"}</span>
+                      <ChevronDown className={cn("w-3.5 h-3.5 transition-transform", showHowItWorks && "rotate-180")} />
                     </button>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-
-          {/* Empty State */}
-          {availableOthers.length === 0 ? (
-            <div className="space-y-6">
-              {/* Live Radar Scanning HUD */}
-              <div className="relative overflow-hidden rounded-3xl bg-gradient-to-b from-[#0e1713] via-[#0a110e] to-[#070b09] border border-emerald-500/30 p-8 sm:p-12 text-center shadow-[0_0_35px_rgba(16,185,129,0.08)]">
-                <div className="relative w-20 h-20 mx-auto mb-5 flex items-center justify-center">
-                  <div className="absolute inset-0 rounded-full border border-emerald-500/20 animate-ping" />
-                  <div className="absolute -inset-3 rounded-full border border-emerald-500/15" />
-                  <div className="w-16 h-16 rounded-full bg-emerald-500/15 border-2 border-emerald-500/40 flex items-center justify-center text-emerald-400 shadow-[0_0_25px_rgba(0,230,118,0.3)]">
-                    <Radio className="w-7 h-7 animate-pulse" />
                   </div>
+
+                  {showHowItWorks && <RunnerHowItWorksGuide />}
                 </div>
+              ) : (
+                /* ── ACTIVE FEED: Controls, Search, Filters & Request Cards ── */
+                <>
+                  {/* Collapsible How It Works bar when orders exist */}
+                  <div className="flex justify-between items-center bg-[#0d1310] border border-white/10 rounded-2xl px-4 py-2.5">
+                    <div className="flex items-center gap-2 text-xs text-white/70">
+                      <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                      <span className="font-mono uppercase text-[11px] text-emerald-400 font-bold">Runner Guide</span>
+                      <span className="hidden sm:inline text-white/40">· Earn cash on campus walks</span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setShowHowItWorks((prev) => !prev)}
+                      className="inline-flex items-center gap-1.5 text-xs text-emerald-400 hover:text-emerald-300 transition-colors font-semibold cursor-pointer"
+                    >
+                      <span>{showHowItWorks ? "Hide Guide" : "How it Works (3 Steps)"}</span>
+                      <ChevronDown className={cn("w-3.5 h-3.5 transition-transform", showHowItWorks && "rotate-180")} />
+                    </button>
+                  </div>
 
-                <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-xs font-mono font-bold uppercase tracking-wider mb-2">
-                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-                  <span>Campus Radar Active · Listening for Orders</span>
-                </div>
+                  {showHowItWorks && <RunnerHowItWorksGuide />}
 
-                <h3 className="text-xl sm:text-2xl font-black text-white tracking-tight">
-                  No Active Requests on Radar Right Now
-                </h3>
+                  {/* Controls & Search Header */}
+                  <div className="flex flex-col gap-4">
+                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                      <div>
+                        <h2 className="text-xl font-bold tracking-tight text-white flex items-center gap-2">
+                          Available Requests
+                          <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-xs font-mono font-bold">
+                            {filteredPendingRequests.length}
+                          </span>
+                        </h2>
+                        <p className="text-white/40 text-xs mt-0.5">Instant campus pickup requests ready to accept</p>
+                      </div>
 
-                <p className="text-white/60 text-xs sm:text-sm max-w-md mx-auto mt-2 leading-relaxed">
-                  Aapka Runner Mode <span className="text-emerald-400 font-bold">ONLINE</span> hai! Jaise hi campus me koi student food, snacks ya notes order karega, yaha instant sound & visual alert aayega.
-                </p>
+                      <div className="flex items-center gap-2.5 w-full sm:w-auto">
+                        {/* Grid/List Toggle */}
+                        <div className="flex items-center bg-[#0d1310] border border-white/10 rounded-xl p-1 shrink-0">
+                          <button
+                            onClick={() => setIsGridView(true)}
+                            className={`p-1.5 rounded-lg transition-colors cursor-pointer ${isGridView ? "bg-emerald-500/20 text-emerald-400" : "text-white/40 hover:text-white"}`}
+                            title="Grid View"
+                          >
+                            <LayoutGrid className="w-4 h-4" />
+                          </button>
+                          <button
+                            onClick={() => setIsGridView(false)}
+                            className={`p-1.5 rounded-lg transition-colors cursor-pointer ${!isGridView ? "bg-emerald-500/20 text-emerald-400" : "text-white/40 hover:text-white"}`}
+                            title="List View"
+                          >
+                            <List className="w-4 h-4" />
+                          </button>
+                        </div>
 
-                <div className="mt-6 max-w-lg mx-auto p-3.5 rounded-2xl bg-white/[0.03] border border-white/10 text-white/50 text-xs flex items-center justify-center gap-2 font-mono">
-                  <span>💡 Peak orders time: Lunch (1 PM - 3 PM) & Late Night (9 PM - 1 AM)</span>
-                </div>
-              </div>
+                        {/* Real Sort Dropdown */}
+                        <div className="relative flex-1 sm:flex-initial">
+                          <select
+                            value={sortBy}
+                            onChange={(e) => setSortBy(e.target.value as any)}
+                            className="appearance-none bg-[#0d1310] border border-white/10 text-white/80 text-xs sm:text-sm rounded-xl pl-3.5 pr-9 py-2 outline-none focus:border-emerald-500/50 hover:text-white transition-colors cursor-pointer w-full font-medium"
+                          >
+                            <option value="newest">Sort by: Newest</option>
+                            <option value="oldest">Sort by: Oldest</option>
+                            <option value="highest_pay">Sort by: Highest Pay</option>
+                          </select>
+                          <ChevronDown className="w-3.5 h-3.5 text-white/40 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                        </div>
+                      </div>
+                    </div>
 
-              {/* Playbook Guide */}
-              <RunnerHowItWorksGuide />
-            </div>
-          ) : filteredPendingRequests.length === 0 ? (
+                    {/* Search Input & Category Filter Chips */}
+                    <div className="flex flex-col md:flex-row gap-3 items-stretch md:items-center">
+                      {/* Search Bar */}
+                      <div className="relative flex-1">
+                        <Search className="w-4 h-4 text-white/40 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                        <input
+                          type="text"
+                          value={searchQuery}
+                          onChange={(e) => setSearchQuery(e.target.value)}
+                          placeholder="Search item, pickup, or hostel room..."
+                          className="w-full bg-[#080d0a]/90 border border-white/10 rounded-xl pl-9 pr-8 py-2 text-xs sm:text-sm text-white placeholder-white/40 focus:border-emerald-500/50 outline-none transition-all shadow-inner"
+                        />
+                        {searchQuery && (
+                          <button
+                            onClick={() => setSearchQuery("")}
+                            className="absolute right-2.5 top-1/2 -translate-y-1/2 text-white/40 hover:text-white p-0.5 rounded-full cursor-pointer"
+                          >
+                            <X className="w-3.5 h-3.5" />
+                          </button>
+                        )}
+                      </div>
+
+                      {/* Category Filter Chips */}
+                      <div className="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0 scrollbar-none">
+                        {[
+                          { id: "all", label: "All", count: availableOthers.length },
+                          { id: "food", label: "🍔 Food & Snacks", count: foodCount },
+                          { id: "academic", label: "📚 Academic", count: academicCount },
+                          { id: "gadgets", label: "🔌 Gadgets", count: gadgetCount },
+                        ].map((cat) => {
+                          const isActive = categoryFilter === cat.id;
+                          return (
+                            <button
+                              key={cat.id}
+                              type="button"
+                              onClick={() => setCategoryFilter(cat.id as any)}
+                              className={cn(
+                                "px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all flex items-center gap-1.5 cursor-pointer",
+                                isActive
+                                  ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 shadow-[0_0_12px_rgba(16,185,129,0.15)]"
+                                  : "bg-white/5 border border-white/5 text-white/60 hover:text-white hover:bg-white/10"
+                              )}
+                            >
+                              <span>{cat.label}</span>
+                              <span
+                                className={cn(
+                                  "text-[10px] font-mono px-1.5 py-0.2 rounded-full",
+                                  isActive ? "bg-emerald-500/30 text-emerald-200" : "bg-white/10 text-white/50"
+                                )}
+                              >
+                                {cat.count}
+                              </span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </div>
+
+                  {filteredPendingRequests.length === 0 ? (
             <div className="bg-[#0b120e] border border-white/5 rounded-2xl p-10 text-center space-y-3">
               <Filter className="w-10 h-10 mx-auto text-emerald-500/30" />
               <p className="text-white/80 font-semibold text-sm">No requests match your current search or filter.</p>
@@ -1081,10 +1102,10 @@ export function RunnerDashboardClient({
               })}
             </div>
           )}
-            </>
-          )}
-        </div>
+        </>
       )}
+    </div>
+  )}
 
       {/* ───────────────────────────────────────────────────────────────────────────── */}
       {/* TAB 2: MY ACTIVE DELIVERIES */}
