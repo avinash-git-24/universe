@@ -7,7 +7,8 @@ import { formatDistanceToNow, format } from "date-fns";
 import {
   MapPin, Package, Clock, IndianRupee, Eye, CheckCircle2, History, Wallet, Star,
   LayoutGrid, List, Calendar, ArrowRight, ChevronDown, MessageSquare, KeyRound,
-  ShieldCheck, Bike, Sparkles, Utensils, BookOpen, Laptop, Activity, Search, X, Filter
+  ShieldCheck, Bike, Sparkles, Utensils, BookOpen, Laptop, Activity, Search, X, Filter,
+  Radio, Zap, Moon
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { NotificationBell } from "@/components/notifications/NotificationBell";
@@ -68,6 +69,108 @@ function getRunnerCategoryIcon(names: string) {
   };
 }
 
+function RunnerHowItWorksGuide() {
+  return (
+    <div className="rounded-3xl bg-gradient-to-br from-[#0c1410] via-[#09100c] to-[#070b09] border border-emerald-500/25 p-5 sm:p-7 backdrop-blur-xl shadow-[0_0_30px_rgba(16,185,129,0.06)] relative overflow-hidden">
+      <div className="absolute -top-16 -right-16 w-48 h-48 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-5 sm:mb-6">
+        <div>
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="text-[11px] font-mono uppercase tracking-wider text-emerald-400 font-bold">
+              Campus Runner Playbook
+            </span>
+          </div>
+          <h3 className="text-lg sm:text-xl font-extrabold text-white mt-0.5">
+            How UniVerse Runner Works
+          </h3>
+        </div>
+        <span className="text-xs text-white/50 font-medium">
+          Earn instant pocket cash during your daily campus walks
+        </span>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5 sm:gap-4">
+        {/* Step 1 */}
+        <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/10 hover:border-emerald-500/30 transition-all flex flex-col justify-between group">
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-[10px] font-mono font-bold uppercase">
+                Step 1
+              </span>
+              <div className="w-8 h-8 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+                <Radio className="w-4 h-4" />
+              </div>
+            </div>
+            <div>
+              <h4 className="font-bold text-white text-sm group-hover:text-emerald-300 transition-colors">
+                Go Online When Free
+              </h4>
+              <p className="text-xs text-white/60 mt-1 leading-relaxed">
+                Jab aap canteen, nescafe ya gate se hostel ja rahe hon, Runner Mode ON karein. Jab class me hon, to Offline rakhein.
+              </p>
+            </div>
+          </div>
+          <div className="mt-3 pt-2.5 border-t border-white/5 text-[11px] text-emerald-400/80 font-mono">
+            Zero pressure · Your own schedule
+          </div>
+        </div>
+
+        {/* Step 2 */}
+        <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/10 hover:border-cyan-500/30 transition-all flex flex-col justify-between group">
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="px-2.5 py-0.5 rounded-full bg-cyan-500/15 border border-cyan-500/30 text-cyan-400 text-[10px] font-mono font-bold uppercase">
+                Step 2
+              </span>
+              <div className="w-8 h-8 rounded-xl bg-cyan-500/15 border border-cyan-500/30 flex items-center justify-center text-cyan-400">
+                <Zap className="w-4 h-4" />
+              </div>
+            </div>
+            <div>
+              <h4 className="font-bold text-white text-sm group-hover:text-cyan-300 transition-colors">
+                Accept Nearby Mission
+              </h4>
+              <p className="text-xs text-white/60 mt-1 leading-relaxed">
+                Pickup location aur hostel dropoff check karke order accept karein. Har delivery ka cash payout pehle hi dikhta hai.
+              </p>
+            </div>
+          </div>
+          <div className="mt-3 pt-2.5 border-t border-white/5 text-[11px] text-cyan-400/80 font-mono">
+            Earn ₹10 – ₹100 per quick pickup
+          </div>
+        </div>
+
+        {/* Step 3 */}
+        <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/10 hover:border-emerald-500/30 transition-all flex flex-col justify-between group">
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-[10px] font-mono font-bold uppercase">
+                Step 3
+              </span>
+              <div className="w-8 h-8 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+                <ShieldCheck className="w-4 h-4" />
+              </div>
+            </div>
+            <div>
+              <h4 className="font-bold text-white text-sm group-hover:text-emerald-300 transition-colors">
+                Handover & Instant Cash
+              </h4>
+              <p className="text-xs text-white/60 mt-1 leading-relaxed">
+                Item deliver karke student se 6-digit OTP lein. OTP verify hote hi paise seedha aapke UniVerse Wallet me transfer ho jayenge!
+              </p>
+            </div>
+          </div>
+          <div className="mt-3 pt-2.5 border-t border-white/5 text-[11px] text-emerald-400/80 font-mono">
+            100% tips kept · Instant Wallet payout
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 interface RunnerDashboardClientProps {
   runnerId: string;
   initialPending: RequestWithItems[];
@@ -103,9 +206,34 @@ export function RunnerDashboardClient({
   const [currentTime] = useState(() => Date.now());
   const [isGridView, setIsGridView] = useState(true);
   const [isOnline, setIsOnline] = useState(true);
+  const [showHowItWorks, setShowHowItWorks] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [categoryFilter, setCategoryFilter] = useState<"all" | "food" | "academic" | "gadgets">("all");
   const [sortBy, setSortBy] = useState<"newest" | "oldest" | "highest_pay">("newest");
+
+  // Sync isOnline preference from localStorage after client mount
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("universe_runner_online");
+      if (saved !== null) {
+        setIsOnline(saved === "true");
+      }
+    } catch {
+      // LocalStorage access failsafe
+    }
+  }, []);
+
+  const toggleOnline = (targetState?: boolean) => {
+    setIsOnline((prev) => {
+      const next = typeof targetState === "boolean" ? targetState : !prev;
+      try {
+        localStorage.setItem("universe_runner_online", String(next));
+      } catch {
+        // LocalStorage access failsafe
+      }
+      return next;
+    });
+  };
 
   // Adjust state when initial props change on revalidation (React recommended pattern)
   const [prevPending, setPrevPending] = useState(initialPending);
@@ -413,24 +541,32 @@ export function RunnerDashboardClient({
           {/* Interactive Online/Offline Switcher */}
           <button
             type="button"
-            onClick={() => setIsOnline((prev) => !prev)}
+            onClick={() => toggleOnline()}
             className={cn(
-              "flex items-center gap-2 px-4 py-2 rounded-full border text-xs sm:text-sm font-semibold transition-all cursor-pointer shadow-sm active:scale-95",
+              "flex items-center gap-2.5 px-3.5 sm:px-4 py-2 rounded-full border text-xs sm:text-sm font-semibold transition-all cursor-pointer shadow-sm active:scale-95 group",
               isOnline
-                ? "border-emerald-500/40 bg-emerald-500/15 text-emerald-300 shadow-[0_0_15px_rgba(16,185,129,0.2)] hover:bg-emerald-500/20"
-                : "border-amber-500/40 bg-amber-500/15 text-amber-300 shadow-[0_0_15px_rgba(245,158,11,0.2)] hover:bg-amber-500/20"
+                ? "border-emerald-500/50 bg-emerald-500/15 text-emerald-300 shadow-[0_0_20px_rgba(16,185,129,0.25)] hover:bg-emerald-500/25"
+                : "border-amber-500/50 bg-amber-500/15 text-amber-300 shadow-[0_0_15px_rgba(245,158,11,0.15)] hover:bg-amber-500/25"
             )}
-            title="Click to toggle Online/Offline availability"
+            title={isOnline ? "Runner Mode Active · Click to Pause" : "Runner Mode Paused · Click to go Online"}
           >
-            <span
+            {/* Visual Mini Slider Pill */}
+            <div
               className={cn(
-                "w-2 h-2 rounded-full",
-                isOnline
-                  ? "bg-emerald-400 animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.9)]"
-                  : "bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.9)]"
+                "w-7 h-4 rounded-full p-0.5 flex items-center transition-colors shrink-0",
+                isOnline ? "bg-emerald-500/40 justify-end" : "bg-white/10 justify-start"
               )}
-            />
-            <span>{isOnline ? "Online · Accepting Orders" : "Paused · Studying"}</span>
+            >
+              <span
+                className={cn(
+                  "w-3 h-3 rounded-full shadow-sm transition-all",
+                  isOnline
+                    ? "bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,1)]"
+                    : "bg-amber-400"
+                )}
+              />
+            </div>
+            <span className="whitespace-nowrap">{isOnline ? "Online · Accepting Orders" : "Offline · Mode Paused"}</span>
           </button>
         </div>
       </div>
@@ -550,6 +686,64 @@ export function RunnerDashboardClient({
       {/* ───────────────────────────────────────────────────────────────────────────── */}
       {activeTab === "available" && (
         <div className="space-y-6">
+          {!isOnline ? (
+            /* ── OFFLINE / PAUSED STATE ── */
+            <div className="space-y-6">
+              <div className="relative overflow-hidden rounded-3xl bg-gradient-to-b from-[#121914] via-[#0d1410] to-[#090f0c] border-2 border-amber-500/35 p-6 sm:p-10 text-center shadow-[0_0_35px_rgba(245,158,11,0.08)]">
+                <div className="w-16 h-16 rounded-2xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-400 mx-auto mb-4 shadow-[0_0_20px_rgba(245,158,11,0.18)]">
+                  <Moon className="w-8 h-8" />
+                </div>
+                <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-300 text-xs font-mono font-bold uppercase tracking-wider mb-2">
+                  <span>● Runner Mode is Paused</span>
+                </div>
+                <h3 className="text-xl sm:text-2xl font-black text-white tracking-tight">
+                  You are Currently Offline
+                </h3>
+                <p className="text-white/60 text-xs sm:text-sm max-w-lg mx-auto mt-2 leading-relaxed">
+                  Jab aap class me hon, library me study kar rahe hon ya rest kar rahe hon, to Runner Mode ko Paused rakhein taaki koi order notification disturb na kare.
+                </p>
+                <p className="text-emerald-400/90 text-xs sm:text-sm max-w-lg mx-auto mt-1 font-medium">
+                  Jab bhi aap campus me walk kar rahe hon (Canteen, Gate ya Hostel ke raste), 1-click me Online ho kar orders deliver karein aur pocket money kamayein!
+                </p>
+
+                <button
+                  type="button"
+                  onClick={() => toggleOnline(true)}
+                  className="mt-6 inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-gradient-to-r from-emerald-500 to-emerald-400 hover:from-emerald-400 hover:to-emerald-300 text-black font-extrabold text-xs sm:text-sm shadow-[0_0_25px_rgba(16,185,129,0.4)] hover:shadow-[0_0_35px_rgba(16,185,129,0.6)] transition-all active:scale-95 cursor-pointer"
+                >
+                  <Radio className="w-4 h-4 animate-pulse text-black" />
+                  <span>Go Online & Start Accepting Orders ➔</span>
+                </button>
+              </div>
+
+              {/* How it works 3-step playbook */}
+              <RunnerHowItWorksGuide />
+            </div>
+          ) : (
+            <>
+              {/* Optional collapsible How It Works bar when orders exist */}
+              {availableOthers.length > 0 && (
+                <div className="flex justify-between items-center bg-[#0d1310] border border-white/10 rounded-2xl px-4 py-2.5">
+                  <div className="flex items-center gap-2 text-xs text-white/70">
+                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                    <span className="font-mono uppercase text-[11px] text-emerald-400 font-bold">Runner Guide</span>
+                    <span className="hidden sm:inline text-white/40">· Earn cash on campus walks</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setShowHowItWorks((prev) => !prev)}
+                    className="inline-flex items-center gap-1.5 text-xs text-emerald-400 hover:text-emerald-300 transition-colors font-semibold cursor-pointer"
+                  >
+                    <span>{showHowItWorks ? "Hide Guide" : "How it Works (3 Steps)"}</span>
+                    <ChevronDown className={cn("w-3.5 h-3.5 transition-transform", showHowItWorks && "rotate-180")} />
+                  </button>
+                </div>
+              )}
+
+              {showHowItWorks && availableOthers.length > 0 && (
+                <RunnerHowItWorksGuide />
+              )}
+
           {/* Controls & Search Header */}
           <div className="flex flex-col gap-4">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
@@ -659,10 +853,37 @@ export function RunnerDashboardClient({
 
           {/* Empty State */}
           {availableOthers.length === 0 ? (
-            <div className="bg-[#111614] border border-white/5 rounded-2xl p-12 text-center">
-              <Package className="w-12 h-12 mx-auto mb-4 text-white/20" />
-              <p className="text-white/60 font-medium">No pending requests available right now.</p>
-              <p className="text-xs text-white/40 mt-1">New requests will appear automatically.</p>
+            <div className="space-y-6">
+              {/* Live Radar Scanning HUD */}
+              <div className="relative overflow-hidden rounded-3xl bg-gradient-to-b from-[#0e1713] via-[#0a110e] to-[#070b09] border border-emerald-500/30 p-8 sm:p-12 text-center shadow-[0_0_35px_rgba(16,185,129,0.08)]">
+                <div className="relative w-20 h-20 mx-auto mb-5 flex items-center justify-center">
+                  <div className="absolute inset-0 rounded-full border border-emerald-500/20 animate-ping" />
+                  <div className="absolute -inset-3 rounded-full border border-emerald-500/15" />
+                  <div className="w-16 h-16 rounded-full bg-emerald-500/15 border-2 border-emerald-500/40 flex items-center justify-center text-emerald-400 shadow-[0_0_25px_rgba(0,230,118,0.3)]">
+                    <Radio className="w-7 h-7 animate-pulse" />
+                  </div>
+                </div>
+
+                <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-xs font-mono font-bold uppercase tracking-wider mb-2">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+                  <span>Campus Radar Active · Listening for Orders</span>
+                </div>
+
+                <h3 className="text-xl sm:text-2xl font-black text-white tracking-tight">
+                  No Active Requests on Radar Right Now
+                </h3>
+
+                <p className="text-white/60 text-xs sm:text-sm max-w-md mx-auto mt-2 leading-relaxed">
+                  Aapka Runner Mode <span className="text-emerald-400 font-bold">ONLINE</span> hai! Jaise hi campus me koi student food, snacks ya notes order karega, yaha instant sound & visual alert aayega.
+                </p>
+
+                <div className="mt-6 max-w-lg mx-auto p-3.5 rounded-2xl bg-white/[0.03] border border-white/10 text-white/50 text-xs flex items-center justify-center gap-2 font-mono">
+                  <span>💡 Peak orders time: Lunch (1 PM - 3 PM) & Late Night (9 PM - 1 AM)</span>
+                </div>
+              </div>
+
+              {/* Playbook Guide */}
+              <RunnerHowItWorksGuide />
             </div>
           ) : filteredPendingRequests.length === 0 ? (
             <div className="bg-[#0b120e] border border-white/5 rounded-2xl p-10 text-center space-y-3">
@@ -810,6 +1031,8 @@ export function RunnerDashboardClient({
                 );
               })}
             </div>
+          )}
+            </>
           )}
         </div>
       )}
