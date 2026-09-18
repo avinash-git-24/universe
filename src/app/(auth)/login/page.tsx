@@ -267,7 +267,7 @@ function LoginForm() {
       email.endsWith("@marwadiuniversity"));
 
   return (
-    <div className="w-full min-h-[100dvh] flex flex-col items-center justify-center p-4 sm:p-6 relative overflow-hidden font-sans">
+    <div className="w-full min-h-[100dvh] flex flex-col items-center justify-center p-4 sm:p-6 py-8 sm:py-10 relative overflow-x-hidden font-sans">
       {/* ── Modern Tech Dot-Grid + Softened Cinematic Spotlight ── */}
       <TechSpotlightBackground />
 
@@ -434,30 +434,31 @@ function LoginForm() {
               error={errors.password}
               warningNode={capsLockOn ? "⇪ Caps Lock is ON" : undefined}
               leftIcon={<Lock size={16} />}
-              headerRight={
-                password.length > 0 ? (
+              rightNode={
+                <div className="flex items-center gap-1.5">
+                  {password.length > 0 && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setPassword("");
+                        if (errors.password) setErrors((prev) => ({ ...prev, password: undefined }));
+                        passwordInputRef.current?.focus();
+                      }}
+                      className="w-5 h-5 rounded-full bg-white/[0.08] hover:bg-white/[0.18] flex items-center justify-center text-slate-400 hover:text-white transition-all cursor-pointer"
+                      title="Clear password"
+                    >
+                      <X size={12} />
+                    </button>
+                  )}
                   <button
                     type="button"
-                    onClick={() => {
-                      setPassword("");
-                      if (errors.password) setErrors((prev) => ({ ...prev, password: undefined }));
-                      passwordInputRef.current?.focus();
-                    }}
-                    className="text-[11px] font-semibold text-emerald-400 hover:text-emerald-300 transition-colors cursor-pointer"
+                    onClick={() => setShowPw(!showPw)}
+                    className="w-6 h-6 rounded-md hover:bg-white/[0.08] flex items-center justify-center text-slate-400 hover:text-emerald-400 transition-colors cursor-pointer"
+                    title={showPw ? "Hide password" : "Show password"}
                   >
-                    CLEAR
+                    {showPw ? <EyeOff size={15} /> : <Eye size={15} />}
                   </button>
-                ) : null
-              }
-              rightNode={
-                <button
-                  type="button"
-                  onClick={() => setShowPw(!showPw)}
-                  className="w-6 h-6 rounded-md hover:bg-white/[0.08] flex items-center justify-center text-slate-400 hover:text-emerald-400 transition-colors cursor-pointer"
-                  title={showPw ? "Hide password" : "Show password"}
-                >
-                  {showPw ? <EyeOff size={15} /> : <Eye size={15} />}
-                </button>
+                </div>
               }
             />
 
@@ -564,25 +565,27 @@ function LoginForm() {
         </div>
       </div>
 
-      {/* ── Bottom Campus Verified Trust Badges (Refined Glass Micro-Pills) ── */}
+      {/* ── Bottom Campus Verified Trust Badges (Unified Compact Micro-Pill) ── */}
       <div
-        className={`relative z-10 mt-7 flex flex-wrap items-center justify-center gap-2.5 sm:gap-3 transition-all duration-700 ${
-          mounted ? "opacity-100" : "opacity-0"
+        className={`relative z-10 mt-5 sm:mt-6 flex items-center justify-center transition-all duration-700 ${
+          mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2"
         }`}
       >
-        <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/[0.03] border border-white/[0.08] backdrop-blur-md hover:border-emerald-500/30 transition-colors">
-          <ShieldCheck size={13} className="text-emerald-400" />
-          <span className="text-[11px] font-medium text-slate-300">256-Bit SSL Encrypted</span>
-        </div>
-
-        <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/[0.03] border border-white/[0.08] backdrop-blur-md hover:border-emerald-500/30 transition-colors">
-          <Zap size={13} className="text-teal-400" />
-          <span className="text-[11px] font-medium text-slate-300">Marwadi ID Verified</span>
-        </div>
-
-        <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/[0.03] border border-white/[0.08] backdrop-blur-md hover:border-emerald-500/30 transition-colors">
-          <Layers size={13} className="text-cyan-400" />
-          <span className="text-[11px] font-medium text-slate-300">Hostel Delivery &amp; Resale</span>
+        <div className="flex items-center gap-2 sm:gap-3 px-3.5 py-1.5 rounded-full bg-white/[0.03] border border-white/[0.08] backdrop-blur-md text-[10.5px] sm:text-[11px] font-medium text-slate-300 shadow-[0_4px_20px_rgba(0,0,0,0.4)]">
+          <div className="flex items-center gap-1.5">
+            <ShieldCheck size={12} className="text-emerald-400 shrink-0" />
+            <span>256-Bit SSL</span>
+          </div>
+          <span className="text-white/20">&bull;</span>
+          <div className="flex items-center gap-1.5">
+            <Zap size={12} className="text-teal-400 shrink-0" />
+            <span>MU Verified</span>
+          </div>
+          <span className="text-white/20">&bull;</span>
+          <div className="flex items-center gap-1.5">
+            <Layers size={12} className="text-cyan-400 shrink-0" />
+            <span>Campus P2P</span>
+          </div>
         </div>
       </div>
 
