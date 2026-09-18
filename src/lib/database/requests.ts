@@ -9,6 +9,41 @@ export type RequestWithItems = DeliveryRequest & {
 };
 
 /**
+ * Formats a dropoff location for public runner feeds to protect student privacy:
+ * - Before an order is accepted, only the Hostel/Building name (e.g. "Hostel D") is visible.
+ * - The room number is concealed so public runners cannot snoop on which room is ordering.
+ * - Once an order is accepted by a runner, the full room number is revealed for delivery.
+ */
+export function formatPublicDropoffLocation(location: string): {
+  hostel: string;
+  isRoomHidden: boolean;
+} {
+  if (!location) return { hostel: "Campus", isRoomHidden: false };
+
+  // Match "Class Room: 204" or similar first
+  if (/^class\s*room/i.test(location)) {
+    return {
+      hostel: "Academic Block",
+      isRoomHidden: true,
+    };
+  }
+
+  // Match patterns like "Hostel D - Room 1140A", "Hostel D, Room 400", "Hostel D Room 400"
+  const roomMatch = location.match(/^(.*?)(?:\s*[-–—,]\s*Room|\s+Room)\s*.*$/i);
+  if (roomMatch && roomMatch[1] && roomMatch[1].trim()) {
+    return {
+      hostel: roomMatch[1].trim(),
+      isRoomHidden: true,
+    };
+  }
+
+  return {
+    hostel: location,
+    isRoomHidden: false,
+  };
+}
+
+/**
  * Automatically purges unaccepted pending delivery requests older than 6 hours.
  */
 export async function purgeExpiredPendingRequests(

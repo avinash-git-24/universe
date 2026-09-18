@@ -26,6 +26,7 @@ import {
   acceptRequest,
   updateRequestStatus,
   completeDeliveryWithOtp,
+  formatPublicDropoffLocation,
   RequestWithItems,
   AssignmentWithRequest
 } from "@/lib/database/requests";
@@ -346,10 +347,11 @@ export function RunnerDashboardClient({
       const q = searchQuery.toLowerCase();
       list = list.filter((r) => {
         const itemNames = r.items.map((i) => i.name).join(" ").toLowerCase();
+        const dropoffHostel = formatPublicDropoffLocation(r.dropoff_location).hostel.toLowerCase();
         return (
           itemNames.includes(q) ||
           r.pickup_location.toLowerCase().includes(q) ||
-          r.dropoff_location.toLowerCase().includes(q)
+          dropoffHostel.includes(q)
         );
       });
     }
@@ -751,16 +753,28 @@ export function RunnerDashboardClient({
                           </span>
                         </div>
 
-                        {/* Dropoff */}
-                        <div className="flex items-center gap-2.5 text-xs sm:text-sm">
-                          <div className="w-5 h-5 rounded-md bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0">
-                            <MapPin className="w-3 h-3" />
-                          </div>
-                          <div className="flex flex-col min-w-0">
-                            <span className="text-[9px] font-mono uppercase tracking-wider text-white/40 font-bold">Dropoff</span>
-                            <span className="font-semibold text-white/95 truncate text-xs">{req.dropoff_location}</span>
-                          </div>
-                        </div>
+                        {/* Dropoff (Room hidden for privacy until accepted) */}
+                        {(() => {
+                          const dropoffInfo = formatPublicDropoffLocation(req.dropoff_location);
+                          return (
+                            <div className="flex items-center gap-2.5 text-xs sm:text-sm">
+                              <div className="w-5 h-5 rounded-md bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0">
+                                <MapPin className="w-3 h-3" />
+                              </div>
+                              <div className="flex flex-col min-w-0">
+                                <span className="text-[9px] font-mono uppercase tracking-wider text-white/40 font-bold">Dropoff</span>
+                                <div className="flex items-center gap-1.5 flex-wrap">
+                                  <span className="font-semibold text-white/95 text-xs">{dropoffInfo.hostel}</span>
+                                  {dropoffInfo.isRoomHidden && (
+                                    <span className="inline-flex items-center gap-1 px-1.5 py-0.2 rounded bg-white/5 border border-white/10 text-[9px] font-mono text-emerald-400/80">
+                                      🔒 Room hidden until accept
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })()}
                       </div>
 
                       {/* Motivator Footer */}
@@ -1123,7 +1137,18 @@ export function RunnerDashboardClient({
                   <MapPin className="w-4 h-4 mr-2 mt-0.5 shrink-0 text-primary" />
                   <div>
                     <p className="text-xs text-muted-foreground font-semibold uppercase">Dropoff Location</p>
-                    <p className="font-semibold text-base text-primary">{selectedRequest.dropoff_location}</p>
+                    {selectedRequest.status === "pending" ? (
+                      <div className="space-y-1">
+                        <p className="font-semibold text-base text-primary">
+                          {formatPublicDropoffLocation(selectedRequest.dropoff_location).hostel}
+                        </p>
+                        <p className="text-xs text-white/50 flex items-center gap-1">
+                          🔒 Exact room number is concealed for student privacy. It will be revealed once you accept this delivery.
+                        </p>
+                      </div>
+                    ) : (
+                      <p className="font-semibold text-base text-primary">{selectedRequest.dropoff_location}</p>
+                    )}
                   </div>
                 </div>
               </div>

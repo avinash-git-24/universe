@@ -139,3 +139,29 @@ describe("Expired Requests & Anti-Self Delivery Guard", () => {
     expect(success).toBe(false);
   });
 });
+
+describe("Student Privacy: formatPublicDropoffLocation", () => {
+  it("conceals room number and extracts hostel name", async () => {
+    const { formatPublicDropoffLocation } = await import("@/lib/database/requests");
+
+    const r1 = formatPublicDropoffLocation("Hostel D - Room 1140A");
+    expect(r1.hostel).toBe("Hostel D");
+    expect(r1.isRoomHidden).toBe(true);
+
+    const r2 = formatPublicDropoffLocation("Hostel D - Room 400D");
+    expect(r2.hostel).toBe("Hostel D");
+    expect(r2.isRoomHidden).toBe(true);
+
+    const r3 = formatPublicDropoffLocation("Girls Hostel, Room 204");
+    expect(r3.hostel).toBe("Girls Hostel");
+    expect(r3.isRoomHidden).toBe(true);
+
+    const r4 = formatPublicDropoffLocation("Class Room: LH 301");
+    expect(r4.hostel).toBe("Academic Block");
+    expect(r4.isRoomHidden).toBe(true);
+
+    const r5 = formatPublicDropoffLocation("Hostel B");
+    expect(r5.hostel).toBe("Hostel B");
+    expect(r5.isRoomHidden).toBe(false);
+  });
+});
