@@ -53,48 +53,49 @@ export default async function NewRequestPage() {
       </div>
 
       <main className="relative z-10 w-full max-w-4xl mx-auto">
-        {/* Top Bar */}
-        <div className="flex justify-between items-center mb-6 sm:mb-10">
-          {/* Logo */}
-          <Link href="/dashboard" className="no-underline group">
-            <div className="flex items-center gap-2.5">
-              <div className="bg-[#00E676] rounded-xl p-1.5 flex items-center justify-center shadow-[0_0_15px_rgba(0,230,118,0.35)] group-hover:scale-105 transition-transform">
-                <Zap size={18} color="#050805" fill="#050805" />
-              </div>
-              <span className="text-white font-extrabold text-xl sm:text-2xl tracking-tight">
-                Uni<span className="text-[#00E676]">Verse</span>
-              </span>
-            </div>
-          </Link>
-
-          {/* Right Actions: Back to Dashboard & Notification Bell */}
-          <div className="flex gap-2.5 sm:gap-3.5 items-center">
+        {/* Top Bar with Ergonomic Mobile Placement */}
+        <div className="flex justify-between items-center mb-4 sm:mb-8">
+          {/* Left: Back Button + UniVerse Brand */}
+          <div className="flex items-center gap-2 sm:gap-3">
             <Link
               href="/dashboard"
-              className="no-underline flex items-center gap-2 bg-[#0a0f0c]/60 hover:bg-emerald-500/15 text-[#A7B8B0] hover:text-white font-semibold text-xs sm:text-sm border border-white/10 hover:border-emerald-500/30 rounded-xl px-3 sm:px-4 py-2 sm:py-2.5 backdrop-blur-md transition-all active:scale-95"
+              className="no-underline flex items-center justify-center bg-[#0a0f0c]/70 hover:bg-emerald-500/15 text-[#A7B8B0] hover:text-white font-semibold border border-white/10 hover:border-emerald-500/30 rounded-xl w-9 h-9 sm:w-auto sm:px-3.5 sm:py-2 backdrop-blur-md transition-all active:scale-95 shadow-sm"
+              title="Back to Dashboard"
+              aria-label="Back to Dashboard"
             >
               <ArrowLeft size={16} />
-              <span className="hidden xs:inline">Back to Dashboard</span>
+              <span className="hidden sm:inline text-xs font-semibold ml-1.5">Dashboard</span>
             </Link>
 
-            {/* Notification Bell */}
-            <div className="relative bg-[#0a0f0c]/60 border border-white/10 hover:border-emerald-500/30 p-2 sm:p-2.5 rounded-xl backdrop-blur-md transition-colors">
-              <NotificationBell />
-            </div>
+            <Link href="/dashboard" className="no-underline group">
+              <div className="flex items-center gap-2">
+                <div className="bg-[#00E676] rounded-xl p-1.5 flex items-center justify-center shadow-[0_0_15px_rgba(0,230,118,0.35)] group-hover:scale-105 transition-transform">
+                  <Zap size={16} color="#050805" fill="#050805" />
+                </div>
+                <span className="text-white font-extrabold text-lg sm:text-2xl tracking-tight">
+                  Uni<span className="text-[#00E676]">Verse</span>
+                </span>
+              </div>
+            </Link>
+          </div>
+
+          {/* Right: Notification Bell */}
+          <div className="relative bg-[#0a0f0c]/70 border border-white/10 hover:border-emerald-500/30 p-2 sm:p-2.5 rounded-xl backdrop-blur-md transition-colors shadow-sm">
+            <NotificationBell />
           </div>
         </div>
 
         {/* Header Section */}
-        <div className="text-center mb-6 sm:mb-10 flex flex-col items-center">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-emerald-400 text-xs font-semibold mb-3">
-            <Sparkles size={13} />
+        <div className="text-center mb-4 sm:mb-8 flex flex-col items-center">
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-emerald-400 text-[11px] sm:text-xs font-semibold mb-2">
+            <Sparkles size={12} />
             <span>Instant Campus Delivery Network</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white mb-2 tracking-tight">
+          <h1 className="text-xl sm:text-3xl lg:text-4xl font-extrabold text-white mb-1 tracking-tight">
             Create <span className="text-[#00E676] drop-shadow-[0_0_20px_rgba(0,230,118,0.35)]">Request</span>
           </h1>
-          <p className="text-[#A7B8B0] text-xs sm:text-sm lg:text-base max-w-md">
-            Tell us what you need — student runners across campus will deliver it straight to your room.
+          <p className="text-[#A7B8B0] text-xs sm:text-sm lg:text-base max-w-md px-2">
+            Tell us what you need — student runners will deliver it straight to your room.
           </p>
         </div>
 

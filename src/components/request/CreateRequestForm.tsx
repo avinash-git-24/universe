@@ -587,7 +587,8 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
                 step >= 1 ? "text-white" : "text-white/40"
               )}
             >
-              Item Details
+              <span className="sm:hidden">Items</span>
+              <span className="hidden sm:inline">Item Details</span>
             </span>
           </button>
 
@@ -630,7 +631,8 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
                 step >= 2 ? "text-white" : "text-white/40"
               )}
             >
-              Delivery & Reward
+              <span className="sm:hidden">Delivery</span>
+              <span className="hidden sm:inline">Delivery & Reward</span>
             </span>
           </button>
 
@@ -692,7 +694,12 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
       )}
 
       {/* Main Glassmorphic Form Card */}
-      <div className="bg-[#0a0f0c]/65 border border-white/10 hover:border-emerald-500/20 rounded-[24px] sm:rounded-[28px] p-5 sm:p-8 lg:p-9 w-full shadow-[0_12px_45px_rgba(0,0,0,0.6),0_0_30px_rgba(0,230,118,0.04)] backdrop-blur-2xl flex flex-col gap-6 sm:gap-8 transition-all">
+      <div
+        className={cn(
+          "bg-[#0a0f0c]/65 border border-white/10 hover:border-emerald-500/20 rounded-[24px] sm:rounded-[28px] p-4 sm:p-8 lg:p-9 w-full shadow-[0_12px_45px_rgba(0,0,0,0.6),0_0_30px_rgba(0,230,118,0.04)] backdrop-blur-2xl flex flex-col gap-5 sm:gap-8 transition-all",
+          step === 1 && items.length > 0 && "pb-24 sm:pb-9"
+        )}
+      >
         {/* ================= STEP 1: ITEM DETAILS ================= */}
         {step === 1 && (
           <>
@@ -710,8 +717,32 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
               </div>
             </div>
 
-            {/* Categories Grid */}
-            <div className="grid grid-cols-3 sm:grid-cols-7 gap-2 sm:gap-2.5 w-full">
+            {/* Mobile Category Horizontal Pills (< sm) — No Orphans, No Vertical Space Waste */}
+            <div className="flex sm:hidden items-center gap-2 overflow-x-auto pb-1 -mx-1 px-1 select-none [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+              {categories.map((cat) => {
+                const isActive = currentCategory === cat.label;
+                const IconComp = cat.icon;
+                return (
+                  <button
+                    key={cat.label}
+                    type="button"
+                    onClick={() => setCurrentCategory(cat.label)}
+                    className={cn(
+                      "flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap shrink-0 transition-all border cursor-pointer active:scale-95",
+                      isActive
+                        ? "bg-emerald-500/20 border-[#00E676] text-[#00E676] shadow-[0_0_15px_rgba(0,230,118,0.25)] font-bold"
+                        : "bg-white/[0.03] border-white/10 text-[#A7B8B0] hover:text-white hover:bg-white/[0.06]"
+                    )}
+                  >
+                    <IconComp size={15} className={isActive ? "text-[#00E676]" : "text-[#A7B8B0]"} />
+                    <span>{cat.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Desktop Categories Grid (>= sm) */}
+            <div className="hidden sm:grid sm:grid-cols-7 gap-2 sm:gap-2.5 w-full">
               {categories.map((cat) => {
                 const isActive = currentCategory === cat.label;
                 const IconComp = cat.icon;
@@ -750,21 +781,27 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
               })}
             </div>
 
-            {/* Quick-Pick Popular Chips */}
+            {/* Quick-Pick Popular Chips & Vending Stock Header */}
             <div className="flex flex-col gap-2.5">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-1.5 text-xs text-[#A7B8B0]">
-                  <Sparkles size={13} className="text-[#00E676]" />
-                  <span>
-                    {currentCategory === "Vending Machine"
-                      ? "Hostel Vending Machine Live Stock (Tap to 1-click add):"
-                      : `Popular ${currentCategory} items (tap to 1-click add):`}
+              <div className="flex items-center justify-between gap-2">
+                <div className="flex items-center gap-1.5 text-xs text-[#A7B8B0] min-w-0">
+                  <Sparkles size={13} className="text-[#00E676] shrink-0" />
+                  <span className="font-medium truncate">
+                    {currentCategory === "Vending Machine" ? (
+                      <>
+                        <span className="sm:hidden">Hostel Vending Live Stock:</span>
+                        <span className="hidden sm:inline">Hostel Vending Machine Live Stock (Tap to 1-click add):</span>
+                      </>
+                    ) : (
+                      `Popular ${currentCategory} items:`
+                    )}
                   </span>
                 </div>
                 {currentCategory === "Vending Machine" && (
-                  <span className="text-[10px] uppercase font-extrabold text-[#00E676] bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-full flex items-center gap-1">
+                  <span className="text-[10px] uppercase font-extrabold text-[#00E676] bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-full flex items-center gap-1 shrink-0">
                     <span className="w-1.5 h-1.5 rounded-full bg-[#00E676] animate-pulse" />
-                    Hostel GF Machines
+                    <span className="sm:hidden">GF Machines</span>
+                    <span className="hidden sm:inline">Hostel GF Machines</span>
                   </span>
                 )}
               </div>
@@ -1603,6 +1640,47 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
           </>
         )}
       </div>
+
+      {/* ── Sticky Mobile Floating Cart Bar (Blinkit / Swiggy Style) ── */}
+      {step === 1 && items.length > 0 && (
+        <div className="fixed bottom-3 inset-x-3 sm:hidden z-50 animate-in slide-in-from-bottom-5 duration-300">
+          <div className="bg-[#0a120d]/95 border border-[#00E676]/40 shadow-[0_8px_32px_rgba(0,0,0,0.8),0_0_24px_rgba(0,230,118,0.25)] backdrop-blur-xl rounded-2xl p-3 flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2.5 min-w-0">
+              <div className="w-9 h-9 rounded-xl bg-[#00E676]/15 border border-[#00E676]/30 flex items-center justify-center text-[#00E676] shrink-0">
+                <Box size={18} />
+              </div>
+              <div className="flex flex-col min-w-0">
+                <div className="flex items-center gap-1.5">
+                  <span className="text-white font-extrabold text-xs">
+                    {items.reduce((sum, it) => sum + it.quantity, 0)}{" "}
+                    {items.reduce((sum, it) => sum + it.quantity, 0) === 1 ? "Item" : "Items"}
+                  </span>
+                  {totalEstimatedItemsAmount > 0 && (
+                    <>
+                      <span className="text-white/30 text-xs">•</span>
+                      <span className="text-[#00E676] font-bold text-xs">₹{totalEstimatedItemsAmount}</span>
+                    </>
+                  )}
+                </div>
+                <span className="text-[#A7B8B0] text-[10px] truncate">Ready to proceed</span>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => {
+                setFormError(null);
+                setStep(2);
+                window.scrollTo({ top: 0, behavior: "smooth" });
+              }}
+              className="bg-gradient-to-r from-[#00C853] to-[#00E676] text-[#050805] font-extrabold text-xs px-4 py-2.5 rounded-xl flex items-center gap-1.5 shadow-[0_0_16px_rgba(0,230,118,0.4)] active:scale-95 shrink-0 cursor-pointer"
+            >
+              <span>Delivery</span>
+              <ArrowRight size={14} strokeWidth={3} />
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
