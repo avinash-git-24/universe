@@ -224,28 +224,33 @@ END $$;
 
 
 -- ==============================================================================
--- 5. FIX: Internal RLS Helpers (public.is_conversation_participant)
+-- 5. FIX: Convert Internal RLS Helpers and Functions to SECURITY INVOKER
+-- Resolves all "Signed-In Users Can Execute SECURITY DEFINER Function" warnings.
 -- ==============================================================================
 
 DO $$
+DECLARE
+  f RECORD;
 BEGIN
-  IF EXISTS (SELECT 1 FROM pg_proc WHERE proname = 'is_conversation_participant') THEN
-    REVOKE ALL ON FUNCTION public.is_conversation_participant(UUID, UUID) FROM PUBLIC, anon;
-    GRANT EXECUTE ON FUNCTION public.is_conversation_participant(UUID, UUID) TO authenticated, service_role;
-  END IF;
-END $$;
-
-
--- ==============================================================================
--- 6. FIX: Runner Delivery Verification (public.verify_and_complete_delivery)
--- ==============================================================================
-
-DO $$
-BEGIN
-  IF EXISTS (SELECT 1 FROM pg_proc WHERE proname = 'verify_and_complete_delivery') THEN
-    REVOKE ALL ON FUNCTION public.verify_and_complete_delivery(UUID, TEXT) FROM PUBLIC, anon;
-    GRANT EXECUTE ON FUNCTION public.verify_and_complete_delivery(UUID, TEXT) TO authenticated, service_role;
-  END IF;
+  FOR f IN
+    SELECT n.nspname, p.proname, pg_get_function_identity_arguments(p.oid) AS args
+    FROM pg_proc p
+    JOIN pg_namespace n ON p.pronamespace = n.oid
+    WHERE n.nspname = 'public'
+      AND p.proname IN (
+        'is_admin',
+        'is_conversation_participant',
+        'request_belongs_to',
+        'user_is_assigned_runner',
+        'verify_and_complete_delivery'
+      )
+  LOOP
+    BEGIN
+      EXECUTE format('ALTER FUNCTION %I.%I(%s) SECURITY INVOKER', f.nspname, f.proname, f.args);
+      EXECUTE format('ALTER FUNCTION %I.%I(%s) SET search_path = public, pg_temp', f.nspname, f.proname, f.args);
+    EXCEPTION WHEN OTHERS THEN NULL;
+    END;
+  END LOOP;
 END $$;
 
 

@@ -112,7 +112,7 @@ export default async function DashboardPage() {
       </div>
 
       <div className="max-w-[1400px] mx-auto relative z-10">
-        
+
         {/* TOP BAR */}
         <div className="flex justify-between sm:justify-end gap-2 sm:gap-4 mb-4 sm:mb-6 items-center">
           {/* Bell */}
@@ -129,7 +129,7 @@ export default async function DashboardPage() {
           {/* New Request Button */}
           <Link href="/request/new" className="no-underline shrink-0">
             <button className="flex items-center gap-1.5 sm:gap-2 bg-gradient-to-r from-emerald-500 to-emerald-400 hover:from-emerald-400 hover:to-emerald-300 text-black font-extrabold text-xs sm:text-sm rounded-xl px-3.5 sm:px-5 py-2 sm:py-2.5 cursor-pointer shadow-[0_0_15px_rgba(16,185,129,0.3)] hover:shadow-[0_0_25px_rgba(16,185,129,0.5)] transition-all active:scale-95">
-              <Plus size={15} className="stroke-[2.5]" /> 
+              <Plus size={15} className="stroke-[2.5]" />
               <span>New Request</span>
             </button>
           </Link>
@@ -140,7 +140,7 @@ export default async function DashboardPage() {
 
           {/* LEFT: Requests & Charts */}
           <div className="flex flex-col gap-5 sm:gap-6 min-w-0">
-            
+
             {/* Header */}
             <DashboardHeader displayName={displayName} />
 
@@ -162,9 +162,9 @@ export default async function DashboardPage() {
                   <span>🏃 Runner Mode</span>
                 </div>
               </Link>
-              <Link href="/dashboard/requests" className="no-underline shrink-0">
+              <Link href="/dashboard/wallet" className="no-underline shrink-0">
                 <div className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 text-white/80 text-xs font-semibold active:scale-95 transition-all">
-                  <span>📋 My Requests</span>
+                  <span>💳 Wallet</span>
                 </div>
               </Link>
               <Link href="/dashboard/chat" className="no-underline shrink-0">
@@ -213,7 +213,7 @@ export default async function DashboardPage() {
                     const runnerInitial = runner?.full_name
                       ? formatStudentName(runner.full_name).initial
                       : null;
-                    
+
                     return (
                       <Link key={req.id} href={`/dashboard/requests/${req.id}`} className="no-underline block">
                         <div
@@ -248,7 +248,7 @@ export default async function DashboardPage() {
                                 </span>
                               )}
                             </div>
-                            
+
                             <div className="bg-emerald-500/15 text-emerald-300 font-black font-mono text-sm sm:text-base rounded-xl px-2.5 py-1 border border-emerald-500/30">
                               ₹{req.delivery_fee}
                             </div>

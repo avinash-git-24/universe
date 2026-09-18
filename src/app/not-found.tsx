@@ -51,7 +51,7 @@ const navLinks = [
   { label: "Deliveries", href: "/dashboard/requests" },
   { label: "Marketplace", href: "/dashboard/marketplace" },
   { label: "Runner Mode", href: "/dashboard/runner" },
-  { label: "Analytics", href: "/dashboard/analytics" },
+  { label: "Wallet", href: "/dashboard/wallet" },
   { label: "About", href: "/about" },
 ];
 
@@ -81,7 +81,7 @@ const footerCols = [
     title: "STUDENT HUB",
     links: [
       { label: "How It Works", href: "/about" },
-      { label: "Runner Hub", href: "/dashboard/runner" },
+      { label: "Runner Earnings", href: "/dashboard/wallet" },
       { label: "Student Verification", href: "/dashboard/profile" },
       { label: "Campus Guidelines", href: "/about" },
       { label: "Help & Support", href: "/about" },
@@ -191,7 +191,7 @@ export default function NotFound() {
 
       {/* ── Main Foreground Content (Fits 100vh Single-Screen Without Scrolling) ── */}
       <div className="relative z-10 flex flex-col h-full justify-between overflow-hidden">
-        
+
         {/* ── Top Navigation Bar (UniVerse Branded with Reel Styling) ── */}
         <nav className="flex items-center justify-between px-6 md:px-12 lg:px-16 py-3 sm:py-4 flex-shrink-0">
           <Link href="/" className="flex items-center gap-2.5 group" aria-label="UniVerse — Home">
@@ -240,14 +240,12 @@ export default function NotFound() {
             className="lg:hidden z-[60] relative w-6 h-6"
           >
             <Menu
-              className={`absolute inset-0 w-6 h-6 text-white transition-all duration-300 ${
-                mobileMenuOpen ? "opacity-0 rotate-90 scale-75" : "opacity-100 rotate-0 scale-100"
-              }`}
+              className={`absolute inset-0 w-6 h-6 text-white transition-all duration-300 ${mobileMenuOpen ? "opacity-0 rotate-90 scale-75" : "opacity-100 rotate-0 scale-100"
+                }`}
             />
             <X
-              className={`absolute inset-0 w-6 h-6 text-white transition-all duration-300 ${
-                mobileMenuOpen ? "opacity-100 rotate-0 scale-100" : "opacity-0 -rotate-90 scale-75"
-              }`}
+              className={`absolute inset-0 w-6 h-6 text-white transition-all duration-300 ${mobileMenuOpen ? "opacity-100 rotate-0 scale-100" : "opacity-0 -rotate-90 scale-75"
+                }`}
             />
           </button>
         </nav>
@@ -256,15 +254,13 @@ export default function NotFound() {
         {mobileMenuOpen && (
           <div className="lg:hidden">
             <div
-              className={`fixed inset-0 z-40 bg-black/50 backdrop-blur-md transition-opacity duration-400 ${
-                menuVisible ? "opacity-100" : "opacity-0"
-              }`}
+              className={`fixed inset-0 z-40 bg-black/50 backdrop-blur-md transition-opacity duration-400 ${menuVisible ? "opacity-100" : "opacity-0"
+                }`}
               onClick={toggleMenu}
             />
             <div
-              className={`absolute left-0 right-0 top-[60px] z-50 transition-opacity duration-400 ${
-                menuVisible ? "opacity-100" : "opacity-0"
-              }`}
+              className={`absolute left-0 right-0 top-[60px] z-50 transition-opacity duration-400 ${menuVisible ? "opacity-100" : "opacity-0"
+                }`}
             >
               <div className="absolute inset-0 backdrop-blur-2xl rounded-b-2xl bg-black/75 border-b border-white/10" />
               <div className="relative z-10 flex flex-col items-center gap-3.5 py-6">

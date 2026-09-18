@@ -1,0 +1,12 @@
+# Vercel Deployment Ignore
+# Prevents uploading heavy non-production files, tests, and documentation
+.git
+.github
+docs/
+supabase/
+src/testing/
+**/*.test.ts
+**/*.test.tsx
+**/*.spec.ts
+**/*.spec.tsx
+*.log

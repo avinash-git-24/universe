@@ -4,10 +4,10 @@ import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { formatDistanceToNow, format } from "date-fns";
-import { 
-  MapPin, Package, Clock, IndianRupee, Eye, CheckCircle2, History, Wallet, Star, 
-  LayoutGrid, List, Calendar, ArrowRight, ChevronDown, MessageSquare, KeyRound, 
-  ShieldCheck, Bike, Sparkles, Utensils, BookOpen, Laptop, Activity, Search, X, Filter 
+import {
+  MapPin, Package, Clock, IndianRupee, Eye, CheckCircle2, History, Wallet, Star,
+  LayoutGrid, List, Calendar, ArrowRight, ChevronDown, MessageSquare, KeyRound,
+  ShieldCheck, Bike, Sparkles, Utensils, BookOpen, Laptop, Activity, Search, X, Filter
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { NotificationBell } from "@/components/notifications/NotificationBell";
@@ -22,12 +22,12 @@ import {
   ModalFooter,
 } from "@/components/ui/modal";
 import { createClient } from "@/lib/supabase/client";
-import { 
-  acceptRequest, 
-  updateRequestStatus, 
+import {
+  acceptRequest,
+  updateRequestStatus,
   completeDeliveryWithOtp,
-  RequestWithItems, 
-  AssignmentWithRequest 
+  RequestWithItems,
+  AssignmentWithRequest
 } from "@/lib/database/requests";
 import { sounds } from "@/lib/audio";
 import { RequestStatusBadge } from "@/components/request/RequestStatusBadge";
@@ -97,7 +97,7 @@ export function RunnerDashboardClient({
   const [enteredOtp, setEnteredOtp] = useState<string>("");
   const [otpError, setOtpError] = useState<string | null>(null);
   const [isVerifyingOtp, setIsVerifyingOtp] = useState<boolean>(false);
-  
+
   // UI State for Grid/List View & Filters
   const [isGridView, setIsGridView] = useState(true);
   const [isOnline, setIsOnline] = useState(true);
@@ -127,7 +127,7 @@ export function RunnerDashboardClient({
   // Realtime subscription for pending requests
   useEffect(() => {
     const supabase = createClient();
-    
+
     const channel = supabase
       .channel("realtime:runner_requests")
       .on(
@@ -418,11 +418,10 @@ export function RunnerDashboardClient({
       <div className="flex flex-wrap gap-2 sm:gap-3 pb-2">
         <button
           onClick={() => setActiveTab("available")}
-          className={`flex items-center px-4 sm:px-6 py-2.5 sm:py-3 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 border ${
-            activeTab === "available"
+          className={`flex items-center px-4 sm:px-6 py-2.5 sm:py-3 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 border ${activeTab === "available"
               ? "bg-emerald-500/15 border-emerald-500/40 text-emerald-300 shadow-[0_0_15px_rgba(16,185,129,0.2)]"
               : "bg-white/5 border-white/10 text-white/70 hover:bg-white/10 hover:text-white"
-          }`}
+            }`}
         >
           <Package className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-2" />
           Available
@@ -435,11 +434,10 @@ export function RunnerDashboardClient({
 
         <button
           onClick={() => setActiveTab("active")}
-          className={`flex items-center px-4 sm:px-6 py-2.5 sm:py-3 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 border ${
-            activeTab === "active"
+          className={`flex items-center px-4 sm:px-6 py-2.5 sm:py-3 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 border ${activeTab === "active"
               ? "bg-emerald-500/15 border-emerald-500/40 text-emerald-300 shadow-[0_0_15px_rgba(16,185,129,0.2)]"
               : "bg-white/5 border-white/10 text-white/70 hover:bg-white/10 hover:text-white"
-          }`}
+            }`}
         >
           <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-2" />
           Active ({activeDeliveries.length})
@@ -447,11 +445,10 @@ export function RunnerDashboardClient({
 
         <button
           onClick={() => setActiveTab("history")}
-          className={`flex items-center px-4 sm:px-6 py-2.5 sm:py-3 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 border ${
-            activeTab === "history"
+          className={`flex items-center px-4 sm:px-6 py-2.5 sm:py-3 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 border ${activeTab === "history"
               ? "bg-emerald-500/15 border-emerald-500/40 text-emerald-300 shadow-[0_0_15px_rgba(16,185,129,0.2)]"
               : "bg-white/5 border-white/10 text-white/70 hover:bg-white/10 hover:text-white"
-          }`}
+            }`}
         >
           <History className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-2" />
           History
@@ -504,9 +501,9 @@ export function RunnerDashboardClient({
               <IndianRupee className="w-5 h-5 mr-0.5 text-emerald-400" />
               {totalEarnings}
             </p>
-            <p className="text-[11px] text-emerald-400/80 font-medium">
-              Direct UPI / Cash received
-            </p>
+            <Link href="/dashboard/wallet" className="text-[11px] text-emerald-300 hover:text-emerald-200 font-bold flex items-center gap-0.5 transition-colors">
+              Go to Wallet ➔
+            </Link>
           </div>
         </div>
 
@@ -540,18 +537,18 @@ export function RunnerDashboardClient({
                 </h2>
                 <p className="text-white/40 text-xs mt-0.5">Instant campus pickup requests ready to accept</p>
               </div>
-              
+
               <div className="flex items-center gap-2.5 w-full sm:w-auto">
                 {/* Grid/List Toggle */}
                 <div className="flex items-center bg-[#0d1310] border border-white/10 rounded-xl p-1 shrink-0">
-                  <button 
+                  <button
                     onClick={() => setIsGridView(true)}
                     className={`p-1.5 rounded-lg transition-colors cursor-pointer ${isGridView ? "bg-emerald-500/20 text-emerald-400" : "text-white/40 hover:text-white"}`}
                     title="Grid View"
                   >
                     <LayoutGrid className="w-4 h-4" />
                   </button>
-                  <button 
+                  <button
                     onClick={() => setIsGridView(false)}
                     className={`p-1.5 rounded-lg transition-colors cursor-pointer ${!isGridView ? "bg-emerald-500/20 text-emerald-400" : "text-white/40 hover:text-white"}`}
                     title="List View"
@@ -796,8 +793,8 @@ export function RunnerDashboardClient({
               <CheckCircle2 className="w-12 h-12 mx-auto mb-4 text-emerald-500/30" />
               <p className="text-white/70 font-semibold text-sm">You have no active deliveries right now.</p>
               <p className="text-white/40 text-xs mt-1">Accept available orders from the campus feed to start earning.</p>
-              <button 
-                className="mt-5 px-5 py-2.5 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 hover:bg-emerald-500/25 transition-all font-bold text-xs cursor-pointer shadow-[0_0_15px_rgba(16,185,129,0.15)]" 
+              <button
+                className="mt-5 px-5 py-2.5 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 hover:bg-emerald-500/25 transition-all font-bold text-xs cursor-pointer shadow-[0_0_15px_rgba(16,185,129,0.15)]"
                 onClick={() => setActiveTab("available")}
               >
                 Browse Available Requests ➔
@@ -990,9 +987,8 @@ export function RunnerDashboardClient({
                     <div className="flex flex-row sm:flex-col items-center justify-between sm:items-end gap-3 pt-3 sm:pt-0 border-t border-white/5 sm:border-t-0 shrink-0">
                       <div className="text-left sm:text-right">
                         <span
-                          className={`text-base sm:text-lg font-bold font-mono flex items-center sm:justify-end ${
-                            isDelivered ? "text-emerald-400" : "text-white/40"
-                          }`}
+                          className={`text-base sm:text-lg font-bold font-mono flex items-center sm:justify-end ${isDelivered ? "text-emerald-400" : "text-white/40"
+                            }`}
                         >
                           {isDelivered ? "+" : ""}
                           <IndianRupee className="w-4 h-4 mr-0.5" />
