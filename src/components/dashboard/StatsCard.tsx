@@ -1,4 +1,5 @@
 import { memo } from "react";
+import Link from "next/link";
 import { LucideIcon } from "lucide-react";
 
 interface StatsCardProps {
@@ -9,18 +10,21 @@ interface StatsCardProps {
   iconBg?: string;
   trend?: string;
   color?: string; // legacy prop — ignored in new design
+  href?: string;
 }
 
 export const StatsCard = memo(function StatsCard({
   label, value, icon: Icon,
-  trend,
+  trend, href,
 }: StatsCardProps) {
   const isActiveCard = label.toLowerCase().includes("active") && value > 0;
   const isCancelledZero = label.toLowerCase().includes("cancelled") && value === 0;
 
-  return (
+  const cardContent = (
     <div
       className={`rounded-2xl sm:rounded-3xl p-3.5 sm:p-5 lg:p-6 relative overflow-hidden backdrop-blur-xl transition-all duration-300 group hover:-translate-y-1 ${
+        href ? "cursor-pointer" : ""
+      } ${
         isActiveCard
           ? "bg-[#0a0f0c]/60 border border-emerald-500/40 shadow-[0_0_25px_rgba(16,185,129,0.15)]"
           : "bg-[#0a0f0c]/40 border border-white/10 hover:border-emerald-500/30 shadow-[0_8px_24px_rgba(0,0,0,0.35)]"
@@ -68,4 +72,14 @@ export const StatsCard = memo(function StatsCard({
       </div>
     </div>
   );
+
+  if (href) {
+    return (
+      <Link href={href} className="no-underline block">
+        {cardContent}
+      </Link>
+    );
+  }
+
+  return cardContent;
 });

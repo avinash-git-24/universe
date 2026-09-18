@@ -2,6 +2,7 @@
 
 import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { differenceInHours, format } from "date-fns";
 import { MapPin, Package, Clock, IndianRupee, MessageSquare, CheckCircle2, History, AlertCircle, Search, SlidersHorizontal, Radio, AlertTriangle, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -37,14 +38,34 @@ interface RequestListProps {
 const ITEMS_PER_PAGE = 5;
 
 export function RequestList({ initialRequests }: RequestListProps) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  const tabParam = searchParams.get("tab") as CategoryTab | null;
+  const initialTab: CategoryTab =
+    tabParam && ["active", "completed", "cancelled", "all"].includes(tabParam)
+      ? tabParam
+      : "active";
+
   const [requests, setRequests] = useState<StudentRequestWithDetails[]>(initialRequests);
-  const [activeTab, setActiveTab] = useState<CategoryTab>("active");
+  const [activeTab, setActiveTab] = useState<CategoryTab>(initialTab);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<RequestStatus | "all">("all");
   const [sortBy, setSortBy] = useState<"newest" | "oldest">("newest");
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedRequest, setSelectedRequest] = useState<StudentRequestWithDetails | null>(null);
   const [isBulkCancelling, setIsBulkCancelling] = useState(false);
+
+  // Sync tab with URL search params (e.g. ?tab=cancelled)
+  useEffect(() => {
+    const tab = searchParams.get("tab") as CategoryTab | null;
+    if (tab && ["active", "completed", "cancelled", "all"].includes(tab)) {
+      setActiveTab(tab);
+      setStatusFilter("all");
+      setCurrentPage(1);
+    }
+  }, [searchParams]);
 
   // Sync with initialRequests when prop updates
   useEffect(() => {
@@ -205,6 +226,7 @@ export function RequestList({ initialRequests }: RequestListProps) {
     setActiveTab(tab);
     setStatusFilter("all");
     setCurrentPage(1);
+    router.replace(`${pathname}?tab=${tab}`, { scroll: false });
   };
 
   const handleFilterChange = (status: RequestStatus | "all") => {

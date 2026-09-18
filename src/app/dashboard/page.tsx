@@ -74,24 +74,28 @@ export default async function DashboardPage() {
       gradient: "rgba(10,15,12,0.4)",
       iconBg: "rgba(0,230,118,0.1)",
       trend: "All time",
+      href: "/dashboard/requests?tab=all",
     },
     {
       label: "Active Requests", value: activeRequests.length, icon: Bike,
       gradient: "rgba(10,15,12,0.4)",
       iconBg: "rgba(102,255,178,0.1)",
       trend: "In progress",
+      href: "/dashboard/requests?tab=active",
     },
     {
       label: "Completed", value: completedRequests.length, icon: CheckCircle2,
       gradient: "rgba(10,15,12,0.4)",
       iconBg: "rgba(0,230,118,0.1)",
       trend: "Delivered",
+      href: "/dashboard/requests?tab=completed",
     },
     {
       label: "Cancelled", value: cancelledRequests.length, icon: AlertCircle,
       gradient: "rgba(10,15,12,0.4)",
       iconBg: "rgba(239,68,68,0.1)",
       trend: "Not completed",
+      href: "/dashboard/requests?tab=cancelled",
     },
   ];
 

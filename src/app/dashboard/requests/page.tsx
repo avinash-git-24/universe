@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { getUser } from "@/lib/supabase/queries";
 import { redirect } from "next/navigation";
 import Link from "next/link";
@@ -137,7 +138,9 @@ export default async function MyRequestsPage() {
         </div>
 
         {/* ── Main Request List with Filters & Pagination ── */}
-        <RequestList initialRequests={requests} />
+        <Suspense fallback={<div className="h-64 rounded-2xl bg-[#0b130e]/50 border border-white/5 animate-pulse" />}>
+          <RequestList initialRequests={requests} />
+        </Suspense>
       </div>
     </div>
   );
