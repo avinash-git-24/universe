@@ -52,7 +52,7 @@ export default async function NewRequestPage() {
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#050805]/40 to-[#050805]" />
       </div>
 
-      <main className="relative z-10 w-full max-w-4xl mx-auto">
+      <main className="relative z-10 w-full max-w-4xl mx-auto min-w-[320px]">
         {/* Top Bar with Ergonomic Mobile Placement */}
         <div className="flex justify-between items-center mb-4 sm:mb-8">
           {/* Left: Back Button + UniVerse Brand */}

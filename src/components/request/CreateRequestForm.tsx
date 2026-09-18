@@ -560,7 +560,7 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
   ];
 
   return (
-    <div className="max-w-[820px] mx-auto w-full flex flex-col items-center">
+    <div className="max-w-[820px] mx-auto w-full min-w-[320px] flex flex-col items-center">
       {/* ── Dynamic Stepper Header ── */}
       <div className="w-full max-w-[620px] mb-8 sm:mb-10 px-2">
         <div className="flex items-center justify-between relative">
@@ -1016,7 +1016,7 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
             <div className="flex flex-col gap-3 bg-black/40 border border-white/10 p-3.5 sm:p-4 rounded-2xl">
               <div className="flex flex-wrap gap-2.5 sm:gap-3 items-center">
                 {/* Item Name Input */}
-                <div className="flex-1 min-w-[200px]">
+                <div className="flex-1 min-w-[140px]">
                   <input
                     type="text"
                     placeholder={`Type ${currentCategory.toLowerCase()} name...`}
