@@ -9,15 +9,52 @@ export type RequestWithItems = DeliveryRequest & {
 };
 
 /**
- * Retrieves all pending delivery requests.
+ * Automatically purges unaccepted pending delivery requests older than 6 hours.
+ */
+export async function purgeExpiredPendingRequests(
+  supabase: SupabaseClient<Database>
+): Promise<number> {
+  try {
+    // 1. Try calling the PostgreSQL RPC function
+    const { data: rpcCount, error: rpcErr } = await supabase.rpc(
+      "cleanup_expired_delivery_requests" as any
+    );
+    if (!rpcErr && typeof rpcCount === "number") {
+      return rpcCount;
+    }
+
+    // 2. Client-side fallback delete
+    const sixHoursAgo = new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString();
+    const { data: deleted, error } = await supabase
+      .from("delivery_requests")
+      .delete()
+      .eq("status", "pending")
+      .lt("created_at", sixHoursAgo)
+      .select("id");
+
+    if (error) {
+      return 0;
+    }
+
+    return deleted?.length || 0;
+  } catch {
+    return 0;
+  }
+}
+
+/**
+ * Retrieves all pending delivery requests (unexpired, within last 6 hours).
  */
 export async function getPendingRequests(
   supabase: SupabaseClient<Database>
 ): Promise<DeliveryRequest[]> {
+  const sixHoursAgo = new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString();
+
   const { data, error } = await supabase
     .from("delivery_requests")
     .select("*")
     .eq("status", "pending")
+    .gte("created_at", sixHoursAgo)
     .order("created_at", { ascending: false });
 
   if (error) {
@@ -104,19 +141,26 @@ export async function createDeliveryRequest(
 
 /**
  * Retrieves pending requests with their items for the runner dashboard.
- * Optionally filters out requests created by the current user to prevent self-delivery.
+ * - Filters out requests older than 6 hours (auto-expiration).
+ * - Optionally filters out requests created by the current user to prevent self-delivery.
  */
 export async function getPendingRequestsWithItems(
   supabase: SupabaseClient<Database>,
   currentUserId?: string
 ): Promise<RequestWithItems[]> {
+  // Fire background purge of expired requests
+  purgeExpiredPendingRequests(supabase).catch(() => {});
+
+  const sixHoursAgo = new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString();
+
   let query = supabase
     .from("delivery_requests")
     .select(`
       *,
       items:request_items(*)
     `)
-    .eq("status", "pending");
+    .eq("status", "pending")
+    .gte("created_at", sixHoursAgo);
 
   if (currentUserId) {
     query = query.neq("requester_id", currentUserId);
@@ -230,10 +274,10 @@ export async function acceptRequest(
   requestId: string,
   runnerId: string
 ): Promise<boolean> {
-  // 0. Anti-fraud check: Ensure request exists, is pending, and runner is NOT requester
+  // 0. Anti-fraud check: Ensure request exists, is pending, not expired (>6h), and runner is NOT requester
   const { data: targetReq, error: fetchErr } = await supabase
     .from("delivery_requests")
-    .select("requester_id, status")
+    .select("requester_id, status, created_at")
     .eq("id", requestId)
     .single();
 
@@ -252,6 +296,12 @@ export async function acceptRequest(
       requester_id: targetReq.requester_id,
       runner_id: runnerId,
     });
+    return false;
+  }
+
+  const sixHoursAgoMs = 6 * 60 * 60 * 1000;
+  if (Date.now() - new Date(targetReq.created_at).getTime() > sixHoursAgoMs) {
+    console.warn("acceptRequest – request has expired (older than 6 hours)");
     return false;
   }
 

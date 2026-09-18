@@ -98,7 +98,8 @@ export function RunnerDashboardClient({
   const [otpError, setOtpError] = useState<string | null>(null);
   const [isVerifyingOtp, setIsVerifyingOtp] = useState<boolean>(false);
 
-  // UI State for Grid/List View & Filters
+  // Track mount time for pure 6-hour expiration filtering (React 19 purity compliant)
+  const [currentTime] = useState(() => Date.now());
   const [isGridView, setIsGridView] = useState(true);
   const [isOnline, setIsOnline] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -310,10 +311,13 @@ export function RunnerDashboardClient({
     }
   };
 
-  // Exclude current user's own requests from available pool (Anti-Fraud)
+  // Exclude current user's own requests AND requests older than 6 hours (Anti-Fraud & Auto-Expiry)
   const availableOthers = useMemo(() => {
-    return pendingRequests.filter((r) => r.requester_id !== runnerId);
-  }, [pendingRequests, runnerId]);
+    const sixHoursAgoMs = 6 * 60 * 60 * 1000;
+    return pendingRequests.filter(
+      (r) => r.requester_id !== runnerId && currentTime - new Date(r.created_at).getTime() <= sixHoursAgoMs
+    );
+  }, [pendingRequests, runnerId, currentTime]);
 
   // Category counts based on available requests
   const foodCount = useMemo(() => {
