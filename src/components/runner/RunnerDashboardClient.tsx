@@ -543,10 +543,10 @@ export function RunnerDashboardClient({
             type="button"
             onClick={() => toggleOnline()}
             className={cn(
-              "flex-1 sm:flex-initial flex items-center justify-between sm:justify-start gap-2.5 sm:gap-3 pl-2 sm:pl-2.5 pr-3 sm:pr-4 py-1.5 sm:py-2 rounded-full border transition-all duration-300 cursor-pointer select-none active:scale-95 group relative overflow-hidden backdrop-blur-xl",
+              "flex-1 sm:flex-initial flex items-center justify-between sm:justify-start gap-3 sm:gap-3.5 pl-2.5 sm:pl-3 pr-4 sm:pr-5 py-2 sm:py-2.5 rounded-full border transition-all duration-300 cursor-pointer select-none active:scale-95 group relative overflow-hidden backdrop-blur-xl shadow-lg",
               isOnline
-                ? "border-emerald-500/40 bg-[#0a1610]/95 hover:border-emerald-400/60 shadow-[0_0_25px_rgba(16,185,129,0.18)] hover:shadow-[0_0_35px_rgba(16,185,129,0.3)]"
-                : "border-amber-500/35 bg-[#14120e]/95 hover:border-amber-400/50 shadow-[0_0_20px_rgba(245,158,11,0.12)] hover:shadow-[0_0_30px_rgba(245,158,11,0.22)]"
+                ? "border-emerald-500/50 bg-[#0a1610]/95 hover:border-emerald-400/70 shadow-[0_0_28px_rgba(16,185,129,0.22)] hover:shadow-[0_0_38px_rgba(16,185,129,0.35)]"
+                : "border-amber-500/40 bg-[#14120e]/95 hover:border-amber-400/60 shadow-[0_0_22px_rgba(245,158,11,0.15)] hover:shadow-[0_0_32px_rgba(245,158,11,0.25)]"
             )}
             title={isOnline ? "Runner Mode Active · Click to Pause" : "Runner Mode Paused · Click to go Online"}
           >
@@ -555,15 +555,15 @@ export function RunnerDashboardClient({
               className={cn(
                 "absolute inset-0 pointer-events-none transition-opacity duration-500 opacity-0 group-hover:opacity-100",
                 isOnline
-                  ? "bg-gradient-to-r from-emerald-500/10 via-transparent to-transparent"
-                  : "bg-gradient-to-r from-amber-500/10 via-transparent to-transparent"
+                  ? "bg-gradient-to-r from-emerald-500/15 via-transparent to-transparent"
+                  : "bg-gradient-to-r from-amber-500/15 via-transparent to-transparent"
               )}
             />
 
             {/* Tactile iOS Slider Track */}
             <div
               className={cn(
-                "w-11 h-6 rounded-full p-0.5 relative transition-colors duration-300 shrink-0 flex items-center shadow-inner",
+                "w-13 h-7.5 rounded-full p-0.5 relative transition-colors duration-300 shrink-0 flex items-center shadow-inner",
                 isOnline
                   ? "bg-[#062414] border border-emerald-500/50"
                   : "bg-[#1f1912] border border-amber-500/30"
@@ -572,16 +572,16 @@ export function RunnerDashboardClient({
               {/* Smooth Sliding Thumb with Glow */}
               <div
                 className={cn(
-                  "w-5 h-5 rounded-full transition-transform duration-300 ease-out flex items-center justify-center transform",
+                  "w-6.5 h-6.5 rounded-full transition-transform duration-300 ease-out flex items-center justify-center transform",
                   isOnline
-                    ? "translate-x-5 bg-gradient-to-tr from-[#00E676] to-emerald-300 shadow-[0_0_12px_rgba(0,230,118,0.9),0_2px_4px_rgba(0,0,0,0.5)]"
+                    ? "translate-x-5.5 bg-gradient-to-tr from-[#00E676] to-emerald-300 shadow-[0_0_14px_rgba(0,230,118,0.95),0_2px_5px_rgba(0,0,0,0.6)]"
                     : "translate-x-0 bg-white/40 shadow-[0_2px_4px_rgba(0,0,0,0.5)]"
                 )}
               >
                 {/* Micro Core Dot inside Thumb */}
                 <div
                   className={cn(
-                    "w-1.5 h-1.5 rounded-full transition-colors",
+                    "w-2 h-2 rounded-full transition-colors",
                     isOnline ? "bg-[#042411]/80" : "bg-white/30"
                   )}
                 />
@@ -589,24 +589,24 @@ export function RunnerDashboardClient({
             </div>
 
             {/* Two-Tone Status Label */}
-            <div className="flex items-center gap-1.5 relative z-10">
+            <div className="flex items-center gap-2 relative z-10">
               {isOnline ? (
                 <>
-                  <span className="relative flex h-2 w-2 shrink-0">
+                  <span className="relative flex h-2.5 w-2.5 shrink-0">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-[#00E676]" />
+                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#00E676]" />
                   </span>
-                  <div className="flex items-baseline gap-1 whitespace-nowrap">
-                    <span className="font-black text-xs sm:text-sm text-[#00E676] tracking-tight">Online</span>
-                    <span className="text-white/50 text-[10px] sm:text-xs font-mono font-medium">· Accepting Orders</span>
+                  <div className="flex items-baseline gap-1.5 whitespace-nowrap">
+                    <span className="font-black text-sm sm:text-base text-[#00E676] tracking-tight">Online</span>
+                    <span className="text-white/60 text-xs sm:text-sm font-mono font-medium">· Accepting Orders</span>
                   </div>
                 </>
               ) : (
                 <>
-                  <span className="w-2 h-2 rounded-full bg-amber-400 shrink-0 shadow-[0_0_6px_rgba(251,191,36,0.8)]" />
-                  <div className="flex items-baseline gap-1 whitespace-nowrap">
-                    <span className="font-black text-xs sm:text-sm text-amber-300 tracking-tight">Offline</span>
-                    <span className="text-white/40 text-[10px] sm:text-xs font-mono font-medium">· Mode Paused</span>
+                  <span className="w-2.5 h-2.5 rounded-full bg-amber-400 shrink-0 shadow-[0_0_8px_rgba(251,191,36,0.8)]" />
+                  <div className="flex items-baseline gap-1.5 whitespace-nowrap">
+                    <span className="font-black text-sm sm:text-base text-amber-300 tracking-tight">Offline</span>
+                    <span className="text-white/50 text-xs sm:text-sm font-mono font-medium">· Mode Paused</span>
                   </div>
                 </>
               )}
