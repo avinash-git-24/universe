@@ -1,0 +1,9 @@
+# Files and directories to ignore in Vercel deployment bundles
+docs/
+supabase/
+scripts/
+*.md
+Dockerfile
+docker-compose.yml
+.dockerignore
+.github/
