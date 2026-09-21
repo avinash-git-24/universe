@@ -843,7 +843,7 @@ export function ChatWindow({ userId, conversation, isOnline }: ChatWindowProps) 
         {/* Message Input Bar */}
         <form
           onSubmit={onSubmitForm}
-          className="flex gap-2 max-w-4xl mx-auto w-full items-end p-2.5 px-3 sm:px-4"
+          className="flex gap-2 sm:gap-2.5 max-w-4xl mx-auto w-full items-end p-2.5 px-3 sm:px-4"
         >
           <input
             type="file"
@@ -858,7 +858,7 @@ export function ChatWindow({ userId, conversation, isOnline }: ChatWindowProps) 
             type="button"
             onClick={() => fileInputRef.current?.click()}
             disabled={uploadingImage}
-            className="w-[40px] h-[40px] rounded-xl shrink-0 bg-white/[0.04] hover:bg-white/[0.08] flex items-center justify-center text-white/60 hover:text-white transition-colors disabled:opacity-50 border border-white/10"
+            className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl shrink-0 bg-white/[0.04] hover:bg-emerald-500/15 border border-white/10 hover:border-emerald-500/30 flex items-center justify-center text-white/60 hover:text-emerald-400 transition-all disabled:opacity-50 cursor-pointer active:scale-95 shadow-sm"
             title="Attach image"
           >
             <ImageIcon className="w-4 h-4" />
@@ -868,9 +868,9 @@ export function ChatWindow({ userId, conversation, isOnline }: ChatWindowProps) 
           <button
             type="button"
             onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-            className={`w-[40px] h-[40px] rounded-xl shrink-0 border transition-colors flex items-center justify-center ${
+            className={`w-10 h-10 sm:w-11 sm:h-11 rounded-2xl shrink-0 border transition-all flex items-center justify-center cursor-pointer active:scale-95 shadow-sm ${
               showEmojiPicker
-                ? "bg-emerald-500/20 border-emerald-500/40 text-emerald-400"
+                ? "bg-emerald-500/20 border-emerald-500/40 text-emerald-400 shadow-[0_0_12px_rgba(16,185,129,0.2)]"
                 : "bg-white/[0.04] border-white/10 text-white/60 hover:text-white hover:bg-white/[0.08]"
             }`}
             title="Open emoji keyboard"
@@ -878,8 +878,8 @@ export function ChatWindow({ userId, conversation, isOnline }: ChatWindowProps) 
             <Smile className="w-4 h-4" />
           </button>
 
-          {/* Textarea Input */}
-          <div className="flex-1 relative bg-white/[0.04] hover:bg-white/[0.06] border border-white/10 rounded-2xl transition-all focus-within:border-emerald-500/50 focus-within:bg-white/[0.08] focus-within:ring-1 focus-within:ring-emerald-500/20">
+          {/* Clean Glassmorphic Textarea Input */}
+          <div className="flex-1 relative bg-[#0a120e]/95 hover:bg-[#0c1611] border border-white/10 hover:border-white/20 rounded-2xl transition-all duration-200 focus-within:border-emerald-500/60 focus-within:bg-[#0b1710] focus-within:shadow-[0_0_20px_rgba(16,185,129,0.18)] shadow-inner flex items-center min-h-[44px]">
             <textarea
               ref={textareaRef}
               placeholder="Type a message... (Shift + Enter for new line)"
@@ -887,7 +887,7 @@ export function ChatWindow({ userId, conversation, isOnline }: ChatWindowProps) 
               onChange={onInputChange}
               onKeyDown={onKeyDown}
               disabled={uploadingImage}
-              className="w-full bg-transparent border-none focus:ring-0 resize-none py-2 px-3.5 text-sm text-white placeholder:text-white/30 max-h-[120px] rounded-2xl min-h-[40px] disabled:opacity-50 leading-relaxed"
+              className="w-full bg-transparent border-0 outline-none focus:outline-none focus:ring-0 ring-0 focus:border-none resize-none py-2.5 px-4 text-sm text-white placeholder:text-white/35 max-h-[120px] rounded-2xl min-h-[44px] disabled:opacity-50 leading-relaxed select-text"
               rows={1}
             />
           </div>
@@ -896,7 +896,7 @@ export function ChatWindow({ userId, conversation, isOnline }: ChatWindowProps) 
           <button
             type="submit"
             disabled={!newMessage.trim() || uploadingImage}
-            className="w-[40px] h-[40px] rounded-xl shrink-0 bg-gradient-to-tr from-emerald-500 to-teal-500 hover:brightness-110 flex items-center justify-center text-black font-extrabold transition-all disabled:opacity-40 disabled:cursor-not-allowed shadow-[0_0_15px_rgba(16,185,129,0.25)] active:scale-95"
+            className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl shrink-0 bg-gradient-to-tr from-emerald-400 via-emerald-500 to-teal-400 hover:brightness-110 flex items-center justify-center text-[#06120b] font-black transition-all disabled:opacity-35 disabled:cursor-not-allowed shadow-[0_0_16px_rgba(16,185,129,0.3)] hover:shadow-[0_0_24px_rgba(16,185,129,0.5)] active:scale-95 cursor-pointer"
             title="Send message"
           >
             <Send className="w-4 h-4 ml-0.5" />
