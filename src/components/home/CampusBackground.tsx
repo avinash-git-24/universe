@@ -54,9 +54,17 @@ export function CampusBackground() {
           0%, 100% { transform: rotate(-14deg); }
           50%       { transform: rotate(12deg); }
         }
-        @keyframes sun-glow {
-          0%, 100% { opacity: 0.12; r: 68; }
-          50%       { opacity: 0.22; r: 76; }
+        @keyframes moon-glow {
+          0%, 100% { opacity: 0.12; transform: scale(1); }
+          50%       { opacity: 0.25; transform: scale(1.10); }
+        }
+        @keyframes star-pulse-a {
+          0%, 100% { opacity: 0.35; transform: scale(0.85); }
+          50%       { opacity: 1.0; transform: scale(1.25); }
+        }
+        @keyframes star-pulse-b {
+          0%, 100% { opacity: 0.25; transform: scale(0.8); }
+          50%       { opacity: 0.9; transform: scale(1.2); }
         }
         @keyframes flag-wave {
           0%, 100% { d: path("M 724 168 L 760 175 L 724 182"); }
@@ -75,7 +83,11 @@ export function CampusBackground() {
         .s3-leg-l { animation: leg-stride-l 0.9s ease-in-out infinite; transform-origin: 700px 582px; }
         .s3-leg-r { animation: leg-stride-r 0.9s ease-in-out infinite; transform-origin: 710px 582px; }
         .phone-screen { animation: phone-pulse 1.8s ease-in-out infinite; }
-        .sun-halo { animation: sun-glow 4s ease-in-out infinite; }
+        .moon-halo { animation: moon-glow 4.5s ease-in-out infinite; transform-origin: 1324px 92px; }
+        .star-a { animation: star-pulse-a 3.2s ease-in-out infinite; transform-origin: 1245px 65px; }
+        .star-b { animation: star-pulse-b 4.0s ease-in-out infinite 1.2s; transform-origin: 1390px 145px; }
+        .star-c { animation: star-pulse-a 3.6s ease-in-out infinite 2.0s; transform-origin: 1205px 120px; }
+        .star-d { animation: star-pulse-b 4.5s ease-in-out infinite 0.5s; transform-origin: 1285px 160px; }
       `}</style>
 
       <svg
@@ -139,6 +151,19 @@ export function CampusBackground() {
             <feGaussianBlur stdDeviation="2" result="blur" />
             <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
           </filter>
+          {/* Luminous Moon Gradient */}
+          <linearGradient id="uvMoonGrad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stopColor="#FFFFFF" />
+            <stop offset="60%" stopColor="#E0F2FE" />
+            <stop offset="100%" stopColor="#BAE6FD" />
+          </linearGradient>
+
+          {/* Crescent Moon Mask */}
+          <mask id="uvCrescentMask">
+            <rect x="1200" y="0" width="240" height="240" fill="black" />
+            <circle cx="1324" cy="92" r="30" fill="white" />
+            <circle cx="1334" cy="84" r="26" fill="black" />
+          </mask>
         </defs>
 
         {/* ═══════════════════════════════════════════════
@@ -146,11 +171,29 @@ export function CampusBackground() {
         ═══════════════════════════════════════════════ */}
         <rect x="0" y="0" width="1440" height="800" fill="url(#uvSkyGrad)" />
 
-        {/* ── Sun ── */}
-        <circle className="sun-halo" cx="1330" cy="88" r="72" fill="#FDE68A" opacity="0.14" />
-        <circle cx="1330" cy="88" r="52" fill="#FEF3C7" opacity="0.25" />
-        <circle cx="1330" cy="88" r="36" fill="#FDE68A" opacity="0.55" />
-        <circle cx="1330" cy="88" r="24" fill="#FCD34D" />
+        {/* ── Luminous Crescent Moon & Cosmic Stars ── */}
+        {/* Atmospheric Cyan-Emerald Halos */}
+        <circle className="moon-halo" cx="1324" cy="92" r="76" fill="#38BDF8" opacity="0.10" />
+        <circle cx="1324" cy="92" r="54" fill="#34D399" opacity="0.16" />
+        <circle cx="1324" cy="92" r="38" fill="#E0F2FE" opacity="0.25" />
+
+        {/* Crisp Luminous Crescent Moon */}
+        <circle cx="1324" cy="92" r="30" fill="url(#uvMoonGrad)" mask="url(#uvCrescentMask)" filter="url(#uvVendGlow)" />
+
+        {/* Twinkling Diamond Micro-Stars */}
+        <g className="star-a">
+          <path d="M 1245 61 Q 1245 65 1241 65 Q 1245 65 1245 69 Q 1245 65 1249 65 Q 1245 65 1245 61 Z" fill="#E0F2FE" />
+          <circle cx="1245" cy="65" r="1" fill="white" />
+        </g>
+        <g className="star-b">
+          <path d="M 1390 141 Q 1390 145 1386 145 Q 1390 145 1390 149 Q 1390 145 1394 145 Q 1390 145 1390 141 Z" fill="#67E8F9" />
+        </g>
+        <g className="star-c">
+          <path d="M 1205 117 Q 1205 120 1202 120 Q 1205 120 1205 123 Q 1205 120 1208 120 Q 1205 120 1205 117 Z" fill="#A7F3D0" />
+        </g>
+        <g className="star-d">
+          <circle cx="1285" cy="160" r="1.5" fill="#E0F2FE" opacity="0.85" />
+        </g>
 
         {/* ── Clouds ── */}
         <g className="cloud-a">
