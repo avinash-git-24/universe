@@ -54,17 +54,9 @@ export function CampusBackground() {
           0%, 100% { transform: rotate(-14deg); }
           50%       { transform: rotate(12deg); }
         }
-        @keyframes orb-pulse {
-          0%, 100% { opacity: 0.16; transform: scale(1); }
-          50%       { opacity: 0.30; transform: scale(1.08); }
-        }
-        @keyframes ring-spin-cw {
-          from { transform: rotate(0deg); }
-          to   { transform: rotate(360deg); }
-        }
-        @keyframes ring-spin-ccw {
-          from { transform: rotate(360deg); }
-          to   { transform: rotate(0deg); }
+        @keyframes sun-glow {
+          0%, 100% { opacity: 0.12; r: 68; }
+          50%       { opacity: 0.22; r: 76; }
         }
         @keyframes flag-wave {
           0%, 100% { d: path("M 724 168 L 760 175 L 724 182"); }
@@ -83,10 +75,7 @@ export function CampusBackground() {
         .s3-leg-l { animation: leg-stride-l 0.9s ease-in-out infinite; transform-origin: 700px 582px; }
         .s3-leg-r { animation: leg-stride-r 0.9s ease-in-out infinite; transform-origin: 710px 582px; }
         .phone-screen { animation: phone-pulse 1.8s ease-in-out infinite; }
-        .orb-halo-emerald { animation: orb-pulse 4.8s ease-in-out infinite; transform-origin: 1330px 88px; }
-        .orb-halo-gold    { animation: orb-pulse 3.6s ease-in-out infinite 0.6s; transform-origin: 1330px 88px; }
-        .orb-ring-primary { animation: ring-spin-cw 22s linear infinite; transform-origin: 1330px 88px; }
-        .orb-ring-secondary { animation: ring-spin-ccw 32s linear infinite; transform-origin: 1330px 88px; }
+        .sun-halo { animation: sun-glow 4s ease-in-out infinite; }
       `}</style>
 
       <svg
@@ -150,35 +139,6 @@ export function CampusBackground() {
             <feGaussianBlur stdDeviation="2" result="blur" />
             <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
           </filter>
-
-          {/* Tech Orb & Plasma Gradients */}
-          <radialGradient id="uvTechOrbGrad" cx="35%" cy="35%" r="65%">
-            <stop offset="0%" stopColor="#FFFFFF" />
-            <stop offset="25%" stopColor="#FEF08A" />
-            <stop offset="65%" stopColor="#F59E0B" />
-            <stop offset="100%" stopColor="#D97706" />
-          </radialGradient>
-
-          <linearGradient id="uvRingGradEmeraldGold" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#10B981" stopOpacity="0.9" />
-            <stop offset="45%" stopColor="#34D399" stopOpacity="0.5" />
-            <stop offset="70%" stopColor="#FBBF24" stopOpacity="0.8" />
-            <stop offset="100%" stopColor="#F59E0B" stopOpacity="0.2" />
-          </linearGradient>
-
-          <linearGradient id="uvRingGradCyber" x1="100%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#06B6D4" stopOpacity="0.7" />
-            <stop offset="50%" stopColor="#10B981" stopOpacity="0.3" />
-            <stop offset="100%" stopColor="#6EE7B7" stopOpacity="0.8" />
-          </linearGradient>
-
-          <filter id="uvOrbGlow" x="-50%" y="-50%" width="200%" height="200%">
-            <feGaussianBlur stdDeviation="4" result="glow" />
-            <feMerge>
-              <feMergeNode in="glow" />
-              <feMergeNode in="SourceGraphic" />
-            </feMerge>
-          </filter>
         </defs>
 
         {/* ═══════════════════════════════════════════════
@@ -186,53 +146,11 @@ export function CampusBackground() {
         ═══════════════════════════════════════════════ */}
         <rect x="0" y="0" width="1440" height="800" fill="url(#uvSkyGrad)" />
 
-        {/* ── 🪐 UniVerse Tech Orb / Eclipse Ring (Futuristic Sci-Fi) ── */}
-        {/* Outer Plasma Atmospheric Halos */}
-        <circle className="orb-halo-emerald" cx="1330" cy="88" r="82" fill="#10B981" opacity="0.14" />
-        <circle className="orb-halo-gold" cx="1330" cy="88" r="62" fill="#F59E0B" opacity="0.18" />
-        <circle cx="1330" cy="88" r="44" fill="#FEF3C7" opacity="0.30" />
-
-        {/* Outer Secondary Orbital Ring (Dashed Cyber Gyroscope) */}
-        <g className="orb-ring-secondary">
-          <ellipse
-            cx="1330"
-            cy="88"
-            rx="66"
-            ry="24"
-            fill="none"
-            stroke="url(#uvRingGradCyber)"
-            strokeWidth="1.2"
-            strokeDasharray="14 10 32 8"
-            transform="rotate(-28 1330 88)"
-          />
-          {/* Orbiting Telemetry Node B */}
-          <circle cx="1396" cy="88" r="2" fill="#22D3EE" opacity="0.85" transform="rotate(-28 1330 88)" />
-        </g>
-
-        {/* Central Luminous Tech Sun Core with Inner Depth */}
-        <circle cx="1330" cy="88" r="26" fill="url(#uvTechOrbGrad)" filter="url(#uvOrbGlow)" />
-        {/* Highlight flare on sphere */}
-        <ellipse cx="1323" cy="81" rx="8" ry="5" fill="#FFFFFF" opacity="0.45" />
-
-        {/* Primary Orbital Eclipse Ring (Tilted Saturn Style with Emerald/Gold Gradient) */}
-        <g className="orb-ring-primary">
-          <ellipse
-            cx="1330"
-            cy="88"
-            rx="56"
-            ry="18"
-            fill="none"
-            stroke="url(#uvRingGradEmeraldGold)"
-            strokeWidth="2.2"
-            strokeDasharray="80 18 25 12"
-            transform="rotate(24 1330 88)"
-          />
-          {/* Orbiting Satellite Tech Node A (Glowing Emerald) */}
-          <g transform="rotate(24 1330 88)">
-            <circle cx="1386" cy="88" r="3.2" fill="#10B981" filter="url(#uvOrbGlow)" />
-            <circle cx="1386" cy="88" r="1.6" fill="#FFFFFF" />
-          </g>
-        </g>
+        {/* ── Sun ── */}
+        <circle className="sun-halo" cx="1330" cy="88" r="72" fill="#FDE68A" opacity="0.14" />
+        <circle cx="1330" cy="88" r="52" fill="#FEF3C7" opacity="0.25" />
+        <circle cx="1330" cy="88" r="36" fill="#FDE68A" opacity="0.55" />
+        <circle cx="1330" cy="88" r="24" fill="#FCD34D" />
 
         {/* ── Clouds ── */}
         <g className="cloud-a">
