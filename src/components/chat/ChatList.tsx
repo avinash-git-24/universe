@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Search, Zap, X, MessageSquare, Loader2 } from "lucide-react";
+import { Search, Zap, X, MessageSquare, Loader2, ChevronDown } from "lucide-react";
 import { ConversationWithDetails } from "@/lib/database/chat";
 import type { ActiveDeliveryContact } from "@/components/chat/ChatClient";
 import { format, isToday, isYesterday } from "date-fns";
@@ -36,6 +36,7 @@ export function ChatList({
   startingChatUserId = null,
 }: ChatListProps) {
   const [searchQuery, setSearchQuery] = useState("");
+  const [isDeliveriesExpanded, setIsDeliveriesExpanded] = useState(false);
 
   const filteredConversations = useMemo(() => {
     if (!searchQuery.trim()) return initialConversations;
@@ -109,7 +110,7 @@ export function ChatList({
                 {activeDeliveries.length}
               </span>
             </div>
-            {activeDeliveries.map((del) => {
+            {(isDeliveriesExpanded ? activeDeliveries : activeDeliveries.slice(0, 2)).map((del) => {
               const nameInfo = formatStudentName(del.otherUser.full_name);
               const isStarting = startingChatUserId === del.otherUserId;
               return (
@@ -156,6 +157,24 @@ export function ChatList({
                 </button>
               );
             })}
+            {activeDeliveries.length > 2 && (
+              <button
+                type="button"
+                onClick={() => setIsDeliveriesExpanded(!isDeliveriesExpanded)}
+                className="w-full py-1.5 px-2 rounded-lg bg-white/[0.02] hover:bg-emerald-500/10 text-[11px] font-semibold text-emerald-400/90 hover:text-emerald-300 flex items-center justify-center gap-1.5 transition-all border border-transparent hover:border-emerald-500/20 cursor-pointer select-none"
+              >
+                <span>
+                  {isDeliveriesExpanded
+                    ? "Show fewer deliveries"
+                    : `+${activeDeliveries.length - 2} more active ${activeDeliveries.length - 2 === 1 ? "delivery" : "deliveries"}`}
+                </span>
+                <ChevronDown
+                  className={`w-3.5 h-3.5 transition-transform duration-200 ${
+                    isDeliveriesExpanded ? "rotate-180" : ""
+                  }`}
+                />
+              </button>
+            )}
           </div>
         )}
 

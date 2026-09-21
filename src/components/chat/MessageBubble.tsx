@@ -158,12 +158,12 @@ export const MessageBubble = memo(function MessageBubble({
               <span>{format(new Date(message.created_at), "h:mm a")}</span>
               {isMe && (
                 <span className="flex items-center ml-0.5">
-                  {message.status === "sent" && <Check className="w-3.5 h-3.5 opacity-80" />}
+                  {message.status === "sent" && <Check className="w-3.5 h-3.5 text-white/70" />}
                   {message.status === "delivered" && (
-                    <CheckCheck className="w-3.5 h-3.5 opacity-90" />
+                    <CheckCheck className="w-3.5 h-3.5 text-white/80" />
                   )}
                   {message.status === "read" && (
-                    <CheckCheck className="w-3.5 h-3.5 text-white font-bold drop-shadow-[0_0_6px_rgba(255,255,255,0.8)]" />
+                    <CheckCheck className="w-3.5 h-3.5 text-cyan-300 font-bold drop-shadow-[0_0_8px_rgba(34,211,238,0.95)]" />
                   )}
                 </span>
               )}

@@ -821,9 +821,11 @@ export function ChatWindow({ userId, conversation, isOnline }: ChatWindowProps) 
           </div>
         )}
 
-        {/* Campus Quick Replies Pill Strip */}
+        {/* Campus Quick Replies Pill Strip with Smooth Right Edge Gradient Fade */}
         <div className="relative max-w-4xl mx-auto w-full px-3 sm:px-4 pt-2.5 pb-1">
-          <div className="flex items-center gap-2 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden pr-4 pb-0.5">
+          {/* Ambient Fade on Right Edge to visually hint more chips */}
+          <div className="pointer-events-none absolute right-3 sm:right-4 top-2.5 bottom-1 w-12 bg-gradient-to-l from-[#090f0c] via-[#090f0c]/80 to-transparent z-10" />
+          <div className="flex items-center gap-2 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden pr-14 pb-0.5 scroll-smooth">
             {CAMPUS_QUICK_REPLIES.map((reply) => (
               <button
                 key={reply}
