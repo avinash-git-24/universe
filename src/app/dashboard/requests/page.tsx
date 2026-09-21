@@ -85,54 +85,54 @@ export default async function MyRequestsPage() {
           </div>
         </div>
 
-        {/* ── Top Metrics HUD Banner (Mobile-Optimized Compact Grid) ── */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 sm:gap-4">
-          {/* Card 1: Active In-Flight (Highlight on mobile full-width) */}
-          <div className="col-span-2 sm:col-span-1 p-3.5 sm:p-5 rounded-2xl bg-[#0b130e]/80 border border-emerald-500/25 backdrop-blur-xl shadow-[0_0_25px_rgba(16,185,129,0.06)] flex items-center justify-between transition-all hover:border-emerald-500/40">
+        {/* ── Top Metrics HUD Banner (Mobile-Optimized Single-Row 3-Grid) ── */}
+        <div className="grid grid-cols-3 gap-2 sm:gap-4">
+          {/* Card 1: Active In-Flight */}
+          <div className="p-2.5 sm:p-5 rounded-xl sm:rounded-2xl bg-[#0b130e]/80 border border-emerald-500/25 backdrop-blur-xl shadow-[0_0_25px_rgba(16,185,129,0.06)] flex flex-col sm:flex-row sm:items-center justify-between gap-1 sm:gap-2 transition-all hover:border-emerald-500/40">
             <div className="space-y-0.5 sm:space-y-1">
-              <div className="flex items-center gap-1.5 text-[10px] sm:text-[11px] font-mono tracking-wider uppercase text-emerald-400 font-bold">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping inline-block" />
-                <span>Active In-Flight</span>
+              <div className="flex items-center gap-1 sm:gap-1.5 text-[9px] sm:text-[11px] font-mono tracking-wider uppercase text-emerald-400 font-bold truncate">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping inline-block shrink-0" />
+                <span className="truncate">Active</span>
               </div>
-              <div className="text-xl sm:text-3xl font-black text-white font-mono tracking-tight">
-                {activeCount} {activeCount === 1 ? "Order" : "Orders"}
+              <div className="text-base sm:text-3xl font-black text-white font-mono tracking-tight">
+                {activeCount} <span className="text-[10px] sm:text-xs font-normal text-white/50 hidden xs:inline sm:inline">Orders</span>
               </div>
             </div>
-            <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shadow-inner">
-              <Truck className="w-4 h-4 sm:w-5 sm:h-5" />
+            <div className="w-7 h-7 sm:w-11 sm:h-11 rounded-lg sm:rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0 self-end sm:self-center shadow-inner">
+              <Truck className="w-3.5 h-3.5 sm:w-5 sm:h-5" />
             </div>
           </div>
 
           {/* Card 2: Total Delivered */}
-          <div className="col-span-1 p-3 sm:p-5 rounded-2xl bg-[#0b130e]/80 border border-white/10 backdrop-blur-xl flex items-center justify-between transition-all hover:border-white/20">
+          <div className="p-2.5 sm:p-5 rounded-xl sm:rounded-2xl bg-[#0b130e]/80 border border-white/10 backdrop-blur-xl flex flex-col sm:flex-row sm:items-center justify-between gap-1 sm:gap-2 transition-all hover:border-white/20">
             <div className="space-y-0.5 sm:space-y-1">
-              <span className="text-[10px] sm:text-[11px] font-mono tracking-wider uppercase text-white/50 font-bold block truncate">
-                Delivered Safely
+              <span className="text-[9px] sm:text-[11px] font-mono tracking-wider uppercase text-white/50 font-bold block truncate">
+                Delivered
               </span>
-              <div className="text-xl sm:text-3xl font-black text-white font-mono tracking-tight">
-                {completedCount} {completedCount === 1 ? "Order" : "Orders"}
+              <div className="text-base sm:text-3xl font-black text-white font-mono tracking-tight">
+                {completedCount} <span className="text-[10px] sm:text-xs font-normal text-white/50 hidden xs:inline sm:inline">Orders</span>
               </div>
             </div>
-            <div className="w-8 h-8 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-white/70 shrink-0 ml-1">
-              <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5" />
+            <div className="w-7 h-7 sm:w-11 sm:h-11 rounded-lg sm:rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-white/70 shrink-0 self-end sm:self-center">
+              <CheckCircle2 className="w-3.5 h-3.5 sm:w-5 sm:h-5" />
             </div>
           </div>
 
           {/* Card 3: Campus Peer Network */}
-          <div className="col-span-1 p-3 sm:p-5 rounded-2xl bg-[#0b130e]/80 border border-white/10 backdrop-blur-xl flex items-center justify-between transition-all hover:border-white/20">
+          <div className="p-2.5 sm:p-5 rounded-xl sm:rounded-2xl bg-[#0b130e]/80 border border-white/10 backdrop-blur-xl flex flex-col sm:flex-row sm:items-center justify-between gap-1 sm:gap-2 transition-all hover:border-white/20">
             <div className="space-y-0.5 sm:space-y-1">
-              <span className="text-[10px] sm:text-[11px] font-mono tracking-wider uppercase text-cyan-400/85 font-bold block truncate">
-                Avg. Delivery
+              <span className="text-[9px] sm:text-[11px] font-mono tracking-wider uppercase text-cyan-400/85 font-bold block truncate">
+                Avg. Time
               </span>
-              <div className="text-sm sm:text-base font-bold text-white/95 truncate">
+              <div className="text-xs sm:text-base font-bold text-white/95 truncate">
                 ~15 mins
               </div>
-              <span className="text-[9.5px] sm:text-[10.5px] text-white/40 block font-mono truncate">
+              <span className="text-[9px] sm:text-[10.5px] text-white/40 font-mono truncate hidden sm:block">
                 Verified Peers
               </span>
             </div>
-            <div className="w-8 h-8 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-cyan-500/10 border border-cyan-500/25 flex items-center justify-center text-cyan-400 shrink-0 ml-1">
-              <ShieldCheck className="w-4 h-4 sm:w-5 sm:h-5" />
+            <div className="w-7 h-7 sm:w-11 sm:h-11 rounded-lg sm:rounded-2xl bg-cyan-500/10 border border-cyan-500/25 flex items-center justify-center text-cyan-400 shrink-0 self-end sm:self-center">
+              <ShieldCheck className="w-3.5 h-3.5 sm:w-5 sm:h-5" />
             </div>
           </div>
         </div>

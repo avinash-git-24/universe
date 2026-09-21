@@ -213,22 +213,22 @@ export const StudentRequestCard = memo(function StudentRequestCard({
         />
       )}
 
-      <div className="w-full p-6 md:p-8 flex flex-col lg:flex-row gap-8 lg:gap-12 items-start lg:items-center relative z-10">
+      <div className="w-full p-4 sm:p-6 md:p-8 flex flex-col lg:flex-row gap-5 sm:gap-8 lg:gap-12 items-start lg:items-center relative z-10">
         {/* LEFT COLUMN: Category Icon, Name, Date, Status */}
-        <div className="flex flex-col gap-4 lg:w-[270px] shrink-0">
-          <div className="flex items-start gap-4 lg:gap-5">
+        <div className="flex flex-col gap-3 sm:gap-4 lg:w-[270px] shrink-0">
+          <div className="flex items-start gap-3.5 sm:gap-5">
             <div
               className={cn(
-                "w-[72px] h-[72px] rounded-2xl flex items-center justify-center shrink-0 border transition-transform duration-300 group-hover:scale-105",
+                "w-[58px] h-[58px] sm:w-[72px] sm:h-[72px] rounded-xl sm:rounded-2xl flex items-center justify-center shrink-0 border transition-transform duration-300 group-hover:scale-105",
                 category.bg
               )}
             >
-              <CategoryIcon className="w-8 h-8" />
+              <CategoryIcon className="w-6 h-6 sm:w-8 sm:h-8" />
             </div>
 
-            <div className="flex flex-col gap-2.5 min-w-0 pt-0.5">
-              <div className="space-y-1">
-                <h3 className="text-xl font-bold text-white truncate leading-tight tracking-tight capitalize group-hover:text-emerald-300 transition-colors">
+            <div className="flex flex-col gap-2 min-w-0 pt-0.5">
+              <div className="space-y-0.5 sm:space-y-1">
+                <h3 className="text-lg sm:text-xl font-bold text-white truncate leading-tight tracking-tight capitalize group-hover:text-emerald-300 transition-colors">
                   {itemNames}
                 </h3>
                 <div className="flex items-center text-xs text-white/45 font-medium">
