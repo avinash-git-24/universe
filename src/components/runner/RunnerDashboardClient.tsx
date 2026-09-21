@@ -709,8 +709,8 @@ export function RunnerDashboardClient({
                 <IndianRupee className="w-4 h-4 sm:w-5 sm:h-5 mr-0.5 text-emerald-400" />
                 {totalEarnings}
               </p>
-              <Link href="/dashboard/wallet" className="text-[10px] sm:text-[11px] text-emerald-300 hover:text-emerald-200 font-bold flex items-center gap-0.5 transition-colors truncate">
-                Wallet ➔
+              <Link href="/dashboard/analytics" className="text-[10px] sm:text-[11px] text-emerald-300 hover:text-emerald-200 font-bold flex items-center gap-0.5 transition-colors truncate">
+                Analytics ➔
               </Link>
             </div>
             <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center shrink-0 text-emerald-300 shadow-[0_0_12px_rgba(16,185,129,0.3)] group-hover:scale-105 transition-transform">

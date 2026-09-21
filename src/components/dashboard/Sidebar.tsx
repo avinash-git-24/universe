@@ -4,7 +4,6 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard,
-  Wallet,
   MessageSquare,
   BarChart2,
   User,
@@ -22,12 +21,18 @@ import { LogoutButton } from "../auth/LogoutButton";
 import { createClient } from "@/lib/supabase/client";
 import { useEffect, useState, useCallback } from "react";
 
-const navItems = [
+interface NavItem {
+  name: string;
+  href: string;
+  icon: typeof Home;
+  dot?: boolean;
+}
+
+const navItems: NavItem[] = [
   { name: "Home", href: "/", icon: Home },
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { name: "My Requests", href: "/dashboard/requests", icon: FileText },
   { name: "Runner Mode", href: "/dashboard/runner", icon: Bike },
-  { name: "Wallet", href: "/dashboard/wallet", icon: Wallet, dot: true },
   { name: "Marketplace", href: "/dashboard/marketplace", icon: ShoppingBag },
   { name: "Chat", href: "/dashboard/chat", icon: MessageSquare },
   { name: "Analytics", href: "/dashboard/analytics", icon: BarChart2 },

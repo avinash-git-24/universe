@@ -51,7 +51,7 @@ const navLinks = [
   { label: "Deliveries", href: "/dashboard/requests" },
   { label: "Marketplace", href: "/dashboard/marketplace" },
   { label: "Runner Mode", href: "/dashboard/runner" },
-  { label: "Wallet", href: "/dashboard/wallet" },
+  { label: "Chat", href: "/dashboard/chat" },
   { label: "About", href: "/about" },
 ];
 
@@ -81,7 +81,7 @@ const footerCols = [
     title: "STUDENT HUB",
     links: [
       { label: "How It Works", href: "/about" },
-      { label: "Runner Earnings", href: "/dashboard/wallet" },
+      { label: "Runner Earnings", href: "/dashboard/analytics" },
       { label: "Student Verification", href: "/dashboard/profile" },
       { label: "Campus Guidelines", href: "/about" },
       { label: "Help & Support", href: "/about" },

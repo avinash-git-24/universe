@@ -166,11 +166,6 @@ export default async function DashboardPage() {
                   <span>🏃 Runner Mode</span>
                 </div>
               </Link>
-              <Link href="/dashboard/wallet" className="no-underline shrink-0">
-                <div className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 text-white/80 text-xs font-semibold active:scale-95 transition-all">
-                  <span>💳 Wallet</span>
-                </div>
-              </Link>
               <Link href="/dashboard/chat" className="no-underline shrink-0">
                 <div className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 text-white/80 text-xs font-semibold active:scale-95 transition-all">
                   <span>💬 Chat</span>
