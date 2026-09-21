@@ -147,7 +147,7 @@ export function RequestList({ initialRequests }: RequestListProps) {
 
     if (
       !window.confirm(
-        `Kya aap saari ${staleRequests.length} puraani / unfulfilled requests ko cancel karna chahte hain? Isse aapka active delivery dashboard ekdum clean ho jayega.`
+        `Are you sure you want to cancel all ${staleRequests.length} stale / unfulfilled requests? This will clean up your active delivery dashboard.`
       )
     ) {
       return;
@@ -162,9 +162,9 @@ export function RequestList({ initialRequests }: RequestListProps) {
         setRequests((prev) =>
           prev.map((r) => (ids.includes(r.id) ? { ...r, status: "cancelled" } : r))
         );
-        alert(`Success! ${staleRequests.length} puraane requests cancel kar diye gaye hain.`);
+        alert(`Success! ${staleRequests.length} stale requests have been cancelled.`);
       } else {
-        alert("Requests cancel karne me dikkat aayi. Kripya dubara try karein.");
+        alert("Failed to cancel requests. Please try again.");
       }
     } catch (err) {
       console.error("Error bulk cancelling requests:", err);
@@ -295,14 +295,14 @@ export function RequestList({ initialRequests }: RequestListProps) {
             <div className="space-y-0.5">
               <div className="flex items-center gap-2 flex-wrap">
                 <span className="text-xs sm:text-sm font-bold text-amber-300">
-                  {staleRequests.length} Puraani / Unfulfilled Requests Detected
+                  {staleRequests.length} Stale / Unfulfilled Requests Detected
                 </span>
                 <span className="text-[10px] font-mono text-amber-400/90 bg-amber-500/15 px-2 py-0.5 rounded border border-amber-500/30">
                   Stale Orders
                 </span>
               </div>
               <p className="text-[11px] sm:text-xs text-zinc-300 leading-relaxed">
-                In orders ko kisi campus runner ne accept ya deliver nahi kiya. Inhe 1-click me cancel karke active orders list clean karein.
+                These orders were not accepted or delivered by any campus runner. Cancel them in 1-click to clean up your active orders list.
               </p>
             </div>
           </div>

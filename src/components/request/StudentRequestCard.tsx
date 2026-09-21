@@ -127,8 +127,8 @@ export const StudentRequestCard = memo(function StudentRequestCard({
 
     const isAccepted = ["accepted", "picked_up", "in_transit"].includes(request.status);
     const confirmMessage = isAccepted
-      ? "Kya aap is delivery order ko cancel karna chahte hain? Runner ne ise kaafi der se complete nahi kiya hai."
-      : "Kya aap is delivery request ko cancel karna chahte hain?";
+      ? "Are you sure you want to cancel this delivery order? The runner has been inactive for a while."
+      : "Are you sure you want to cancel this delivery request?";
 
     if (!window.confirm(confirmMessage)) {
       return;
@@ -145,7 +145,7 @@ export const StudentRequestCard = memo(function StudentRequestCard({
           router.refresh();
         }
       } else {
-        alert("Request cancel karne me dikkat aayi. Kripya dubara koshish karein.");
+        alert("Failed to cancel request. Please try again.");
       }
     } catch (err) {
       console.error("Error cancelling request:", err);
