@@ -17,8 +17,6 @@ import { motion } from "framer-motion";
 import { ArrowRight, ChevronDown, Users, Bike, Package } from "lucide-react";
 import { CampusBackground } from "./CampusBackground";
 import { FloatingObjects } from "./FloatingObjects";
-import { AtmosphereBadge } from "./AtmosphereBadge";
-import { useAtmosphere } from "@/lib/weather/rajkotAtmosphere";
 import { ROUTES } from "@/constants/routes";
 import { cn } from "@/lib/utils";
 import { createClient } from "@/lib/supabase/client";
@@ -280,27 +278,23 @@ function HeroButtons() {
 // ─── Main Hero Section ────────────────────────────────────────────────────────
 
 export function HeroSection() {
-  const { atmos, override, clearOverride, isOverriding } = useAtmosphere();
-  const d = atmos.heroOverlayDark;
-
   return (
     <section
       id="home"
       aria-label="UniVerse hero"
       className="relative w-full min-h-screen overflow-hidden flex items-center justify-center"
     >
-      {/* ── Campus Background (receives live atmosphere state) ── */}
-      <CampusBackground atmos={atmos} />
+      {/* ── Campus Background ── */}
+      <CampusBackground />
 
-      {/* ── Dynamic Dark overlay — adapts to time of day ── */}
+      {/* ── Dark overlay — radial from center ── */}
       <div
         className="absolute inset-0 z-10"
         style={{
           background: `
-            radial-gradient(ellipse 80% 60% at 50% 40%, rgba(5,15,10,${(d * 0.5).toFixed(2)}) 0%, rgba(5,15,10,${d.toFixed(2)}) 100%),
-            linear-gradient(to bottom, rgba(5,15,10,${(d * 0.8).toFixed(2)}) 0%, rgba(5,15,10,${(d * 0.45).toFixed(2)}) 40%, rgba(5,15,10,${d.toFixed(2)}) 100%)
+            radial-gradient(ellipse 80% 60% at 50% 40%, rgba(5,15,10,0.35) 0%, rgba(5,15,10,0.68) 100%),
+            linear-gradient(to bottom, rgba(5,15,10,0.55) 0%, rgba(5,15,10,0.30) 40%, rgba(5,15,10,0.70) 100%)
           `,
-          transition: "background 1.8s ease-in-out",
         }}
         aria-hidden="true"
       />
@@ -309,14 +303,6 @@ export function HeroSection() {
       <div className="absolute inset-0 z-10">
         <FloatingObjects />
       </div>
-
-      {/* ── Atmosphere Badge (top-right, above everything) ── */}
-      <AtmosphereBadge
-        atmos={atmos}
-        override={override}
-        clearOverride={clearOverride}
-        isOverriding={isOverriding}
-      />
 
       {/* ── Hero Content ── */}
       <div className="relative z-20 w-full max-w-4xl mx-auto px-4 text-center">
