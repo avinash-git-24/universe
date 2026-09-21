@@ -80,12 +80,12 @@ export function CampusBackground() {
 
         /* ── Celestial Animations ── */
         @keyframes star-twinkle {
-          0%, 100% { opacity: 0.25; transform: scale(0.8); }
-          50%       { opacity: 0.95; transform: scale(1.15); }
+          0%, 100% { opacity: 0.30; transform: scale(0.85); }
+          50%       { opacity: 1.00; transform: scale(1.30); filter: drop-shadow(0 0 5px rgba(224, 242, 254, 0.9)); }
         }
         @keyframes moon-breathe {
-          0%, 100% { opacity: 0.92; }
-          50%       { opacity: 1; filter: drop-shadow(0 0 10px rgba(186, 230, 253, 0.6)); }
+          0%, 100% { opacity: 0.92; filter: drop-shadow(0 0 10px rgba(186, 230, 253, 0.55)); }
+          50%       { opacity: 1.00; filter: drop-shadow(0 0 20px rgba(224, 242, 254, 0.85)); }
         }
 
         .cloud-a { animation: cloud-drift-a 55s linear infinite; }
@@ -101,10 +101,10 @@ export function CampusBackground() {
         .s3-leg-r { animation: leg-stride-r 0.9s ease-in-out infinite; transform-origin: 710px 582px; }
         .phone-screen { animation: phone-pulse 1.8s ease-in-out infinite; }
         .sun-halo { animation: sun-glow 4s ease-in-out infinite; }
-        .star-1 { animation: star-twinkle 3.2s ease-in-out infinite; }
-        .star-2 { animation: star-twinkle 4.1s ease-in-out infinite 0.7s; }
-        .star-3 { animation: star-twinkle 2.8s ease-in-out infinite 1.4s; }
-        .star-4 { animation: star-twinkle 3.6s ease-in-out infinite 2.1s; }
+        .star-1 { animation: star-twinkle 3.0s ease-in-out infinite; }
+        .star-2 { animation: star-twinkle 4.2s ease-in-out infinite 0.8s; }
+        .star-3 { animation: star-twinkle 2.7s ease-in-out infinite 1.5s; }
+        .star-4 { animation: star-twinkle 3.5s ease-in-out infinite 2.2s; }
         .moon-glow { animation: moon-breathe 4s ease-in-out infinite; }
       `}</style>
 
@@ -121,34 +121,35 @@ export function CampusBackground() {
           <linearGradient id="uvSkyGrad" x1="0" y1="0" x2="0" y2="1">
             <stop
               offset="0%"
-              stopColor={isNight ? "#091124" : "#9EC8E0"}
+              stopColor={isNight ? "#060D20" : "#9EC8E0"}
               style={{ transition: "stop-color 1.2s ease-in-out" }}
             />
             <stop
-              offset="40%"
-              stopColor={isNight ? "#0F1E3D" : "#BDDAED"}
+              offset="45%"
+              stopColor={isNight ? "#0D1D42" : "#BDDAED"}
               style={{ transition: "stop-color 1.2s ease-in-out" }}
             />
             <stop
               offset="100%"
-              stopColor={isNight ? "#1C2E56" : "#D9EDF6"}
+              stopColor={isNight ? "#173166" : "#D9EDF6"}
               style={{ transition: "stop-color 1.2s ease-in-out" }}
             />
           </linearGradient>
 
           {/* Moon Gradients & Mask (Active during Night) */}
-          <radialGradient id="uvMoonGlow" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stopColor="#BAE6FD" stopOpacity="0.4" />
-            <stop offset="100%" stopColor="#BAE6FD" stopOpacity="0" />
+          <radialGradient id="uvMoonAura" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor="#E0F2FE" stopOpacity="0.45" />
+            <stop offset="60%" stopColor="#BAE6FD" stopOpacity="0.15" />
+            <stop offset="100%" stopColor="#38BDF8" stopOpacity="0" />
           </radialGradient>
           <linearGradient id="uvMoonGrad" x1="0" y1="0" x2="1" y2="1">
             <stop offset="0%" stopColor="#FFFFFF" />
-            <stop offset="50%" stopColor="#E0F2FE" />
+            <stop offset="40%" stopColor="#F0F9FF" />
             <stop offset="100%" stopColor="#BAE6FD" />
           </linearGradient>
           <mask id="uvCrescentMask">
-            <circle cx="1330" cy="88" r="28" fill="white" />
-            <circle cx="1342" cy="78" r="24" fill="black" />
+            <circle cx="1250" cy="92" r="30" fill="white" />
+            <circle cx="1264" cy="80" r="26" fill="black" />
           </mask>
 
           {/* Ground */}
@@ -213,57 +214,70 @@ export function CampusBackground() {
           </>
         )}
 
-        {/* ── Night Mode: Glowing Crescent Moon & Twinkling Stars ── */}
+        {/* ── Night Mode: Glowing Crescent Moon & Sparkling Stars ── */}
         {isNight && (
           <>
-            {/* Lunar Glow & Crescent Moon */}
-            <circle cx="1330" cy="88" r="64" fill="url(#uvMoonGlow)" />
+            {/* Outer Lunar Aura */}
+            <circle cx="1250" cy="92" r="85" fill="url(#uvMoonAura)" className="moon-glow" />
+            <circle cx="1250" cy="92" r="50" fill="url(#uvMoonAura)" />
+            {/* Radiant Crescent Moon */}
             <circle
-              cx="1330"
-              cy="88"
-              r="28"
+              cx="1250"
+              cy="92"
+              r="30"
               fill="url(#uvMoonGrad)"
               mask="url(#uvCrescentMask)"
               className="moon-glow"
             />
 
-            {/* Twinkling Stars across upper sky */}
-            <g className="star-1" style={{ transformOrigin: "140px 60px" }}>
-              <path d="M 140 55 Q 140 60 135 60 Q 140 60 140 65 Q 140 60 145 60 Q 140 60 140 55 Z" fill="#E0F2FE" />
+            {/* Twinkling Diamond & Point Stars across upper sky */}
+            <g className="star-1" style={{ transformOrigin: "120px 55px" }}>
+              <path d="M 120 48 Q 120 55 113 55 Q 120 55 120 62 Q 120 55 127 55 Q 120 55 120 48 Z" fill="#F0F9FF" />
+              <circle cx="120" cy="55" r="1.5" fill="#FFFFFF" />
             </g>
-            <circle cx="280" cy="90" r="1.5" fill="#BAE6FD" className="star-2" />
-            <g className="star-3" style={{ transformOrigin: "420px 45px" }}>
-              <path d="M 420 40 Q 420 45 415 45 Q 420 45 420 50 Q 420 45 425 45 Q 420 45 420 40 Z" fill="#FFFFFF" />
+            <circle cx="230" cy="75" r="2" fill="#E0F2FE" className="star-2" />
+            <g className="star-3" style={{ transformOrigin: "360px 45px" }}>
+              <path d="M 360 39 Q 360 45 354 45 Q 360 45 360 51 Q 360 45 366 45 Q 360 45 360 39 Z" fill="#BAE6FD" />
             </g>
-            <circle cx="620" cy="110" r="1.5" fill="#E0F2FE" className="star-4" />
-            <g className="star-2" style={{ transformOrigin: "800px 50px" }}>
-              <path d="M 800 45 Q 800 50 795 50 Q 800 50 800 55 Q 800 50 805 50 Q 800 50 800 45 Z" fill="#BAE6FD" />
+            <circle cx="480" cy="85" r="1.8" fill="#FFFFFF" className="star-4" />
+            <g className="star-1" style={{ transformOrigin: "640px 60px" }}>
+              <path d="M 640 53 Q 640 60 633 60 Q 640 60 640 67 Q 640 60 647 60 Q 640 60 640 53 Z" fill="#F0F9FF" />
+              <circle cx="640" cy="60" r="1.2" fill="#FFFFFF" />
             </g>
-            <circle cx="940" cy="80" r="1.5" fill="#FFFFFF" className="star-1" />
-            <circle cx="1060" cy="40" r="1.5" fill="#E0F2FE" className="star-3" />
-            <g className="star-4" style={{ transformOrigin: "1180px 70px" }}>
-              <path d="M 1180 65 Q 1180 70 1175 70 Q 1180 70 1180 75 Q 1180 70 1185 70 Q 1180 70 1180 65 Z" fill="#E0F2FE" />
+            <circle cx="780" cy="40" r="2.2" fill="#E0F2FE" className="star-2" />
+            <g className="star-3" style={{ transformOrigin: "890px 70px" }}>
+              <path d="M 890 63 Q 890 70 883 70 Q 890 70 890 77 Q 890 70 897 70 Q 890 70 890 63 Z" fill="#BAE6FD" />
+              <circle cx="890" cy="70" r="1.2" fill="#FFFFFF" />
             </g>
+            <circle cx="1020" cy="50" r="2" fill="#FFFFFF" className="star-4" />
+            <g className="star-2" style={{ transformOrigin: "1120px 75px" }}>
+              <path d="M 1120 69 Q 1120 75 1114 75 Q 1120 75 1120 81 Q 1120 75 1126 75 Q 1120 75 1120 69 Z" fill="#E0F2FE" />
+            </g>
+            <circle cx="1350" cy="50" r="2" fill="#BAE6FD" className="star-1" />
+            <circle cx="1405" cy="80" r="2.2" fill="#FFFFFF" className="star-3" />
+            <circle cx="70" cy="110" r="1.6" fill="#BAE6FD" className="star-4" />
+            <circle cx="530" cy="35" r="1.6" fill="#E0F2FE" className="star-1" />
+            <circle cx="960" cy="110" r="1.8" fill="#FFFFFF" className="star-2" />
           </>
         )}
 
-        {/* ── Clouds (soft white in Day, graceful night-silver at Night) ── */}
+        {/* ── Clouds (radiant white in Day, graceful moonlit silver-mist at Night) ── */}
         <g className="cloud-a" style={{ transition: "opacity 1.2s ease" }}>
-          <ellipse cx="160" cy="95" rx="90" ry="32" fill={isNight ? "#CBD5E1" : "white"} opacity={isNight ? 0.35 : 0.88} />
-          <ellipse cx="230" cy="82" rx="65" ry="26" fill={isNight ? "#CBD5E1" : "white"} opacity={isNight ? 0.35 : 0.88} />
-          <ellipse cx="90" cy="102" rx="60" ry="24" fill={isNight ? "#CBD5E1" : "white"} opacity={isNight ? 0.35 : 0.88} />
-          <ellipse cx="190" cy="75" rx="45" ry="20" fill={isNight ? "#CBD5E1" : "white"} opacity={isNight ? 0.28 : 0.78} />
+          <ellipse cx="160" cy="95" rx="90" ry="32" fill="white" opacity={isNight ? 0.15 : 0.88} />
+          <ellipse cx="230" cy="82" rx="65" ry="26" fill="white" opacity={isNight ? 0.15 : 0.88} />
+          <ellipse cx="90" cy="102" rx="60" ry="24" fill="white" opacity={isNight ? 0.15 : 0.88} />
+          <ellipse cx="190" cy="75" rx="45" ry="20" fill="white" opacity={isNight ? 0.12 : 0.78} />
         </g>
         <g className="cloud-b" style={{ transition: "opacity 1.2s ease" }}>
-          <ellipse cx="560" cy="68" rx="110" ry="38" fill={isNight ? "#CBD5E1" : "white"} opacity={isNight ? 0.30 : 0.72} />
-          <ellipse cx="648" cy="55" rx="78" ry="30" fill={isNight ? "#CBD5E1" : "white"} opacity={isNight ? 0.30 : 0.72} />
-          <ellipse cx="472" cy="74" rx="72" ry="29" fill={isNight ? "#CBD5E1" : "white"} opacity={isNight ? 0.30 : 0.72} />
-          <ellipse cx="600" cy="48" rx="52" ry="22" fill={isNight ? "#CBD5E1" : "white"} opacity={isNight ? 0.25 : 0.65} />
+          <ellipse cx="560" cy="68" rx="110" ry="38" fill="white" opacity={isNight ? 0.14 : 0.72} />
+          <ellipse cx="648" cy="55" rx="78" ry="30" fill="white" opacity={isNight ? 0.14 : 0.72} />
+          <ellipse cx="472" cy="74" rx="72" ry="29" fill="white" opacity={isNight ? 0.14 : 0.72} />
+          <ellipse cx="600" cy="48" rx="52" ry="22" fill="white" opacity={isNight ? 0.11 : 0.65} />
         </g>
         <g className="cloud-c" style={{ transition: "opacity 1.2s ease" }}>
-          <ellipse cx="900" cy="115" rx="80" ry="30" fill={isNight ? "#CBD5E1" : "white"} opacity={isNight ? 0.25 : 0.65} />
-          <ellipse cx="970" cy="103" rx="58" ry="23" fill={isNight ? "#CBD5E1" : "white"} opacity={isNight ? 0.25 : 0.65} />
-          <ellipse cx="828" cy="120" rx="55" ry="22" fill={isNight ? "#CBD5E1" : "white"} opacity={isNight ? 0.25 : 0.65} />
+          <ellipse cx="900" cy="115" rx="80" ry="30" fill="white" opacity={isNight ? 0.12 : 0.65} />
+          <ellipse cx="970" cy="103" rx="58" ry="23" fill="white" opacity={isNight ? 0.12 : 0.65} />
+          <ellipse cx="828" cy="120" rx="55" ry="22" fill="white" opacity={isNight ? 0.12 : 0.65} />
         </g>
 
         {/* ═══════════════════════════════════════════════
