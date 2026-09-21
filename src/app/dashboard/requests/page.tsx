@@ -53,9 +53,20 @@ export default async function MyRequestsPage() {
         {/* ── Page Header ── */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4">
           <div>
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-white flex items-center gap-2">
-              My Requests
-              <span className="text-emerald-400 text-2xl sm:text-3xl">✦</span>
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-white flex items-center gap-2.5">
+              <span>My Requests</span>
+              <span className="relative inline-flex items-center justify-center group cursor-pointer select-none" title="UniVerse Live Campus Missions">
+                {/* Ambient Soft Radial Backlight Glow */}
+                <span className="absolute -inset-1.5 rounded-full bg-emerald-400/25 blur-md animate-pulse pointer-events-none" />
+                {/* Radiant Holographic Star with Multi-Layer Neon Drop Shadow */}
+                <span className="relative text-2xl sm:text-3xl font-black bg-gradient-to-tr from-emerald-400 via-teal-300 to-cyan-300 bg-clip-text text-transparent drop-shadow-[0_0_10px_rgba(52,211,153,0.85)] drop-shadow-[0_0_22px_rgba(16,185,129,0.5)] transition-all duration-300 group-hover:scale-125 group-hover:rotate-12 inline-block">
+                  ✦
+                </span>
+                {/* Micro Satellite Sparkle on top-right */}
+                <span className="absolute -top-1 -right-1 text-[10px] text-cyan-300 animate-ping opacity-75 pointer-events-none">
+                  ✦
+                </span>
+              </span>
             </h1>
             <p className="text-white/60 mt-0.5 sm:mt-1 text-xs sm:text-sm lg:text-base font-medium">
               View, track, and manage your campus delivery orders in real time.
