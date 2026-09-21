@@ -79,10 +79,6 @@ export function CampusBackground() {
         }
 
         /* ── Celestial Animations ── */
-        @keyframes star-twinkle {
-          0%, 100% { opacity: 0.30; transform: scale(0.85); }
-          50%       { opacity: 1.00; transform: scale(1.30); filter: drop-shadow(0 0 5px rgba(224, 242, 254, 0.9)); }
-        }
         @keyframes moon-breathe {
           0%, 100% { opacity: 0.92; filter: drop-shadow(0 0 10px rgba(186, 230, 253, 0.55)); }
           50%       { opacity: 1.00; filter: drop-shadow(0 0 20px rgba(224, 242, 254, 0.85)); }
@@ -101,10 +97,6 @@ export function CampusBackground() {
         .s3-leg-r { animation: leg-stride-r 0.9s ease-in-out infinite; transform-origin: 710px 582px; }
         .phone-screen { animation: phone-pulse 1.8s ease-in-out infinite; }
         .sun-halo { animation: sun-glow 4s ease-in-out infinite; }
-        .star-1 { animation: star-twinkle 3.0s ease-in-out infinite; }
-        .star-2 { animation: star-twinkle 4.2s ease-in-out infinite 0.8s; }
-        .star-3 { animation: star-twinkle 2.7s ease-in-out infinite 1.5s; }
-        .star-4 { animation: star-twinkle 3.5s ease-in-out infinite 2.2s; }
         .moon-glow { animation: moon-breathe 4s ease-in-out infinite; }
       `}</style>
 
@@ -214,7 +206,7 @@ export function CampusBackground() {
           </>
         )}
 
-        {/* ── Night Mode: Glowing Crescent Moon & Sparkling Stars ── */}
+        {/* ── Night Mode: Glowing Crescent Moon ── */}
         {isNight && (
           <>
             {/* Outer Lunar Aura */}
@@ -229,35 +221,6 @@ export function CampusBackground() {
               mask="url(#uvCrescentMask)"
               className="moon-glow"
             />
-
-            {/* Twinkling Diamond & Point Stars across upper sky */}
-            <g className="star-1" style={{ transformOrigin: "120px 55px" }}>
-              <path d="M 120 48 Q 120 55 113 55 Q 120 55 120 62 Q 120 55 127 55 Q 120 55 120 48 Z" fill="#F0F9FF" />
-              <circle cx="120" cy="55" r="1.5" fill="#FFFFFF" />
-            </g>
-            <circle cx="230" cy="75" r="2" fill="#E0F2FE" className="star-2" />
-            <g className="star-3" style={{ transformOrigin: "360px 45px" }}>
-              <path d="M 360 39 Q 360 45 354 45 Q 360 45 360 51 Q 360 45 366 45 Q 360 45 360 39 Z" fill="#BAE6FD" />
-            </g>
-            <circle cx="480" cy="85" r="1.8" fill="#FFFFFF" className="star-4" />
-            <g className="star-1" style={{ transformOrigin: "640px 60px" }}>
-              <path d="M 640 53 Q 640 60 633 60 Q 640 60 640 67 Q 640 60 647 60 Q 640 60 640 53 Z" fill="#F0F9FF" />
-              <circle cx="640" cy="60" r="1.2" fill="#FFFFFF" />
-            </g>
-            <circle cx="780" cy="40" r="2.2" fill="#E0F2FE" className="star-2" />
-            <g className="star-3" style={{ transformOrigin: "890px 70px" }}>
-              <path d="M 890 63 Q 890 70 883 70 Q 890 70 890 77 Q 890 70 897 70 Q 890 70 890 63 Z" fill="#BAE6FD" />
-              <circle cx="890" cy="70" r="1.2" fill="#FFFFFF" />
-            </g>
-            <circle cx="1020" cy="50" r="2" fill="#FFFFFF" className="star-4" />
-            <g className="star-2" style={{ transformOrigin: "1120px 75px" }}>
-              <path d="M 1120 69 Q 1120 75 1114 75 Q 1120 75 1120 81 Q 1120 75 1126 75 Q 1120 75 1120 69 Z" fill="#E0F2FE" />
-            </g>
-            <circle cx="1350" cy="50" r="2" fill="#BAE6FD" className="star-1" />
-            <circle cx="1405" cy="80" r="2.2" fill="#FFFFFF" className="star-3" />
-            <circle cx="70" cy="110" r="1.6" fill="#BAE6FD" className="star-4" />
-            <circle cx="530" cy="35" r="1.6" fill="#E0F2FE" className="star-1" />
-            <circle cx="960" cy="110" r="1.8" fill="#FFFFFF" className="star-2" />
           </>
         )}
 
