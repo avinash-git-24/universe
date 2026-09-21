@@ -53,9 +53,8 @@ export default async function MyRequestsPage() {
         {/* ── Page Header ── */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4">
           <div>
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-white flex items-center gap-2">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-white">
               My Requests
-              <span className="text-emerald-400 text-2xl sm:text-3xl">✦</span>
             </h1>
             <p className="text-white/60 mt-0.5 sm:mt-1 text-xs sm:text-sm lg:text-base font-medium">
               View, track, and manage your campus delivery orders in real time.
