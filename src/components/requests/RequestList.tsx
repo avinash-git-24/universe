@@ -434,7 +434,14 @@ export function RequestList({ initialRequests }: RequestListProps) {
 
       {/* Request List Cards or Empty State */}
       {filteredRequests.length === 0 ? (
-        <EmptyRequests category={activeTab} showCreate={initialRequests.length === 0 || activeTab === "active"} />
+        <EmptyRequests
+          category={activeTab}
+          showCreate={initialRequests.length === 0 || activeTab === "active"}
+          completedCount={counts.completed}
+          onViewCompleted={() => handleTabChange("completed")}
+          isSearching={searchQuery.trim() !== ""}
+          onClearSearch={() => handleSearchChange("")}
+        />
       ) : (
         <div className="grid gap-3.5 sm:gap-6 lg:gap-8">
           {currentRequests.map((req) => (
