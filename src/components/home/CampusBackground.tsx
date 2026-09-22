@@ -43,43 +43,6 @@ export function CampusBackground() {
           100% { transform: translateX(1600px); }
         }
 
-        /* ── Student Walking Animations (Multi-Directional Continuous Campus) ── */
-        @keyframes walk-ltr {
-          0%   { transform: translateX(-880px); }
-          100% { transform: translateX(880px); }
-        }
-        @keyframes walk-rtl {
-          0%   { transform: translateX(880px); }
-          100% { transform: translateX(-880px); }
-        }
-        @keyframes student-step-bob {
-          0%, 100% { transform: translateY(0px); }
-          50%       { transform: translateY(-2.5px); }
-        }
-        @keyframes arm-swing-l {
-          0%, 100% { transform: rotate(-15deg); }
-          50%       { transform: rotate(15deg); }
-        }
-        @keyframes arm-swing-r {
-          0%, 100% { transform: rotate(12deg); }
-          50%       { transform: rotate(-12deg); }
-        }
-        @keyframes leg-swing-l {
-          0%, 100% { transform: rotate(18deg); }
-          50%       { transform: rotate(-18deg); }
-        }
-        @keyframes leg-swing-r {
-          0%, 100% { transform: rotate(-18deg); }
-          50%       { transform: rotate(18deg); }
-        }
-        @keyframes phone-pulse {
-          0%, 100% { opacity: 0.7; }
-          50%       { opacity: 1; }
-        }
-        @keyframes sun-glow {
-          0%, 100% { opacity: 0.12; r: 68; }
-          50%       { opacity: 0.22; r: 76; }
-        }
         @keyframes flag-wave {
           0%, 100% { d: path("M 724 168 L 760 175 L 724 182"); }
           50%       { d: path("M 724 168 L 762 180 L 724 185"); }
@@ -106,36 +69,6 @@ export function CampusBackground() {
         .cloud-a { animation: cloud-drift-a 55s linear infinite; }
         .cloud-b { animation: cloud-drift-b 72s linear infinite 18s; }
         .cloud-c { animation: cloud-drift-c 90s linear infinite 36s; }
-
-        .s3-traverse { animation: walk-ltr 22s linear infinite -4s; }
-        .s2-traverse { animation: walk-ltr 32s linear infinite -16s; }
-        .s1-traverse { animation: walk-rtl 26s linear infinite -8s; }
-
-        .walker-bob-1 { animation: student-step-bob 0.48s ease-in-out infinite; }
-        .walker-bob-2 { animation: student-step-bob 0.52s ease-in-out infinite; }
-        .walker-bob-3 { animation: student-step-bob 0.44s ease-in-out infinite; }
-
-        .walk-leg-l {
-          animation: leg-swing-l 0.9s ease-in-out infinite;
-          transform-box: fill-box;
-          transform-origin: 50% 5%;
-        }
-        .walk-leg-r {
-          animation: leg-swing-r 0.9s ease-in-out infinite;
-          transform-box: fill-box;
-          transform-origin: 50% 5%;
-        }
-        .walk-arm-l {
-          animation: arm-swing-l 0.9s ease-in-out infinite;
-          transform-box: fill-box;
-          transform-origin: 85% 50%;
-        }
-        .walk-arm-r {
-          animation: arm-swing-r 0.9s ease-in-out infinite;
-          transform-box: fill-box;
-          transform-origin: 15% 50%;
-        }
-        .phone-screen { animation: phone-pulse 1.8s ease-in-out infinite; }
         .sun-halo { animation: sun-glow 4s ease-in-out infinite; }
         .moon-glow { animation: moon-breathe 4s ease-in-out infinite; }
         .star-pulse-1 { animation: star-fade-1 3.5s ease-in-out infinite; }
@@ -597,134 +530,7 @@ export function CampusBackground() {
         {/* Footpath near road */}
         <rect x="0" y="636" width="1440" height="8" fill="#D4D8DF" opacity="0.35" />
 
-        {/* ═══════════════════════════════════════════════
-            LAYER 9 — STUDENTS (Continuous Multi-Directional Campus Activity)
-        ═══════════════════════════════════════════════ */}
 
-        {/* ── Student 3: Campus Runner (Indigo shirt, UV delivery bag) — Walking Left to Right (Upper lane, y=602) ── */}
-        <g className="s3-traverse">
-          <g className="walker-bob-3">
-            {/* Moving Shadow */}
-            <ellipse cx="720" cy="602" rx="16" ry="5" fill="#000" opacity="0.13" />
-
-            {/* Left Leg + Shoe */}
-            <g className="walk-leg-l">
-              <rect x="713" y="578" width="7" height="21" fill="#1E3A5F" rx="3" />
-              <rect x="711" y="597" width="11" height="5" fill="#1E3A5F" rx="2" />
-            </g>
-
-            {/* Right Leg + Shoe */}
-            <g className="walk-leg-r">
-              <rect x="723" y="578" width="7" height="21" fill="#1E3A5F" rx="3" />
-              <rect x="723" y="597" width="11" height="5" fill="#1E3A5F" rx="2" />
-            </g>
-
-            {/* Body — Indigo UniVerse Runner shirt */}
-            <rect x="708" y="552" width="26" height="28" fill="#6366F1" rx="5" />
-            <rect x="719" y="552" width="4" height="28" fill="#4F46E5" opacity="0.4" />
-
-            {/* Left arm (trailing swing) */}
-            <g className="walk-arm-l">
-              <rect x="695" y="557" width="14" height="6" fill="#C8956C" rx="3" />
-            </g>
-
-            {/* Right arm holding delivery bag */}
-            <g className="walk-arm-r">
-              <rect x="732" y="554" width="13" height="6" fill="#C8956C" rx="3" />
-              {/* UniVerse green delivery bag */}
-              <rect x="742" y="542" width="22" height="26" fill="#10B981" rx="4" />
-              <text x="753" y="554" textAnchor="middle" fill="white" fontSize="8" fontFamily="sans-serif" fontWeight="800">UV</text>
-              <rect x="745" y="563" width="16" height="2" fill="white" opacity="0.4" rx="1" />
-              {/* Bag handle */}
-              <path d="M 747 542 Q 750 536 753 536 Q 756 536 759 542" fill="none" stroke="white" strokeWidth="1.5" opacity="0.6" />
-            </g>
-
-            {/* Head */}
-            <circle cx="721" cy="544" r="11" fill="#D4A070" />
-            {/* Hair */}
-            <ellipse cx="721" cy="536" rx="11" ry="5" fill="#3D2B1F" />
-          </g>
-        </g>
-
-        {/* ── Student 2: Campus Collector (Amber shirt, carrying snack) — Walking Left to Right (Middle lane, y=614) ── */}
-        <g className="s2-traverse">
-          <g className="walker-bob-2">
-            {/* Moving Shadow */}
-            <ellipse cx="720" cy="614" rx="16" ry="5" fill="#000" opacity="0.13" />
-
-            {/* Left Leg + Shoe */}
-            <g className="walk-leg-l">
-              <rect x="713" y="590" width="7" height="21" fill="#374151" rx="3" />
-              <rect x="711" y="609" width="11" height="5" fill="#374151" rx="2" />
-            </g>
-
-            {/* Right Leg + Shoe */}
-            <g className="walk-leg-r">
-              <rect x="723" y="590" width="7" height="21" fill="#374151" rx="3" />
-              <rect x="723" y="609" width="11" height="5" fill="#374151" rx="2" />
-            </g>
-
-            {/* Body — Amber shirt */}
-            <rect x="708" y="564" width="26" height="28" fill="#F59E0B" rx="5" />
-
-            {/* Left arm */}
-            <g className="walk-arm-l">
-              <rect x="695" y="569" width="14" height="6" fill="#C8956C" rx="3" />
-            </g>
-
-            {/* Right arm holding snack bag */}
-            <g className="walk-arm-r">
-              <rect x="732" y="566" width="13" height="6" fill="#C8956C" rx="3" />
-              <rect x="741" y="558" width="14" height="18" fill="#10B981" rx="3" opacity="0.95" />
-              <text x="748" y="570" textAnchor="middle" fill="white" fontSize="7" fontFamily="sans-serif" fontWeight="800">UV</text>
-            </g>
-
-            {/* Head */}
-            <circle cx="721" cy="556" r="11" fill="#C8956C" />
-            {/* Hair */}
-            <ellipse cx="721" cy="548" rx="11" ry="5" fill="#1A0A04" />
-          </g>
-        </g>
-
-        {/* ── Student 1: Student Requester (Green shirt, phone) — Walking Right to Left (Opposite Direction, Front lane, y=626) ── */}
-        <g className="s1-traverse">
-          <g className="walker-bob-1" transform="scale(-1, 1)" style={{ transformOrigin: "720px 590px" }}>
-            {/* Moving Shadow */}
-            <ellipse cx="720" cy="626" rx="16" ry="5" fill="#000" opacity="0.14" />
-
-            {/* Left Leg + Shoe */}
-            <g className="walk-leg-l">
-              <rect x="713" y="602" width="7" height="21" fill="#1E3A5F" rx="3" />
-              <rect x="711" y="621" width="11" height="5" fill="#1E3A5F" rx="2" />
-            </g>
-
-            {/* Right Leg + Shoe */}
-            <g className="walk-leg-r">
-              <rect x="723" y="602" width="7" height="21" fill="#1E3A5F" rx="3" />
-              <rect x="723" y="621" width="11" height="5" fill="#1E3A5F" rx="2" />
-            </g>
-
-            {/* Body — Green shirt */}
-            <rect x="708" y="576" width="26" height="28" fill="#10B981" rx="5" />
-
-            {/* Left arm */}
-            <g className="walk-arm-l">
-              <rect x="695" y="581" width="14" height="6" fill="#D4A070" rx="3" />
-            </g>
-
-            {/* Right arm holding phone */}
-            <g className="walk-arm-r">
-              <rect x="732" y="578" width="13" height="6" fill="#D4A070" rx="3" />
-              <rect x="741" y="568" width="12" height="18" fill="#1A1A2E" rx="3" />
-              <rect x="743" y="570" width="8" height="14" rx="1.5" fill="#4FC3F7" className="phone-screen" />
-            </g>
-
-            {/* Head */}
-            <circle cx="721" cy="568" r="11" fill="#D4A070" />
-            {/* Hair */}
-            <ellipse cx="721" cy="560" rx="11" ry="5" fill="#2C1810" />
-          </g>
-        </g>
 
         {/* ═══════════════════════════════════════════════
             LAYER 10 — ATMOSPHERIC DEPTH
