@@ -189,6 +189,11 @@ export function CampusBackground() {
             <feGaussianBlur stdDeviation="2" result="blur" />
             <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
           </filter>
+
+          {/* Soft Night Cloud Filter (feathery blur so clouds look organic and smoky, zero hard edges) */}
+          <filter id="uvCloudSoft" x="-30%" y="-30%" width="160%" height="160%">
+            <feGaussianBlur stdDeviation="3.5" />
+          </filter>
         </defs>
 
         {/* ═══════════════════════════════════════════════
@@ -224,28 +229,39 @@ export function CampusBackground() {
           </>
         )}
 
-        {/* ── Clouds (Only in Day Mode — completely hidden at night to keep night sky crystal clear) ── */}
-        {!isNight && (
-          <>
-            <g className="cloud-a">
-              <ellipse cx="160" cy="95" rx="90" ry="32" fill="white" opacity="0.88" />
-              <ellipse cx="230" cy="82" rx="65" ry="26" fill="white" opacity="0.88" />
-              <ellipse cx="90" cy="102" rx="60" ry="24" fill="white" opacity="0.88" />
-              <ellipse cx="190" cy="75" rx="45" ry="20" fill="white" opacity="0.78" />
-            </g>
-            <g className="cloud-b">
-              <ellipse cx="560" cy="68" rx="110" ry="38" fill="white" opacity="0.72" />
-              <ellipse cx="648" cy="55" rx="78" ry="30" fill="white" opacity="0.72" />
-              <ellipse cx="472" cy="74" rx="72" ry="29" fill="white" opacity="0.72" />
-              <ellipse cx="600" cy="48" rx="52" ry="22" fill="white" opacity="0.65" />
-            </g>
-            <g className="cloud-c">
-              <ellipse cx="900" cy="115" rx="80" ry="30" fill="white" opacity="0.65" />
-              <ellipse cx="970" cy="103" rx="58" ry="23" fill="white" opacity="0.65" />
-              <ellipse cx="828" cy="120" rx="55" ry="22" fill="white" opacity="0.65" />
-            </g>
-          </>
-        )}
+        {/* ── Clouds (Visible in Both Day & Night — group-level opacity eliminates all internal seams/dots) ── */}
+        <g
+          className="cloud-a"
+          opacity={isNight ? 0.22 : 0.88}
+          filter={isNight ? "url(#uvCloudSoft)" : undefined}
+          style={{ transition: "opacity 1.2s ease" }}
+        >
+          <ellipse cx="160" cy="95" rx="90" ry="32" fill={isNight ? "#E0F2FE" : "white"} />
+          <ellipse cx="230" cy="82" rx="65" ry="26" fill={isNight ? "#E0F2FE" : "white"} />
+          <ellipse cx="90" cy="102" rx="60" ry="24" fill={isNight ? "#E0F2FE" : "white"} />
+          <ellipse cx="190" cy="75" rx="45" ry="20" fill={isNight ? "#E0F2FE" : "white"} />
+        </g>
+        <g
+          className="cloud-b"
+          opacity={isNight ? 0.18 : 0.72}
+          filter={isNight ? "url(#uvCloudSoft)" : undefined}
+          style={{ transition: "opacity 1.2s ease" }}
+        >
+          <ellipse cx="560" cy="68" rx="110" ry="38" fill={isNight ? "#E0F2FE" : "white"} />
+          <ellipse cx="648" cy="55" rx="78" ry="30" fill={isNight ? "#E0F2FE" : "white"} />
+          <ellipse cx="472" cy="74" rx="72" ry="29" fill={isNight ? "#E0F2FE" : "white"} />
+          <ellipse cx="600" cy="48" rx="52" ry="22" fill={isNight ? "#E0F2FE" : "white"} />
+        </g>
+        <g
+          className="cloud-c"
+          opacity={isNight ? 0.16 : 0.65}
+          filter={isNight ? "url(#uvCloudSoft)" : undefined}
+          style={{ transition: "opacity 1.2s ease" }}
+        >
+          <ellipse cx="900" cy="115" rx="80" ry="30" fill={isNight ? "#E0F2FE" : "white"} />
+          <ellipse cx="970" cy="103" rx="58" ry="23" fill={isNight ? "#E0F2FE" : "white"} />
+          <ellipse cx="828" cy="120" rx="55" ry="22" fill={isNight ? "#E0F2FE" : "white"} />
+        </g>
 
         {/* ═══════════════════════════════════════════════
             LAYER 2 — DISTANT TREE LINE / HILLS
