@@ -84,16 +84,16 @@ export function CampusBackground() {
           50%       { opacity: 1.00; filter: drop-shadow(0 0 20px rgba(224, 242, 254, 0.85)); }
         }
         @keyframes star-fade-1 {
-          0%, 100% { opacity: 0.20; }
-          50%       { opacity: 0.90; filter: drop-shadow(0 0 3px rgba(224, 242, 254, 0.9)); }
+          0%, 100% { opacity: 0.35; filter: drop-shadow(0 0 2px rgba(224, 242, 254, 0.5)); }
+          50%       { opacity: 1.00; filter: drop-shadow(0 0 6px rgba(224, 242, 254, 0.95)); }
         }
         @keyframes star-fade-2 {
-          0%, 100% { opacity: 0.15; }
-          50%       { opacity: 0.85; filter: drop-shadow(0 0 3px rgba(224, 242, 254, 0.7)); }
+          0%, 100% { opacity: 0.30; filter: drop-shadow(0 0 2px rgba(186, 230, 253, 0.45)); }
+          50%       { opacity: 0.95; filter: drop-shadow(0 0 5px rgba(186, 230, 253, 0.9)); }
         }
         @keyframes star-fade-3 {
-          0%, 100% { opacity: 0.25; }
-          50%       { opacity: 1.00; filter: drop-shadow(0 0 4px rgba(240, 249, 255, 1)); }
+          0%, 100% { opacity: 0.40; filter: drop-shadow(0 0 2px rgba(240, 249, 255, 0.6)); }
+          50%       { opacity: 1.00; filter: drop-shadow(0 0 7px rgba(255, 255, 255, 1)); }
         }
 
         .cloud-a { animation: cloud-drift-a 55s linear infinite; }
@@ -243,20 +243,20 @@ export function CampusBackground() {
             />
 
             {/* ── Fixed Twinkling Stars (Pure Opacity Breathing — 100% Stable Position) ── */}
-            {/* Delicate Diamonds */}
-            <path d="M 130 47 Q 130 52 125 52 Q 130 52 130 57 Q 130 52 135 52 Q 130 52 130 47 Z" fill="#F0F9FF" className="star-pulse-1" />
-            <path d="M 420 43 Q 420 48 415 48 Q 420 48 420 53 Q 420 48 425 48 Q 420 48 420 43 Z" fill="#E0F2FE" className="star-pulse-2" />
-            <path d="M 840 53 Q 840 58 835 58 Q 840 58 840 63 Q 840 58 845 58 Q 840 58 840 53 Z" fill="#F0F9FF" className="star-pulse-3" />
+            {/* Delicate 4-Point Sparkle Diamonds */}
+            <path d="M 130 46 Q 130 52 124 52 Q 130 52 130 58 Q 130 52 136 52 Q 130 52 130 46 Z" fill="#F0F9FF" className="star-pulse-1" />
+            <path d="M 420 42 Q 420 48 414 48 Q 420 48 420 54 Q 420 48 426 48 Q 420 48 420 42 Z" fill="#E0F2FE" className="star-pulse-2" />
+            <path d="M 840 52 Q 840 58 834 58 Q 840 58 840 64 Q 840 58 846 58 Q 840 58 840 52 Z" fill="#F0F9FF" className="star-pulse-3" />
 
             {/* Micro Pinprick Stars */}
-            <circle cx="260" cy="78" r="1.3" fill="#E0F2FE" className="star-pulse-2" />
-            <circle cx="340" cy="40" r="1.1" fill="#FFFFFF" className="star-pulse-3" />
-            <circle cx="510" cy="88" r="1.3" fill="#BAE6FD" className="star-pulse-1" />
-            <circle cx="680" cy="42" r="1.4" fill="#FFFFFF" className="star-pulse-2" />
-            <circle cx="750" cy="74" r="1.1" fill="#E0F2FE" className="star-pulse-3" />
-            <circle cx="980" cy="45" r="1.3" fill="#FFFFFF" className="star-pulse-1" />
-            <circle cx="1090" cy="80" r="1.2" fill="#E0F2FE" className="star-pulse-2" />
-            <circle cx="1380" cy="60" r="1.3" fill="#BAE6FD" className="star-pulse-3" />
+            <circle cx="260" cy="78" r="1.9" fill="#E0F2FE" className="star-pulse-2" />
+            <circle cx="340" cy="40" r="1.8" fill="#FFFFFF" className="star-pulse-3" />
+            <circle cx="510" cy="88" r="2.0" fill="#BAE6FD" className="star-pulse-1" />
+            <circle cx="680" cy="42" r="2.2" fill="#FFFFFF" className="star-pulse-2" />
+            <circle cx="750" cy="74" r="1.8" fill="#E0F2FE" className="star-pulse-3" />
+            <circle cx="980" cy="45" r="2.0" fill="#FFFFFF" className="star-pulse-1" />
+            <circle cx="1090" cy="80" r="1.9" fill="#E0F2FE" className="star-pulse-2" />
+            <circle cx="1380" cy="60" r="2.0" fill="#BAE6FD" className="star-pulse-3" />
           </>
         )}
 
