@@ -83,6 +83,18 @@ export function CampusBackground() {
           0%, 100% { opacity: 0.92; filter: drop-shadow(0 0 10px rgba(186, 230, 253, 0.55)); }
           50%       { opacity: 1.00; filter: drop-shadow(0 0 20px rgba(224, 242, 254, 0.85)); }
         }
+        @keyframes star-fade-1 {
+          0%, 100% { opacity: 0.20; }
+          50%       { opacity: 0.90; filter: drop-shadow(0 0 3px rgba(224, 242, 254, 0.9)); }
+        }
+        @keyframes star-fade-2 {
+          0%, 100% { opacity: 0.15; }
+          50%       { opacity: 0.85; filter: drop-shadow(0 0 3px rgba(224, 242, 254, 0.7)); }
+        }
+        @keyframes star-fade-3 {
+          0%, 100% { opacity: 0.25; }
+          50%       { opacity: 1.00; filter: drop-shadow(0 0 4px rgba(240, 249, 255, 1)); }
+        }
 
         .cloud-a { animation: cloud-drift-a 55s linear infinite; }
         .cloud-b { animation: cloud-drift-b 72s linear infinite 18s; }
@@ -98,6 +110,9 @@ export function CampusBackground() {
         .phone-screen { animation: phone-pulse 1.8s ease-in-out infinite; }
         .sun-halo { animation: sun-glow 4s ease-in-out infinite; }
         .moon-glow { animation: moon-breathe 4s ease-in-out infinite; }
+        .star-pulse-1 { animation: star-fade-1 3.5s ease-in-out infinite; }
+        .star-pulse-2 { animation: star-fade-2 4.2s ease-in-out infinite 1.1s; }
+        .star-pulse-3 { animation: star-fade-3 2.9s ease-in-out infinite 1.8s; }
       `}</style>
 
       <svg
@@ -226,6 +241,22 @@ export function CampusBackground() {
               mask="url(#uvCrescentMask)"
               className="moon-glow"
             />
+
+            {/* ── Fixed Twinkling Stars (Pure Opacity Breathing — 100% Stable Position) ── */}
+            {/* Delicate Diamonds */}
+            <path d="M 130 47 Q 130 52 125 52 Q 130 52 130 57 Q 130 52 135 52 Q 130 52 130 47 Z" fill="#F0F9FF" className="star-pulse-1" />
+            <path d="M 420 43 Q 420 48 415 48 Q 420 48 420 53 Q 420 48 425 48 Q 420 48 420 43 Z" fill="#E0F2FE" className="star-pulse-2" />
+            <path d="M 840 53 Q 840 58 835 58 Q 840 58 840 63 Q 840 58 845 58 Q 840 58 840 53 Z" fill="#F0F9FF" className="star-pulse-3" />
+
+            {/* Micro Pinprick Stars */}
+            <circle cx="260" cy="78" r="1.3" fill="#E0F2FE" className="star-pulse-2" />
+            <circle cx="340" cy="40" r="1.1" fill="#FFFFFF" className="star-pulse-3" />
+            <circle cx="510" cy="88" r="1.3" fill="#BAE6FD" className="star-pulse-1" />
+            <circle cx="680" cy="42" r="1.4" fill="#FFFFFF" className="star-pulse-2" />
+            <circle cx="750" cy="74" r="1.1" fill="#E0F2FE" className="star-pulse-3" />
+            <circle cx="980" cy="45" r="1.3" fill="#FFFFFF" className="star-pulse-1" />
+            <circle cx="1090" cy="80" r="1.2" fill="#E0F2FE" className="star-pulse-2" />
+            <circle cx="1380" cy="60" r="1.3" fill="#BAE6FD" className="star-pulse-3" />
           </>
         )}
 
