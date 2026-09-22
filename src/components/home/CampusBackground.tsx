@@ -48,26 +48,33 @@ export function CampusBackground() {
           0%, 100% { transform: translateY(0px); }
           50%       { transform: translateY(-4px); }
         }
-        @keyframes student-walk {
-          0%, 100% { transform: translateX(0px) scaleX(1); }
-          25%       { transform: translateX(3px)  scaleX(1); }
-          75%       { transform: translateX(-3px) scaleX(1); }
+        @keyframes runner-cross {
+          0%   { transform: translateX(-800px); }
+          100% { transform: translateX(800px); }
         }
-        @keyframes arm-swing {
-          0%, 100% { transform: rotate(-10deg); }
+        @keyframes runner-step-bob {
+          0%, 100% { transform: translateY(0px); }
+          50%       { transform: translateY(-2.5px); }
+        }
+        @keyframes arm-swing-l {
+          0%, 100% { transform: rotate(-15deg); }
           50%       { transform: rotate(15deg); }
+        }
+        @keyframes arm-swing-r {
+          0%, 100% { transform: rotate(12deg); }
+          50%       { transform: rotate(-12deg); }
+        }
+        @keyframes leg-swing-l {
+          0%, 100% { transform: rotate(18deg); }
+          50%       { transform: rotate(-18deg); }
+        }
+        @keyframes leg-swing-r {
+          0%, 100% { transform: rotate(-18deg); }
+          50%       { transform: rotate(18deg); }
         }
         @keyframes phone-pulse {
           0%, 100% { opacity: 0.7; }
           50%       { opacity: 1; }
-        }
-        @keyframes leg-stride-l {
-          0%, 100% { transform: rotate(12deg); }
-          50%       { transform: rotate(-14deg); }
-        }
-        @keyframes leg-stride-r {
-          0%, 100% { transform: rotate(-14deg); }
-          50%       { transform: rotate(12deg); }
         }
         @keyframes sun-glow {
           0%, 100% { opacity: 0.12; r: 68; }
@@ -102,11 +109,28 @@ export function CampusBackground() {
 
         .s1-body  { animation: student-bob  2.1s ease-in-out infinite; transform-origin: 130px 585px; }
         .s2-body  { animation: student-bob  2.4s ease-in-out infinite 0.3s; transform-origin: 435px 580px; }
-        .s3-body  { animation: student-walk 0.9s ease-in-out infinite; transform-origin: 705px 580px; }
-        .s3-arm-l { animation: arm-swing    0.9s ease-in-out infinite; transform-origin: 699px 563px; }
-        .s3-arm-r { animation: arm-swing    0.9s ease-in-out infinite 0.45s; transform-origin: 715px 563px; }
-        .s3-leg-l { animation: leg-stride-l 0.9s ease-in-out infinite; transform-origin: 700px 582px; }
-        .s3-leg-r { animation: leg-stride-r 0.9s ease-in-out infinite; transform-origin: 710px 582px; }
+        .runner-traverse { animation: runner-cross 22s linear infinite; }
+        .runner-bob      { animation: runner-step-bob 0.45s ease-in-out infinite; }
+        .s3-leg-l {
+          animation: leg-swing-l 0.9s ease-in-out infinite;
+          transform-box: fill-box;
+          transform-origin: 50% 5%;
+        }
+        .s3-leg-r {
+          animation: leg-swing-r 0.9s ease-in-out infinite;
+          transform-box: fill-box;
+          transform-origin: 50% 5%;
+        }
+        .s3-arm-l {
+          animation: arm-swing-l 0.9s ease-in-out infinite;
+          transform-box: fill-box;
+          transform-origin: 85% 50%;
+        }
+        .s3-arm-r {
+          animation: arm-swing-r 0.9s ease-in-out infinite;
+          transform-box: fill-box;
+          transform-origin: 15% 50%;
+        }
         .phone-screen { animation: phone-pulse 1.8s ease-in-out infinite; }
         .sun-halo { animation: sun-glow 4s ease-in-out infinite; }
         .moon-glow { animation: moon-breathe 4s ease-in-out infinite; }
@@ -624,31 +648,49 @@ export function CampusBackground() {
           <rect x="438" y="598" width="10" height="5" fill="#374151" rx="2" />
         </g>
 
-        {/* ── Student 3: Deliverer — walking with UniVerse bag ── */}
-        <g className="s3-body">
-          <ellipse cx="705" cy="604" rx="16" ry="5" fill="#000" opacity="0.12" />
-          {/* Legs — animated */}
-          <rect className="s3-leg-l" x="697" y="580" width="8" height="22" fill="#1E3A5F" rx="3" />
-          <rect className="s3-leg-r" x="709" y="580" width="8" height="22" fill="#1E3A5F" rx="3" />
-          {/* Body — indigo shirt */}
-          <rect x="693" y="554" width="26" height="28" fill="#6366F1" rx="5" />
-          {/* Left arm animated */}
-          <rect className="s3-arm-l" x="680" y="559" width="14" height="6" fill="#C8956C" rx="3" />
-          {/* Right arm with delivery bag */}
-          <rect className="s3-arm-r" x="718" y="556" width="14" height="6" fill="#C8956C" rx="3" />
-          {/* UniVerse delivery bag */}
-          <rect x="728" y="544" width="22" height="26" fill="#10B981" rx="4" />
-          <text x="739" y="556" textAnchor="middle" fill="white" fontSize="8" fontFamily="sans-serif" fontWeight="800">UV</text>
-          <rect x="731" y="565" width="16" height="2" fill="white" opacity="0.4" rx="1" />
-          {/* Bag handle */}
-          <path d="M 733 544 Q 735 538 739 538 Q 743 538 745 544" fill="none" stroke="white" strokeWidth="1.5" opacity="0.6" />
-          {/* Head */}
-          <circle cx="706" cy="546" r="11" fill="#D4A070" />
-          {/* Hair */}
-          <ellipse cx="706" cy="538" rx="11" ry="5" fill="#3D2B1F" />
-          {/* Shoes */}
-          <rect x="695" y="600" width="10" height="5" fill="#1E3A5F" rx="2" />
-          <rect x="709" y="600" width="10" height="5" fill="#1E3A5F" rx="2" />
+        {/* ── Student 3: Campus Runner — actively walking across campus road with UniVerse bag ── */}
+        <g className="runner-traverse">
+          <g className="runner-bob">
+            {/* Moving Shadow */}
+            <ellipse cx="705" cy="604" rx="16" ry="5" fill="#000" opacity="0.14" />
+
+            {/* Left Leg + Shoe */}
+            <g className="s3-leg-l">
+              <rect x="698" y="580" width="7" height="21" fill="#1E3A5F" rx="3" />
+              <rect x="696" y="599" width="11" height="5" fill="#1E3A5F" rx="2" />
+            </g>
+
+            {/* Right Leg + Shoe */}
+            <g className="s3-leg-r">
+              <rect x="708" y="580" width="7" height="21" fill="#1E3A5F" rx="3" />
+              <rect x="708" y="599" width="11" height="5" fill="#1E3A5F" rx="2" />
+            </g>
+
+            {/* Body — Indigo UniVerse Runner shirt */}
+            <rect x="693" y="554" width="26" height="28" fill="#6366F1" rx="5" />
+            <rect x="704" y="554" width="4" height="28" fill="#4F46E5" opacity="0.4" />
+
+            {/* Left arm (trailing swing) */}
+            <g className="s3-arm-l">
+              <rect x="680" y="559" width="14" height="6" fill="#C8956C" rx="3" />
+            </g>
+
+            {/* Right arm holding delivery bag */}
+            <g className="s3-arm-r">
+              <rect x="717" y="556" width="13" height="6" fill="#C8956C" rx="3" />
+              {/* UniVerse green delivery bag */}
+              <rect x="727" y="544" width="22" height="26" fill="#10B981" rx="4" />
+              <text x="738" y="556" textAnchor="middle" fill="white" fontSize="8" fontFamily="sans-serif" fontWeight="800">UV</text>
+              <rect x="730" y="565" width="16" height="2" fill="white" opacity="0.4" rx="1" />
+              {/* Bag handle */}
+              <path d="M 732 544 Q 735 538 738 538 Q 741 538 744 544" fill="none" stroke="white" strokeWidth="1.5" opacity="0.6" />
+            </g>
+
+            {/* Head */}
+            <circle cx="706" cy="546" r="11" fill="#D4A070" />
+            {/* Hair */}
+            <ellipse cx="706" cy="538" rx="11" ry="5" fill="#3D2B1F" />
+          </g>
         </g>
 
         {/* ═══════════════════════════════════════════════
