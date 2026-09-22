@@ -100,9 +100,9 @@ export function CampusBackground() {
           50%       { opacity: 1; }
         }
 
-        .student-ltr-fast { animation: walk-traverse-ltr 24s linear infinite -4s; }
-        .student-ltr-slow { animation: walk-traverse-ltr 32s linear infinite -18s; }
-        .student-rtl      { animation: walk-traverse-rtl 28s linear infinite -10s; }
+        .student-ltr-fast { animation: walk-traverse-ltr 22s linear infinite -4s; }
+        .student-ltr-mid  { animation: walk-traverse-ltr 26s linear infinite -12s; }
+        .student-ltr-slow { animation: walk-traverse-ltr 32s linear infinite -20s; }
 
         .walk-bob-1 { animation: walk-bounce 0.48s ease-in-out infinite; }
         .walk-bob-2 { animation: walk-bounce 0.52s ease-in-out infinite; }
@@ -705,9 +705,9 @@ export function CampusBackground() {
           </g>
         </g>
 
-        {/* ── Student 1: Tech Requester (Emerald Hoodie, Checking Phone) — Front Lane (y=626, Walking Opposite: Right ➔ Left) ── */}
-        <g className="student-rtl">
-          <g className="walk-bob-1" transform="scale(-1, 1)" style={{ transformOrigin: "720px 590px" }}>
+        {/* ── Student 1: Tech Requester (Emerald Hoodie, Checking Phone) — Front Lane (y=626, Walking Forward Left ➔ Right) ── */}
+        <g className="student-ltr-mid">
+          <g className="walk-bob-1">
             {/* Soft Ground Shadow */}
             <ellipse cx="720" cy="626" rx="14" ry="4" fill="#000" opacity="0.18" />
 
