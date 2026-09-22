@@ -66,6 +66,70 @@ export function CampusBackground() {
           50%       { opacity: 1.00; filter: drop-shadow(0 0 7px rgba(255, 255, 255, 1)); }
         }
 
+        /* ── Modern Campus Students Walking Animations ── */
+        @keyframes walk-traverse-ltr {
+          0%   { transform: translateX(-880px); }
+          100% { transform: translateX(880px); }
+        }
+        @keyframes walk-traverse-rtl {
+          0%   { transform: translateX(880px); }
+          100% { transform: translateX(-880px); }
+        }
+        @keyframes walk-bounce {
+          0%, 100% { transform: translateY(0px); }
+          50%       { transform: translateY(-2.2px); }
+        }
+        @keyframes leg-swing-fwd {
+          0%, 100% { transform: rotate(18deg); }
+          50%       { transform: rotate(-18deg); }
+        }
+        @keyframes leg-swing-bwd {
+          0%, 100% { transform: rotate(-18deg); }
+          50%       { transform: rotate(18deg); }
+        }
+        @keyframes arm-swing-fwd {
+          0%, 100% { transform: rotate(-14deg); }
+          50%       { transform: rotate(16deg); }
+        }
+        @keyframes arm-swing-bwd {
+          0%, 100% { transform: rotate(16deg); }
+          50%       { transform: rotate(-14deg); }
+        }
+        @keyframes phone-screen-glow {
+          0%, 100% { opacity: 0.65; }
+          50%       { opacity: 1; }
+        }
+
+        .student-ltr-fast { animation: walk-traverse-ltr 24s linear infinite -4s; }
+        .student-ltr-slow { animation: walk-traverse-ltr 32s linear infinite -18s; }
+        .student-rtl      { animation: walk-traverse-rtl 28s linear infinite -10s; }
+
+        .walk-bob-1 { animation: walk-bounce 0.48s ease-in-out infinite; }
+        .walk-bob-2 { animation: walk-bounce 0.52s ease-in-out infinite; }
+        .walk-bob-3 { animation: walk-bounce 0.44s ease-in-out infinite; }
+
+        .char-leg-l {
+          animation: leg-swing-fwd 0.88s ease-in-out infinite;
+          transform-box: fill-box;
+          transform-origin: 50% 0%;
+        }
+        .char-leg-r {
+          animation: leg-swing-bwd 0.88s ease-in-out infinite;
+          transform-box: fill-box;
+          transform-origin: 50% 0%;
+        }
+        .char-arm-l {
+          animation: arm-swing-bwd 0.88s ease-in-out infinite;
+          transform-box: fill-box;
+          transform-origin: 50% 0%;
+        }
+        .char-arm-r {
+          animation: arm-swing-fwd 0.88s ease-in-out infinite;
+          transform-box: fill-box;
+          transform-origin: 50% 0%;
+        }
+        .phone-pulse-screen { animation: phone-screen-glow 1.8s ease-in-out infinite; }
+
         .cloud-a { animation: cloud-drift-a 55s linear infinite; }
         .cloud-b { animation: cloud-drift-b 72s linear infinite 18s; }
         .cloud-c { animation: cloud-drift-c 90s linear infinite 36s; }
@@ -530,7 +594,166 @@ export function CampusBackground() {
         {/* Footpath near road */}
         <rect x="0" y="636" width="1440" height="8" fill="#D4D8DF" opacity="0.35" />
 
+        {/* ═══════════════════════════════════════════════
+            LAYER 9 — STUDENTS (Modern Stylized Campus Living Super-App)
+        ═══════════════════════════════════════════════ */}
 
+        {/* ── Student 3: UniVerse Campus Runner (Sleek Indigo Bomber, UV Courier Bag) — Upper Lane (y=604, Left ➔ Right) ── */}
+        <g className="student-ltr-fast">
+          <g className="walk-bob-3">
+            {/* Soft Ground Shadow */}
+            <ellipse cx="720" cy="604" rx="14" ry="4" fill="#000" opacity="0.16" />
+
+            {/* Back Leg (Right) with white-sole sneaker */}
+            <g className="char-leg-r">
+              <rect x="721" y="580" width="5" height="19" rx="2" fill="#334155" />
+              {/* Sneaker */}
+              <rect x="720" y="597" width="9" height="5" rx="2" fill="#1E293B" />
+              <rect x="719" y="601" width="11" height="1.8" rx="0.8" fill="#FFFFFF" />
+            </g>
+
+            {/* Back Arm (Left) swinging naturally downward */}
+            <g className="char-arm-l">
+              <rect x="711" y="561" width="4.5" height="14" rx="2" fill="#4338CA" />
+              <circle cx="713.2" cy="576" r="2.2" fill="#E2A676" />
+            </g>
+
+            {/* Front Leg (Left) with white-sole sneaker */}
+            <g className="char-leg-l">
+              <rect x="714" y="580" width="5" height="19" rx="2" fill="#334155" />
+              {/* Sneaker */}
+              <rect x="713" y="597" width="9" height="5" rx="2" fill="#1E293B" />
+              <rect x="712" y="601" width="11" height="1.8" rx="0.8" fill="#FFFFFF" />
+            </g>
+
+            {/* Torso — Modern Indigo Bomber Jacket */}
+            <rect x="710" y="558" width="18" height="23" rx="5" fill="#6366F1" />
+            {/* Jacket zipper & collar trim */}
+            <rect x="718" y="558" width="2" height="23" fill="#4338CA" />
+            <polygon points="716,558 722,558 719,563" fill="#FFFFFF" opacity="0.9" />
+
+            {/* Head & Modern Hair */}
+            <rect x="717.5" y="553" width="3" height="6" fill="#D49B6A" rx="1" />
+            <ellipse cx="719" cy="548" rx="6.5" ry="7.5" fill="#E2A676" />
+            {/* Stylish swept-back dark hair */}
+            <path d="M 713 547 Q 714 540 721 541 Q 726 541 726 546 Q 724 543 720 543 Q 715 543 713 547 Z" fill="#1E1B4B" />
+
+            {/* Front Arm (Right) holding UniVerse green courier bag */}
+            <g className="char-arm-r">
+              <rect x="722" y="561" width="4.5" height="13" rx="2" fill="#4F46E5" />
+              <circle cx="724.2" cy="575" r="2.2" fill="#E2A676" />
+              {/* UniVerse Green Delivery Bag */}
+              <rect x="721" y="575" width="17" height="19" rx="3.5" fill="#10B981" stroke="#059669" strokeWidth="0.8" />
+              <text x="729.5" y="587" textAnchor="middle" fill="white" fontSize="7" fontFamily="system-ui, sans-serif" fontWeight="900" letterSpacing="0.5">UV</text>
+              <rect x="724" y="591" width="11" height="1.2" fill="white" opacity="0.5" rx="0.5" />
+              {/* Bag shoulder strap */}
+              <path d="M 714 560 L 725 575" stroke="#047857" strokeWidth="1.8" fill="none" opacity="0.8" />
+            </g>
+          </g>
+        </g>
+
+        {/* ── Student 2: Campus Stroller (Amber College Sweater, Headphones, Holding Snack) — Middle Lane (y=614, Left ➔ Right) ── */}
+        <g className="student-ltr-slow">
+          <g className="walk-bob-2">
+            {/* Soft Ground Shadow */}
+            <ellipse cx="720" cy="614" rx="14" ry="4" fill="#000" opacity="0.16" />
+
+            {/* Back Leg (Right) with white-sole sneaker */}
+            <g className="char-leg-r">
+              <rect x="721" y="590" width="5" height="19" rx="2" fill="#1E3A5F" />
+              <rect x="720" y="607" width="9" height="5" rx="2" fill="#0F172A" />
+              <rect x="719" y="611" width="11" height="1.8" rx="0.8" fill="#FFFFFF" />
+            </g>
+
+            {/* Back Arm swinging naturally */}
+            <g className="char-arm-l">
+              <rect x="711" y="571" width="4.5" height="14" rx="2" fill="#D97706" />
+              <circle cx="713.2" cy="586" r="2.2" fill="#C8956C" />
+            </g>
+
+            {/* Front Leg (Left) with white-sole sneaker */}
+            <g className="char-leg-l">
+              <rect x="714" y="590" width="5" height="19" rx="2" fill="#1E3A5F" />
+              <rect x="713" y="607" width="9" height="5" rx="2" fill="#0F172A" />
+              <rect x="712" y="611" width="11" height="1.8" rx="0.8" fill="#FFFFFF" />
+            </g>
+
+            {/* Torso — Amber Sweater with ribbed cuffs */}
+            <rect x="710" y="568" width="18" height="23" rx="5" fill="#F59E0B" />
+            <rect x="711" y="589" width="16" height="2" fill="#D97706" rx="1" />
+
+            {/* Head, Hair & Headphones */}
+            <rect x="717.5" y="563" width="3" height="6" fill="#B77950" rx="1" />
+            <ellipse cx="719" cy="558" rx="6.5" ry="7.5" fill="#C8956C" />
+            {/* Hair */}
+            <path d="M 713 557 Q 714 550 721 551 Q 726 551 726 556 Q 724 553 720 553 Q 715 553 713 557 Z" fill="#2C1810" />
+            {/* Over-ear headphones */}
+            <path d="M 714 558 A 6 6 0 0 1 724 558" fill="none" stroke="#E2E8F0" strokeWidth="1.5" />
+            <rect x="713" y="555" width="2.5" height="5" rx="1" fill="#38BDF8" />
+            <rect x="722.5" y="555" width="2.5" height="5" rx="1" fill="#38BDF8" />
+
+            {/* Front Arm (Right) holding campus drink cup */}
+            <g className="char-arm-r">
+              <rect x="722" y="571" width="4.5" height="12" rx="2" fill="#D97706" />
+              <circle cx="724.2" cy="583" r="2.2" fill="#C8956C" />
+              {/* Iced campus cup */}
+              <polygon points="726,580 732,580 731,589 727,589" fill="#F8FAFC" opacity="0.9" stroke="#CBD5E1" strokeWidth="0.5" />
+              <rect x="725" y="579" width="8" height="1.5" fill="#10B981" rx="0.5" />
+              {/* Straw */}
+              <line x1="729" y1="576" x2="729" y2="580" stroke="#10B981" strokeWidth="1" strokeLinecap="round" />
+            </g>
+          </g>
+        </g>
+
+        {/* ── Student 1: Tech Requester (Emerald Hoodie, Checking Phone) — Front Lane (y=626, Walking Opposite: Right ➔ Left) ── */}
+        <g className="student-rtl">
+          <g className="walk-bob-1" transform="scale(-1, 1)" style={{ transformOrigin: "720px 590px" }}>
+            {/* Soft Ground Shadow */}
+            <ellipse cx="720" cy="626" rx="14" ry="4" fill="#000" opacity="0.18" />
+
+            {/* Back Leg (Right) with white-sole sneaker */}
+            <g className="char-leg-r">
+              <rect x="721" y="602" width="5" height="19" rx="2" fill="#1E293B" />
+              <rect x="720" y="619" width="9" height="5" rx="2" fill="#020617" />
+              <rect x="719" y="623" width="11" height="1.8" rx="0.8" fill="#FFFFFF" />
+            </g>
+
+            {/* Back Arm swinging naturally */}
+            <g className="char-arm-l">
+              <rect x="711" y="583" width="4.5" height="14" rx="2" fill="#059669" />
+              <circle cx="713.2" cy="598" r="2.2" fill="#D4A070" />
+            </g>
+
+            {/* Front Leg (Left) with white-sole sneaker */}
+            <g className="char-leg-l">
+              <rect x="714" y="602" width="5" height="19" rx="2" fill="#1E293B" />
+              <rect x="713" y="619" width="9" height="5" rx="2" fill="#020617" />
+              <rect x="712" y="623" width="11" height="1.8" rx="0.8" fill="#FFFFFF" />
+            </g>
+
+            {/* Torso — Emerald Green Campus Hoodie with pocket */}
+            <rect x="710" y="580" width="18" height="23" rx="5" fill="#10B981" />
+            {/* Kangaroo pocket */}
+            <path d="M 713 596 L 725 596 L 723 601 L 715 601 Z" fill="#059669" opacity="0.6" />
+            {/* Backpack strap on shoulder */}
+            <line x1="714" y1="581" x2="716" y2="598" stroke="#047857" strokeWidth="1.5" strokeLinecap="round" />
+
+            {/* Head & Stylish Hair */}
+            <rect x="717.5" y="575" width="3" height="6" fill="#B77950" rx="1" />
+            <ellipse cx="719" cy="570" rx="6.5" ry="7.5" fill="#D4A070" />
+            {/* Modern fade haircut */}
+            <path d="M 713 569 Q 714 562 721 563 Q 726 563 726 568 Q 724 565 720 565 Q 715 565 713 569 Z" fill="#18181B" />
+
+            {/* Front Arm (Right) holding phone in front */}
+            <g className="char-arm-r">
+              <rect x="722" y="583" width="4.5" height="11" rx="2" fill="#059669" transform="rotate(-15, 724, 584)" />
+              <circle cx="727" cy="593" r="2.2" fill="#D4A070" />
+              {/* Smartphone held in hand */}
+              <rect x="728" y="585" width="7" height="13" rx="1.5" fill="#0F172A" />
+              <rect x="729" y="586.5" width="5" height="10" rx="1" fill="#38BDF8" className="phone-pulse-screen" />
+            </g>
+          </g>
+        </g>
 
         {/* ═══════════════════════════════════════════════
             LAYER 10 — ATMOSPHERIC DEPTH
