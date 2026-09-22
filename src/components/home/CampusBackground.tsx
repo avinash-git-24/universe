@@ -101,8 +101,8 @@ export function CampusBackground() {
         }
 
         .student-ltr-fast { animation: walk-traverse-ltr 22s linear infinite -4s; }
-        .student-ltr-mid  { animation: walk-traverse-ltr 26s linear infinite -12s; }
         .student-ltr-slow { animation: walk-traverse-ltr 32s linear infinite -20s; }
+        .student-rtl      { animation: walk-traverse-rtl 26s linear infinite -10s; }
 
         .walk-bob-1 { animation: walk-bounce 0.48s ease-in-out infinite; }
         .walk-bob-2 { animation: walk-bounce 0.52s ease-in-out infinite; }
@@ -705,52 +705,54 @@ export function CampusBackground() {
           </g>
         </g>
 
-        {/* ── Student 1: Tech Requester (Emerald Hoodie, Checking Phone) — Front Lane (y=626, Walking Forward Left ➔ Right) ── */}
-        <g className="student-ltr-mid">
-          <g className="walk-bob-1">
-            {/* Soft Ground Shadow */}
-            <ellipse cx="720" cy="626" rx="14" ry="4" fill="#000" opacity="0.18" />
+        {/* ── Student 1: Tech Requester (Emerald Hoodie, Checking Phone) — Front Lane (y=626, Walking Opposite: Right ➔ Left) ── */}
+        <g className="student-rtl">
+          <g transform="translate(1440, 0) scale(-1, 1)">
+            <g className="walk-bob-1">
+              {/* Soft Ground Shadow */}
+              <ellipse cx="720" cy="626" rx="14" ry="4" fill="#000" opacity="0.18" />
 
-            {/* Back Leg (Right) with white-sole sneaker */}
-            <g className="char-leg-r">
-              <rect x="721" y="602" width="5" height="19" rx="2" fill="#1E293B" />
-              <rect x="720" y="619" width="9" height="5" rx="2" fill="#020617" />
-              <rect x="719" y="623" width="11" height="1.8" rx="0.8" fill="#FFFFFF" />
-            </g>
+              {/* Back Leg (Right) with white-sole sneaker */}
+              <g className="char-leg-r">
+                <rect x="721" y="602" width="5" height="19" rx="2" fill="#1E293B" />
+                <rect x="720" y="619" width="9" height="5" rx="2" fill="#020617" />
+                <rect x="719" y="623" width="11" height="1.8" rx="0.8" fill="#FFFFFF" />
+              </g>
 
-            {/* Back Arm swinging naturally */}
-            <g className="char-arm-l">
-              <rect x="711" y="583" width="4.5" height="14" rx="2" fill="#059669" />
-              <circle cx="713.2" cy="598" r="2.2" fill="#D4A070" />
-            </g>
+              {/* Back Arm swinging naturally */}
+              <g className="char-arm-l">
+                <rect x="711" y="583" width="4.5" height="14" rx="2" fill="#059669" />
+                <circle cx="713.2" cy="598" r="2.2" fill="#D4A070" />
+              </g>
 
-            {/* Front Leg (Left) with white-sole sneaker */}
-            <g className="char-leg-l">
-              <rect x="714" y="602" width="5" height="19" rx="2" fill="#1E293B" />
-              <rect x="713" y="619" width="9" height="5" rx="2" fill="#020617" />
-              <rect x="712" y="623" width="11" height="1.8" rx="0.8" fill="#FFFFFF" />
-            </g>
+              {/* Front Leg (Left) with white-sole sneaker */}
+              <g className="char-leg-l">
+                <rect x="714" y="602" width="5" height="19" rx="2" fill="#1E293B" />
+                <rect x="713" y="619" width="9" height="5" rx="2" fill="#020617" />
+                <rect x="712" y="623" width="11" height="1.8" rx="0.8" fill="#FFFFFF" />
+              </g>
 
-            {/* Torso — Emerald Green Campus Hoodie with pocket */}
-            <rect x="710" y="580" width="18" height="23" rx="5" fill="#10B981" />
-            {/* Kangaroo pocket */}
-            <path d="M 713 596 L 725 596 L 723 601 L 715 601 Z" fill="#059669" opacity="0.6" />
-            {/* Backpack strap on shoulder */}
-            <line x1="714" y1="581" x2="716" y2="598" stroke="#047857" strokeWidth="1.5" strokeLinecap="round" />
+              {/* Torso — Emerald Green Campus Hoodie with pocket */}
+              <rect x="710" y="580" width="18" height="23" rx="5" fill="#10B981" />
+              {/* Kangaroo pocket */}
+              <path d="M 713 596 L 725 596 L 723 601 L 715 601 Z" fill="#059669" opacity="0.6" />
+              {/* Backpack strap on shoulder */}
+              <line x1="714" y1="581" x2="716" y2="598" stroke="#047857" strokeWidth="1.5" strokeLinecap="round" />
 
-            {/* Head & Stylish Hair */}
-            <rect x="717.5" y="575" width="3" height="6" fill="#B77950" rx="1" />
-            <ellipse cx="719" cy="570" rx="6.5" ry="7.5" fill="#D4A070" />
-            {/* Modern fade haircut */}
-            <path d="M 713 569 Q 714 562 721 563 Q 726 563 726 568 Q 724 565 720 565 Q 715 565 713 569 Z" fill="#18181B" />
+              {/* Head & Stylish Hair */}
+              <rect x="717.5" y="575" width="3" height="6" fill="#B77950" rx="1" />
+              <ellipse cx="719" cy="570" rx="6.5" ry="7.5" fill="#D4A070" />
+              {/* Modern fade haircut */}
+              <path d="M 713 569 Q 714 562 721 563 Q 726 563 726 568 Q 724 565 720 565 Q 715 565 713 569 Z" fill="#18181B" />
 
-            {/* Front Arm (Right) holding phone in front */}
-            <g className="char-arm-r">
-              <rect x="722" y="583" width="4.5" height="11" rx="2" fill="#059669" transform="rotate(-15, 724, 584)" />
-              <circle cx="727" cy="593" r="2.2" fill="#D4A070" />
-              {/* Smartphone held in hand */}
-              <rect x="728" y="585" width="7" height="13" rx="1.5" fill="#0F172A" />
-              <rect x="729" y="586.5" width="5" height="10" rx="1" fill="#38BDF8" className="phone-pulse-screen" />
+              {/* Front Arm (Right) holding phone in front */}
+              <g className="char-arm-r">
+                <rect x="722" y="583" width="4.5" height="11" rx="2" fill="#059669" transform="rotate(-15, 724, 584)" />
+                <circle cx="727" cy="593" r="2.2" fill="#D4A070" />
+                {/* Smartphone held in hand */}
+                <rect x="728" y="585" width="7" height="13" rx="1.5" fill="#0F172A" />
+                <rect x="729" y="586.5" width="5" height="10" rx="1" fill="#38BDF8" className="phone-pulse-screen" />
+              </g>
             </g>
           </g>
         </g>
