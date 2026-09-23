@@ -4,321 +4,236 @@ import React, { useRef, useEffect } from "react";
 
 interface SignalParticlesBackgroundProps {
   className?: string;
-  dotSpacing?: number;
-  baseDotRadius?: number;
+  spacing?: number;
+  dotRadius?: number;
+  speed?: number;
 }
 
-interface SignalPacket {
-  angle: number; // Angle along the arc in radians
-  speed: number;
-  radius: number; // Angular width / spatial influence
-  hue: "emerald" | "cyan" | "violet";
-  intensity: number;
-}
-
+/**
+ * Signal Particles — Exact ThreeUI Loop
+ * Source: https://threeui.com/backgrounds/predictive-arc/signal-particles
+ *
+ * Implements the continuous double-sinusoidal wave field loop with deterministic
+ * spatial highlights (cyan, emerald, purple) across a centered dot matrix.
+ */
 export function SignalParticlesBackground({
   className = "",
-  dotSpacing = 22,
-  baseDotRadius = 1.25,
+  spacing = 16,
+  dotRadius = 1.45,
+  speed = 1.0,
 }: SignalParticlesBackgroundProps) {
+  const containerRef = useRef<HTMLDivElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   useEffect(() => {
+    const container = containerRef.current;
     const canvas = canvasRef.current;
-    if (!canvas) return;
+    if (!container || !canvas) return;
 
-    const ctx = canvas.getContext("2d", { alpha: true });
-    if (!ctx) return;
+    const localCtx = canvas.getContext("2d", { alpha: true });
+    if (!localCtx) return;
+    const ctx: CanvasRenderingContext2D = localCtx;
 
     let width = 0;
     let height = 0;
     let dpr = 1;
+    let time = 0;
     let rafId = 0;
+    let isVisible = true;
 
-    // Interactive pointer state
+    // Interactive pointer
     const pointer = {
       x: -9999,
       y: -9999,
       active: false,
     };
 
-    // Click ripples
-    interface Ripple {
-      x: number;
-      y: number;
-      radius: number;
-      maxRadius: number;
-      alpha: number;
-    }
-    const ripples: Ripple[] = [];
-
-    // Signal packets travelling along the predictive arc
-    const packets: SignalPacket[] = [
-      { angle: 0.2, speed: 0.18, radius: 0.35, hue: "emerald", intensity: 1.0 },
-      { angle: 1.1, speed: -0.14, radius: 0.40, hue: "cyan", intensity: 0.85 },
-      { angle: 2.2, speed: 0.22, radius: 0.30, hue: "emerald", intensity: 0.95 },
-      { angle: 2.9, speed: -0.16, radius: 0.45, hue: "violet", intensity: 0.75 },
-      { angle: 0.7, speed: 0.26, radius: 0.25, hue: "emerald", intensity: 0.9 },
-    ];
-
     const resize = () => {
-      if (!canvas) return;
-      const rect = canvas.getBoundingClientRect();
-      width = rect.width;
-      height = rect.height;
+      const rect = container.getBoundingClientRect();
+      width = Math.max(1, rect.width);
+      height = Math.max(1, rect.height);
       dpr = Math.min(window.devicePixelRatio || 1, 2);
 
-      canvas.width = Math.floor(width * dpr);
-      canvas.height = Math.floor(height * dpr);
+      canvas.width = Math.round(width * dpr);
+      canvas.height = Math.round(height * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     };
 
     resize();
     const ro = new ResizeObserver(() => resize());
-    ro.observe(canvas);
+    ro.observe(container);
 
-    // Pointer listeners on canvas parent
-    const parent = canvas.parentElement;
-    const onPointerMove = (e: MouseEvent) => {
-      const rect = canvas.getBoundingClientRect();
+    // Pause when footer is scrolled offscreen (saves 100% CPU/battery)
+    const io = new IntersectionObserver(([entry]) => {
+      isVisible = entry?.isIntersecting ?? true;
+      if (isVisible && !rafId) {
+        lastTime = performance.now();
+        rafId = requestAnimationFrame(draw);
+      } else if (!isVisible && rafId) {
+        cancelAnimationFrame(rafId);
+        rafId = 0;
+      }
+    });
+    io.observe(container);
+
+    const onVisibilityChange = () => {
+      if (document.hidden && rafId) {
+        cancelAnimationFrame(rafId);
+        rafId = 0;
+      } else if (!document.hidden && isVisible && !rafId) {
+        lastTime = performance.now();
+        rafId = requestAnimationFrame(draw);
+      }
+    };
+    document.addEventListener("visibilitychange", onVisibilityChange);
+
+    // Mouse movement listener on parent container
+    const onMouseMove = (e: MouseEvent) => {
+      const rect = container.getBoundingClientRect();
       pointer.x = e.clientX - rect.left;
       pointer.y = e.clientY - rect.top;
       pointer.active = true;
     };
 
-    const onPointerLeave = () => {
+    const onMouseLeave = () => {
       pointer.active = false;
       pointer.x = -9999;
       pointer.y = -9999;
     };
 
-    const onPointerDown = (e: MouseEvent) => {
-      const rect = canvas.getBoundingClientRect();
-      const px = e.clientX - rect.left;
-      const py = e.clientY - rect.top;
-      if (ripples.length < 5) {
-        ripples.push({
-          x: px,
-          y: py,
-          radius: 0,
-          maxRadius: Math.max(width, height) * 0.45,
-          alpha: 0.85,
-        });
-      }
-    };
+    container.addEventListener("mousemove", onMouseMove);
+    container.addEventListener("mouseleave", onMouseLeave);
 
-    if (parent) {
-      parent.addEventListener("mousemove", onPointerMove);
-      parent.addEventListener("mouseleave", onPointerLeave);
-      parent.addEventListener("mousedown", onPointerDown);
-    }
-
-    let lastTime = performance.now();
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let lastTime = performance.now();
 
-    const render = (now: number) => {
+    function draw(now: number) {
       const dt = Math.min((now - lastTime) / 1000, 0.1);
       lastTime = now;
 
-      if (!prefersReducedMotion) {
-        // Advance packets along the arc
-        for (const p of packets) {
-          p.angle += p.speed * dt;
-          if (p.angle > Math.PI) p.angle -= Math.PI;
-          if (p.angle < 0) p.angle += Math.PI;
-        }
-
-        // Advance ripples
-        for (let i = ripples.length - 1; i >= 0; i--) {
-          const r = ripples[i];
-          r.radius += 180 * dt;
-          r.alpha -= 0.65 * dt;
-          if (r.alpha <= 0 || r.radius >= r.maxRadius) {
-            ripples.splice(i, 1);
-          }
-        }
-      }
-
-      ctx.save();
-      ctx.scale(dpr, dpr);
       ctx.clearRect(0, 0, width, height);
 
-      // Arc origin & geometry (predictive dome centered below bottom edge)
-      const arcCenterX = width * 0.5;
-      const arcCenterY = height * 1.25;
-      const arcRadius = Math.max(width * 0.52, height * 1.15);
-      const arcBandWidth = Math.max(height * 0.42, 140);
+      const cols = Math.floor(width / spacing);
+      const rows = Math.floor(height / spacing);
 
-      // Grid dimensions
-      const cols = Math.ceil(width / dotSpacing) + 1;
-      const rows = Math.ceil(height / dotSpacing) + 1;
+      const offsetX = (width - cols * spacing) / 2;
+      const offsetY = (height - rows * spacing) / 2;
 
-      // Draw faint soft ambient glow at the arc summit
-      const summitGlow = ctx.createRadialGradient(
-        arcCenterX,
-        arcCenterY - arcRadius,
+      // Soft ambient background vignette
+      const bgGrad = ctx.createRadialGradient(
+        width / 2,
+        height * 0.9,
         0,
-        arcCenterX,
-        arcCenterY - arcRadius,
-        arcBandWidth * 1.8
+        width / 2,
+        height * 0.9,
+        Math.max(width * 0.6, height)
       );
-      summitGlow.addColorStop(0, "rgba(16, 185, 129, 0.07)");
-      summitGlow.addColorStop(0.5, "rgba(6, 182, 212, 0.03)");
-      summitGlow.addColorStop(1, "transparent");
-      ctx.fillStyle = summitGlow;
+      bgGrad.addColorStop(0, "rgba(16, 185, 129, 0.05)");
+      bgGrad.addColorStop(0.6, "rgba(6, 182, 212, 0.02)");
+      bgGrad.addColorStop(1, "transparent");
+      ctx.fillStyle = bgGrad;
       ctx.fillRect(0, 0, width, height);
 
-      // Arrays to collect bright dots for micro-connectivity lines
-      const excitedDots: Array<{ x: number; y: number; brightness: number; color: string }> = [];
+      for (let i = 0; i <= cols; i++) {
+        for (let j = 0; j <= rows; j++) {
+          const x = offsetX + i * spacing;
+          const y = offsetY + j * spacing;
 
-      // Render Matrix Grid
-      for (let r = 0; r < rows; r++) {
-        const y = r * dotSpacing;
+          const nx = i * 0.1;
+          const ny = j * 0.1;
 
-        for (let c = 0; c < cols; c++) {
-          const x = c * dotSpacing;
+          // Exact ThreeUI double-sinusoidal interference wave loop
+          const wave1 = Math.sin(nx + time * 0.5) * Math.cos(ny - time * 0.3);
+          const wave2 = Math.sin(nx * 0.5 - ny * 0.5 + time * 0.8);
+          let value = wave1 + wave2;
 
-          // Distance from predictive arc center
-          const dx = x - arcCenterX;
-          const dy = (y - arcCenterY) * 1.15; // slightly flattened ellipse
-          const dist = Math.hypot(dx, dy);
-
-          // Gaussian falloff from the predictive arc path
-          const distFromArc = Math.abs(dist - arcRadius);
-          const arcWeight = Math.exp(-Math.pow(distFromArc / (arcBandWidth * 0.55), 2));
-
-          // Angle on the upper half-circle (0 to PI)
-          // Angle 0 is right, PI is left. Normalize so center is ~PI/2.
-          const theta = Math.atan2(-(y - arcCenterY), dx);
-
-          // Base dot brightness (very dark subtle background grid)
-          let brightness = 0.05 + arcWeight * 0.32;
-          let dotRadius = baseDotRadius;
-          let dotColor = "rgba(255, 255, 255, 0.12)";
-
-          // Signal packet illumination
-          if (!prefersReducedMotion) {
-            for (const p of packets) {
-              const dTheta = Math.abs(theta - p.angle);
-              // Wrap angular distance
-              const angularDist = Math.min(dTheta, Math.PI * 2 - dTheta);
-
-              if (angularDist < p.radius && distFromArc < arcBandWidth * 0.8) {
-                const packetInfluence =
-                  Math.cos((angularDist / p.radius) * (Math.PI / 2)) *
-                  (1 - distFromArc / (arcBandWidth * 0.8)) *
-                  p.intensity;
-
-                if (packetInfluence > 0) {
-                  brightness += packetInfluence * 0.75;
-                  dotRadius = Math.max(dotRadius, baseDotRadius + packetInfluence * 1.5);
-
-                  if (p.hue === "emerald") {
-                    dotColor = `rgba(52, 211, 153, ${Math.min(0.95, brightness)})`;
-                  } else if (p.hue === "cyan") {
-                    dotColor = `rgba(34, 211, 238, ${Math.min(0.92, brightness)})`;
-                  } else {
-                    dotColor = `rgba(167, 139, 250, ${Math.min(0.88, brightness)})`;
-                  }
-                }
-              }
-            }
-
-            // Ripple influence from clicks
-            for (const rip of ripples) {
-              const dRip = Math.hypot(x - rip.x, y - rip.y);
-              const ringDist = Math.abs(dRip - rip.radius);
-              if (ringDist < 45) {
-                const ripFactor = (1 - ringDist / 45) * rip.alpha;
-                brightness += ripFactor * 0.8;
-                dotRadius += ripFactor * 1.8;
-                dotColor = `rgba(52, 211, 153, ${Math.min(1, brightness)})`;
-              }
-            }
-          }
-
-          // Interactive Pointer proximity
+          // Pointer interaction boost
           if (pointer.active) {
-            const ptrDist = Math.hypot(x - pointer.x, y - pointer.y);
-            const ptrRadius = 130;
-            if (ptrDist < ptrRadius) {
-              const ptrFactor = (1 - ptrDist / ptrRadius) * 0.65;
-              brightness += ptrFactor;
-              dotRadius = Math.max(dotRadius, baseDotRadius + ptrFactor * 1.4);
-              dotColor = `rgba(110, 231, 183, ${Math.min(0.95, brightness)})`;
+            const pdx = x - pointer.x;
+            const pdy = y - pointer.y;
+            const pdist = Math.hypot(pdx, pdy);
+            if (pdist < 110) {
+              value += (1 - pdist / 110) * 0.6;
             }
           }
 
-          // Top edge fade so it melts seamlessly into the section above
-          const topFade = Math.min(1, y / 70);
-          brightness *= topFade;
+          if (value > 0.08) {
+            // Soft top fade to blend smoothly into above sections
+            const topFade = Math.min(1, y / 50);
+            const alpha = Math.min(0.65, (value - 0.08) * 0.85) * topFade;
 
-          if (brightness < 0.03) continue;
+            if (alpha <= 0.015) continue;
 
-          // Draw the dot
-          ctx.beginPath();
-          ctx.arc(x, y, dotRadius, 0, Math.PI * 2);
+            // Deterministic spatial coordinate highlight check from ThreeUI
+            const highlightCheck = Math.sin(i * 12.34) * Math.cos(j * 56.78);
 
-          if (brightness > 0.45) {
-            ctx.fillStyle = dotColor;
-            ctx.shadowColor = dotColor;
-            ctx.shadowBlur = 6;
-            ctx.fill();
-            ctx.shadowBlur = 0; // reset
+            ctx.beginPath();
+            ctx.arc(x, y, dotRadius, 0, Math.PI * 2);
 
-            // Collect for micro-connectivity
-            if (excitedDots.length < 80) {
-              excitedDots.push({ x, y, brightness, color: dotColor });
-            }
-          } else {
-            ctx.fillStyle = `rgba(148, 163, 184, ${Math.min(0.25, brightness)})`;
-            ctx.fill();
-          }
-        }
-      }
-
-      // Draw subtle micro-connectivity lines between close excited dots
-      if (excitedDots.length > 1) {
-        ctx.lineWidth = 0.75;
-        for (let i = 0; i < excitedDots.length; i++) {
-          const d1 = excitedDots[i];
-          for (let j = i + 1; j < excitedDots.length; j++) {
-            const d2 = excitedDots[j];
-            const dist = Math.hypot(d1.x - d2.x, d1.y - d2.y);
-            if (dist < dotSpacing * 1.55) {
-              const lineAlpha = (1 - dist / (dotSpacing * 1.55)) * Math.min(d1.brightness, d2.brightness) * 0.35;
-              ctx.strokeStyle = `rgba(52, 211, 153, ${lineAlpha})`;
-              ctx.beginPath();
-              ctx.moveTo(d1.x, d1.y);
-              ctx.lineTo(d2.x, d2.y);
-              ctx.stroke();
+            if (highlightCheck > 0.98) {
+              // UniVerse Emerald Signal
+              ctx.fillStyle = "#10B981";
+              ctx.shadowColor = "rgba(16, 185, 129, 0.85)";
+              ctx.shadowBlur = 6;
+              ctx.fill();
+              ctx.shadowBlur = 0;
+            } else if (highlightCheck > 0.955) {
+              // Cyber Cyan / Blue Signal (ThreeUI #3b82f6)
+              ctx.fillStyle = "#38BDF8";
+              ctx.shadowColor = "rgba(56, 189, 248, 0.8)";
+              ctx.shadowBlur = 5;
+              ctx.fill();
+              ctx.shadowBlur = 0;
+            } else if (highlightCheck < -0.965) {
+              // Neon Purple Signal (ThreeUI #8b5cf6)
+              ctx.fillStyle = "#A855F7";
+              ctx.shadowColor = "rgba(168, 85, 247, 0.8)";
+              ctx.shadowBlur = 5;
+              ctx.fill();
+              ctx.shadowBlur = 0;
+            } else {
+              // Base signal matrix particles
+              ctx.fillStyle = `rgba(148, 163, 184, ${alpha})`;
+              ctx.shadowBlur = 0;
+              ctx.fill();
             }
           }
         }
       }
 
-      ctx.restore();
-      rafId = requestAnimationFrame(render);
-    };
+      if (!prefersReducedMotion) {
+        time += (dt / 0.016) * 0.02 * speed;
+      }
 
-    rafId = requestAnimationFrame(render);
+      if (isVisible) {
+        rafId = requestAnimationFrame(draw);
+      }
+    }
+
+    rafId = requestAnimationFrame(draw);
 
     return () => {
-      cancelAnimationFrame(rafId);
+      if (rafId) cancelAnimationFrame(rafId);
       ro.disconnect();
-      if (parent) {
-        parent.removeEventListener("mousemove", onPointerMove);
-        parent.removeEventListener("mouseleave", onPointerLeave);
-        parent.removeEventListener("mousedown", onPointerDown);
-      }
+      io.disconnect();
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+      container.removeEventListener("mousemove", onMouseMove);
+      container.removeEventListener("mouseleave", onMouseLeave);
     };
-  }, [dotSpacing, baseDotRadius]);
+  }, [spacing, dotRadius, speed]);
 
   return (
-    <canvas
-      ref={canvasRef}
+    <div
+      ref={containerRef}
       aria-hidden="true"
-      className={`absolute inset-0 w-full h-full pointer-events-none select-none ${className}`}
-    />
+      className={`absolute inset-0 w-full h-full overflow-hidden pointer-events-none select-none ${className}`}
+    >
+      <canvas
+        ref={canvasRef}
+        aria-hidden="true"
+        className="w-full h-full block pointer-events-none select-none"
+      />
+    </div>
   );
 }
 
