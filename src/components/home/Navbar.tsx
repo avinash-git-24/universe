@@ -85,7 +85,7 @@ function NavCTAs({ hasUser }: { hasUser: boolean }) {
           variant="ghost"
           showIcon={false}
           label="Sign out"
-          className="px-2 py-1.5 sm:px-3 sm:py-2 text-[10.5px] sm:text-xs font-semibold h-auto rounded-lg sm:rounded-xl bg-transparent border border-white/15 text-white/70 hover:text-red-400 hover:border-red-500/30 hover:bg-red-500/10 transition-all duration-200"
+          className="hidden sm:inline-flex px-2 py-1.5 sm:px-3 sm:py-2 text-[10.5px] sm:text-xs font-semibold h-auto rounded-lg sm:rounded-xl bg-transparent border border-white/15 text-white/70 hover:text-red-400 hover:border-red-500/30 hover:bg-red-500/10 transition-all duration-200"
         />
       </div>
     );
@@ -303,7 +303,7 @@ export function Navbar() {
       transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
     >
       <div
-        className="mx-4 mt-3 rounded-[var(--radius-xl)] pointer-events-auto"
+        className="mx-2.5 sm:mx-4 mt-2 sm:mt-3 rounded-[var(--radius-xl)] pointer-events-auto"
         style={{
           borderColor: "rgba(255, 255, 255, 0.1)",
           backgroundColor: "rgba(10, 10, 10, 0.12)",

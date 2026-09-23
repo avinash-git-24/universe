@@ -298,7 +298,7 @@ export function HeroSection() {
           transition={{ duration: 0.5, delay: 0.2 }}
         >
           <span
-            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-[11px] sm:text-xs font-semibold tracking-wide uppercase"
+            className="inline-flex items-center gap-1.5 sm:gap-2 px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-semibold tracking-wide uppercase max-w-full"
             style={{
               background: "rgba(16,185,129,0.15)",
               border: "1px solid rgba(16,185,129,0.35)",
@@ -307,8 +307,8 @@ export function HeroSection() {
               backdropFilter: "blur(8px)",
             }}
           >
-            <span className="w-1.5 h-1.5 rounded-full bg-[#4ADE80] animate-pulse" />
-            Exclusively for Marwadi University Students
+            <span className="w-1.5 h-1.5 rounded-full bg-[#4ADE80] animate-pulse flex-shrink-0" />
+            <span className="truncate sm:whitespace-normal">Exclusively for Marwadi University Students</span>
           </span>
         </motion.div>
 
@@ -317,7 +317,7 @@ export function HeroSection() {
           className="font-extrabold leading-[1.08] tracking-tight text-white max-w-3xl mx-auto"
           style={{
             fontFamily: "var(--font-plus-jakarta-sans)",
-            fontSize: "clamp(2.25rem, 6.5vw, 5.5rem)",
+            fontSize: "clamp(2rem, 6.5vw, 5.5rem)",
             textShadow: "0 2px 40px rgba(0,0,0,0.5)",
           }}
           initial={{ opacity: 0, y: 24 }}

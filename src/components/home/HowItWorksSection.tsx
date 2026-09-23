@@ -162,7 +162,7 @@ function StepCard({
       variants={cardVariants}
       transition={{ duration: 0.55, delay: index * 0.12, ease: [0.4, 0, 0.2, 1] }}
       whileHover={{ y: -6, transition: { duration: 0.25, ease: "easeOut" } }}
-      className="group relative flex flex-col rounded-[var(--radius-xl)] p-7 cursor-default"
+      className="group relative flex flex-col rounded-[var(--radius-xl)] p-5 sm:p-7 cursor-default"
       style={{
         background: `rgba(255,255,255,0.72)`,
         backdropFilter: "blur(16px) saturate(180%)",
@@ -281,7 +281,7 @@ export function HowItWorksSection() {
           </span>
 
           <h2
-            className="text-4xl md:text-5xl font-extrabold text-[var(--color-text)] leading-tight"
+            className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-[var(--color-text)] leading-tight"
             style={{ fontFamily: "var(--font-plus-jakarta-sans)" }}
           >
             How UniVerse{" "}

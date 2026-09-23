@@ -88,7 +88,7 @@ function AdvantageCard({
       transition={{ duration: 0.5, delay: index * 0.1, ease: [0.4, 0, 0.2, 1] }}
       whileHover={{ y: -4, transition: { duration: 0.22, ease: "easeOut" } }}
       className={cn(
-        "group relative flex flex-col gap-4 p-7 rounded-[var(--radius-xl)]",
+        "group relative flex flex-col gap-3 sm:gap-4 p-5 sm:p-7 rounded-[var(--radius-xl)]",
         "cursor-default transition-all duration-300",
         highlight
           ? "md:col-span-2 md:row-span-2"
@@ -231,7 +231,7 @@ export function WhyUniverseSection() {
           </span>
 
           <h2
-            className="text-4xl md:text-5xl font-extrabold text-white leading-tight"
+            className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white leading-tight"
             style={{ fontFamily: "var(--font-plus-jakarta-sans)" }}
           >
             Why{" "}
