@@ -10,7 +10,6 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Zap, Mail, Share2, Check } from "lucide-react";
-import SignalParticlesBackground from "./SignalParticlesBackground";
 
 function ShareButton() {
   const [copied, setCopied] = useState(false);
@@ -122,28 +121,34 @@ export function Footer() {
   return (
     <footer
       role="contentinfo"
-      className="relative overflow-hidden"
-      style={{ background: "#060A08" }}
+      className="relative overflow-hidden bg-[#05080A]"
     >
-      {/* Top divider — gradient line */}
+      {/* Top divider — high precision subtle gradient line */}
       <div
         className="absolute top-0 left-0 right-0 h-px"
         style={{
           background:
-            "linear-gradient(90deg, transparent, rgba(16,185,129,0.4), rgba(245,158,11,0.3), transparent)",
+            "linear-gradient(90deg, transparent 0%, rgba(16,185,129,0.3) 25%, rgba(255,255,255,0.12) 50%, rgba(16,185,129,0.3) 75%, transparent 100%)",
         }}
         aria-hidden="true"
       />
 
-      {/* ── Signal Particles — Predictive Arc Canvas Background ── */}
-      <SignalParticlesBackground className="opacity-90" />
-
-      {/* Subtle background glow */}
+      {/* Top-center ambient emerald bloom */}
       <div
-        className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-60 rounded-full pointer-events-none"
+        className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[260px] pointer-events-none select-none"
         style={{
           background:
-            "radial-gradient(ellipse, rgba(16,185,129,0.06) 0%, transparent 70%)",
+            "radial-gradient(ellipse 600px 180px at 50% 0%, rgba(16,185,129,0.08) 0%, transparent 70%)",
+        }}
+        aria-hidden="true"
+      />
+
+      {/* Subtle bottom accent glow */}
+      <div
+        className="absolute bottom-0 right-1/4 w-[500px] h-44 rounded-full pointer-events-none select-none"
+        style={{
+          background:
+            "radial-gradient(ellipse, rgba(56,189,248,0.025) 0%, transparent 70%)",
         }}
         aria-hidden="true"
       />
