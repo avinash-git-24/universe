@@ -207,7 +207,7 @@ function HeroButtons() {
 
   return (
     <motion.div
-      className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mt-6 sm:mt-9 w-full max-w-md sm:max-w-none mx-auto"
+      className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mt-5 sm:mt-8 w-full max-w-md sm:max-w-none mx-auto"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, delay: 0.9, ease: [0.4, 0, 0.2, 1] }}
@@ -267,7 +267,7 @@ export function HeroSection() {
     <section
       id="home"
       aria-label="UniVerse hero"
-      className="relative w-full min-h-[100svh] overflow-hidden flex flex-col justify-between items-center pt-24 pb-6 sm:pt-32 sm:pb-10"
+      className="relative w-full min-h-[100svh] overflow-hidden flex flex-col justify-between items-center pt-20 pb-5 sm:pt-24 sm:pb-7 lg:pt-28 lg:pb-8"
     >
       {/* ── Campus Background ── */}
       <CampusBackground />
@@ -292,7 +292,7 @@ export function HeroSection() {
 
         {/* Overline badge */}
         <motion.div
-          className="inline-flex items-center gap-2 mb-4 sm:mb-6"
+          className="inline-flex items-center gap-2 mb-3.5 sm:mb-5"
           initial={{ opacity: 0, y: -14 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
@@ -317,7 +317,7 @@ export function HeroSection() {
           className="font-extrabold leading-[1.08] tracking-tight text-white max-w-3xl mx-auto"
           style={{
             fontFamily: "var(--font-plus-jakarta-sans)",
-            fontSize: "clamp(2rem, 6.5vw, 5.5rem)",
+            fontSize: "clamp(2rem, 5.2vw, 5.25rem)",
             textShadow: "0 2px 40px rgba(0,0,0,0.5)",
           }}
           initial={{ opacity: 0, y: 24 }}
@@ -340,7 +340,7 @@ export function HeroSection() {
 
         {/* Subheading */}
         <motion.p
-          className="mt-4 sm:mt-6 text-white/75 leading-relaxed max-w-2xl mx-auto px-2"
+          className="mt-3.5 sm:mt-5 text-white/75 leading-relaxed max-w-2xl mx-auto px-2"
           style={{
             fontFamily: "var(--font-inter)",
             fontSize: "clamp(0.9rem, 2vw, 1.15rem)",
@@ -362,7 +362,7 @@ export function HeroSection() {
 
         {/* Trust indicators */}
         <motion.div
-          className="flex flex-wrap items-center justify-center gap-x-4 sm:gap-x-6 gap-y-2 mt-5 sm:mt-7"
+          className="flex flex-wrap items-center justify-center gap-x-4 sm:gap-x-6 gap-y-1.5 sm:gap-y-2 mt-4 sm:mt-5"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6, delay: 1.1 }}
