@@ -27,11 +27,15 @@ export default async function ChatPage({
   const { startWithUserId, requestId } = await searchParams;
 
   if (startWithUserId) {
-    // Attempt to ensure a conversation exists on the server using adminClient for reliable RLS bypass
+    // Attempt to ensure a conversation exists on the server using authenticated client (or admin if available)
     try {
-      const adminClient = createAdminClient();
+      const hasRealServiceKey = Boolean(
+        process.env.SUPABASE_SERVICE_ROLE_KEY &&
+        process.env.SUPABASE_SERVICE_ROLE_KEY !== process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
+      );
+      const clientToUse = hasRealServiceKey ? createAdminClient() : supabase;
       const convId = await getOrCreateConversation(
-        adminClient,
+        clientToUse,
         user.id,
         startWithUserId.trim(),
         requestId ? String(requestId).trim() : null
@@ -45,8 +49,6 @@ export default async function ChatPage({
       }
       console.warn("[chat/page] Server-side getOrCreateConversation error:", e);
     }
-    // If convId could not be resolved on server, do not redirect to blank /dashboard/chat!
-    // Let page render — ChatClient will resolve it via /api/chat/conversation.
   }
 
   const initialConversations = await getConversations(supabase, user.id);

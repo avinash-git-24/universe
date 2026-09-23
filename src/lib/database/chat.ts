@@ -304,7 +304,7 @@ export async function getOrCreateConversation(
       }
     }
 
-    // 2. No existing conversation — try master RPC get_or_create_delivery_conversation
+    // 2. Try master RPC get_or_create_delivery_conversation
     try {
       const { data: rpcConvId, error: rpcError } = await (supabase.rpc as any)(
         "get_or_create_delivery_conversation",
@@ -321,7 +321,7 @@ export async function getOrCreateConversation(
       // Proceed to next fallback
     }
 
-    // 3. Try legacy RPC create_delivery_conversation
+    // 3. Try legacy RPC create_delivery_conversation (with request_id)
     try {
       const { data: legacyId, error: legacyError } = await (supabase.rpc as any)(
         "create_delivery_conversation",
@@ -333,6 +333,28 @@ export async function getOrCreateConversation(
 
       if (!legacyError && legacyId) {
         return legacyId as string;
+      }
+    } catch {
+      // Proceed to next fallback
+    }
+
+    // 3b. Try legacy RPC create_delivery_conversation without request_id (single argument)
+    try {
+      const { data: singleArgId, error: singleArgError } = await (supabase.rpc as any)(
+        "create_delivery_conversation",
+        {
+          p_other_user_id: userId2,
+        }
+      );
+
+      if (!singleArgError && singleArgId) {
+        if (trimmedReqId) {
+          await supabase
+            .from("conversations")
+            .update({ request_id: trimmedReqId })
+            .eq("id", singleArgId);
+        }
+        return singleArgId as string;
       }
     } catch {
       // Proceed to next fallback
@@ -361,28 +383,79 @@ export async function getOrCreateConversation(
     let newConvId: string | null = null;
 
     if (trimmedReqId) {
-      const { data: convWithReq } = await supabase
-        .from("conversations")
-        .insert({ request_id: trimmedReqId })
-        .select("id")
-        .single();
-      if (convWithReq?.id) {
-        newConvId = convWithReq.id;
+      try {
+        const query = supabase
+          .from("conversations")
+          .insert({ request_id: trimmedReqId })
+          .select("id");
+        const res =
+          typeof (query as any).single === "function"
+            ? await (query as any).single()
+            : typeof (query as any).maybeSingle === "function"
+            ? await (query as any).maybeSingle()
+            : null;
+        if (res?.data?.id) {
+          newConvId = res.data.id;
+        }
+      } catch (err) {
+        console.warn("[chat] insert with request_id warning:", err);
       }
     }
 
     if (!newConvId) {
-      const { data: convWithoutReq, error: insertError } = await supabase
-        .from("conversations")
-        .insert({})
-        .select("id")
-        .single();
-
-      if (insertError || !convWithoutReq) {
-        console.error("Error creating conversation fallback:", insertError);
-        return null;
+      try {
+        const query = supabase
+          .from("conversations")
+          .insert({})
+          .select("id");
+        const res =
+          typeof (query as any).single === "function"
+            ? await (query as any).single()
+            : typeof (query as any).maybeSingle === "function"
+            ? await (query as any).maybeSingle()
+            : null;
+        if (res?.data?.id) {
+          newConvId = res.data.id;
+        }
+      } catch (err) {
+        console.warn("[chat] insert without request_id warning:", err);
       }
-      newConvId = convWithoutReq.id;
+    }
+
+    // 5b. If RLS blocked .select("id") before participants exist, use pre-generated UUID
+    if (!newConvId) {
+      const explicitId =
+        typeof crypto !== "undefined" && typeof crypto.randomUUID === "function"
+          ? crypto.randomUUID()
+          : `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+
+      let explicitSuccess = false;
+      if (trimmedReqId) {
+        const { error: expError } = await supabase
+          .from("conversations")
+          .insert({ id: explicitId, request_id: trimmedReqId });
+        if (!expError) {
+          explicitSuccess = true;
+        }
+      }
+
+      if (!explicitSuccess) {
+        const { error: simpleError } = await supabase
+          .from("conversations")
+          .insert({ id: explicitId });
+        if (!simpleError) {
+          explicitSuccess = true;
+        }
+      }
+
+      if (explicitSuccess) {
+        newConvId = explicitId;
+      }
+    }
+
+    if (!newConvId) {
+      console.error("Error creating conversation fallback: All creation paths exhausted");
+      return null;
     }
 
     // Insert participants

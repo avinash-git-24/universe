@@ -10,6 +10,13 @@
 import { createClient } from "@supabase/supabase-js";
 import { Database } from "@/types/database";
 
+export function hasAdminPrivileges(): boolean {
+  return Boolean(
+    process.env.SUPABASE_SERVICE_ROLE_KEY &&
+    process.env.SUPABASE_SERVICE_ROLE_KEY !== process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
+  );
+}
+
 export function createAdminClient() {
   const supabaseUrl =
     process.env.SUPABASE_INTERNAL_URL ||
@@ -25,3 +32,4 @@ export function createAdminClient() {
     },
   });
 }
+

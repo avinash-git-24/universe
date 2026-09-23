@@ -25,23 +25,30 @@ export async function POST(req: NextRequest) {
     const targetUserId = otherUserId.trim();
     const targetRequestId = requestId ? String(requestId).trim() : null;
 
-    // Use admin client with service_role to ensure participants are inserted across RLS boundaries
     let convId: string | null = null;
     let adminClient: ReturnType<typeof createAdminClient> | null = null;
 
-    try {
-      adminClient = createAdminClient();
-      convId = await getOrCreateConversation(
-        adminClient,
-        user.id,
-        targetUserId,
-        targetRequestId
-      );
-    } catch (adminErr) {
-      console.warn("[api/chat/conversation] adminClient execution warning:", adminErr);
+    // Only attempt adminClient if real service role key is configured (avoids unauthenticated anon failure)
+    const hasRealServiceKey = Boolean(
+      process.env.SUPABASE_SERVICE_ROLE_KEY &&
+      process.env.SUPABASE_SERVICE_ROLE_KEY !== process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
+    );
+
+    if (hasRealServiceKey) {
+      try {
+        adminClient = createAdminClient();
+        convId = await getOrCreateConversation(
+          adminClient,
+          user.id,
+          targetUserId,
+          targetRequestId
+        );
+      } catch (adminErr) {
+        console.warn("[api/chat/conversation] adminClient execution warning:", adminErr);
+      }
     }
 
-    // Fallback: If adminClient is unavailable or failed, try user-authenticated supabase client
+    // Authenticated user client (uses user session from request cookies)
     if (!convId) {
       convId = await getOrCreateConversation(
         supabase,
@@ -53,14 +60,14 @@ export async function POST(req: NextRequest) {
 
     if (!convId) {
       return NextResponse.json(
-        { error: "Failed to initialize conversation" },
+        { error: "Could not create or find conversation with this student" },
         { status: 500 }
       );
     }
 
     // 2. Load populated conversation details for immediate client hydration
     let conversation = null;
-    if (adminClient) {
+    if (adminClient && hasRealServiceKey) {
       try {
         conversation = await getConversationById(adminClient, convId, user.id);
       } catch (err) {

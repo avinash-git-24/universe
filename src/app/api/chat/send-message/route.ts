@@ -36,13 +36,17 @@ export async function POST(req: NextRequest) {
       metadata || null
     );
 
-    // Elevated fallback: If standard insert/RPC was blocked by missing participant record or RLS, auto-heal using admin client
+    // Auto-heal fallback: If standard insert/RPC was blocked by missing participant record or RLS
     if (!message) {
       try {
-        const adminClient = createAdminClient();
+        const hasRealServiceKey = Boolean(
+          process.env.SUPABASE_SERVICE_ROLE_KEY &&
+          process.env.SUPABASE_SERVICE_ROLE_KEY !== process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
+        );
+        const fallbackClient = hasRealServiceKey ? createAdminClient() : supabase;
 
         // 1. Auto-heal: Ensure current user is in conversation_participants
-        const participantsTable = adminClient.from("conversation_participants") as any;
+        const participantsTable = fallbackClient.from("conversation_participants") as any;
         if (typeof participantsTable.upsert === "function") {
           await participantsTable.upsert(
             { conversation_id: conversationId, profile_id: user.id },
@@ -54,8 +58,8 @@ export async function POST(req: NextRequest) {
           );
         }
 
-        // 2. Insert message via admin client
-        const { data: adminMsg, error: insertErr } = await adminClient
+        // 2. Insert message via fallback client
+        const { data: fallbackMsg, error: insertErr } = await fallbackClient
           .from("messages")
           .insert({
             conversation_id: conversationId,
@@ -68,17 +72,17 @@ export async function POST(req: NextRequest) {
           .select("*")
           .single();
 
-        if (!insertErr && adminMsg) {
-          message = adminMsg;
-          await adminClient
+        if (!insertErr && fallbackMsg) {
+          message = fallbackMsg;
+          await fallbackClient
             .from("conversations")
             .update({ updated_at: new Date().toISOString() })
             .eq("id", conversationId);
         } else if (insertErr) {
-          console.error("[api/chat/send-message] Admin fallback insert error:", insertErr);
+          console.error("[api/chat/send-message] Fallback insert error:", insertErr);
         }
-      } catch (adminErr) {
-        console.error("[api/chat/send-message] Admin fallback exception:", adminErr);
+      } catch (fallbackErr) {
+        console.error("[api/chat/send-message] Fallback exception:", fallbackErr);
       }
     }
 

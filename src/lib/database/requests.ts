@@ -1,5 +1,6 @@
 import { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/types/database";
+import { getOrCreateConversation } from "@/lib/database/chat";
 
 export type DeliveryRequest = Database["public"]["Tables"]["delivery_requests"]["Row"];
 export type RequestItem = Database["public"]["Tables"]["request_items"]["Row"];
@@ -397,10 +398,12 @@ export async function acceptRequest(
       .single();
 
     if (reqData?.requester_id && reqData.requester_id !== runnerId) {
-      await supabase.rpc("create_delivery_conversation", {
-        p_other_user_id: reqData.requester_id,
-        p_request_id: requestId,
-      });
+      await getOrCreateConversation(
+        supabase,
+        runnerId,
+        reqData.requester_id,
+        requestId
+      );
 
       // Send immediate notification to requester
       fetch("/api/notifications/create", {

@@ -62,6 +62,8 @@ export function ChatClient({ userId, initialConversations, activeDeliveries = []
   const [toasts, setToasts] = useState<InAppToast[]>([]);
 
   const activeIdRef = useRef<string | null>(activeConversationId);
+  const startedWithRef = useRef<string | null>(null);
+
   useEffect(() => {
     activeIdRef.current = activeConversationId;
   }, [activeConversationId]);
@@ -80,20 +82,25 @@ export function ChatClient({ userId, initialConversations, activeDeliveries = []
   }, []);
 
   const handleSelect = useCallback(async (id: string) => {
+    if (!id) {
+      setActiveConversationId(null);
+      router.replace("/dashboard/chat", { scroll: false });
+      return;
+    }
+
     setActiveConversationId(id);
     router.replace(`?id=${id}`, { scroll: false });
     
     // Clear unread count locally and in db
-    if (id) {
-      setConversations((prev) =>
-        prev.map((c) => (c.id === id ? { ...c, unread_count: 0 } : c))
-      );
-      setToasts((prev) => prev.filter((t) => t.conversationId !== id));
-      await markConversationAsRead(supabase, id, userId);
-    }
+    setConversations((prev) =>
+      prev.map((c) => (c.id === id ? { ...c, unread_count: 0 } : c))
+    );
+    setToasts((prev) => prev.filter((t) => t.conversationId !== id));
+    await markConversationAsRead(supabase, id, userId);
   }, [router, supabase, userId]);
 
   const handleStartChatWithUser = useCallback(async (otherUserId: string, reqId?: string) => {
+    if (!otherUserId) return;
     setStartingChatUserId(otherUserId);
     try {
       // 1. Check if conversation already exists in current loaded list
@@ -170,7 +177,8 @@ export function ChatClient({ userId, initialConversations, activeDeliveries = []
 
     if (urlId) {
       setActiveConversationId(urlId);
-    } else if (startWithUserId) {
+    } else if (startWithUserId && startedWithRef.current !== startWithUserId) {
+      startedWithRef.current = startWithUserId;
       handleStartChatWithUser(startWithUserId, reqId || undefined);
     } else if (conversations.length > 0 && !activeConversationId && !startingChatUserId) {
       setActiveConversationId(conversations[0].id);
@@ -350,8 +358,12 @@ export function ChatClient({ userId, initialConversations, activeDeliveries = []
         {toasts.map((toast) => (
           <div
             key={toast.id}
-            onClick={() => handleSelect(toast.conversationId)}
-            className="pointer-events-auto cursor-pointer p-3.5 rounded-2xl bg-[#0d1612]/95 border border-emerald-500/40 shadow-[0_8px_30px_rgba(0,0,0,0.6)] backdrop-blur-xl flex items-center justify-between gap-3 animate-in slide-in-from-top-4 fade-in duration-200 hover:border-emerald-400 transition-all group"
+            onClick={() => {
+              if (toast.conversationId) {
+                handleSelect(toast.conversationId);
+              }
+            }}
+            className={`pointer-events-auto ${toast.conversationId ? 'cursor-pointer' : ''} p-3.5 rounded-2xl bg-[#0d1612]/95 border border-emerald-500/40 shadow-[0_8px_30px_rgba(0,0,0,0.6)] backdrop-blur-xl flex items-center justify-between gap-3 animate-in slide-in-from-top-4 fade-in duration-200 hover:border-emerald-400 transition-all group`}
           >
             <div className="flex items-center gap-3 min-w-0">
               <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-emerald-500 to-teal-400 text-black font-extrabold flex items-center justify-center text-sm shrink-0 shadow-md">
@@ -373,9 +385,11 @@ export function ChatClient({ userId, initialConversations, activeDeliveries = []
             </div>
 
             <div className="flex items-center gap-1.5 shrink-0">
-              <span className="text-xs font-bold text-emerald-400 flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
-                Reply <ArrowRight className="w-3.5 h-3.5" />
-              </span>
+              {toast.conversationId ? (
+                <span className="text-xs font-bold text-emerald-400 flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
+                  Reply <ArrowRight className="w-3.5 h-3.5" />
+                </span>
+              ) : null}
               <button
                 type="button"
                 onClick={(e) => {
