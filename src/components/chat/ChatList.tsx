@@ -12,7 +12,7 @@ interface ChatListProps {
   initialConversations: ConversationWithDetails[];
   activeConversationId: string | null;
   onSelectConversation: (id: string) => void;
-  onStartChatWithUser?: (otherUserId: string) => void;
+  onStartChatWithUser?: (otherUserId: string, requestId?: string) => void;
   onlineUsers: Set<string>;
   activeDeliveries?: ActiveDeliveryContact[];
   startingChatUserId?: string | null;
@@ -118,7 +118,7 @@ export function ChatList({
                   key={del.otherUserId}
                   type="button"
                   disabled={isStarting}
-                  onClick={() => onStartChatWithUser?.(del.otherUserId)}
+                  onClick={() => onStartChatWithUser?.(del.otherUserId, del.requestId)}
                   className="w-full text-left p-2.5 rounded-xl bg-emerald-500/[0.06] hover:bg-emerald-500/15 border border-emerald-500/20 hover:border-emerald-500/40 transition-all flex items-center justify-between gap-2.5 group cursor-pointer disabled:opacity-80"
                 >
                   <div className="min-w-0 flex-1">

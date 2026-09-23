@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { getOrCreateConversation, getConversationById } from "@/lib/database/chat";
 
 export async function POST(req: NextRequest) {
@@ -21,13 +22,34 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Missing otherUserId" }, { status: 400 });
     }
 
-    // 1. Get or create the conversation (safe server execution)
-    const convId = await getOrCreateConversation(
-      supabase,
-      user.id,
-      otherUserId.trim(),
-      requestId ? String(requestId).trim() : null
-    );
+    const targetUserId = otherUserId.trim();
+    const targetRequestId = requestId ? String(requestId).trim() : null;
+
+    // Use admin client with service_role to ensure participants are inserted across RLS boundaries
+    let convId: string | null = null;
+    let adminClient: ReturnType<typeof createAdminClient> | null = null;
+
+    try {
+      adminClient = createAdminClient();
+      convId = await getOrCreateConversation(
+        adminClient,
+        user.id,
+        targetUserId,
+        targetRequestId
+      );
+    } catch (adminErr) {
+      console.warn("[api/chat/conversation] adminClient execution warning:", adminErr);
+    }
+
+    // Fallback: If adminClient is unavailable or failed, try user-authenticated supabase client
+    if (!convId) {
+      convId = await getOrCreateConversation(
+        supabase,
+        user.id,
+        targetUserId,
+        targetRequestId
+      );
+    }
 
     if (!convId) {
       return NextResponse.json(
@@ -37,7 +59,18 @@ export async function POST(req: NextRequest) {
     }
 
     // 2. Load populated conversation details for immediate client hydration
-    const conversation = await getConversationById(supabase, convId, user.id);
+    let conversation = null;
+    if (adminClient) {
+      try {
+        conversation = await getConversationById(adminClient, convId, user.id);
+      } catch (err) {
+        console.warn("[api/chat/conversation] adminClient getConversationById warning:", err);
+      }
+    }
+
+    if (!conversation) {
+      conversation = await getConversationById(supabase, convId, user.id);
+    }
 
     return NextResponse.json({
       success: true,

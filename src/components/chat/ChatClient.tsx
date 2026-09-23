@@ -17,6 +17,7 @@ import { sounds } from "@/lib/audio";
 
 export interface ActiveDeliveryContact {
   otherUserId: string;
+  requestId?: string;
   otherUser: {
     id: string;
     full_name: string | null;
@@ -50,7 +51,11 @@ export function ChatClient({ userId, initialConversations, activeDeliveries = []
   
   const [conversations, setConversations] = useState<ConversationWithDetails[]>(initialConversations);
   const [activeConversationId, setActiveConversationId] = useState<string | null>(
-    searchParams.get("id") || (initialConversations.length > 0 ? initialConversations[0].id : null)
+    searchParams.get("id") || (
+      searchParams.get("startWithUserId")
+        ? null
+        : (initialConversations.length > 0 ? initialConversations[0].id : null)
+    )
   );
   const [onlineUsers, setOnlineUsers] = useState<Set<string>>(new Set());
   const [startingChatUserId, setStartingChatUserId] = useState<string | null>(null);
@@ -88,7 +93,7 @@ export function ChatClient({ userId, initialConversations, activeDeliveries = []
     }
   }, [router, supabase, userId]);
 
-  const handleStartChatWithUser = useCallback(async (otherUserId: string) => {
+  const handleStartChatWithUser = useCallback(async (otherUserId: string, reqId?: string) => {
     setStartingChatUserId(otherUserId);
     try {
       // 1. Check if conversation already exists in current loaded list
@@ -105,7 +110,7 @@ export function ChatClient({ userId, initialConversations, activeDeliveries = []
       const res = await fetch("/api/chat/conversation", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ otherUserId }),
+        body: JSON.stringify({ otherUserId, requestId: reqId || null }),
       });
 
       if (res.ok) {
@@ -124,20 +129,33 @@ export function ChatClient({ userId, initialConversations, activeDeliveries = []
       }
 
       // 3. Fallback: try client-side getOrCreateConversation + getConversationById
-      const convId = await getOrCreateConversation(supabase, userId, otherUserId);
+      const convId = await getOrCreateConversation(supabase, userId, otherUserId, reqId || null);
       if (convId) {
         const conv = await getConversationById(supabase, convId, userId);
         if (conv) {
           setConversations((prev) => [conv, ...prev.filter((c) => c.id !== conv.id)]);
         }
         handleSelect(convId);
+      } else {
+        showToast({
+          conversationId: "",
+          senderName: "Chat",
+          avatarChar: "!",
+          content: "Could not open chat with this student. Please try again.",
+        });
       }
     } catch (err) {
       console.error("Error starting chat:", err);
+      showToast({
+        conversationId: "",
+        senderName: "Chat",
+        avatarChar: "!",
+        content: "Network issue while connecting to chat.",
+      });
     } finally {
       setStartingChatUserId(null);
     }
-  }, [conversations, handleSelect, supabase, userId]);
+  }, [conversations, handleSelect, showToast, supabase, userId]);
 
   // Sync state if server props change
   useEffect(() => {
@@ -148,14 +166,16 @@ export function ChatClient({ userId, initialConversations, activeDeliveries = []
   useEffect(() => {
     const urlId = searchParams.get("id");
     const startWithUserId = searchParams.get("startWithUserId");
+    const reqId = searchParams.get("requestId");
+
     if (urlId) {
       setActiveConversationId(urlId);
     } else if (startWithUserId) {
-      handleStartChatWithUser(startWithUserId);
-    } else if (conversations.length > 0 && !activeConversationId) {
+      handleStartChatWithUser(startWithUserId, reqId || undefined);
+    } else if (conversations.length > 0 && !activeConversationId && !startingChatUserId) {
       setActiveConversationId(conversations[0].id);
     }
-  }, [searchParams, conversations, activeConversationId]);
+  }, [searchParams, conversations, activeConversationId, handleStartChatWithUser, startingChatUserId]);
 
   // If activeConversationId is not yet in conversations list, fetch it
   useEffect(() => {
@@ -405,6 +425,17 @@ export function ChatClient({ userId, initialConversations, activeDeliveries = []
               isOnline={Boolean(activeConversation.other_participant?.id && onlineUsers.has(activeConversation.other_participant.id))}
             />
           </div>
+        ) : startingChatUserId ? (
+          <div className="flex-1 flex flex-col items-center justify-center p-6 md:p-12 text-center bg-[#0a0f0d] relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-b from-[#10b981]/5 to-transparent opacity-50 pointer-events-none" />
+            <div className="w-16 h-16 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 mb-4 animate-pulse">
+              <Zap className="w-8 h-8 fill-emerald-400" />
+            </div>
+            <h3 className="text-xl font-bold text-white mb-1.5">Opening Chat...</h3>
+            <p className="text-sm text-white/50 max-w-sm">
+              Connecting securely with the campus student. Please wait a moment.
+            </p>
+          </div>
         ) : (
           <div className="flex-1 flex flex-col items-center justify-center p-6 md:p-12 text-center bg-[#0a0f0d] relative overflow-y-auto">
             <div className="absolute inset-0 bg-gradient-to-b from-[#10b981]/5 to-transparent opacity-50 pointer-events-none" />
@@ -426,7 +457,7 @@ export function ChatClient({ userId, initialConversations, activeDeliveries = []
                       key={del.otherUserId}
                       type="button"
                       disabled={startingChatUserId === del.otherUserId}
-                      onClick={() => handleStartChatWithUser(del.otherUserId)}
+                      onClick={() => handleStartChatWithUser(del.otherUserId, del.requestId)}
                       className="p-3.5 rounded-2xl bg-white/5 hover:bg-emerald-500/10 border border-white/10 hover:border-emerald-500/30 transition-all flex items-center justify-between group cursor-pointer"
                     >
                       <div className="min-w-0 flex-1">

@@ -1,6 +1,7 @@
 import { getUser } from "@/lib/supabase/queries";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { ROUTES } from "@/constants/routes";
 import { getConversations, getOrCreateConversation } from "@/lib/database/chat";
 import { ChatClient, type ActiveDeliveryContact } from "@/components/chat/ChatClient";
@@ -26,10 +27,23 @@ export default async function ChatPage({
   const { startWithUserId, requestId } = await searchParams;
 
   if (startWithUserId) {
-    // Attempt to ensure a conversation exists on the server
-    const convId = await getOrCreateConversation(supabase, user.id, startWithUserId, requestId || null);
-    if (convId) {
-      redirect(`/dashboard/chat?id=${convId}`);
+    // Attempt to ensure a conversation exists on the server using adminClient for reliable RLS bypass
+    try {
+      const adminClient = createAdminClient();
+      const convId = await getOrCreateConversation(
+        adminClient,
+        user.id,
+        startWithUserId.trim(),
+        requestId ? String(requestId).trim() : null
+      );
+      if (convId) {
+        redirect(`/dashboard/chat?id=${convId}`);
+      }
+    } catch (e: any) {
+      if (e?.message === "NEXT_REDIRECT" || e?.digest?.startsWith?.("NEXT_REDIRECT")) {
+        throw e;
+      }
+      console.warn("[chat/page] Server-side getOrCreateConversation error:", e);
     }
     // If convId could not be resolved on server, do not redirect to blank /dashboard/chat!
     // Let page render — ChatClient will resolve it via /api/chat/conversation.
@@ -76,6 +90,7 @@ export default async function ChatPage({
           if (!contactMap.has(runnerId)) {
             contactMap.set(runnerId, {
               otherUserId: runnerId,
+              requestId: req.id,
               otherUser: activeAssign.runner,
               deliveryCount: 1,
               latestItemsSummary: itemNames,
@@ -86,6 +101,7 @@ export default async function ChatPage({
           } else {
             const existing = contactMap.get(runnerId)!;
             existing.deliveryCount += 1;
+            if (!existing.requestId) existing.requestId = req.id;
           }
         }
       }
@@ -121,6 +137,7 @@ export default async function ChatPage({
           if (!contactMap.has(requesterId)) {
             contactMap.set(requesterId, {
               otherUserId: requesterId,
+              requestId: req.id,
               otherUser: req.requester,
               deliveryCount: 1,
               latestItemsSummary: itemNames,
@@ -131,6 +148,7 @@ export default async function ChatPage({
           } else {
             const existing = contactMap.get(requesterId)!;
             existing.deliveryCount += 1;
+            if (!existing.requestId) existing.requestId = req.id;
           }
         }
       }

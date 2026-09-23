@@ -269,6 +269,41 @@ export async function getOrCreateConversation(
       }
     }
 
+    // 1b. Check if conversation already exists for this delivery request
+    if (trimmedReqId) {
+      try {
+        const { data: reqConv } = await supabase
+          .from("conversations")
+          .select("id")
+          .eq("request_id", trimmedReqId)
+          .maybeSingle();
+
+        if (reqConv?.id) {
+          const uniqueParticipants = Array.from(new Set([userId1, userId2]));
+          const participantsTable = supabase.from("conversation_participants") as any;
+          if (typeof participantsTable.upsert === "function") {
+            await participantsTable.upsert(
+              uniqueParticipants.map((pid) => ({
+                conversation_id: reqConv.id,
+                profile_id: pid,
+              })),
+              { onConflict: "conversation_id,profile_id" }
+            );
+          } else {
+            await participantsTable.insert(
+              uniqueParticipants.map((pid) => ({
+                conversation_id: reqConv.id,
+                profile_id: pid,
+              }))
+            );
+          }
+          return reqConv.id;
+        }
+      } catch {
+        // Proceed to next checks
+      }
+    }
+
     // 2. No existing conversation — try master RPC get_or_create_delivery_conversation
     try {
       const { data: rpcConvId, error: rpcError } = await (supabase.rpc as any)(
@@ -352,12 +387,23 @@ export async function getOrCreateConversation(
 
     // Insert participants
     const uniqueParticipants = Array.from(new Set([userId1, userId2]));
-    await supabase.from("conversation_participants").insert(
-      uniqueParticipants.map((pid) => ({
-        conversation_id: newConvId!,
-        profile_id: pid,
-      }))
-    );
+    const participantsTable = supabase.from("conversation_participants") as any;
+    if (typeof participantsTable.upsert === "function") {
+      await participantsTable.upsert(
+        uniqueParticipants.map((pid) => ({
+          conversation_id: newConvId!,
+          profile_id: pid,
+        })),
+        { onConflict: "conversation_id,profile_id" }
+      );
+    } else {
+      await participantsTable.insert(
+        uniqueParticipants.map((pid) => ({
+          conversation_id: newConvId!,
+          profile_id: pid,
+        }))
+      );
+    }
 
     return newConvId;
   } catch (err) {
