@@ -153,7 +153,7 @@ function LiveStatusStrip() {
           <div key={s.label} className="flex items-center flex-1">
             <StatItem {...s} />
             {i < stats.length - 1 && (
-              <div className="h-8 w-px bg-white/12 flex-shrink-0"/>
+              <div className="h-8 w-px bg-white/12 flex-shrink-0" />
             )}
           </div>
         ))}
@@ -217,12 +217,12 @@ function HeroButtons() {
         id="hero-cta-register"
         onClick={() => router.push(ROUTES.REGISTER)}
         containerClassName="w-full sm:w-[220px]"
-        className="text-base font-bold text-white tracking-wide flex items-center justify-center gap-2 group"
+        className="text-base font-semibold text-white tracking-wide flex items-center justify-center gap-2.5 group/btn"
       >
-        <span>Get Started</span>
+        <span className="drop-shadow-[0_1px_4px_rgba(0,0,0,0.8)]">Get Started</span>
         <ArrowRight
           size={18}
-          className="transition-transform duration-200 group-hover:translate-x-1 stroke-[2.5] text-white"
+          className="transition-transform duration-200 group-hover/btn:translate-x-1 stroke-[2.5] text-emerald-400 drop-shadow-[0_0_8px_rgba(52,211,153,0.8)]"
         />
       </LiquidMetalButton>
 
@@ -309,7 +309,7 @@ export function HeroSection() {
               backdropFilter: "blur(8px)",
             }}
           >
-            <span className="w-1.5 h-1.5 rounded-full bg-[#4ADE80] animate-pulse"/>
+            <span className="w-1.5 h-1.5 rounded-full bg-[#4ADE80] animate-pulse" />
             Exclusively for Marwadi University Students
           </span>
         </motion.div>

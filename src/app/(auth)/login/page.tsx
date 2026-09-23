@@ -72,18 +72,16 @@ function TechField({
       </div>
 
       <div
-        className={`relative flex items-center w-full rounded-xl transition-all duration-200 overflow-hidden ${
-          error
+        className={`relative flex items-center w-full rounded-xl transition-all duration-200 overflow-hidden ${error
             ? "bg-red-950/25 border border-red-500/60 shadow-[0_0_18px_rgba(239,68,68,0.25)]"
             : focused
-            ? "bg-black/60 border border-emerald-400 shadow-[0_0_24px_rgba(16,185,129,0.35),inset_0_0_12px_rgba(16,185,129,0.08)] ring-1 ring-emerald-400/40 backdrop-blur-md"
-            : "bg-black/35 border border-white/[0.10] hover:border-white/[0.22] hover:bg-black/45 backdrop-blur-sm"
-        }`}
+              ? "bg-black/60 border border-emerald-400 shadow-[0_0_24px_rgba(16,185,129,0.35),inset_0_0_12px_rgba(16,185,129,0.08)] ring-1 ring-emerald-400/40 backdrop-blur-md"
+              : "bg-black/35 border border-white/[0.10] hover:border-white/[0.22] hover:bg-black/45 backdrop-blur-sm"
+          }`}
       >
         <span
-          className={`absolute left-3.5 flex items-center transition-colors pointer-events-none z-10 ${
-            focused ? "text-emerald-400" : "text-slate-400"
-          }`}
+          className={`absolute left-3.5 flex items-center transition-colors pointer-events-none z-10 ${focused ? "text-emerald-400" : "text-slate-400"
+            }`}
         >
           {leftIcon}
         </span>
@@ -274,9 +272,8 @@ function LoginForm() {
 
       {/* ── Top University Gateway Status Pill ── */}
       <div
-        className={`relative z-10 mb-6 flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-[#060914]/90 border border-emerald-500/35 backdrop-blur-xl shadow-[0_0_25px_rgba(16,185,129,0.2)] transition-all duration-500 ${
-          mounted ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-4"
-        }`}
+        className={`relative z-10 mb-6 flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-[#060914]/90 border border-emerald-500/35 backdrop-blur-xl shadow-[0_0_25px_rgba(16,185,129,0.2)] transition-all duration-500 ${mounted ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-4"
+          }`}
       >
         <span className="relative flex h-2 w-2">
           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
@@ -294,9 +291,8 @@ function LoginForm() {
 
         {/* Main Card */}
         <div
-          className={`relative z-10 w-full rounded-2xl p-6 sm:p-8 backdrop-blur-2xl transition-all duration-700 shadow-2xl overflow-hidden ${
-            mounted ? "opacity-100 scale-100 translate-y-0" : "opacity-0 scale-95 translate-y-6"
-          }`}
+          className={`relative z-10 w-full rounded-2xl p-6 sm:p-8 backdrop-blur-2xl transition-all duration-700 shadow-2xl overflow-hidden ${mounted ? "opacity-100 scale-100 translate-y-0" : "opacity-0 scale-95 translate-y-6"
+            }`}
           style={{
             background: "linear-gradient(180deg, rgba(8, 14, 28, 0.65) 0%, rgba(4, 7, 16, 0.8) 100%)",
             border: "1px solid rgba(255, 255, 255, 0.12)",
@@ -488,22 +484,22 @@ function LoginForm() {
               <LiquidMetalButton
                 type="submit"
                 disabled={loading || isSuccess}
-                className="text-[14px] font-bold text-white tracking-wide flex items-center justify-center gap-2 group"
+                className="text-[14px] font-bold text-white tracking-wide flex items-center justify-center gap-2.5 group/btn"
               >
                 {isSuccess ? (
                   <>
                     <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin shrink-0" />
-                    <span>Verified! Opening Dashboard...</span>
+                    <span className="drop-shadow-[0_1px_4px_rgba(0,0,0,0.8)]">Verified! Opening Dashboard...</span>
                   </>
                 ) : loading ? (
                   <>
                     <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin shrink-0" />
-                    <span>Authenticating Student ID...</span>
+                    <span className="drop-shadow-[0_1px_4px_rgba(0,0,0,0.8)]">Authenticating Student ID...</span>
                   </>
                 ) : (
                   <>
-                    <span>Sign In to UniVerse</span>
-                    <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform stroke-[2.5] text-white" />
+                    <span className="drop-shadow-[0_1px_4px_rgba(0,0,0,0.8)]">Sign In to UniVerse</span>
+                    <ArrowRight size={16} className="group-hover/btn:translate-x-1 transition-transform stroke-[2.5] text-emerald-400 drop-shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
                   </>
                 )}
               </LiquidMetalButton>
@@ -564,9 +560,8 @@ function LoginForm() {
 
       {/* ── Bottom Campus Verified Trust Badges (Unified Compact Micro-Pill) ── */}
       <div
-        className={`relative z-10 mt-5 sm:mt-6 flex items-center justify-center transition-all duration-700 ${
-          mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2"
-        }`}
+        className={`relative z-10 mt-5 sm:mt-6 flex items-center justify-center transition-all duration-700 ${mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2"
+          }`}
       >
         <div className="flex items-center gap-2 sm:gap-3 px-3.5 py-1.5 rounded-full bg-white/[0.03] border border-white/[0.08] backdrop-blur-md text-[10.5px] sm:text-[11px] font-medium text-slate-300 shadow-[0_4px_20px_rgba(0,0,0,0.4)]">
           <div className="flex items-center gap-1.5">
