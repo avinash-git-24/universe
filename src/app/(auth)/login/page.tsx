@@ -6,6 +6,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { ROUTES } from "@/constants/routes";
 import TechSpotlightBackground from "@/components/auth/TechSpotlightBackground";
+import { LiquidMetalButton } from "@/components/ui/LiquidMetalButton";
 import {
   Mail,
   Lock,
@@ -482,35 +483,31 @@ function LoginForm() {
               </Link>
             </div>
 
-            {/* ── Next-Gen Ultra-Premium Luminous Sign In Button ── */}
-            <button
-              type="submit"
-              disabled={loading || isSuccess}
-              className="w-full mt-2 py-3.5 px-5 rounded-xl font-bold text-[#022c22] bg-gradient-to-r from-emerald-400 via-teal-300 to-emerald-400 hover:brightness-105 transition-all duration-300 shadow-[0_0_28px_rgba(52,211,153,0.38)] hover:shadow-[0_0_42px_rgba(52,211,153,0.6)] active:scale-[0.985] disabled:opacity-50 disabled:pointer-events-none flex items-center justify-center gap-2.5 text-[13.5px] tracking-wide cursor-pointer relative overflow-hidden group/btn"
-            >
-              {/* Top Razor Shine Line */}
-              <div className="absolute top-0 inset-x-0 h-[1px] bg-white/50 pointer-events-none" />
-
-              {/* Diagonal Shimmer Sweep on Hover */}
-              <div className="absolute inset-0 -translate-x-full group-hover/btn:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/30 to-transparent pointer-events-none" />
-
-              {isSuccess ? (
-                <>
-                  <span className="w-4 h-4 border-2 border-[#022c22]/30 border-t-[#022c22] rounded-full animate-spin shrink-0" />
-                  <span>Verified! Opening Dashboard...</span>
-                </>
-              ) : loading ? (
-                <>
-                  <span className="w-4 h-4 border-2 border-[#022c22]/30 border-t-[#022c22] rounded-full animate-spin shrink-0" />
-                  <span>Authenticating Student ID...</span>
-                </>
-              ) : (
-                <>
-                  <span>Sign In to UniVerse</span>
-                  <ArrowRight size={16} className="group-hover/btn:translate-x-1 transition-transform stroke-[2.5]" />
-                </>
-              )}
-            </button>
+            {/* ── Liquid Metal WebGL 2 Sign In Button with Press Ripples ── */}
+            <div className="w-full mt-3">
+              <LiquidMetalButton
+                type="submit"
+                disabled={loading || isSuccess}
+                className="text-[14px] font-bold text-white tracking-wide flex items-center justify-center gap-2.5 group/btn"
+              >
+                {isSuccess ? (
+                  <>
+                    <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin shrink-0" />
+                    <span className="drop-shadow-[0_1px_4px_rgba(0,0,0,0.8)]">Verified! Opening Dashboard...</span>
+                  </>
+                ) : loading ? (
+                  <>
+                    <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin shrink-0" />
+                    <span className="drop-shadow-[0_1px_4px_rgba(0,0,0,0.8)]">Authenticating Student ID...</span>
+                  </>
+                ) : (
+                  <>
+                    <span className="drop-shadow-[0_1px_4px_rgba(0,0,0,0.8)]">Sign In to UniVerse</span>
+                    <ArrowRight size={16} className="group-hover/btn:translate-x-1 transition-transform stroke-[2.5] text-emerald-400 drop-shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
+                  </>
+                )}
+              </LiquidMetalButton>
+            </div>
 
             {/* Divider */}
             <div className="flex items-center gap-3 my-1">
