@@ -91,7 +91,7 @@ function AdvantageCard({
         "group relative flex flex-col gap-3 sm:gap-4 p-5 sm:p-7 rounded-[var(--radius-xl)]",
         "cursor-default transition-all duration-300",
         highlight
-          ? "md:col-span-2 md:row-span-2"
+          ? "sm:col-span-2 lg:col-span-2 lg:row-span-2"
           : ""
       )}
       style={{
@@ -257,7 +257,7 @@ export function WhyUniverseSection() {
 
         {/* Bento grid */}
         <motion.div
-          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.15 }}
