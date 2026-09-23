@@ -10,11 +10,9 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
 import { ROUTES } from "@/constants/routes";
 import { createClient } from "@/lib/supabase/client";
 import BlackHoleBackground from "@/components/auth/BlackHoleBackground";
-import LiquidMetalButton from "@/components/ui/LiquidMetalButton";
 
 // ─── Validation ──────────────────────────────────────────────────────────────
 
@@ -405,31 +403,36 @@ export default function RegisterPage() {
               </span>
             </div>
 
-            {/* ── Liquid Metal WebGL 2 Create Account Button with Press Ripples ── */}
-            <div className="w-full mt-2">
-              <LiquidMetalButton
-                type="submit"
-                disabled={loading || isWarping}
-                className="text-[14px] font-bold text-white tracking-wide flex items-center justify-center gap-2.5 group/btn"
-              >
-                {isWarping ? (
-                  <>
-                    <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin shrink-0" />
-                    <span className="drop-shadow-[0_1px_4px_rgba(0,0,0,0.8)]">{btnText}</span>
-                  </>
-                ) : loading ? (
-                  <>
-                    <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin shrink-0" />
-                    <span className="drop-shadow-[0_1px_4px_rgba(0,0,0,0.8)]">INITIALIZING ACCOUNT...</span>
-                  </>
-                ) : (
-                  <>
-                    <span className="drop-shadow-[0_1px_4px_rgba(0,0,0,0.8)]">Create Account</span>
-                    <ArrowRight size={16} className="group-hover/btn:translate-x-1 transition-transform stroke-[2.5] text-emerald-400 drop-shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
-                  </>
-                )}
-              </LiquidMetalButton>
-            </div>
+            {/* Submit Action Button */}
+            <button
+              className="scifi-btn"
+              type="submit" disabled={loading || isWarping}
+              style={{
+                width: "100%", marginTop: 4,
+                padding: "13px 20px",
+                background: isWarping ? "rgba(0, 210, 255, 0.2)" : loading ? "rgba(0, 210, 255, 0.1)" : "transparent",
+                border: isWarping ? "1px solid #00d2ff" : "1px solid rgba(255, 255, 255, 0.25)",
+                borderRadius: 4,
+                color: isWarping ? "#00d2ff" : "#fff",
+                fontFamily: "'Space Mono', monospace",
+                letterSpacing: "3px",
+                fontSize: 12.5,
+                fontWeight: 700,
+                textTransform: "uppercase",
+                cursor: (loading || isWarping) ? "not-allowed" : "pointer",
+                boxShadow: isWarping ? "0 0 25px rgba(0, 210, 255, 0.4)" : "none",
+                transition: "all 0.3s ease",
+                display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
+              }}
+            >
+              {isWarping ? (
+                <span>{btnText}</span>
+              ) : loading ? (
+                <><span>INITIALIZING…</span></>
+              ) : (
+                <><span>Create Account</span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" /></svg></>
+              )}
+            </button>
 
             {/* OR Divider */}
             <div style={{ display: "flex", alignItems: "center", gap: 12, margin: "1px 0" }}>
