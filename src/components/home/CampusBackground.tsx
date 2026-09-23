@@ -372,29 +372,12 @@ export function CampusBackground() {
         <rect x="672" y="544" width="116" height="14" fill="#059669" rx="2" opacity="0.9" />
 
         {/* ═══════════════════════════════════════════════
-            LAYER 3B — ADMIN TOWER (center, taller)
+            LAYER 3B — ACADEMIC BLOCK FLAGPOLE
         ═══════════════════════════════════════════════ */}
-        {/* Tower shadow */}
-        <rect x="750" y="148" width="84" height="458" fill="#1a2a1a" opacity="0.08" rx="2" />
-
-        {/* Tower body */}
-        <rect x="742" y="140" width="76" height="460" fill="url(#uvGlassGrad)" filter="url(#uvShadow)" rx="2" />
-
-        {/* Tower vertical stripe */}
-        <rect x="778" y="140" width="4" height="460" fill="white" opacity="0.25" />
-
-        {/* Tower windows */}
-        {[0, 1, 2, 3, 4, 5, 6, 7].map(row => (
-          <g key={row}>
-            <rect x="750" y={155 + row * 52} width="28" height="36" fill="#87BEDB" opacity="0.55" rx="1" />
-            <rect x="782" y={155 + row * 52} width="28" height="36" fill="#87BEDB" opacity="0.55" rx="1" />
-          </g>
-        ))}
-
-        {/* Tower roof / flag */}
-        <rect x="748" y="130" width="64" height="12" fill="#10B981" rx="2" />
-        <rect x="776" y="108" width="3" height="24" fill="#6B7280" />
-        <path d="M 779 108 L 808 116 L 779 124 Z" fill="#F59E0B" />
+        {/* Central Flagpole & University Pennant */}
+        <rect x="719" y="210" width="2.5" height="30" fill="#94A3B8" rx="1" />
+        <circle cx="720.25" cy="209" r="2.5" fill="#F59E0B" />
+        <path d="M 721.5 210 L 748 217 L 721.5 224 Z" fill="#10B981" />
 
         {/* ═══════════════════════════════════════════════
             LAYER 4 — HOSTEL BUILDINGS
