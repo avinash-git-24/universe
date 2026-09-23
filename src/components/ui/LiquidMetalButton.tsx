@@ -107,11 +107,18 @@ void main(){
   vec2  p   = vec2(d.x, -d.y) / (uHalf.y * 2.);
   float lift = 1. + uPress * uE[6] + ripple(p, uT) * uE[7] + pointerW(p) * uPtrK.w;
 
-  o = vec4(vec3(
-    rimBand(sd,  uE[2]) * rimHot(s + uE[3], uT),
-    rimBand(sd,  0.   ) * rimHot(s,         uT),
-    rimBand(sd, -uE[2]) * rimHot(s - uE[3], uT)
-  ) * uE[1] * top * lift, 1.);
+  float rLobe = rimBand(sd,  uE[2]) * rimHot(s + uE[3], uT);
+  float gLobe = rimBand(sd,  0.   ) * rimHot(s,         uT);
+  float bLobe = rimBand(sd, -uE[2]) * rimHot(s - uE[3], uT);
+
+  // Precision Emerald & Cyber-Cyan tint for UniVerse identity
+  vec3 emeraldRim = vec3(
+    rLobe * 0.15 + gLobe * 0.20,
+    gLobe * 1.15 + rLobe * 0.10,
+    bLobe * 0.90 + gLobe * 0.20
+  );
+
+  o = vec4(emeraldRim * uE[1] * top * lift, 1.);
 }`;
 
 const FRAG_SCENE = HEAD + `
@@ -254,12 +261,16 @@ void main(){
 
   vec3 core = metal * pill * mix(1., uDim, veil) + texture(uRim, uv).rgb;
   float rip = ripple(vec2(d.x, -d.y) / (uHalf.y * 2.), uT);
-  core += vec3(rip * rip) * uRipK2.w * pill * mix(1., 0.42, veil);
+  // Emerald ripple wave highlight
+  core += vec3(rip * rip) * vec3(0.25, 1.0, 0.70) * uRipK2.w * pill * mix(1., 0.42, veil);
 
   float sdSh = sdPill(d + vec2(0., uHalf.y * 0.62), uHalf * 0.94, uHalf.y * 0.94);
   float occl = uOccl * exp(-max(sdSh, 0.) / (uHalf.y * 0.75));
 
-  vec3 rgb = core + glow * uGlowGain * mix(1., uGlowIn, pill) * (1. - occl * (1. - pill));
+  // Sophisticated Emerald-Cyan ambient bloom (matches UniVerse theme perfectly)
+  vec3 emeraldGlow = glow * vec3(0.10, 0.85, 0.55);
+
+  vec3 rgb = core + emeraldGlow * uGlowGain * mix(1., uGlowIn, pill) * (1. - occl * (1. - pill));
   float a = clamp(max(rgb.r, max(rgb.g, rgb.b)), 0., 1.);
   o = vec4(min(rgb, vec3(1.)), a);
 }`;
@@ -900,10 +911,10 @@ export function LiquidMetalButton({
         aria-hidden="true"
         className={`absolute inset-0 rounded-full transition-all duration-300 pointer-events-none ${
           isPress
-            ? "bg-[#070809] shadow-[0_3px_8px_rgba(0,0,0,0.85),0_8px_20px_rgba(0,0,0,0.70)]"
+            ? "bg-[#021812] shadow-[0_2px_8px_rgba(5,150,105,0.4),0_6px_16px_rgba(0,0,0,0.85)]"
             : isHot
-            ? "bg-[#08090a] shadow-[0_6px_14px_rgba(0,0,0,0.80),0_20px_45px_rgba(0,0,0,0.72),0_44px_90px_rgba(0,0,0,0.55)]"
-            : "bg-[#0b0c0e] shadow-[0_5px_12px_rgba(0,0,0,0.72),0_15px_34px_rgba(0,0,0,0.62),0_32px_68px_rgba(0,0,0,0.42)]"
+            ? "bg-[#04241b] shadow-[0_0_28px_rgba(16,185,129,0.38),0_12px_28px_rgba(0,0,0,0.7)]"
+            : "bg-[#031c15] shadow-[0_0_16px_rgba(16,185,129,0.20),0_8px_20px_rgba(0,0,0,0.5)]"
         }`}
       />
 
