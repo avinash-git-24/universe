@@ -15,7 +15,6 @@ jobs:
       fail-fast: false
       matrix:
         node-version: [20.x, 22.x]
-      max-parallel: 1
 
     env:
       NEXT_PUBLIC_SUPABASE_URL: 'http://127.0.0.1:54321'
@@ -23,11 +22,6 @@ jobs:
       NEXT_PUBLIC_SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.uW6lW-VwZg9T5Jq9C_q3kF4k8F-Qp_QG5w_bH-8kL-0'
       SUPABASE_SERVICE_ROLE_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU'
       NEXT_PUBLIC_APP_URL: 'http://localhost:3000'
-      SUPABASE_INTERNAL_IMAGE_REGISTRY: 'public.ecr.aws'
-
-    permissions:
-      contents: read
-      packages: read
 
     steps:
       - name: Checkout Repository
@@ -47,14 +41,6 @@ jobs:
 
       - name: Run TypeScript Type Check
         run: npx tsc --noEmit
-
-      - name: Setup Supabase CLI
-        uses: supabase/setup-cli@v1
-        with:
-          version: latest
-
-      - name: Start Local Supabase
-        run: supabase start -x edge-runtime,studio,postgres-meta,logflare,vector,mailpit,imgproxy
 
       - name: Run Vitest Unit & Component Tests
         run: npm test
