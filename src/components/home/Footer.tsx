@@ -10,6 +10,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Zap, Mail, Share2, Check } from "lucide-react";
+import SignalParticlesBackground from "./SignalParticlesBackground";
 
 function ShareButton() {
   const [copied, setCopied] = useState(false);
@@ -134,17 +135,20 @@ export function Footer() {
         aria-hidden="true"
       />
 
+      {/* ── Signal Particles — Predictive Arc Canvas Background ── */}
+      <SignalParticlesBackground className="opacity-90" />
+
       {/* Subtle background glow */}
       <div
         className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-60 rounded-full pointer-events-none"
         style={{
           background:
-            "radial-gradient(ellipse, rgba(16,185,129,0.04) 0%, transparent 70%)",
+            "radial-gradient(ellipse, rgba(16,185,129,0.06) 0%, transparent 70%)",
         }}
         aria-hidden="true"
       />
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* ── Top Grid ── */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-12 py-16">
