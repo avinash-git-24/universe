@@ -19,6 +19,7 @@ out vec4 o;
 
 uniform vec2  uC;
 uniform vec2  uHalf;
+uniform float uRadius;
 uniform float uT;
 uniform float uHover;
 uniform float uPress;
@@ -30,19 +31,19 @@ uniform vec4  uPtrK;
 
 #define PI 3.14159265
 
-float sdPill(vec2 p, vec2 b, float r){
-  vec2 q = abs(p) - b + r;
-  return min(max(q.x,q.y),0.) + length(max(q,0.)) - r;
+float sdRoundBox(vec2 p, vec2 b, float r){
+  vec2 q = abs(p) - b + vec2(r);
+  return min(max(q.x, q.y), 0.0) + length(max(q, 0.0)) - r;
 }
 
 float ripple(vec2 p, float t){
-  float sum = 0.;
+  float sum = 0.0;
   for(int i = 0; i < 3; i++){
     if(uRip[i].w < 0.5) continue;
     float age = t - uRip[i].z;
-    if(age < 0. || age > 4.) continue;
+    if(age < 0.0 || age > 4.0) continue;
     vec2  rp = p - uRip[i].xy;
-    float facet = 1. + uRipK2.x * cos(uRipK2.y * atan(rp.y, rp.x) + age * 2.1 + float(i) * 2.4);
+    float facet = 1.0 + uRipK2.x * cos(uRipK2.y * atan(rp.y, rp.x) + age * 2.1 + float(i) * 2.4);
     float x = (length(rp) - age * uRipK.x * facet) / uRipK.y;
     sum += exp(-pow(abs(x) + 1e-4, uRipK2.z)) * exp(-age * uRipK.z);
   }
@@ -50,14 +51,14 @@ float ripple(vec2 p, float t){
 }
 
 float pointerW(vec2 p){
-  if(uPtr.z < 0.001) return 0.;
+  if(uPtr.z < 0.001) return 0.0;
   float d = length(p - uPtr.xy) / uPtrK.x;
-  return exp(-d*d) * uPtr.z;
+  return exp(-d * d) * uPtr.z;
 }
 
 vec2 pointerWarp(vec2 p){
   float w = pointerW(p);
-  if(w <= 0.) return vec2(0.);
+  if(w <= 0.0) return vec2(0.0);
   return normalize(p - uPtr.xy + vec2(1e-5)) * w * (uPtrK.y + uPtrK.z * uPtr.w);
 }
 `;
@@ -66,52 +67,47 @@ const FRAG_RIM = HEAD + `
 uniform float uBw;
 uniform float uE[8];
 
-float perim(vec2 d, float a, float r){
-  float P = 4.*a + 2.*PI*r;
-  float s;
-  if(d.x >= a){
-    float th = atan(d.y, d.x - a); if(th < 0.) th += 2.*PI;
-    s = (th <= PI*0.5) ? r*th : P - r*(2.*PI - th);
-  } else if(d.x <= -a){
-    float th = atan(d.y, d.x + a); if(th < 0.) th += 2.*PI;
-    s = r*PI*0.5 + 2.*a + r*(th - PI*0.5);
-  } else if(d.y >= 0.){
-    s = r*PI*0.5 + (a - d.x);
-  } else {
-    s = r*PI*1.5 + 2.*a + (d.x + a);
-  }
-  return s / P;
+float perim(vec2 d){
+  float th = atan(d.y, d.x);
+  if(th < 0.0) th += 2.0 * PI;
+  return th / (2.0 * PI);
 }
 
-float pb(float u, float w){ u = fract(u); float x = min(u, 1.-u); return exp(-(x*x)/(w*w)); }
+float pb(float u, float w){ u = fract(u); float x = min(u, 1.0 - u); return exp(-(x * x) / (w * w)); }
 
 float rimHot(float s, float t){
   float v = uE[0];
-  v += 0.62 * pb(s - t*uE[4],             0.075);
-  v += 0.44 * pb(s + t*uE[4]*0.63 + 0.41, 0.135);
-  v += 0.30 * pb(s - t*uE[4]*0.34 + 0.73, 0.200);
+  v += 0.65 * pb(s - t * uE[4],             0.080);
+  v += 0.45 * pb(s + t * uE[4] * 0.63 + 0.41, 0.140);
+  v += 0.32 * pb(s - t * uE[4] * 0.34 + 0.73, 0.200);
   return v;
 }
 
-float rimBand(float sd, float off){ return 1. - smoothstep(0., uBw*1.05, abs(sd + uBw*0.55 + off)); }
+float rimBand(float sd, float off){ return 1.0 - smoothstep(0.0, uBw * 1.05, abs(sd + uBw * 0.55 + off)); }
 
 void main(){
   vec2  d  = gl_FragCoord.xy - uC;
-  float sd = sdPill(d, uHalf, uHalf.y);
-  if(sd > uBw*2.5 || sd < -uBw*3.5){ o = vec4(0.); return; }
+  float sd = sdRoundBox(d, uHalf, uRadius);
+  if(sd > uBw * 2.5 || sd < -uBw * 3.5){ o = vec4(0.0); return; }
 
-  float a = max(uHalf.x - uHalf.y, 0.);
-  float s = perim(d, a, uHalf.y);
-  float top = mix(1., 0.5 + 0.5 * (d.y / uHalf.y), uE[5]);
+  float s = perim(d);
+  float top = mix(1.0, 0.55 + 0.45 * (d.y / uHalf.y), uE[5]);
 
-  vec2  p   = vec2(d.x, -d.y) / (uHalf.y * 2.);
-  float lift = 1. + uPress * uE[6] + ripple(p, uT) * uE[7] + pointerW(p) * uPtrK.w;
+  vec2  p   = vec2(d.x, -d.y) / (uHalf.y * 2.0);
+  float lift = 1.0 + uPress * uE[6] + ripple(p, uT) * uE[7] + pointerW(p) * uPtrK.w;
 
-  o = vec4(vec3(
-    rimBand(sd,  uE[2]) * rimHot(s + uE[3], uT),
-    rimBand(sd,  0.   ) * rimHot(s,         uT),
-    rimBand(sd, -uE[2]) * rimHot(s - uE[3], uT)
-  ) * uE[1] * top * lift, 1.);
+  float rLobe = rimBand(sd,  uE[2]) * rimHot(s + uE[3], uT);
+  float gLobe = rimBand(sd,  0.0  ) * rimHot(s,         uT);
+  float bLobe = rimBand(sd, -uE[2]) * rimHot(s - uE[3], uT);
+
+  // Precision Emerald & Cyber-Cyan tint for UniVerse identity
+  vec3 emeraldRim = vec3(
+    rLobe * 0.15 + gLobe * 0.20,
+    gLobe * 1.15 + rLobe * 0.10,
+    bLobe * 0.90 + gLobe * 0.20
+  );
+
+  o = vec4(emeraldRim * uE[1] * top * lift, 1.0);
 }`;
 
 const FRAG_SCENE = HEAD + `
@@ -124,78 +120,89 @@ float h21(vec2 p){
 }
 float vn(vec2 p){
   vec2 i = floor(p), f = fract(p);
-  f = f*f*(3.-2.*f);
-  float a = h21(i), b = h21(i+vec2(1,0)), c = h21(i+vec2(0,1)), d = h21(i+vec2(1,1));
-  return mix(mix(a,b,f.x), mix(c,d,f.x), f.y) * 2. - 1.;
+  f = f * f * (3.0 - 2.0 * f);
+  float a = h21(i), b = h21(i + vec2(1.0, 0.0)), c = h21(i + vec2(0.0, 1.0)), d = h21(i + vec2(1.0, 1.0));
+  return mix(mix(a, b, f.x), mix(c, d, f.x), f.y) * 2.0 - 1.0;
 }
 float fbm(vec2 p, float g){
-  float s = 0., a = 1., n = 0.;
-  for(int i=0;i<4;i++){ s += a*vn(p); n += a; p = p*2.03 + 11.7; a *= g; }
+  float s = 0.0, a = 1.0, n = 0.0;
+  for(int i = 0; i < 4; i++){ s += a * vn(p); n += a; p = p * 2.03 + 11.7; a *= g; }
   return s / n;
 }
 float fbm(vec2 p){ return fbm(p, 0.5); }
 
 float wig(float x, float t, float seed){
-  return vn(vec2(x,          t*0.150 + seed)) * 0.60
-       + vn(vec2(x*2.07 + 4., t*0.105 + seed)) * 0.27
-       + vn(vec2(x*4.30 - 7., t*0.080 + seed)) * 0.13;
+  return vn(vec2(x,                 t * 0.150 + seed)) * 0.60
+       + vn(vec2(x * 2.07 + 4.0,    t * 0.105 + seed)) * 0.27
+       + vn(vec2(x * 4.30 - 7.0,    t * 0.080 + seed)) * 0.13;
 }
 
-float valleyAt(vec2 p, float t){ return wig(p.x*uP[0], t, 0.0) * uP[1]; }
-float densAt  (vec2 p, float t){ return uP[2] * exp(uP[3] * wig(p.x*uP[4] + 9.0, t, 2.7)); }
+float valleyAt(vec2 p, float t){ return wig(p.x * uP[0], t, 0.0) * uP[1]; }
+float densAt  (vec2 p, float t){ return uP[2] * exp(uP[3] * wig(p.x * uP[4] + 9.0, t, 2.7)); }
 
 float surface(vec2 p, float t){
-  float V = (p.y - valleyAt(p,t)) * densAt(p,t);
-  V += uP[5] * fbm(p*vec2(0.8, 1.7)*uP[6] + vec2(t*0.05, -t*0.03), uP[17]);
+  float V = (p.y - valleyAt(p, t)) * densAt(p, t);
+  V += uP[5] * fbm(p * vec2(0.8, 1.7) * uP[6] + vec2(t * 0.05, -t * 0.03), uP[17]);
   return V - uP[7];
 }
 float tone(float v){
   float u = fract(v);
   float e = uP[9], W = uP[10] * 0.5;
-  return smoothstep(0.5-W-e, 0.5-W, u) * (1. - smoothstep(0.5+W, 0.5+W+e, u));
+  return smoothstep(0.5 - W - e, 0.5 - W, u) * (1.0 - smoothstep(0.5 + W, 0.5 + W + e, u));
 }
-vec3 spec(float t){ return clamp(vec3(1.5) - abs(4.*t - vec3(3.,2.,1.)), 0., 1.); }
+
+// Tailored UniVerse Emerald / Cyber-Cyan Dispersion Spectrum
+vec3 spec(float t){
+  vec3 c0 = vec3(0.04, 0.72, 0.85); // Electric Cyan (#06B6D4)
+  vec3 c1 = vec3(0.06, 0.88, 0.52); // Luminous Emerald (#10B981)
+  vec3 c2 = vec3(0.42, 0.96, 0.75); // Radiant Mint (#6EE7B7)
+  vec3 c3 = vec3(0.92, 1.00, 0.96); // Specular White Highlight
+
+  if(t < 0.35) return mix(c0, c1, t / 0.35);
+  if(t < 0.75) return mix(c1, c2, (t - 0.35) / 0.40);
+  return mix(c2, c3, (t - 0.75) / 0.25);
+}
 
 void main(){
   vec2  d  = gl_FragCoord.xy - uC;
-  float sd = sdPill(d, uHalf, uHalf.y);
-  float pill = 1. - smoothstep(-1., 1., sd);
-  float S = uHalf.y * 2.;
+  float sd = sdRoundBox(d, uHalf, uRadius);
+  float pill = 1.0 - smoothstep(-1.0, 1.0, sd);
+  float S = uHalf.y * 2.0;
   float t = uT;
 
-  if(uHover <= 0.0015 || pill <= 0.0015){ o = vec4(0., 0., 0., pill); return; }
+  if(uHover <= 0.0015 || pill <= 0.0015){ o = vec4(0.0, 0.0, 0.0, pill); return; }
 
   vec2  p = vec2(d.x, -d.y) / S;
   vec2  q = p + pointerWarp(p);
 
   float h0 = surface(q, t);
   vec2  gp = vec2(dFdx(h0), -dFdy(h0)) * S;
-  float V  = surface(q - gp * uP[8] / max(uP[2], .001), t);
+  float V  = surface(q - gp * uP[8] / max(uP[2], 0.001), t);
 
   vec2  gd = normalize(gp + vec2(1e-5));
-  V += uP[13] * fbm(vec2(dot(q,gd)*uP[14], dot(q, vec2(-gd.y,gd.x))*uP[14]*0.04) + vec2(0., t*0.06));
+  V += uP[13] * fbm(vec2(dot(q, gd) * uP[14], dot(q, vec2(-gd.y, gd.x)) * uP[14] * 0.04) + vec2(0.0, t * 0.06));
 
   float rip  = ripple(p, t);
   float well = pointerW(p);
   V += rip * uRipK.w;
 
   const int N = 21;
-  float mid = 1. - pow(0.5, uP[12]);
-  vec3 col = vec3(0.), wsum = vec3(0.);
-  for(int i=0;i<N;i++){
-    float k = float(i)/float(N-1);
+  float mid = 1.0 - pow(0.5, uP[12]);
+  vec3 col = vec3(0.0), wsum = vec3(0.0);
+  for(int i = 0; i < N; i++){
+    float k = float(i) / float(N - 1);
     vec3  w = spec(k);
-    col  += w * tone(V + ((1. - pow(1. - k, uP[12])) - mid) * uP[11]);
+    col  += w * tone(V + ((1.0 - pow(1.0 - k, uP[12])) - mid) * uP[11]);
     wsum += w;
   }
   col /= wsum;
   col = pow(col, vec3(uP[15]));
 
   float lit = smoothstep(uP[18], uP[19], q.y - valleyAt(q, t));
-  lit *= mix(1., lit, 0.55);
+  lit *= mix(1.0, lit, 0.55);
   col *= uP[16] * lit;
 
-  col = col * (1. + rip * 1.15 + well * 0.60);
+  col = col * (1.0 + rip * 1.15 + well * 0.60);
 
   o = vec4(col * pill * uHover, pill);
 }`;
@@ -210,12 +217,12 @@ uniform float uAdd;
 void main(){
   vec2 uv = gl_FragCoord.xy * uDstTexel;
   vec2 e = uDstTexel * 0.25;
-  vec4 s = texture(uTex, uv + vec2(-e.x,-e.y)) + texture(uTex, uv + vec2( e.x,-e.y))
-         + texture(uTex, uv + vec2(-e.x, e.y)) + texture(uTex, uv + vec2( e.x, e.y));
+  vec4 s = texture(uTex, uv + vec2(-e.x, -e.y)) + texture(uTex, uv + vec2( e.x, -e.y))
+         + texture(uTex, uv + vec2(-e.x,  e.y)) + texture(uTex, uv + vec2( e.x,  e.y));
   s *= 0.25;
   if(uAdd > 0.5){
-    vec4 r = texture(uTex2, uv + vec2(-e.x,-e.y)) + texture(uTex2, uv + vec2( e.x,-e.y))
-           + texture(uTex2, uv + vec2(-e.x, e.y)) + texture(uTex2, uv + vec2( e.x, e.y));
+    vec4 r = texture(uTex2, uv + vec2(-e.x, -e.y)) + texture(uTex2, uv + vec2( e.x, -e.y))
+           + texture(uTex2, uv + vec2(-e.x,  e.y)) + texture(uTex2, uv + vec2( e.x,  e.y));
     s.rgb += r.rgb * 0.25;
   }
   o = s;
@@ -229,9 +236,9 @@ void main(){
   vec2 uv = gl_FragCoord.xy * uTexel;
   vec2 st = uTexel * uDir * uR;
   vec4 s = texture(uTex, uv) * 0.1964;
-  s += (texture(uTex, uv + st*1.4118) + texture(uTex, uv - st*1.4118)) * 0.2969;
-  s += (texture(uTex, uv + st*3.2941) + texture(uTex, uv - st*3.2941)) * 0.0944;
-  s += (texture(uTex, uv + st*5.1765) + texture(uTex, uv - st*5.1765)) * 0.0104;
+  s += (texture(uTex, uv + st * 1.4118) + texture(uTex, uv - st * 1.4118)) * 0.2969;
+  s += (texture(uTex, uv + st * 3.2941) + texture(uTex, uv - st * 3.2941)) * 0.0944;
+  s += (texture(uTex, uv + st * 5.1765) + texture(uTex, uv - st * 5.1765)) * 0.0104;
   o = s;
 }`;
 
@@ -242,26 +249,31 @@ uniform float uGlowGain, uGlowIn, uOccl, uDim, uPunch;
 
 void main(){
   vec2 uv = gl_FragCoord.xy / uRes;
-  vec3 glow = texture(uGlow, uv).rgb;
+  vec3 rawGlow = texture(uGlow, uv).rgb;
 
   vec2  d    = gl_FragCoord.xy - uC;
-  float sd   = sdPill(d, uHalf, uHalf.y);
-  float pill = 1. - smoothstep(-1., 1., sd);
+  float sd   = sdRoundBox(d, uHalf, uRadius);
+  float pill = 1.0 - smoothstep(-1.0, 1.0, sd);
 
   vec4 m = texture(uSoft, uv);
-  float veil = 1. - smoothstep(0.46, 0.88, abs(d.y) / uHalf.y);
-  vec3 metal = pow(max(m.rgb / max(m.a, 1e-3), 0.), vec3(uPunch));
+  float veil = 1.0 - smoothstep(0.46, 0.88, abs(d.y) / uHalf.y);
+  vec3 metal = pow(max(m.rgb / max(m.a, 1e-3), 0.0), vec3(uPunch));
 
-  vec3 core = metal * pill * mix(1., uDim, veil) + texture(uRim, uv).rgb;
-  float rip = ripple(vec2(d.x, -d.y) / (uHalf.y * 2.), uT);
-  core += vec3(rip * rip) * uRipK2.w * pill * mix(1., 0.42, veil);
+  vec3 core = metal * pill * mix(1.0, uDim, veil) + texture(uRim, uv).rgb;
+  float rip = ripple(vec2(d.x, -d.y) / (uHalf.y * 2.0), uT);
+  
+  // Emerald ripple wave highlight
+  core += vec3(rip * rip) * vec3(0.25, 1.0, 0.70) * uRipK2.w * pill * mix(1.0, 0.42, veil);
 
-  float sdSh = sdPill(d + vec2(0., uHalf.y * 0.62), uHalf * 0.94, uHalf.y * 0.94);
-  float occl = uOccl * exp(-max(sdSh, 0.) / (uHalf.y * 0.75));
+  float sdSh = sdRoundBox(d + vec2(0.0, uHalf.y * 0.50), uHalf * 0.96, uRadius * 0.96);
+  float occl = uOccl * exp(-max(sdSh, 0.0) / (uHalf.y * 0.75));
 
-  vec3 rgb = core + glow * uGlowGain * mix(1., uGlowIn, pill) * (1. - occl * (1. - pill));
-  float a = clamp(max(rgb.r, max(rgb.g, rgb.b)), 0., 1.);
-  o = vec4(min(rgb, vec3(1.)), a);
+  // Sophisticated Emerald-Cyan ambient bloom pool (no warm white headlight)
+  vec3 emeraldGlow = rawGlow * vec3(0.10, 0.85, 0.55);
+
+  vec3 rgb = core + emeraldGlow * uGlowGain * mix(1.0, uGlowIn, pill) * (1.0 - occl * (1.0 - pill));
+  float a = clamp(max(rgb.r, max(rgb.g, rgb.b)), 0.0, 1.0);
+  o = vec4(min(rgb, vec3(1.0)), a);
 }`;
 
 const P = {
@@ -281,17 +293,17 @@ const P = {
   fineAmp: 0.0,
   fineFreq: 9.0,
   gamma: 1.00,
-  gain: 1.90,
+  gain: 1.85,
   octGain: 0.32,
   litLo: -0.26,
   litHi: 0.10,
-  dim: 0.44
+  dim: 0.42
 };
 const PKEYS = Object.keys(P) as (keyof typeof P)[];
 
 const E = {
   base: 0.22,
-  hot: 0.86,
+  hot: 0.85,
   chromA: 0.42,
   chromS: 0.030,
   speed: 0.070,
@@ -302,12 +314,12 @@ const E = {
 const EKEYS = Object.keys(E) as (keyof typeof E)[];
 
 const C = {
-  glow: 1.95,
-  glowR: 1.30,
+  glow: 1.65, // Harmonious glow gain
+  glowR: 1.20,
   glowIn: 0.30,
-  occl: 0.62,
+  occl: 0.65,
   soften: 0.24,
-  punch: 1.50
+  punch: 1.45
 };
 
 const R = {
@@ -327,7 +339,7 @@ const R = {
   ptrVref: 4.5
 };
 
-const PADDING = 28;
+const PADDING = 24;
 
 export function LiquidMetalButton({
   children,
@@ -346,7 +358,6 @@ export function LiquidMetalButton({
   const [isHot, setIsHot] = useState(false);
   const [isPress, setIsPress] = useState(false);
 
-  // Interaction ripple helper
   const addRippleRef = useRef<((x: number, y: number) => void) | null>(null);
 
   useEffect(() => {
@@ -516,6 +527,7 @@ export function LiquidMetalButton({
     let BH = 0;
     let CX = 0;
     let CY = 0;
+    let U_RADIUS = 0;
     let DOWN = 4;
     const GLOW_TEX = 129;
     let needResize = true;
@@ -537,6 +549,8 @@ export function LiquidMetalButton({
       BH = br.height * DPR;
       CX = (br.left - r.left) * DPR + BW / 2;
       CY = H - ((br.top - r.top) * DPR + BH / 2);
+      // Exactly matches rounded-xl (14px CSS radius in device px)
+      U_RADIUS = Math.min(14 * DPR, BH / 2);
 
       sizeTarget(T_core, W, H);
       sizeTarget(T_rim, W, H);
@@ -567,8 +581,8 @@ export function LiquidMetalButton({
     const uArr = new Float32Array(PKEYS.length);
     const eArr = new Float32Array(EKEYS.length);
 
-    // Initial base hover so the metal ribbons are softly visible at rest, blooming to full on interaction
-    const IDLE_HOVER = 0.35;
+    // Initial base hover so the emerald chrome ribbons are softly visible at rest, blooming to full on interaction
+    const IDLE_HOVER = 0.38;
     let hover = IDLE_HOVER;
     let hoverTarget = IDLE_HOVER;
     let clock = 0;
@@ -661,12 +675,13 @@ export function LiquidMetalButton({
 
       for (let i = 0; i < uArr.length; i++) uArr[i] = P[PKEYS[i]];
       for (let i = 0; i < eArr.length; i++) eArr[i] = E[EKEYS[i]];
-      const bw = Math.max(1.5, 3.2 * (BH / 516));
+      const bw = Math.max(1.5, 3.0 * (BH / 516));
 
-      // 1. Metal scene pass
+      // 1. Metal scene pass (Emerald / Cyan Cauchy dispersion)
       localGl.useProgram(pScene.p);
       localGl.uniform2f(pScene.u.uC, CX, CY);
       localGl.uniform2f(pScene.u.uHalf, BW / 2, BH / 2);
+      localGl.uniform1f(pScene.u.uRadius, U_RADIUS);
       localGl.uniform1f(pScene.u.uT, clock);
       localGl.uniform1f(pScene.u.uHover, hover);
       localGl.uniform1f(pScene.u.uPress, press);
@@ -678,10 +693,11 @@ export function LiquidMetalButton({
       localGl.uniform1fv(pScene.u.uP, uArr);
       drawTo(T_core);
 
-      // 2. Travelling razor rim pass
+      // 2. Travelling razor rim pass (Emerald-Cyan highlights)
       localGl.useProgram(pRim.p);
       localGl.uniform2f(pRim.u.uC, CX, CY);
       localGl.uniform2f(pRim.u.uHalf, BW / 2, BH / 2);
+      localGl.uniform1f(pRim.u.uRadius, U_RADIUS);
       localGl.uniform1f(pRim.u.uT, clock);
       localGl.uniform1f(pRim.u.uBw, bw);
       localGl.uniform1f(pRim.u.uPress, press);
@@ -748,7 +764,7 @@ export function LiquidMetalButton({
         drawTo(T_a);
       }
 
-      // 5. Composite pass
+      // 5. Composite pass (Atmospheric Emerald Glow)
       localGl.useProgram(pComp.p);
       localGl.activeTexture(localGl.TEXTURE0);
       localGl.bindTexture(localGl.TEXTURE_2D, T_s1.tex);
@@ -762,6 +778,7 @@ export function LiquidMetalButton({
       localGl.uniform2f(pComp.u.uRes, W, H);
       localGl.uniform2f(pComp.u.uC, CX, CY);
       localGl.uniform2f(pComp.u.uHalf, BW / 2, BH / 2);
+      localGl.uniform1f(pComp.u.uRadius, U_RADIUS);
       localGl.uniform1f(pComp.u.uT, clock);
       localGl.uniform4fv(pComp.u.uRip, ripArr);
       localGl.uniform4f(pComp.u.uRipK, R.speed, R.width, R.decay, R.amp);
@@ -895,15 +912,15 @@ export function LiquidMetalButton({
       className={`relative w-full flex items-center justify-center select-none ${containerClassName}`}
       style={{ touchAction: "manipulation" }}
     >
-      {/* ── Solid body plate & deep dynamic drop shadow ── */}
+      {/* ── Solid body plate & deep dynamic drop shadow (rounded-xl matching input boxes) ── */}
       <div
         aria-hidden="true"
-        className={`absolute inset-0 rounded-full transition-all duration-300 pointer-events-none ${
+        className={`absolute inset-0 rounded-xl transition-all duration-300 pointer-events-none border border-emerald-500/30 ${
           isPress
-            ? "bg-[#070809] shadow-[0_3px_8px_rgba(0,0,0,0.85),0_8px_20px_rgba(0,0,0,0.70)]"
+            ? "bg-[#021812] shadow-[0_2px_8px_rgba(5,150,105,0.4),0_6px_16px_rgba(0,0,0,0.85)]"
             : isHot
-            ? "bg-[#08090a] shadow-[0_6px_14px_rgba(0,0,0,0.80),0_20px_45px_rgba(0,0,0,0.72),0_44px_90px_rgba(0,0,0,0.55)]"
-            : "bg-[#0b0c0e] shadow-[0_5px_12px_rgba(0,0,0,0.72),0_15px_34px_rgba(0,0,0,0.62),0_32px_68px_rgba(0,0,0,0.42)]"
+            ? "bg-[#04241b] shadow-[0_0_28px_rgba(16,185,129,0.38),0_12px_28px_rgba(0,0,0,0.7)]"
+            : "bg-[#031c15] shadow-[0_0_16px_rgba(16,185,129,0.20),0_8px_20px_rgba(0,0,0,0.5)]"
         }`}
       />
 
@@ -923,17 +940,17 @@ export function LiquidMetalButton({
         /* Fallback for environments without WebGL 2 */
         <div
           aria-hidden="true"
-          className="absolute inset-0 rounded-full border border-emerald-500/40 bg-gradient-to-r from-slate-900 via-emerald-950/40 to-slate-900 pointer-events-none"
+          className="absolute inset-0 rounded-xl border border-emerald-500/40 bg-gradient-to-r from-slate-900 via-emerald-950/40 to-slate-900 pointer-events-none"
         />
       )}
 
-      {/* ── Interactive Accessible Button ── */}
+      {/* ── Interactive Accessible Button (rounded-xl matching input fields) ── */}
       <button
         ref={btnRef}
         type={type}
         disabled={disabled}
         onClick={handleClick}
-        className={`relative z-10 w-full h-[52px] rounded-full flex items-center justify-center gap-2.5 px-6 font-semibold text-white tracking-wide cursor-pointer transition-transform duration-100 active:scale-[0.985] disabled:opacity-50 disabled:pointer-events-none select-none outline-none focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 ${className}`}
+        className={`relative z-10 w-full h-[50px] rounded-xl flex items-center justify-center gap-2.5 px-6 font-bold text-white tracking-wide cursor-pointer transition-transform duration-100 active:scale-[0.985] disabled:opacity-50 disabled:pointer-events-none select-none outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 ${className}`}
         {...props}
       >
         {children}
