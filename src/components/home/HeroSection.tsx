@@ -217,12 +217,12 @@ function HeroButtons() {
         id="hero-cta-register"
         onClick={() => router.push(ROUTES.REGISTER)}
         containerClassName="w-full sm:w-[220px]"
-        className="text-base font-semibold text-white tracking-wide flex items-center justify-center gap-2.5 group/btn"
+        className="text-base font-bold text-white tracking-wide flex items-center justify-center gap-2 group"
       >
-        <span className="drop-shadow-[0_1px_4px_rgba(0,0,0,0.8)]">Get Started</span>
+        <span>Get Started</span>
         <ArrowRight
           size={18}
-          className="transition-transform duration-200 group-hover/btn:translate-x-1 stroke-[2.5] text-emerald-400 drop-shadow-[0_0_8px_rgba(52,211,153,0.8)]"
+          className="transition-transform duration-200 group-hover:translate-x-1 stroke-[2.5] text-white"
         />
       </LiquidMetalButton>
 

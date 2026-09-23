@@ -488,22 +488,22 @@ function LoginForm() {
               <LiquidMetalButton
                 type="submit"
                 disabled={loading || isSuccess}
-                className="text-[14px] font-bold text-white tracking-wide flex items-center justify-center gap-2.5 group/btn"
+                className="text-[14px] font-bold text-white tracking-wide flex items-center justify-center gap-2 group"
               >
                 {isSuccess ? (
                   <>
                     <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin shrink-0" />
-                    <span className="drop-shadow-[0_1px_4px_rgba(0,0,0,0.8)]">Verified! Opening Dashboard...</span>
+                    <span>Verified! Opening Dashboard...</span>
                   </>
                 ) : loading ? (
                   <>
                     <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin shrink-0" />
-                    <span className="drop-shadow-[0_1px_4px_rgba(0,0,0,0.8)]">Authenticating Student ID...</span>
+                    <span>Authenticating Student ID...</span>
                   </>
                 ) : (
                   <>
-                    <span className="drop-shadow-[0_1px_4px_rgba(0,0,0,0.8)]">Sign In to UniVerse</span>
-                    <ArrowRight size={16} className="group-hover/btn:translate-x-1 transition-transform stroke-[2.5] text-emerald-400 drop-shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
+                    <span>Sign In to UniVerse</span>
+                    <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform stroke-[2.5] text-white" />
                   </>
                 )}
               </LiquidMetalButton>
