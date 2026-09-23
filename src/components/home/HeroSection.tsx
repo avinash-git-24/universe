@@ -13,6 +13,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { ArrowRight, ChevronDown, Users, Bike, Package } from "lucide-react";
 import { CampusBackground } from "./CampusBackground";
@@ -20,6 +21,7 @@ import { FloatingObjects } from "./FloatingObjects";
 import { ROUTES } from "@/constants/routes";
 import { cn } from "@/lib/utils";
 import { createClient } from "@/lib/supabase/client";
+import LiquidMetalButton from "@/components/ui/LiquidMetalButton";
 
 // ─── Animated Stat Item ───────────────────────────────────────────────────────
 
@@ -201,71 +203,54 @@ function ScrollIndicator() {
 // ─── Hero Buttons ─────────────────────────────────────────────────────────────
 
 function HeroButtons() {
+  const router = useRouter();
+
   return (
     <motion.div
-      className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-10"
+      className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-10 w-full max-w-md sm:max-w-none mx-auto"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, delay: 0.9, ease: [0.4, 0, 0.2, 1] }}
     >
-      {/* Primary CTA */}
-      <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
-        <Link
-          href={ROUTES.REGISTER}
-          id="hero-cta-register"
-          className={cn(
-            "group inline-flex items-center gap-2.5 px-8 py-4",
-            "text-base font-semibold text-white rounded-[var(--radius-md)]",
-            "font-[family-name:var(--font-inter)]",
-            "transition-all duration-300",
-            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
-          )}
-          style={{
-            background: "linear-gradient(135deg, #10B981 0%, #059669 100%)",
-            boxShadow: "0 0 0 1px rgba(16,185,129,0.3), 0 8px 32px rgba(16,185,129,0.45)",
-          }}
-          onMouseEnter={(e) => {
-            (e.currentTarget as HTMLAnchorElement).style.boxShadow =
-              "0 0 0 1px rgba(16,185,129,0.5), 0 12px 40px rgba(16,185,129,0.6)";
-          }}
-          onMouseLeave={(e) => {
-            (e.currentTarget as HTMLAnchorElement).style.boxShadow =
-              "0 0 0 1px rgba(16,185,129,0.3), 0 8px 32px rgba(16,185,129,0.45)";
-          }}
-        >
-          Get Started
-          <ArrowRight
-            size={18}
-            className="transition-transform duration-200 group-hover:translate-x-1"
-          />
-        </Link>
-      </motion.div>
+      {/* Primary CTA — Liquid Metal WebGL 2 Shader */}
+      <LiquidMetalButton
+        id="hero-cta-register"
+        onClick={() => router.push(ROUTES.REGISTER)}
+        containerClassName="w-full sm:w-[220px]"
+        className="text-base font-semibold text-white tracking-wide flex items-center justify-center gap-2.5 group/btn"
+      >
+        <span className="drop-shadow-[0_1px_4px_rgba(0,0,0,0.8)]">Get Started</span>
+        <ArrowRight
+          size={18}
+          className="transition-transform duration-200 group-hover/btn:translate-x-1 stroke-[2.5] text-emerald-400 drop-shadow-[0_0_8px_rgba(52,211,153,0.8)]"
+        />
+      </LiquidMetalButton>
 
-      {/* Secondary CTA — glass */}
-      <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
+      {/* Secondary CTA — Frosted Glass with matching geometry */}
+      <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="w-full sm:w-auto">
         <Link
           href="#how-it-works"
           id="hero-cta-how-it-works"
           className={cn(
-            "inline-flex items-center gap-2 px-8 py-4",
-            "text-base font-semibold text-white rounded-[var(--radius-md)]",
+            "w-full sm:w-[180px] h-[50px] inline-flex items-center justify-center gap-2 px-6",
+            "text-base font-semibold text-white rounded-xl",
             "font-[family-name:var(--font-inter)]",
             "transition-all duration-300",
             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50"
           )}
           style={{
-            background: "rgba(255,255,255,0.1)",
+            background: "rgba(255,255,255,0.08)",
             backdropFilter: "blur(12px)",
             WebkitBackdropFilter: "blur(12px)",
-            border: "1px solid rgba(255,255,255,0.22)",
+            border: "1px solid rgba(255,255,255,0.18)",
           }}
           onMouseEnter={(e) => {
-            (e.currentTarget as HTMLAnchorElement).style.background = "rgba(255,255,255,0.18)";
-            (e.currentTarget as HTMLAnchorElement).style.borderColor = "rgba(255,255,255,0.38)";
+            (e.currentTarget as HTMLAnchorElement).style.background = "rgba(255,255,255,0.14)";
+            (e.currentTarget as HTMLAnchorElement).style.borderColor = "rgba(255,255,255,0.32)";
           }}
           onMouseLeave={(e) => {
-            (e.currentTarget as HTMLAnchorElement).style.background = "rgba(255,255,255,0.1)";
-            (e.currentTarget as HTMLAnchorElement).style.borderColor = "rgba(255,255,255,0.22)";
+            (e.currentTarget as HTMLAnchorElement).style.background = "rgba(255,255,255,0.08)";
+            (e.currentTarget as HTMLAnchorElement).style.borderColor = "rgba(255,255,255,0.18)";
           }}
         >
           How It Works

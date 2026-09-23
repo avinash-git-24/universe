@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useRef, useEffect, useState, useCallback } from "react";
+import { cn } from "@/lib/utils";
 
 export interface LiquidMetalButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -909,7 +910,7 @@ export function LiquidMetalButton({
   return (
     <div
       ref={stageRef}
-      className={`relative w-full flex items-center justify-center select-none ${containerClassName}`}
+      className={cn("relative w-full flex items-center justify-center select-none", containerClassName)}
       style={{ touchAction: "manipulation" }}
     >
       {/* ── Solid body plate & deep dynamic drop shadow (rounded-xl matching input boxes) ── */}
@@ -950,7 +951,10 @@ export function LiquidMetalButton({
         type={type}
         disabled={disabled}
         onClick={handleClick}
-        className={`relative z-10 w-full h-[50px] rounded-xl flex items-center justify-center gap-2.5 px-6 font-bold text-white tracking-wide cursor-pointer transition-transform duration-100 active:scale-[0.985] disabled:opacity-50 disabled:pointer-events-none select-none outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 ${className}`}
+        className={cn(
+          "relative z-10 w-full h-[50px] rounded-xl flex items-center justify-center gap-2.5 px-6 font-bold text-white tracking-wide cursor-pointer transition-transform duration-100 active:scale-[0.985] disabled:opacity-50 disabled:pointer-events-none select-none outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950",
+          className
+        )}
         {...props}
       >
         {children}
@@ -958,3 +962,5 @@ export function LiquidMetalButton({
     </div>
   );
 }
+
+export default LiquidMetalButton;
