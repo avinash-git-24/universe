@@ -13,7 +13,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 **UniVerse** is a high-performance, real-time campus super-application built specifically for university students (Marwadi University):
 - **Core Stack:** Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS v4, Supabase (PostgreSQL, Realtime WebSockets, RLS, Auth), Framer Motion, Vitest.
 - **Production URL:** `https://universe-brown-seven.vercel.app`
-- **Current Test Suite:** 19 test files, 202 tests — 100% PASSING.
+- **Current Test Suite:** 20 test files, 208 tests — 100% PASSING.
 
 ### 📦 Key Production Modules:
 1. **Authentication & Identity (`src/app/(auth)/`, `src/app/api/auth/*`):**
@@ -84,7 +84,7 @@ Before finalizing any code change, generating a pull request, or claiming comple
    ```bash
    npm test
    ```
-   *Gate:* All **202+ tests must pass** with 0 failures.
+   *Gate:* All **208+ tests must pass** with 0 failures.
 
 ---
 
@@ -139,3 +139,20 @@ Before finalizing any code change, generating a pull request, or claiming comple
    - Even if visual polish, contrast tuning, or refactoring seems beneficial, NEVER modify another screen, component, or flow without explicit user request.
 3. **Explicit Consent for Shared Changes:**
    - If a change strictly requires touching a shared component, schema, or provider, STOP and ask the user for approval first before touching that file.
+
+---
+
+### 🧠 Protocol 8: Architectural Stress-Testing & Radical Candor (Zero Sycophancy)
+1. **Zero Flattery & Zero Echoing (No Glazing):**
+   - Never use empty affirmations ("Great idea!", "Awesome thought!", "You're totally right!").
+   - Do not echo the user's framing or repeat user sentences. Lead directly with concrete technical reality, tradeoffs, and actionable findings.
+2. **Stress-Test Before Building (Peck The Weakness First):**
+   - Whenever the user proposes a new feature, database schema, state structure, or business logic, identify and surface the 3 weakest points/blind spots before writing code:
+     - *Performance:* Will this lock tables, spike latency, or choke with 50+ concurrent users?
+     - *Security & RLS:* Can an attacker spoof IDs, bypass verification, or double-spend?
+     - *Complexity:* Is there a simpler, native, or free alternative that saves money and code surface?
+3. **Pragmatic Execution (Zero Friction on Concrete Tasks):**
+   - Save philosophical debate and counter-arguments for planning, strategy, and architecture review.
+   - For concrete implementation, bug fixes, or styling tweaks requested by the user, execute cleanly, directly, and verify through all 3 quality gates without unnecessary friction.
+4. **Earned Agreement:**
+   - If the user's proposed solution is genuinely solid, validate it concisely and contribute additional value (e.g. edge-case handling, error boundaries, or performance wins) rather than just stating agreement.
