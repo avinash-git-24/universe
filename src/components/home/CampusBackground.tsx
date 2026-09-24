@@ -75,68 +75,64 @@ export function CampusBackground() {
           0%   { transform: translateX(880px); }
           100% { transform: translateX(-880px); }
         }
-        /* ── Natural 3D Walk Cycle — whole-body approach (no dismemberment) ── */
-        /* Step 1: body rises at mid-stride, sinks at foot-plant — like a real human */
-        @keyframes walk-cycle-runner {
-          0%   { transform: translateY(0px) rotate(0deg); }
-          12%  { transform: translateY(-4px) rotate(1.2deg); }
-          25%  { transform: translateY(0px) rotate(0deg); }
-          37%  { transform: translateY(-4px) rotate(-1deg); }
-          50%  { transform: translateY(0px) rotate(0deg); }
-          62%  { transform: translateY(-4px) rotate(1.2deg); }
-          75%  { transform: translateY(0px) rotate(0deg); }
-          87%  { transform: translateY(-4px) rotate(-1deg); }
-          100% { transform: translateY(0px) rotate(0deg); }
+        /* ── 4-Frame Sprite Walk Cycle ── */
+        /* The student-*-walk.webp files are 1200×300px sprite strips:
+           4 frames each 300×300, rendered via SVG clipPath + CSS steps animation.
+           Frame 0: foot-plant-L  →  Frame 1: mid-air
+           Frame 2: foot-plant-R  →  Frame 3: mid-air
+        */
+
+        /* Sprite frame stepper: shifts the strip image left by one frame each step.
+           Each frame = 300px in strip coords. We render at ~60px so scale = 60/300 = 0.2.
+           At display size 60px wide, each step moves 60px (one frame). */
+        @keyframes sprite-step-runner {
+          0%    { transform: translateX(0px); }
+          25%   { transform: translateX(-60px); }
+          50%   { transform: translateX(-120px); }
+          75%   { transform: translateX(-180px); }
+          100%  { transform: translateX(0px); }
         }
-        @keyframes walk-cycle-coffee {
-          0%   { transform: translateY(0px) rotate(0deg); }
-          12%  { transform: translateY(-3.5px) rotate(-0.8deg); }
-          25%  { transform: translateY(0px) rotate(0deg); }
-          37%  { transform: translateY(-3.5px) rotate(0.9deg); }
-          50%  { transform: translateY(0px) rotate(0deg); }
-          62%  { transform: translateY(-3.5px) rotate(-0.8deg); }
-          75%  { transform: translateY(0px) rotate(0deg); }
-          87%  { transform: translateY(-3.5px) rotate(0.9deg); }
-          100% { transform: translateY(0px) rotate(0deg); }
+        @keyframes sprite-step-coffee {
+          0%    { transform: translateX(0px); }
+          25%   { transform: translateX(-57px); }
+          50%   { transform: translateX(-114px); }
+          75%   { transform: translateX(-171px); }
+          100%  { transform: translateX(0px); }
         }
-        @keyframes walk-cycle-tech {
-          0%   { transform: translateY(0px) rotate(0deg); }
-          12%  { transform: translateY(-4.5px) rotate(1deg); }
-          25%  { transform: translateY(0px) rotate(0deg); }
-          37%  { transform: translateY(-4.5px) rotate(-1.1deg); }
-          50%  { transform: translateY(0px) rotate(0deg); }
-          62%  { transform: translateY(-4.5px) rotate(1deg); }
-          75%  { transform: translateY(0px) rotate(0deg); }
-          87%  { transform: translateY(-4.5px) rotate(-1.1deg); }
-          100% { transform: translateY(0px) rotate(0deg); }
+        @keyframes sprite-step-tech {
+          0%    { transform: translateX(0px); }
+          25%   { transform: translateX(-63px); }
+          50%   { transform: translateX(-126px); }
+          75%   { transform: translateX(-189px); }
+          100%  { transform: translateX(0px); }
         }
 
-        /* Shadow pulse to match foot-plant rhythm */
-        @keyframes shadow-step-1 {
-          0%, 25%, 50%, 75%, 100% { transform: scale(1); opacity: 0.30; }
-          12%, 37%, 62%, 87%     { transform: scale(0.85); opacity: 0.18; }
-        }
-        @keyframes shadow-step-2 {
-          0%, 25%, 50%, 75%, 100% { transform: scale(1); opacity: 0.28; }
-          12%, 37%, 62%, 87%     { transform: scale(0.87); opacity: 0.16; }
-        }
-        @keyframes shadow-step-3 {
-          0%, 25%, 50%, 75%, 100% { transform: scale(1); opacity: 0.25; }
-          12%, 37%, 62%, 87%     { transform: scale(0.83); opacity: 0.14; }
-        }
+        /* steps(4, end) = crisp frame-by-frame, no tweening between poses */
+        .sprite-runner { animation: sprite-step-runner 0.56s steps(4, end) infinite; }
+        .sprite-coffee { animation: sprite-step-coffee 0.72s steps(4, end) infinite; }
+        .sprite-tech   { animation: sprite-step-tech   0.64s steps(4, end) infinite; }
 
+        /* Horizontal traversal */
         .student-ltr-fast { animation: walk-traverse-ltr 26s linear infinite -6s; }
         .student-ltr-slow { animation: walk-traverse-ltr 36s linear infinite -18s; }
         .student-rtl      { animation: walk-traverse-rtl 30s linear infinite -12s; }
 
-        /* Walk cycle applied to the WHOLE character group (body stays together) */
-        .walk-runner { animation: walk-cycle-runner 0.62s ease-in-out infinite; transform-origin: 720px 605px; }
-        .walk-coffee { animation: walk-cycle-coffee 0.78s ease-in-out infinite; transform-origin: 720px 617px; }
-        .walk-tech   { animation: walk-cycle-tech   0.70s ease-in-out infinite; transform-origin: 720px 633px; }
-
-        .shadow-pulse-tech   { animation: shadow-step-1 0.70s ease-in-out infinite; transform-origin: 720px 633px; }
-        .shadow-pulse-coffee { animation: shadow-step-2 0.78s ease-in-out infinite; transform-origin: 720px 617px; }
-        .shadow-pulse-runner { animation: shadow-step-3 0.62s ease-in-out infinite; transform-origin: 720px 605px; }
+        /* Shadow pulse synced with 4-frame step (2 foot-plants per cycle) */
+        @keyframes shadow-step-1 {
+          0%, 50%, 100% { transform: scaleX(1.15) scaleY(0.9); opacity: 0.32; }
+          25%, 75%      { transform: scaleX(0.88) scaleY(1.0); opacity: 0.18; }
+        }
+        @keyframes shadow-step-2 {
+          0%, 50%, 100% { transform: scaleX(1.12) scaleY(0.9); opacity: 0.30; }
+          25%, 75%      { transform: scaleX(0.90) scaleY(1.0); opacity: 0.16; }
+        }
+        @keyframes shadow-step-3 {
+          0%, 50%, 100% { transform: scaleX(1.10) scaleY(0.9); opacity: 0.28; }
+          25%, 75%      { transform: scaleX(0.92) scaleY(1.0); opacity: 0.14; }
+        }
+        .shadow-pulse-tech   { animation: shadow-step-1 0.64s steps(2, end) infinite; transform-origin: 720px 633px; }
+        .shadow-pulse-coffee { animation: shadow-step-2 0.72s steps(2, end) infinite; transform-origin: 720px 617px; }
+        .shadow-pulse-runner { animation: shadow-step-3 0.56s steps(2, end) infinite; transform-origin: 720px 605px; }
 
         .cloud-a { animation: cloud-drift-a 55s linear infinite; }
         .cloud-b { animation: cloud-drift-b 72s linear infinite 18s; }
@@ -157,7 +153,21 @@ export function CampusBackground() {
         role="presentation"
       >
         <defs>
-          {/* Sky Gradient: adapts to Day / Night smoothly */}
+          {/* ── Sprite Clip Regions — one per character, window = 1 frame wide ── */}
+          {/* Strip is 1200×300. Rendered at ~60px wide (scale 0.2), clip = 60×? */}
+
+          {/* Runner: rendered 60×79px inside 60×79 clip */}
+          <clipPath id="runner-frame-clip">
+            <rect x="694" y="526" width="60" height="79" />
+          </clipPath>
+          {/* Coffee: rendered 57×85px inside 57×85 clip */}
+          <clipPath id="coffee-frame-clip">
+            <rect x="695.5" y="532" width="57" height="85" />
+          </clipPath>
+          {/* Tech: rendered 63×91px inside 63×91 clip */}
+          <clipPath id="tech-frame-clip">
+            <rect x="689.5" y="542" width="63" height="91" />
+          </clipPath>
           <linearGradient id="uvSkyGrad" x1="0" y1="0" x2="0" y2="1">
             <stop
               offset="0%"
@@ -615,58 +625,61 @@ export function CampusBackground() {
             LAYER 9 — 3D PIXAR-STYLE CAMPUS WALKERS
         ═══════════════════════════════════════════════ */}
 
-        {/* ── Student 3: UniVerse Campus Courier Runner (3D Pixar Avatar) — Upper Lane (y=604, Left ➔ Right) ── */}
+        {/* ── Student 3: UniVerse Campus Courier Runner — Upper Lane (Left ➔ Right) ── */}
         <g className="student-ltr-fast">
-          {/* Ground Contact Shadow synced with step rhythm */}
           <ellipse cx="720" cy="605" rx="20" ry="4.5" fill="#000" className="shadow-pulse-runner" />
-          {/* Full-body walk — one uncut image keeps the character looking human */}
-          <g className="walk-runner">
+          {/*
+            Sprite strip: student-runner-walk.webp is 1200×300 (4 frames × 300px each).
+            We render it at 4×60 = 240px wide, 79px tall, clipped to 60×79 (one frame).
+            CSS steps(4) animation shifts by -60px per step, cycling through all frames.
+          */}
+          <g clipPath="url(#runner-frame-clip)" filter="drop-shadow(0 4px 6px rgba(0,0,0,0.22))">
             <image
-              href="/characters/student-runner.webp"
-              xlinkHref="/characters/student-runner.webp"
+              href="/characters/student-runner-walk.webp"
+              xlinkHref="/characters/student-runner-walk.webp"
               x="694"
               y="526"
-              width="52"
+              width="240"
               height="79"
-              preserveAspectRatio="xMidYMid meet"
-              filter="drop-shadow(0 4px 6px rgba(0,0,0,0.22))"
+              preserveAspectRatio="none"
+              className="sprite-runner"
             />
           </g>
         </g>
 
-        {/* ── Student 2: Campus Stroller with Iced Coffee & Headphones (3D Pixar Avatar) — Middle Lane (y=616, Left ➔ Right) ── */}
+        {/* ── Student 2: Campus Stroller with Iced Coffee — Middle Lane (Left ➔ Right) ── */}
         <g className="student-ltr-slow">
-          {/* Ground Contact Shadow */}
           <ellipse cx="720" cy="617" rx="22" ry="5" fill="#000" className="shadow-pulse-coffee" />
-          <g className="walk-coffee">
+          {/* Strip 4×57=228px wide, 85px tall, clipped to 57×85 */}
+          <g clipPath="url(#coffee-frame-clip)" filter="drop-shadow(0 4px 8px rgba(0,0,0,0.25))">
             <image
-              href="/characters/student-coffee.webp"
-              xlinkHref="/characters/student-coffee.webp"
+              href="/characters/student-coffee-walk.webp"
+              xlinkHref="/characters/student-coffee-walk.webp"
               x="695.5"
               y="532"
-              width="49"
+              width="228"
               height="85"
-              preserveAspectRatio="xMidYMid meet"
-              filter="drop-shadow(0 4px 8px rgba(0,0,0,0.25))"
+              preserveAspectRatio="none"
+              className="sprite-coffee"
             />
           </g>
         </g>
 
-        {/* ── Student 1: Tech Requester with Glowing Smartphone (3D Pixar Avatar) — Foreground Lane (y=632, Right ➔ Left) ── */}
+        {/* ── Student 1: Tech Requester with Smartphone — Foreground Lane (Right ➔ Left) ── */}
         <g className="student-rtl">
           <g transform="translate(1440, 0) scale(-1, 1)">
-            {/* Ground Contact Shadow */}
             <ellipse cx="720" cy="633" rx="24" ry="5.5" fill="#000" className="shadow-pulse-tech" />
-            <g className="walk-tech">
+            {/* Strip 4×63=252px wide, 91px tall, clipped to 63×91 */}
+            <g clipPath="url(#tech-frame-clip)" filter="drop-shadow(0 5px 10px rgba(0,0,0,0.28))">
               <image
-                href="/characters/student-tech.webp"
-                xlinkHref="/characters/student-tech.webp"
+                href="/characters/student-tech-walk.webp"
+                xlinkHref="/characters/student-tech-walk.webp"
                 x="689.5"
                 y="542"
-                width="61"
+                width="252"
                 height="91"
-                preserveAspectRatio="xMidYMid meet"
-                filter="drop-shadow(0 5px 10px rgba(0,0,0,0.28))"
+                preserveAspectRatio="none"
+                className="sprite-tech"
               />
             </g>
           </g>
