@@ -75,50 +75,93 @@ export function CampusBackground() {
           0%   { transform: translateX(880px); }
           100% { transform: translateX(-880px); }
         }
-        /* ── Fluid Natural 3D Walking Stride Motion ── */
-        @keyframes walk-stride-1 {
-          0%   { transform: translateY(0px) rotate(0deg); }
-          25%  { transform: translateY(-3.5px) rotate(1.2deg); }
-          50%  { transform: translateY(0px) rotate(0deg); }
-          75%  { transform: translateY(-3.5px) rotate(-1deg); }
-          100% { transform: translateY(0px) rotate(0deg); }
+        /* ── Genuine Articulated 3D Walking Leg Motions (Alternating Strides) ── */
+        @keyframes leg-swing-runner-fwd {
+          0%   { transform: rotate(22deg) scaleY(1); }
+          25%  { transform: rotate(3deg) scaleY(1.02); }
+          50%  { transform: rotate(-20deg) scaleY(0.96); }
+          75%  { transform: rotate(-2deg) scaleY(0.91); }
+          100% { transform: rotate(22deg) scaleY(1); }
         }
-        @keyframes walk-stride-2 {
-          0%   { transform: translateY(0px) rotate(0deg); }
-          25%  { transform: translateY(-3px) rotate(-1deg); }
-          50%  { transform: translateY(0px) rotate(0deg); }
-          75%  { transform: translateY(-3px) rotate(1deg); }
-          100% { transform: translateY(0px) rotate(0deg); }
+        @keyframes leg-swing-runner-bwd {
+          0%   { transform: rotate(-20deg) scaleY(0.96); }
+          25%  { transform: rotate(-2deg) scaleY(0.91); }
+          50%  { transform: rotate(22deg) scaleY(1); }
+          75%  { transform: rotate(3deg) scaleY(1.02); }
+          100% { transform: rotate(-20deg) scaleY(0.96); }
         }
-        @keyframes walk-stride-3 {
-          0%   { transform: translateY(0px) rotate(0deg); }
-          25%  { transform: translateY(-4px) rotate(1.5deg); }
-          50%  { transform: translateY(0px) rotate(0deg); }
-          75%  { transform: translateY(-4px) rotate(-1.2deg); }
-          100% { transform: translateY(0px) rotate(0deg); }
+        @keyframes torso-bob-runner-kf {
+          0%, 50%, 100% { transform: translateY(1.8px) rotate(0.6deg); }
+          25%, 75%      { transform: translateY(-1.8px) rotate(-0.6deg); }
+        }
+
+        @keyframes leg-swing-coffee-fwd {
+          0%   { transform: rotate(19deg) scaleY(1); }
+          25%  { transform: rotate(2deg) scaleY(1.02); }
+          50%  { transform: rotate(-17deg) scaleY(0.96); }
+          75%  { transform: rotate(-1deg) scaleY(0.91); }
+          100% { transform: rotate(19deg) scaleY(1); }
+        }
+        @keyframes leg-swing-coffee-bwd {
+          0%   { transform: rotate(-17deg) scaleY(0.96); }
+          25%  { transform: rotate(-1deg) scaleY(0.91); }
+          50%  { transform: rotate(19deg) scaleY(1); }
+          75%  { transform: rotate(2deg) scaleY(1.02); }
+          100% { transform: rotate(-17deg) scaleY(0.96); }
+        }
+        @keyframes torso-bob-coffee-kf {
+          0%, 50%, 100% { transform: translateY(1.6px) rotate(-0.5deg); }
+          25%, 75%      { transform: translateY(-1.6px) rotate(0.5deg); }
+        }
+
+        @keyframes leg-swing-tech-fwd {
+          0%   { transform: rotate(20deg) scaleY(1); }
+          25%  { transform: rotate(3deg) scaleY(1.02); }
+          50%  { transform: rotate(-18deg) scaleY(0.96); }
+          75%  { transform: rotate(-2deg) scaleY(0.91); }
+          100% { transform: rotate(20deg) scaleY(1); }
+        }
+        @keyframes leg-swing-tech-bwd {
+          0%   { transform: rotate(-18deg) scaleY(0.96); }
+          25%  { transform: rotate(-2deg) scaleY(0.91); }
+          50%  { transform: rotate(20deg) scaleY(1); }
+          75%  { transform: rotate(3deg) scaleY(1.02); }
+          100% { transform: rotate(-18deg) scaleY(0.96); }
+        }
+        @keyframes torso-bob-tech-kf {
+          0%, 50%, 100% { transform: translateY(1.8px) rotate(0.5deg); }
+          25%, 75%      { transform: translateY(-1.8px) rotate(-0.5deg); }
         }
 
         /* Shadow pulse to match foot step rhythm */
         @keyframes shadow-step-1 {
-          0%, 50%, 100% { transform: scale(1); opacity: 0.28; }
-          25%, 75%      { transform: scale(0.88); opacity: 0.18; }
+          0%, 50%, 100% { transform: scale(1.15, 0.88); opacity: 0.28; }
+          25%, 75%      { transform: scale(0.88, 1.0);  opacity: 0.18; }
         }
         @keyframes shadow-step-2 {
-          0%, 50%, 100% { transform: scale(1); opacity: 0.25; }
-          25%, 75%      { transform: scale(0.90); opacity: 0.16; }
+          0%, 50%, 100% { transform: scale(1.15, 0.88); opacity: 0.25; }
+          25%, 75%      { transform: scale(0.88, 1.0);  opacity: 0.16; }
         }
         @keyframes shadow-step-3 {
-          0%, 50%, 100% { transform: scale(1); opacity: 0.22; }
-          25%, 75%      { transform: scale(0.86); opacity: 0.14; }
+          0%, 50%, 100% { transform: scale(1.18, 0.85); opacity: 0.24; }
+          25%, 75%      { transform: scale(0.85, 1.0);  opacity: 0.14; }
         }
 
         .student-ltr-fast { animation: walk-traverse-ltr 26s linear infinite -6s; }
         .student-ltr-slow { animation: walk-traverse-ltr 36s linear infinite -18s; }
         .student-rtl      { animation: walk-traverse-rtl 30s linear infinite -12s; }
 
-        .walk-stride-tech   { animation: walk-stride-1 0.72s ease-in-out infinite; transform-origin: 50% 100%; }
-        .walk-stride-coffee { animation: walk-stride-2 0.82s ease-in-out infinite; transform-origin: 50% 100%; }
-        .walk-stride-runner { animation: walk-stride-3 0.60s ease-in-out infinite; transform-origin: 50% 100%; }
+        .leg-runner-bwd   { animation: leg-swing-runner-bwd 0.60s ease-in-out infinite; transform-origin: 716.2px 571.2px; }
+        .leg-runner-fwd   { animation: leg-swing-runner-fwd 0.60s ease-in-out infinite; transform-origin: 721.7px 571.2px; }
+        .torso-runner     { animation: torso-bob-runner-kf 0.60s ease-in-out infinite;   transform-origin: 720px 571px; }
+
+        .leg-coffee-bwd   { animation: leg-swing-coffee-bwd 0.82s ease-in-out infinite; transform-origin: 713.5px 578.4px; }
+        .leg-coffee-fwd   { animation: leg-swing-coffee-fwd 0.82s ease-in-out infinite; transform-origin: 720.7px 578.4px; }
+        .torso-coffee     { animation: torso-bob-coffee-kf 0.82s ease-in-out infinite;   transform-origin: 718px 578px; }
+
+        .leg-tech-bwd     { animation: leg-swing-tech-bwd 0.72s ease-in-out infinite;   transform-origin: 714.4px 595.9px; }
+        .leg-tech-fwd     { animation: leg-swing-tech-fwd 0.72s ease-in-out infinite;   transform-origin: 721.1px 595.9px; }
+        .torso-tech       { animation: torso-bob-tech-kf 0.72s ease-in-out infinite;     transform-origin: 718px 596px; }
 
         .shadow-pulse-tech   { animation: shadow-step-1 0.72s ease-in-out infinite; transform-origin: 720px 633px; }
         .shadow-pulse-coffee { animation: shadow-step-2 0.82s ease-in-out infinite; transform-origin: 720px 617px; }
@@ -605,10 +648,26 @@ export function CampusBackground() {
         <g className="student-ltr-fast">
           {/* Ground Contact Shadow synced with step rhythm */}
           <ellipse cx="720" cy="605" rx="20" ry="4.5" fill="#000" className="shadow-pulse-runner" />
-          <g className="walk-stride-runner">
+
+          {/* Layer 1: Back Leg (Shadowed behind torso) */}
+          <g className="leg-runner-bwd">
             <image
-              href="/characters/student-runner.webp"
-              xlinkHref="/characters/student-runner.webp"
+              href="/characters/student-runner-leg.webp"
+              xlinkHref="/characters/student-runner-leg.webp"
+              x="694"
+              y="526"
+              width="52"
+              height="79"
+              preserveAspectRatio="xMidYMid meet"
+              filter="brightness(0.68) saturate(0.85)"
+            />
+          </g>
+
+          {/* Layer 2: Torso & Head (Upper body bobs naturally) */}
+          <g className="torso-runner">
+            <image
+              href="/characters/student-runner-torso.webp"
+              xlinkHref="/characters/student-runner-torso.webp"
               x="694"
               y="526"
               width="52"
@@ -617,22 +676,64 @@ export function CampusBackground() {
               filter="drop-shadow(0 4px 6px rgba(0, 0, 0, 0.22))"
             />
           </g>
+
+          {/* Layer 3: Front Leg (Key light, active forward stride) */}
+          <g className="leg-runner-fwd">
+            <image
+              href="/characters/student-runner-leg.webp"
+              xlinkHref="/characters/student-runner-leg.webp"
+              x="694"
+              y="526"
+              width="52"
+              height="79"
+              preserveAspectRatio="xMidYMid meet"
+            />
+          </g>
         </g>
 
         {/* ── Student 2: Campus Stroller with Iced Coffee & Headphones (3D Pixar Avatar) — Middle Lane (y=616, Left ➔ Right) ── */}
         <g className="student-ltr-slow">
           {/* Ground Contact Shadow */}
           <ellipse cx="720" cy="617" rx="22" ry="5" fill="#000" className="shadow-pulse-coffee" />
-          <g className="walk-stride-coffee">
+
+          {/* Layer 1: Back Leg (Shadowed behind torso) */}
+          <g className="leg-coffee-bwd">
             <image
-              href="/characters/student-coffee.webp"
-              xlinkHref="/characters/student-coffee.webp"
+              href="/characters/student-coffee-leg.webp"
+              xlinkHref="/characters/student-coffee-leg.webp"
+              x="695.5"
+              y="532"
+              width="49"
+              height="85"
+              preserveAspectRatio="xMidYMid meet"
+              filter="brightness(0.68) saturate(0.85)"
+            />
+          </g>
+
+          {/* Layer 2: Torso & Head (Upper body bobs naturally) */}
+          <g className="torso-coffee">
+            <image
+              href="/characters/student-coffee-torso.webp"
+              xlinkHref="/characters/student-coffee-torso.webp"
               x="695.5"
               y="532"
               width="49"
               height="85"
               preserveAspectRatio="xMidYMid meet"
               filter="drop-shadow(0 4px 8px rgba(0, 0, 0, 0.25))"
+            />
+          </g>
+
+          {/* Layer 3: Front Leg (Key light, active forward stride) */}
+          <g className="leg-coffee-fwd">
+            <image
+              href="/characters/student-coffee-leg.webp"
+              xlinkHref="/characters/student-coffee-leg.webp"
+              x="695.5"
+              y="532"
+              width="49"
+              height="85"
+              preserveAspectRatio="xMidYMid meet"
             />
           </g>
         </g>
@@ -642,16 +743,45 @@ export function CampusBackground() {
           <g transform="translate(1440, 0) scale(-1, 1)">
             {/* Ground Contact Shadow */}
             <ellipse cx="720" cy="633" rx="24" ry="5.5" fill="#000" className="shadow-pulse-tech" />
-            <g className="walk-stride-tech">
+
+            {/* Layer 1: Back Leg (Shadowed behind torso) */}
+            <g className="leg-tech-bwd">
               <image
-                href="/characters/student-tech.webp"
-                xlinkHref="/characters/student-tech.webp"
+                href="/characters/student-tech-leg.webp"
+                xlinkHref="/characters/student-tech-leg.webp"
+                x="689.5"
+                y="542"
+                width="61"
+                height="91"
+                preserveAspectRatio="xMidYMid meet"
+                filter="brightness(0.68) saturate(0.85)"
+              />
+            </g>
+
+            {/* Layer 2: Torso & Head (Upper body bobs naturally) */}
+            <g className="torso-tech">
+              <image
+                href="/characters/student-tech-torso.webp"
+                xlinkHref="/characters/student-tech-torso.webp"
                 x="689.5"
                 y="542"
                 width="61"
                 height="91"
                 preserveAspectRatio="xMidYMid meet"
                 filter="drop-shadow(0 5px 10px rgba(0, 0, 0, 0.28))"
+              />
+            </g>
+
+            {/* Layer 3: Front Leg (Key light, active forward stride) */}
+            <g className="leg-tech-fwd">
+              <image
+                href="/characters/student-tech-leg.webp"
+                xlinkHref="/characters/student-tech-leg.webp"
+                x="689.5"
+                y="542"
+                width="61"
+                height="91"
+                preserveAspectRatio="xMidYMid meet"
               />
             </g>
           </g>
