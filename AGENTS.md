@@ -139,6 +139,9 @@ Before finalizing any code change, generating a pull request, or claiming comple
    - Even if visual polish, contrast tuning, or refactoring seems beneficial, NEVER modify another screen, component, or flow without explicit user request.
 3. **Explicit Consent for Shared Changes:**
    - If a change strictly requires touching a shared component, schema, or provider, STOP and ask the user for approval first before touching that file.
+4. **Zero Task Drift & Scope Lock (Bhatakna Mana Hai):**
+   - Hamesha yaad rakhna hai ki user ne exactly kya karne ko bola tha. Kabhi bhi mool muddhe (original task) se bhatak kar doosre files ya unasked features me nahi ghusna.
+   - Sirf requested kaam complete karo — zero unrequested changes. Agar koi adjacent warning ya issue dikhta bhi hai, toh chupke se edit karne ke bajaye pehle user ko text me inform karo.
 
 ---
 
