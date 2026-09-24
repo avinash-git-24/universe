@@ -75,42 +75,26 @@ export function CampusBackground() {
           0%   { transform: translateX(880px); }
           100% { transform: translateX(-880px); }
         }
-        @keyframes walk-bounce {
-          0%, 100% { transform: translateY(0px); }
-          50%       { transform: translateY(-2.2px); }
+        @keyframes walk-bounce-1 {
+          0%, 100% { transform: translateY(0px) rotate(0deg); }
+          50%       { transform: translateY(-3.5px) rotate(0.8deg); }
         }
-        @keyframes leg-swing-fwd {
-          0%, 100% { transform: rotate(18deg); }
-          50%       { transform: rotate(-18deg); }
+        @keyframes walk-bounce-2 {
+          0%, 100% { transform: translateY(0px) rotate(0deg); }
+          50%       { transform: translateY(-3px) rotate(-0.8deg); }
         }
-        @keyframes leg-swing-bwd {
-          0%, 100% { transform: rotate(-18deg); }
-          50%       { transform: rotate(18deg); }
-        }
-        @keyframes arm-swing-fwd {
-          0%, 100% { transform: rotate(-14deg); }
-          50%       { transform: rotate(16deg); }
-        }
-        @keyframes arm-swing-bwd {
-          0%, 100% { transform: rotate(16deg); }
-          50%       { transform: rotate(-14deg); }
-        }
-        @keyframes phone-screen-glow {
-          0%, 100% { opacity: 0.80; filter: drop-shadow(0 0 2px rgba(6, 182, 212, 0.7)); }
-          50%       { opacity: 1.00; filter: drop-shadow(0 0 6px rgba(6, 182, 212, 1)); }
-        }
-        @keyframes phone-ambient-cast {
-          0%, 100% { opacity: 0.30; }
-          50%       { opacity: 0.75; }
+        @keyframes walk-bounce-3 {
+          0%, 100% { transform: translateY(0px) rotate(0deg); }
+          50%       { transform: translateY(-4px) rotate(1deg); }
         }
 
         .student-ltr-fast { animation: walk-traverse-ltr 22s linear infinite -4s; }
         .student-ltr-slow { animation: walk-traverse-ltr 32s linear infinite -20s; }
         .student-rtl      { animation: walk-traverse-rtl 26s linear infinite -10s; }
 
-        .walk-bob-1 { animation: walk-bounce 0.48s ease-in-out infinite; }
-        .walk-bob-2 { animation: walk-bounce 0.52s ease-in-out infinite; }
-        .walk-bob-3 { animation: walk-bounce 0.44s ease-in-out infinite; }
+        .walk-bob-1 { animation: walk-bounce-1 0.48s ease-in-out infinite; transform-origin: 50% 100%; }
+        .walk-bob-2 { animation: walk-bounce-2 0.54s ease-in-out infinite; transform-origin: 50% 100%; }
+        .walk-bob-3 { animation: walk-bounce-3 0.44s ease-in-out infinite; transform-origin: 50% 100%; }
 
         .char-leg-l {
           animation: leg-swing-fwd 0.88s ease-in-out infinite;
@@ -618,307 +602,64 @@ export function CampusBackground() {
         <rect x="0" y="636" width="1440" height="8" fill="#D4D8DF" opacity="0.35" />
 
         {/* ═══════════════════════════════════════════════
-            LAYER 9 — STUDENTS (Campus Life with Expressive Faces & Detailed Hands)
+            LAYER 9 — 3D PIXAR-STYLE CAMPUS STUDENTS
         ═══════════════════════════════════════════════ */}
 
-        {/* ── Student 3: UniVerse Campus Courier Runner — Upper Lane (y=604, Left ➔ Right) ── */}
+        {/* ── Student 3: UniVerse Campus Courier Runner (3D Pixar Avatar) — Upper Lane (y=604, Left ➔ Right) ── */}
         <g className="student-ltr-fast">
+          {/* Ground Contact Shadow on Road */}
+          <ellipse cx="720" cy="605" rx="20" ry="4.5" fill="#000" opacity="0.25" />
           <g className="walk-bob-3">
-            {/* Dynamic Ground Shadow */}
-            <ellipse cx="720" cy="604" rx="18" ry="4" fill="#000" opacity="0.20" />
-
-            {/* Back Leg (Right) with white-sole sneaker */}
-            <g className="char-leg-r">
-              <rect x="721" y="576" width="6" height="23" rx="3" fill="#1E293B" />
-              <rect x="721" y="596" width="6" height="2" rx="1" fill="#334155" />
-              <rect x="720" y="597" width="12" height="6" rx="2" fill="#0F172A" />
-              <rect x="719" y="601" width="14" height="2.5" rx="1" fill="#FFFFFF" />
-              <rect x="722" y="599" width="4" height="1.2" rx="0.4" fill="#38BDF8" />
-            </g>
-
-            {/* Back Arm (Left) swinging naturally */}
-            <g className="char-arm-l">
-              <rect x="710" y="552" width="5.5" height="18" rx="2.7" fill="#4338CA" />
-              <rect x="710" y="558" width="5.5" height="2" fill="#FFFFFF" opacity="0.8" />
-              <rect x="710" y="567" width="5.5" height="2.5" rx="1" fill="#312E81" />
-              <circle cx="712.7" cy="571.5" r="2.8" fill="#E2A676" />
-              <rect x="712" y="571.5" width="2" height="3.5" rx="1" fill="#C08354" />
-            </g>
-
-            {/* Front Leg (Left) with white-sole sneaker */}
-            <g className="char-leg-l">
-              <rect x="714" y="576" width="6" height="23" rx="3" fill="#334155" />
-              <rect x="714" y="596" width="6" height="2" rx="1" fill="#475569" />
-              <rect x="713" y="597" width="12" height="6" rx="2" fill="#1E293B" />
-              <rect x="712" y="601" width="14" height="2.5" rx="1" fill="#FFFFFF" />
-              <rect x="715" y="599" width="4" height="1.2" rx="0.4" fill="#38BDF8" />
-            </g>
-
-            {/* Torso — Varsity Bomber Jacket */}
-            <rect x="709" y="549" width="22" height="28" rx="6" fill="#6366F1" />
-            <rect x="719" y="549" width="1.5" height="28" fill="#4338CA" />
-            <polygon points="716,549 724,549 720,555" fill="#FFFFFF" />
-            <rect x="710" y="574" width="20" height="3" rx="1.5" fill="#312E81" />
-            <circle cx="714" cy="556" r="2" fill="#10B981" />
-
-            {/* Neck */}
-            <rect x="718" y="544" width="4.5" height="6" fill="#C08354" rx="1.5" />
-
-            {/* Head Base */}
-            <ellipse cx="720" cy="537" rx="8" ry="9.5" fill="#E2A676" />
-            <path d="M 714 538 Q 721 547 726 542" fill="#E2A676" />
-
-            {/* Backwards Snapback University Cap */}
-            <path d="M 713 538 Q 713 527 721 527 Q 729 527 728 535 Q 724 534 717 534 Z" fill="#312E81" />
-            <path d="M 713 535 Q 708 536 706 539 Q 710 538 714 537 Z" fill="#1E1B4B" />
-            <path d="M 712 534 A 2.5 2.5 0 0 1 715 534" fill="none" stroke="#D49B6A" strokeWidth="1" />
-            {/* Hair Fade at Temples & Fringe */}
-            <path d="M 717 534 L 719 541 L 716 541 Z" fill="#0F172A" />
-            <path d="M 726 534 Q 728 535 727 538 Q 725 536 724 535 Z" fill="#0F172A" />
-
-            {/* Ear */}
-            <ellipse cx="714.5" cy="537.5" rx="2.2" ry="3.2" fill="#E2A676" />
-            <path d="M 715 536.5 Q 714 537.5 715 539" stroke="#C08354" strokeWidth="0.8" fill="none" strokeLinecap="round" />
-
-            {/* Eyebrow & Expressive Eye */}
-            <path d="M 721 532.5 Q 723.5 531.5 726 533" stroke="#0F172A" strokeWidth="1.2" fill="none" strokeLinecap="round" />
-            <ellipse cx="724.5" cy="536" rx="2" ry="1.5" fill="#FFFFFF" />
-            <circle cx="725.2" cy="536" r="1.1" fill="#0F172A" />
-            <circle cx="725.5" cy="535.6" r="0.4" fill="#FFFFFF" />
-            <path d="M 722.5 535.2 Q 724.5 534.5 726.5 535.5" stroke="#0F172A" strokeWidth="0.7" fill="none" />
-
-            {/* Nose */}
-            <path d="M 726 536 L 728.2 539 L 726.2 539.6" stroke="#C08354" strokeWidth="1" fill="#E2A676" strokeLinejoin="round" strokeLinecap="round" />
-
-            {/* Smiling Mouth */}
-            <path d="M 723 542.5 Q 725.5 544 727.5 542" stroke="#9A3412" strokeWidth="1" fill="none" strokeLinecap="round" />
-
-            {/* Cross-body Bag Strap */}
-            <path d="M 713 551 L 726 567" stroke="#047857" strokeWidth="3" strokeLinecap="round" />
-
-            {/* Front Arm & Hand gripping bag strap */}
-            <g className="char-arm-carry">
-              <rect x="723" y="551" width="5.5" height="9" rx="2.5" fill="#4F46E5" />
-              <rect x="723" y="556" width="5.5" height="2" fill="#FFFFFF" opacity="0.8" />
-              <polygon points="723,558 728.5,558 727,566 722,565" fill="#6366F1" />
-              <rect x="721" y="563" width="5.5" height="2.5" rx="1" fill="#312E81" />
-              {/* Hand Palm */}
-              <circle cx="725" cy="567" r="3" fill="#E2A676" />
-              {/* Thumb */}
-              <path d="M 723 565 Q 725 564 726 566" stroke="#C08354" strokeWidth="1.2" fill="none" strokeLinecap="round" />
-              {/* Distinct Fingers wrapped on strap */}
-              <rect x="724" y="566" width="3.2" height="1.8" rx="0.8" fill="#E2A676" stroke="#C08354" strokeWidth="0.4" />
-              <rect x="723.8" y="568" width="3.2" height="1.8" rx="0.8" fill="#E2A676" stroke="#C08354" strokeWidth="0.4" />
-              <rect x="723.5" y="570" width="3" height="1.7" rx="0.8" fill="#E2A676" stroke="#C08354" strokeWidth="0.4" />
-              <rect x="723.2" y="571.8" width="2.8" height="1.6" rx="0.7" fill="#C08354" stroke="#C08354" strokeWidth="0.4" />
-              {/* UniVerse Green Delivery Bag */}
-              <rect x="722" y="567" width="20" height="22" rx="4" fill="#10B981" stroke="#059669" strokeWidth="1" />
-              <path d="M 722 567 L 742 567 L 742 575 L 722 575 Z" fill="#059669" />
-              <rect x="730.5" y="573.5" width="3" height="3" rx="0.5" fill="#F59E0B" />
-              <text x="732" y="582" textAnchor="middle" fill="white" fontSize="7.5" fontFamily="system-ui, sans-serif" fontWeight="900" letterSpacing="0.5">UV</text>
-              <rect x="725" y="584" width="14" height="1.5" rx="0.7" fill="#FFFFFF" opacity="0.85" />
-            </g>
+            {/* High-Res 3D Courier Runner */}
+            <image
+              href="/characters/student-runner.webp"
+              xlinkHref="/characters/student-runner.webp"
+              x="694"
+              y="526"
+              width="52"
+              height="79"
+              preserveAspectRatio="xMidYMid meet"
+              filter="drop-shadow(0 4px 6px rgba(0, 0, 0, 0.22))"
+            />
           </g>
         </g>
 
-        {/* ── Student 2: Campus Stroller (Amber Sweater, Headphones, Holding Drink) — Middle Lane (y=614, Left ➔ Right) ── */}
+        {/* ── Student 2: Campus Stroller with Iced Coffee & Headphones (3D Pixar Avatar) — Middle Lane (y=616, Left ➔ Right) ── */}
         <g className="student-ltr-slow">
+          {/* Ground Contact Shadow */}
+          <ellipse cx="720" cy="617" rx="22" ry="5" fill="#000" opacity="0.28" />
           <g className="walk-bob-2">
-            {/* Dynamic Ground Shadow */}
-            <ellipse cx="720" cy="614" rx="18" ry="4" fill="#000" opacity="0.22" />
-
-            {/* Back Leg (Right) with white-sole sneaker */}
-            <g className="char-leg-r">
-              <rect x="721" y="586" width="6" height="23" rx="3" fill="#1E3A5F" />
-              <rect x="721" y="606" width="6" height="2" rx="1" fill="#2563EB" opacity="0.4" />
-              <rect x="720" y="607" width="12" height="6" rx="2" fill="#0F172A" />
-              <rect x="719" y="611" width="14" height="2.5" rx="1" fill="#FFFFFF" />
-              <rect x="722" y="609" width="4" height="1.2" rx="0.4" fill="#F59E0B" />
-            </g>
-
-            {/* Back Arm swinging naturally */}
-            <g className="char-arm-l">
-              <rect x="710" y="562" width="5.5" height="18" rx="2.7" fill="#D97706" />
-              <rect x="710" y="577" width="5.5" height="2.5" rx="1" fill="#B45309" />
-              <circle cx="712.7" cy="581.5" r="2.8" fill="#C8956C" />
-              <rect x="712" y="581.5" width="2" height="3.5" rx="1" fill="#A8704A" />
-            </g>
-
-            {/* Front Leg (Left) with white-sole sneaker */}
-            <g className="char-leg-l">
-              <rect x="714" y="586" width="6" height="23" rx="3" fill="#2563EB" />
-              <rect x="714" y="606" width="6" height="2" rx="1" fill="#3B82F6" opacity="0.4" />
-              <rect x="713" y="607" width="12" height="6" rx="2" fill="#1E293B" />
-              <rect x="712" y="611" width="14" height="2.5" rx="1" fill="#FFFFFF" />
-              <rect x="715" y="609" width="4" height="1.2" rx="0.4" fill="#F59E0B" />
-            </g>
-
-            {/* Torso — Amber Sweater with ribbed cuffs & athletic stripe */}
-            <rect x="709" y="559" width="22" height="28" rx="6" fill="#F59E0B" />
-            <path d="M 716 559 Q 720 562 724 559" stroke="#D97706" strokeWidth="1.8" fill="none" strokeLinecap="round" />
-            <polygon points="718,559 722,559 720,562" fill="#FFFFFF" />
-            <rect x="709" y="568" width="22" height="3" fill="#FFFFFF" opacity="0.85" />
-            <rect x="710" y="584" width="20" height="3" rx="1.5" fill="#D97706" />
-
-            {/* Neck */}
-            <rect x="718" y="554" width="4.5" height="6" fill="#A8704A" rx="1.5" />
-
-            {/* Head Base */}
-            <ellipse cx="720" cy="547" rx="8" ry="9.5" fill="#C8956C" />
-            <path d="M 714 548 Q 721 557 726 552" fill="#C8956C" />
-
-            {/* Voluminous Wavy Hair */}
-            <path d="M 712 548 Q 711 535 721 535 Q 730 535 729 544 Q 727 541 721 541 Q 716 541 713 548 Z" fill="#2C1810" />
-            <path d="M 717 539 Q 722 537 727 542 Q 725 544 722 543 Q 719 543 717 539 Z" fill="#3D2314" />
-
-            {/* Sleek Over-Ear Headphones */}
-            <path d="M 713 547 Q 720 532 727 547" fill="none" stroke="#E2E8F0" strokeWidth="2.2" strokeLinecap="round" />
-            <rect x="712" y="544" width="3" height="7" rx="1.5" fill="#0F172A" />
-            <rect x="711" y="545" width="2" height="5" rx="1" fill="#38BDF8" />
-
-            {/* Ear Lobe */}
-            <ellipse cx="714" cy="549.5" rx="1.8" ry="2.2" fill="#C8956C" />
-
-            {/* Eyebrow & Expressive Eye */}
-            <path d="M 721 542.5 Q 723.5 541.5 726 543" stroke="#2C1810" strokeWidth="1.2" fill="none" strokeLinecap="round" />
-            <ellipse cx="724.5" cy="546" rx="2" ry="1.5" fill="#FFFFFF" />
-            <circle cx="725" cy="546" r="1.1" fill="#3D2314" />
-            <circle cx="725.4" cy="545.6" r="0.4" fill="#FFFFFF" />
-            <path d="M 722.5 545.2 Q 724.5 544.5 726.5 545.5" stroke="#2C1810" strokeWidth="0.7" fill="none" />
-
-            {/* Nose */}
-            <path d="M 726 546 L 728.2 549 L 726.2 549.6" stroke="#A8704A" strokeWidth="1" fill="#C8956C" strokeLinejoin="round" strokeLinecap="round" />
-
-            {/* Cheerful Friendly Smile */}
-            <path d="M 723 552.5 Q 725.5 554 727.5 552" stroke="#9A3412" strokeWidth="1" fill="none" strokeLinecap="round" />
-
-            {/* Front Arm & Hand holding Iced Coffee Drink Tumbler */}
-            <g className="char-arm-carry">
-              <rect x="723" y="561" width="5.5" height="9" rx="2.5" fill="#D97706" />
-              <polygon points="723,568 728.5,568 732,574 726.5,576" fill="#F59E0B" />
-              <rect x="728" y="572" width="4" height="4.5" rx="1.5" fill="#D97706" transform="rotate(25 730 574)" />
-              {/* Hand Palm */}
-              <circle cx="732" cy="576" r="3" fill="#C8956C" />
-              {/* Thumb */}
-              <path d="M 732 574 Q 734 573 735 575 Q 734 576.5 732 576" fill="#A8704A" />
-              {/* 4 Distinct Fingers wrapping cup */}
-              <rect x="733.5" y="573.5" width="2.8" height="2" rx="0.9" fill="#C8956C" stroke="#A8704A" strokeWidth="0.4" />
-              <rect x="733.5" y="576" width="2.8" height="2" rx="0.9" fill="#C8956C" stroke="#A8704A" strokeWidth="0.4" />
-              <rect x="733.2" y="578.5" width="2.6" height="1.9" rx="0.9" fill="#C8956C" stroke="#A8704A" strokeWidth="0.4" />
-              <rect x="732.8" y="580.7" width="2.4" height="1.8" rx="0.8" fill="#A8704A" stroke="#A8704A" strokeWidth="0.4" />
-              {/* Clear Iced Tumbler */}
-              <polygon points="734,569 741,569 739.5,582 735.5,582" fill="#F8FAFC" opacity="0.85" stroke="#CBD5E1" strokeWidth="0.6" />
-              <polygon points="734.5,573 740.5,573 739.2,581.5 735.8,581.5" fill="#10B981" opacity="0.75" />
-              <rect x="736" y="574" width="2.5" height="2" fill="#FFFFFF" opacity="0.7" rx="0.5" />
-              <polygon points="735,575 740,575 739.5,578.5 735.5,578.5" fill="#D97706" opacity="0.8" />
-              <path d="M 733.5 569 Q 737.5 566.5 741.5 569 Z" fill="#E2E8F0" stroke="#CBD5E1" strokeWidth="0.5" />
-              <line x1="738.5" y1="563" x2="737.5" y2="569" stroke="#059669" strokeWidth="1.3" strokeLinecap="round" />
-            </g>
+            {/* High-Res 3D Stroller Student */}
+            <image
+              href="/characters/student-coffee.webp"
+              xlinkHref="/characters/student-coffee.webp"
+              x="695.5"
+              y="532"
+              width="49"
+              height="85"
+              preserveAspectRatio="xMidYMid meet"
+              filter="drop-shadow(0 4px 8px rgba(0, 0, 0, 0.25))"
+            />
           </g>
         </g>
 
-        {/* ── Student 1: Tech Requester (Emerald Hoodie, Holding Phone Naturally with Clear Hand) — Front Lane (y=626, Walking Right ➔ Left) ── */}
+        {/* ── Student 1: Tech Requester with Glowing Smartphone (3D Pixar Avatar) — Foreground Lane (y=632, Right ➔ Left) ── */}
         <g className="student-rtl">
           <g transform="translate(1440, 0) scale(-1, 1)">
+            {/* Ground Contact Shadow on Sidewalk */}
+            <ellipse cx="720" cy="633" rx="24" ry="5.5" fill="#000" opacity="0.30" />
             <g className="walk-bob-1">
-              {/* Dynamic Ground Shadow */}
-              <ellipse cx="720" cy="626" rx="18" ry="4" fill="#000" opacity="0.25" />
-
-              {/* Back Leg (Right) with white-sole sneaker */}
-              <g className="char-leg-r">
-                <rect x="721" y="598" width="6" height="23" rx="3" fill="#1E293B" />
-                <rect x="721" y="618" width="6" height="2" rx="1" fill="#334155" />
-                <rect x="720" y="619" width="12" height="6" rx="2" fill="#0F172A" />
-                <rect x="719" y="623" width="14" height="2.5" rx="1" fill="#FFFFFF" />
-                <rect x="722" y="621" width="3" height="1.5" rx="0.5" fill="#10B981" />
-              </g>
-
-              {/* Back Arm swinging naturally */}
-              <g className="char-arm-l">
-                <rect x="710" y="574" width="5.5" height="18" rx="2.7" fill="#047857" />
-                <rect x="710" y="589" width="5.5" height="2.5" rx="1" fill="#065F46" />
-                <circle cx="712.7" cy="593.5" r="2.8" fill="#D4A070" />
-                <rect x="712" y="593.5" width="2" height="3.5" rx="1" fill="#C08B5C" />
-              </g>
-
-              {/* Front Leg (Left) with white-sole sneaker */}
-              <g className="char-leg-l">
-                <rect x="714" y="598" width="6" height="23" rx="3" fill="#334155" />
-                <rect x="714" y="618" width="6" height="2" rx="1" fill="#475569" />
-                <rect x="713" y="619" width="12" height="6" rx="2" fill="#1E293B" />
-                <rect x="712" y="623" width="14" height="2.5" rx="1" fill="#FFFFFF" />
-                <rect x="715" y="621" width="3" height="1.5" rx="0.5" fill="#10B981" />
-              </g>
-
-              {/* Torso — Emerald Green Campus Hoodie with kangaroo pocket */}
-              <rect x="709" y="571" width="22" height="28" rx="6" fill="#10B981" />
-              <rect x="710" y="596" width="20" height="3" rx="1.5" fill="#059669" />
-              <path d="M 714 588 L 728 588 L 726 595 L 716 595 Z" fill="#059669" opacity="0.7" />
-              {/* Hoodie drawstrings */}
-              <path d="M 718 574 Q 717 580 718 585" stroke="#FFFFFF" strokeWidth="1" fill="none" strokeLinecap="round" />
-              <path d="M 721 574 Q 722 579 720 584" stroke="#FFFFFF" strokeWidth="1" fill="none" strokeLinecap="round" />
-              <circle cx="718" cy="585" r="0.8" fill="#D1D5DB" />
-              <circle cx="720" cy="584" r="0.8" fill="#D1D5DB" />
-              {/* Backpack strap */}
-              <path d="M 714 572 L 717 596" stroke="#047857" strokeWidth="2.5" strokeLinecap="round" opacity="0.8" />
-
-              {/* Neck */}
-              <rect x="718" y="566" width="4.5" height="6" fill="#B77950" rx="1.5" />
-
-              {/* Head Base */}
-              <ellipse cx="720" cy="559" rx="8" ry="9.5" fill="#D4A070" />
-              <path d="M 714 560 Q 721 569 726 564" fill="#D4A070" />
-
-              {/* Modern Textured Taper Fade Haircut */}
-              <path d="M 712 559 Q 712 548 721 548 Q 729 548 728 556 Q 726 553 721 553 Q 716 553 714 559 Z" fill="#18181B" />
-              <path d="M 713 553 Q 716 546 722 547 Q 727 547 729 552 Q 727 550 722 550 Q 717 550 713 553 Z" fill="#27272A" />
-              <path d="M 717 557 L 718 563 L 716 563 Z" fill="#18181B" />
-
-              {/* Ear */}
-              <ellipse cx="714.5" cy="559.5" rx="2.2" ry="3.2" fill="#D4A070" />
-              <path d="M 715 558.5 Q 714 559.5 715 561" stroke="#B77950" strokeWidth="0.8" fill="none" strokeLinecap="round" />
-
-              {/* Eyebrow & Expressive Eye looking at phone */}
-              <path d="M 721 554 Q 724 553.5 726.5 555" stroke="#18181B" strokeWidth="1.2" fill="none" strokeLinecap="round" />
-              <ellipse cx="724.5" cy="558" rx="2" ry="1.5" fill="#FFFFFF" />
-              <circle cx="725.2" cy="558.5" r="1.1" fill="#1E293B" />
-              <circle cx="725.6" cy="558.2" r="0.4" fill="#FFFFFF" />
-              <path d="M 722.5 557.2 Q 724.5 556.5 726.5 557.5" stroke="#18181B" strokeWidth="0.7" fill="none" />
-
-              {/* Nose */}
-              <path d="M 726 558 L 728.2 561.2 L 726.2 561.8" stroke="#B77950" strokeWidth="1" fill="#D4A070" strokeLinejoin="round" strokeLinecap="round" />
-
-              {/* Focused Gentle Smile */}
-              <path d="M 723.5 564.5 Q 725.5 565.5 727 564" stroke="#9A3412" strokeWidth="0.9" fill="none" strokeLinecap="round" />
-
-              {/* Subtle Cyan Screen Reflection on Face */}
-              <ellipse cx="725" cy="563" rx="4" ry="4" fill="url(#uvPhoneFaceGlow)" className="phone-ambient-pulse" opacity="0.6" />
-
-              {/* Front Arm & Connected Hand holding smartphone naturally */}
-              <g className="char-arm-carry">
-                {/* Upper arm from shoulder */}
-                <rect x="723" y="573" width="5.5" height="9" rx="2.5" fill="#047857" />
-                {/* Forearm angled forward */}
-                <polygon points="723,580 728.5,580 732,586 726.5,588" fill="#059669" />
-                {/* Sleeve cuff */}
-                <rect x="728" y="584" width="4" height="4.5" rx="1.5" fill="#065F46" transform="rotate(25 730 586)" />
-                {/* Connected Hand Palm */}
-                <circle cx="732" cy="588" r="3" fill="#D4A070" />
-                {/* Thumb resting on front edge of phone */}
-                <path d="M 732 586 Q 734 585 735 587 Q 734 588.5 732 588" fill="#C08B5C" />
-                {/* 4 Distinct Fingers firmly wrapping around phone edge */}
-                <rect x="733.5" y="585" width="2.8" height="2" rx="0.9" fill="#D4A070" stroke="#B77950" strokeWidth="0.4" />
-                <rect x="733.5" y="587.5" width="2.8" height="2" rx="0.9" fill="#D4A070" stroke="#B77950" strokeWidth="0.4" />
-                <rect x="733.2" y="590" width="2.6" height="1.9" rx="0.9" fill="#D4A070" stroke="#B77950" strokeWidth="0.4" />
-                <rect x="732.8" y="592.2" width="2.4" height="1.8" rx="0.8" fill="#C08B5C" stroke="#B77950" strokeWidth="0.4" />
-                {/* Smartphone firmly in hand */}
-                <rect x="734" y="580" width="8" height="15" rx="2" fill="#0F172A" stroke="#475569" strokeWidth="0.6" />
-                {/* Glowing OLED phone screen with app cards */}
-                <rect x="735" y="581.5" width="6" height="12" rx="1" fill="#0284C7" className="phone-pulse-screen" />
-                <rect x="735.8" y="582.5" width="4.4" height="1.5" rx="0.5" fill="#38BDF8" />
-                <rect x="735.8" y="585" width="4.4" height="3" rx="0.5" fill="#E0F2FE" opacity="0.9" />
-                <rect x="735.8" y="589" width="3" height="1.2" rx="0.4" fill="#10B981" />
-              </g>
+              {/* High-Res 3D Tech Student */}
+              <image
+                href="/characters/student-tech.webp"
+                xlinkHref="/characters/student-tech.webp"
+                x="689.5"
+                y="542"
+                width="61"
+                height="91"
+                preserveAspectRatio="xMidYMid meet"
+                filter="drop-shadow(0 5px 10px rgba(0, 0, 0, 0.28))"
+              />
             </g>
           </g>
         </g>
