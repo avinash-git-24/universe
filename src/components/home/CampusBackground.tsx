@@ -96,37 +96,59 @@ export function CampusBackground() {
         .walk-bob-2 { animation: walk-bounce-2 0.54s ease-in-out infinite; transform-origin: 50% 100%; }
         .walk-bob-3 { animation: walk-bounce-3 0.44s ease-in-out infinite; transform-origin: 50% 100%; }
 
-        .char-leg-l {
-          animation: leg-swing-fwd 0.88s ease-in-out infinite;
-          transform-box: fill-box;
-          transform-origin: 50% 0%;
+        /* ── 3D Pixar Character Walk Cycle Sprite Frame Animations ── */
+        @keyframes walk-sprite-tech {
+          0%, 16.66%     { background-position: 0% 0%; }
+          16.67%, 33.33% { background-position: 20% 0%; }
+          33.34%, 50.00% { background-position: 40% 0%; }
+          50.01%, 66.66% { background-position: 60% 0%; }
+          66.67%, 83.33% { background-position: 80% 0%; }
+          83.34%, 100%   { background-position: 100% 0%; }
         }
-        .char-leg-r {
-          animation: leg-swing-bwd 0.88s ease-in-out infinite;
-          transform-box: fill-box;
-          transform-origin: 50% 0%;
+        @keyframes walk-sprite-coffee {
+          0%, 16.66%     { background-position: 0% 0%; }
+          16.67%, 33.33% { background-position: 20% 0%; }
+          33.34%, 50.00% { background-position: 40% 0%; }
+          50.01%, 66.66% { background-position: 60% 0%; }
+          66.67%, 83.33% { background-position: 80% 0%; }
+          83.34%, 100%   { background-position: 100% 0%; }
         }
-        .char-arm-l {
-          animation: arm-swing-bwd 0.88s ease-in-out infinite;
-          transform-box: fill-box;
-          transform-origin: 50% 0%;
+        @keyframes walk-sprite-runner {
+          0%, 16.66%     { background-position: 0% 0%; }
+          16.67%, 33.33% { background-position: 20% 0%; }
+          33.34%, 50.00% { background-position: 40% 0%; }
+          50.01%, 66.66% { background-position: 60% 0%; }
+          66.67%, 83.33% { background-position: 80% 0%; }
+          83.34%, 100%   { background-position: 100% 0%; }
         }
-        .char-arm-r {
-          animation: arm-swing-fwd 0.88s ease-in-out infinite;
-          transform-box: fill-box;
-          transform-origin: 50% 0%;
+
+        .sprite-walker-runner {
+          width: 100%;
+          height: 100%;
+          background-image: url('/characters/student-runner-strip.webp');
+          background-size: 600% 100%;
+          background-repeat: no-repeat;
+          animation: walk-sprite-runner 0.62s infinite;
+          filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.22));
         }
-        @keyframes arm-carry-steady {
-          0%, 100% { transform: rotate(0deg); }
-          50%       { transform: rotate(2deg); }
+        .sprite-walker-coffee {
+          width: 100%;
+          height: 100%;
+          background-image: url('/characters/student-coffee-strip.webp');
+          background-size: 600% 100%;
+          background-repeat: no-repeat;
+          animation: walk-sprite-coffee 0.80s infinite;
+          filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.25));
         }
-        .char-arm-carry {
-          animation: arm-carry-steady 0.88s ease-in-out infinite;
-          transform-box: fill-box;
-          transform-origin: 20% 0%;
+        .sprite-walker-tech {
+          width: 100%;
+          height: 100%;
+          background-image: url('/characters/student-tech-strip.webp');
+          background-size: 600% 100%;
+          background-repeat: no-repeat;
+          animation: walk-sprite-tech 0.70s infinite;
+          filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.28));
         }
-        .phone-pulse-screen { animation: phone-screen-glow 1.8s ease-in-out infinite; }
-        .phone-ambient-pulse { animation: phone-ambient-cast 1.8s ease-in-out infinite; }
 
         .cloud-a { animation: cloud-drift-a 55s linear infinite; }
         .cloud-b { animation: cloud-drift-b 72s linear infinite 18s; }
@@ -602,64 +624,40 @@ export function CampusBackground() {
         <rect x="0" y="636" width="1440" height="8" fill="#D4D8DF" opacity="0.35" />
 
         {/* ═══════════════════════════════════════════════
-            LAYER 9 — 3D PIXAR-STYLE CAMPUS STUDENTS
+            LAYER 9 — ANIMATED 3D PIXAR-STYLE CAMPUS WALKERS
         ═══════════════════════════════════════════════ */}
 
-        {/* ── Student 3: UniVerse Campus Courier Runner (3D Pixar Avatar) — Upper Lane (y=604, Left ➔ Right) ── */}
+        {/* ── Student 3: UniVerse Campus Courier Runner (Real 3D Walk Cycle) — Upper Lane (y=604, Left ➔ Right) ── */}
         <g className="student-ltr-fast">
           {/* Ground Contact Shadow on Road */}
           <ellipse cx="720" cy="605" rx="20" ry="4.5" fill="#000" opacity="0.25" />
           <g className="walk-bob-3">
-            {/* High-Res 3D Courier Runner */}
-            <image
-              href="/characters/student-runner.webp"
-              xlinkHref="/characters/student-runner.webp"
-              x="694"
-              y="526"
-              width="52"
-              height="79"
-              preserveAspectRatio="xMidYMid meet"
-              filter="drop-shadow(0 4px 6px rgba(0, 0, 0, 0.22))"
-            />
+            <foreignObject x={692} y={521} width={56} height={84} style={{ overflow: "visible" }}>
+              <div className="sprite-walker-runner" />
+            </foreignObject>
           </g>
         </g>
 
-        {/* ── Student 2: Campus Stroller with Iced Coffee & Headphones (3D Pixar Avatar) — Middle Lane (y=616, Left ➔ Right) ── */}
+        {/* ── Student 2: Campus Stroller with Iced Coffee & Headphones (Real 3D Walk Cycle) — Middle Lane (y=616, Left ➔ Right) ── */}
         <g className="student-ltr-slow">
           {/* Ground Contact Shadow */}
           <ellipse cx="720" cy="617" rx="22" ry="5" fill="#000" opacity="0.28" />
           <g className="walk-bob-2">
-            {/* High-Res 3D Stroller Student */}
-            <image
-              href="/characters/student-coffee.webp"
-              xlinkHref="/characters/student-coffee.webp"
-              x="695.5"
-              y="532"
-              width="49"
-              height="85"
-              preserveAspectRatio="xMidYMid meet"
-              filter="drop-shadow(0 4px 8px rgba(0, 0, 0, 0.25))"
-            />
+            <foreignObject x={690} y={527} width={60} height={90} style={{ overflow: "visible" }}>
+              <div className="sprite-walker-coffee" />
+            </foreignObject>
           </g>
         </g>
 
-        {/* ── Student 1: Tech Requester with Glowing Smartphone (3D Pixar Avatar) — Foreground Lane (y=632, Right ➔ Left) ── */}
+        {/* ── Student 1: Tech Requester with Glowing Smartphone (Real 3D Walk Cycle) — Foreground Lane (y=632, Right ➔ Left) ── */}
         <g className="student-rtl">
           <g transform="translate(1440, 0) scale(-1, 1)">
             {/* Ground Contact Shadow on Sidewalk */}
             <ellipse cx="720" cy="633" rx="24" ry="5.5" fill="#000" opacity="0.30" />
             <g className="walk-bob-1">
-              {/* High-Res 3D Tech Student */}
-              <image
-                href="/characters/student-tech.webp"
-                xlinkHref="/characters/student-tech.webp"
-                x="689.5"
-                y="542"
-                width="61"
-                height="91"
-                preserveAspectRatio="xMidYMid meet"
-                filter="drop-shadow(0 5px 10px rgba(0, 0, 0, 0.28))"
-              />
+              <foreignObject x={688} y={537} width={64} height={96} style={{ overflow: "visible" }}>
+                <div className="sprite-walker-tech" />
+              </foreignObject>
             </g>
           </g>
         </g>
