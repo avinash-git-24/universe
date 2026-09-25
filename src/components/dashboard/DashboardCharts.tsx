@@ -215,7 +215,7 @@ export function DashboardCharts({ requests }: DashboardChartsProps) {
         </div>
 
         {/* Custom SVG Line Chart */}
-        <div className="relative h-[180px] w-full mt-2">
+        <div className="relative h-45 w-full mt-2">
           {/* Y-Axis Labels */}
           <div className="absolute left-0 top-0 bottom-0 flex flex-col justify-between text-white/30 text-[11px] font-mono pb-5 pointer-events-none">
             {uniqueYTicks.map((tick, i) => (
@@ -368,21 +368,21 @@ export function DashboardCharts({ requests }: DashboardChartsProps) {
 
           {/* Legend */}
           <div className="flex flex-col gap-2.5 w-full sm:w-auto flex-1 text-xs">
-            <div className="flex justify-between items-center p-2 rounded-lg bg-white/[0.02] border border-white/5">
+            <div className="flex justify-between items-center p-2 rounded-lg bg-white/2 border border-white/5">
               <div className="flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.8)]" />
                 <span className="text-white/80 font-medium">Completed</span>
               </div>
               <span className="text-white font-mono font-bold">{completedPct}%</span>
             </div>
-            <div className="flex justify-between items-center p-2 rounded-lg bg-white/[0.02] border border-white/5">
+            <div className="flex justify-between items-center p-2 rounded-lg bg-white/2 border border-white/5">
               <div className="flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-amber-400 shadow-[0_0_6px_rgba(251,191,36,0.8)]" />
                 <span className="text-white/80 font-medium">In Progress</span>
               </div>
               <span className="text-white font-mono font-bold">{inProgressPct}%</span>
             </div>
-            <div className="flex justify-between items-center p-2 rounded-lg bg-white/[0.02] border border-white/5">
+            <div className="flex justify-between items-center p-2 rounded-lg bg-white/2 border border-white/5">
               <div className="flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-red-400" />
                 <span className="text-white/80 font-medium">Cancelled</span>

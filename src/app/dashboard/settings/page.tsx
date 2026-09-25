@@ -52,16 +52,16 @@ export default async function SettingsPage() {
       />
 
       {/* Cosmic ambient radial glows */}
-      <div className="absolute top-0 right-1/4 w-[600px] h-[600px] rounded-full bg-radial from-emerald-500/10 via-transparent to-transparent blur-3xl pointer-events-none" />
-      <div className="absolute bottom-1/4 left-10 w-[500px] h-[500px] rounded-full bg-radial from-teal-500/10 via-transparent to-transparent blur-3xl pointer-events-none" />
+      <div className="absolute top-0 right-1/4 w-150 h-150 rounded-full bg-radial from-emerald-500/10 via-transparent to-transparent blur-3xl pointer-events-none" />
+      <div className="absolute bottom-1/4 left-10 w-125 h-125 rounded-full bg-radial from-teal-500/10 via-transparent to-transparent blur-3xl pointer-events-none" />
 
-      <div className="max-w-[820px] mx-auto relative z-10">
+      <div className="max-w-205 mx-auto relative z-10">
         
         {/* Header */}
         <div className="flex items-center gap-3 sm:gap-4 mb-6 sm:mb-8">
           <Link 
             href="/dashboard" 
-            className="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-white/[0.03] hover:bg-white/[0.08] border border-white/10 text-[#A7B8B0] hover:text-white transition-all group shrink-0"
+            className="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-white/3 hover:bg-white/8 border border-white/10 text-[#A7B8B0] hover:text-white transition-all group shrink-0"
           >
             <ArrowLeft size={18} className="transition-transform group-hover:-translate-x-0.5 text-emerald-400" />
           </Link>

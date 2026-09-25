@@ -49,9 +49,9 @@ const SectionCard = ({
     className="bg-[#0A0F0C]/80 rounded-2xl p-5 sm:p-7 border border-emerald-500/15 backdrop-blur-xl shadow-xl mb-6 relative overflow-hidden group transition-all"
   >
     {/* Subtle top-right accent glow */}
-    <div className="absolute top-0 right-0 w-36 h-36 bg-emerald-500/[0.04] rounded-full blur-2xl pointer-events-none" />
+    <div className="absolute top-0 right-0 w-36 h-36 bg-emerald-500/4 rounded-full blur-2xl pointer-events-none" />
     
-    <div className="flex items-start justify-between gap-4 mb-6 border-b border-white/[0.06] pb-4">
+    <div className="flex items-start justify-between gap-4 mb-6 border-b border-white/6 pb-4">
       <div className="flex items-center gap-3">
         <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-[#00E676] shrink-0 shadow-[0_0_12px_rgba(0,230,118,0.18)]">
           {icon}
@@ -81,7 +81,7 @@ const ToggleItem = ({
   onChange: (v: boolean) => void;
   icon?: React.ReactNode;
 }) => (
-  <div className="flex items-start justify-between py-3.5 border-b border-white/[0.04] last:border-0 group">
+  <div className="flex items-start justify-between py-3.5 border-b border-white/4 last:border-0 group">
     <div className="flex items-start gap-3 pr-4">
       {icon && <div className="mt-0.5 text-emerald-400 shrink-0">{icon}</div>}
       <div>
@@ -446,11 +446,11 @@ export function SettingsClient({
     <div className="flex flex-col gap-6 text-white">
 
       {/* 1. STUDENT IDENTITY & PROFILE BANNER */}
-      <div className="p-5 sm:p-6 rounded-2xl bg-gradient-to-r from-emerald-950/40 via-[#0c1410] to-[#0A0F0C] border border-emerald-500/20 backdrop-blur-xl shadow-xl flex flex-col sm:flex-row sm:items-center justify-between gap-5 relative overflow-hidden group">
+      <div className="p-5 sm:p-6 rounded-2xl bg-linear-to-r from-emerald-950/40 via-[#0c1410] to-[#0A0F0C] border border-emerald-500/20 backdrop-blur-xl shadow-xl flex flex-col sm:flex-row sm:items-center justify-between gap-5 relative overflow-hidden group">
         <div className="absolute top-0 right-0 w-56 h-56 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
 
         <div className="flex items-center gap-4 relative z-10">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#00E676] via-teal-500 to-emerald-700 flex items-center justify-center text-black font-black text-2xl shrink-0 shadow-[0_0_20px_rgba(0,230,118,0.35)] overflow-hidden">
+          <div className="w-16 h-16 rounded-2xl bg-linear-to-br from-[#00E676] via-teal-500 to-emerald-700 flex items-center justify-center text-black font-black text-2xl shrink-0 shadow-[0_0_20px_rgba(0,230,118,0.35)] overflow-hidden">
             {initialProfile.avatar_url ? (
               <img
                 src={initialProfile.avatar_url}
@@ -512,7 +512,7 @@ export function SettingsClient({
 
         <Link
           href="/dashboard/profile"
-          className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-white/[0.05] hover:bg-white/[0.1] border border-white/10 text-white text-xs font-bold transition-all hover:scale-102 self-start sm:self-auto shrink-0 shadow-sm relative z-10 cursor-pointer"
+          className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white text-xs font-bold transition-all hover:scale-102 self-start sm:self-auto shrink-0 shadow-sm relative z-10 cursor-pointer"
         >
           <User size={14} className="text-emerald-400" />
           <span>Edit Profile</span>
@@ -531,7 +531,7 @@ export function SettingsClient({
               className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all whitespace-nowrap cursor-pointer border ${
                 isActive
                   ? "bg-emerald-500/15 text-[#00E676] border-emerald-500/40 shadow-[0_0_12px_rgba(0,230,118,0.2)]"
-                  : "bg-[#0A0F0C]/60 text-white/60 border-white/10 hover:text-white hover:bg-white/[0.04]"
+                  : "bg-[#0A0F0C]/60 text-white/60 border-white/10 hover:text-white hover:bg-white/4"
               }`}
             >
               {tab.icon}
@@ -550,7 +550,7 @@ export function SettingsClient({
           subtitle="Set your room & phone number so delivery requests prefill automatically"
         >
           <form onSubmit={handleSaveDeliveryDefaults} className="flex flex-col gap-4">
-            <div className="p-3.5 rounded-xl bg-emerald-500/[0.05] border border-emerald-500/15 flex items-start gap-3">
+            <div className="p-3.5 rounded-xl bg-emerald-500/5 border border-emerald-500/15 flex items-start gap-3">
               <Info size={18} className="text-emerald-400 shrink-0 mt-0.5" />
               <p className="text-xs text-white/70 m-0 leading-relaxed">
                 Whenever you create a delivery request for snacks or drinks, your saved hostel, room, and runner phone number will be pre-filled automatically for 1-tap checkout.
@@ -567,7 +567,7 @@ export function SettingsClient({
                   <select 
                     value={defaultHostel} 
                     onChange={(e) => setDefaultHostel(e.target.value)}
-                    className="w-full pl-4 pr-10 py-2.5 bg-white/[0.03] text-white border border-white/10 rounded-xl text-sm outline-none focus:border-[#00E676] appearance-none hover:bg-white/[0.05] transition-colors cursor-pointer"
+                    className="w-full pl-4 pr-10 py-2.5 bg-white/3 text-white border border-white/10 rounded-xl text-sm outline-none focus:border-[#00E676] appearance-none hover:bg-white/5 transition-colors cursor-pointer"
                   >
                     {HOSTEL_OPTIONS.map((h) => (
                       <option key={h} value={h} className="bg-[#050A07] text-white">
@@ -660,14 +660,14 @@ export function SettingsClient({
         >
           {/* Read-Only Credentials Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 mb-6">
-            <div className="p-4 bg-white/[0.02] border border-white/10 rounded-xl hover:bg-white/[0.04] transition-colors">
+            <div className="p-4 bg-white/2 border border-white/10 rounded-xl hover:bg-white/4 transition-colors">
               <p className="text-white/50 text-xs font-semibold uppercase tracking-wider mb-1 flex items-center gap-1.5">
                 <Mail size={13} className="text-emerald-400" /> University Email
               </p>
               <p className="text-white font-semibold text-sm m-0 truncate" title={email}>{email}</p>
             </div>
 
-            <div className="p-4 bg-white/[0.02] border border-white/10 rounded-xl flex items-center justify-between hover:bg-white/[0.04] transition-colors">
+            <div className="p-4 bg-white/2 border border-white/10 rounded-xl flex items-center justify-between hover:bg-white/4 transition-colors">
               <div>
                 <p className="text-white/50 text-xs font-semibold uppercase tracking-wider mb-1 flex items-center gap-1.5">
                   <ShieldCheck size={13} className="text-emerald-400" /> Account Status
@@ -683,7 +683,7 @@ export function SettingsClient({
           </div>
 
           {/* Active Session & Device Security Card */}
-          <div className="p-4 rounded-xl bg-white/[0.02] border border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+          <div className="p-4 rounded-xl bg-white/2 border border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
             <div className="flex items-center gap-3.5">
               <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shrink-0">
                 <Laptop size={20} />
@@ -708,7 +708,7 @@ export function SettingsClient({
               onClick={handleLogoutOthers}
               isLoading={logoutOthersLoading}
               variant="ghost"
-              className="border border-white/15 text-white/80 hover:text-white hover:bg-white/[0.08] text-xs font-semibold px-3.5 py-2 rounded-xl shrink-0 cursor-pointer self-start sm:self-auto"
+              className="border border-white/15 text-white/80 hover:text-white hover:bg-white/8 text-xs font-semibold px-3.5 py-2 rounded-xl shrink-0 cursor-pointer self-start sm:self-auto"
             >
               <Radio size={14} className="mr-1.5 text-emerald-400" />
               <span>Log out other devices</span>
@@ -729,7 +729,7 @@ export function SettingsClient({
           )}
 
           {/* Change Password Form */}
-          <div className="pt-2 border-t border-white/[0.06]">
+          <div className="pt-2 border-t border-white/6">
             <h3 className="text-white font-bold text-base mb-4 flex items-center gap-2">
               <Lock size={16} className="text-emerald-400" />
               <span>Change Password</span>
@@ -750,7 +750,7 @@ export function SettingsClient({
                 <button 
                   type="button" 
                   onClick={() => setShowCurrentPwd(!showCurrentPwd)}
-                  className="absolute right-3 top-[38px] text-white/40 hover:text-white transition-colors cursor-pointer"
+                  className="absolute right-3 top-9.5 text-white/40 hover:text-white transition-colors cursor-pointer"
                   title={showCurrentPwd ? "Hide password" : "Show password"}
                 >
                   {showCurrentPwd ? <EyeOff size={16} /> : <Eye size={16} />}
@@ -772,7 +772,7 @@ export function SettingsClient({
                   <button 
                     type="button" 
                     onClick={() => setShowNewPwd(!showNewPwd)}
-                    className="absolute right-3 top-[38px] text-white/40 hover:text-white transition-colors cursor-pointer"
+                    className="absolute right-3 top-9.5 text-white/40 hover:text-white transition-colors cursor-pointer"
                     title={showNewPwd ? "Hide password" : "Show password"}
                   >
                     {showNewPwd ? <EyeOff size={16} /> : <Eye size={16} />}
@@ -812,7 +812,7 @@ export function SettingsClient({
                   <button 
                     type="button" 
                     onClick={() => setShowConfirmPwd(!showConfirmPwd)}
-                    className="absolute right-3 top-[38px] text-white/40 hover:text-white transition-colors cursor-pointer"
+                    className="absolute right-3 top-9.5 text-white/40 hover:text-white transition-colors cursor-pointer"
                     title={showConfirmPwd ? "Hide password" : "Show password"}
                   >
                     {showConfirmPwd ? <EyeOff size={16} /> : <Eye size={16} />}
@@ -914,7 +914,7 @@ export function SettingsClient({
 
             {/* Sound Preview Test Row */}
             {soundAlerts && (
-              <div className="mt-3 p-3 bg-white/[0.02] border border-white/10 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="mt-3 p-3 bg-white/2 border border-white/10 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div className="flex items-center gap-2.5">
                   <Volume2 size={16} className="text-emerald-400 shrink-0" />
                   <span className="text-xs text-white/70">Test synthesized sound chimes:</span>
@@ -923,7 +923,7 @@ export function SettingsClient({
                   <button
                     type="button"
                     onClick={() => handleTestSound("chat")}
-                    className="px-3 py-1.5 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] border border-white/10 text-white text-xs font-semibold transition-all hover:scale-102 flex items-center gap-1.5 cursor-pointer"
+                    className="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-white text-xs font-semibold transition-all hover:scale-102 flex items-center gap-1.5 cursor-pointer"
                   >
                     <span>💬 Chat Chime</span>
                     {testingSound === "chat" && <span className="w-1.5 h-1.5 rounded-full bg-[#00E676] animate-ping" />}
@@ -942,7 +942,7 @@ export function SettingsClient({
           </div>
 
           {/* Privacy Controls */}
-          <div className="mb-6 pt-4 border-t border-white/[0.06]">
+          <div className="mb-6 pt-4 border-t border-white/6">
             <h3 className="text-white font-bold text-sm sm:text-base mb-3 flex items-center gap-2">
               <Sparkles size={16} className="text-emerald-400" />
               <span>Privacy Controls</span>
@@ -955,7 +955,7 @@ export function SettingsClient({
                   <select 
                     value={profileVis} 
                     onChange={(e) => setProfileVis(e.target.value)}
-                    className="w-full pl-4 pr-10 py-2.5 bg-white/[0.03] text-white border border-white/10 rounded-xl text-sm outline-none focus:border-[#00E676] appearance-none hover:bg-white/[0.05] transition-colors cursor-pointer"
+                    className="w-full pl-4 pr-10 py-2.5 bg-white/3 text-white border border-white/10 rounded-xl text-sm outline-none focus:border-[#00E676] appearance-none hover:bg-white/5 transition-colors cursor-pointer"
                   >
                     <option value="public" className="bg-[#050A07] text-white">Public (Visible to campus)</option>
                     <option value="runners_only" className="bg-[#050A07] text-white">Runners Only</option>
@@ -973,7 +973,7 @@ export function SettingsClient({
                   <select 
                     value={activityVis} 
                     onChange={(e) => setActivityVis(e.target.value)}
-                    className="w-full pl-4 pr-10 py-2.5 bg-white/[0.03] text-white border border-white/10 rounded-xl text-sm outline-none focus:border-[#00E676] appearance-none hover:bg-white/[0.05] transition-colors cursor-pointer"
+                    className="w-full pl-4 pr-10 py-2.5 bg-white/3 text-white border border-white/10 rounded-xl text-sm outline-none focus:border-[#00E676] appearance-none hover:bg-white/5 transition-colors cursor-pointer"
                   >
                     <option value="public" className="bg-[#050A07] text-white">Public</option>
                     <option value="private" className="bg-[#050A07] text-white">Private (Only me)</option>
@@ -1000,7 +1000,7 @@ export function SettingsClient({
             </div>
           )}
 
-          <div className="flex justify-end border-t border-white/[0.06] pt-5 mt-2">
+          <div className="flex justify-end border-t border-white/6 pt-5 mt-2">
             <Button 
               type="button" 
               onClick={handleSaveSettings}
@@ -1024,7 +1024,7 @@ export function SettingsClient({
         >
           <div className="flex flex-col gap-3.5">
             {/* Sign Out Card */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between p-4 bg-white/[0.02] border border-white/10 rounded-xl gap-4 hover:bg-white/[0.04] transition-colors">
+            <div className="flex flex-col md:flex-row md:items-center justify-between p-4 bg-white/2 border border-white/10 rounded-xl gap-4 hover:bg-white/4 transition-colors">
               <div>
                 <h4 className="text-white font-semibold text-sm m-0">Sign Out of UniVerse</h4>
                 <p className="text-white/50 text-xs m-0 mt-0.5">
@@ -1041,7 +1041,7 @@ export function SettingsClient({
             </div>
 
             {/* Delete Account Card */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between p-4 bg-red-500/[0.05] border border-red-500/20 rounded-xl gap-4">
+            <div className="flex flex-col md:flex-row md:items-center justify-between p-4 bg-red-500/5 border border-red-500/20 rounded-xl gap-4">
               <div>
                 <h4 className="text-red-400 font-bold text-sm m-0">Delete Account Permanently</h4>
                 <p className="text-white/50 text-xs m-0 mt-0.5">
@@ -1100,7 +1100,7 @@ export function SettingsClient({
                 value={deleteConfirmation}
                 onChange={(e) => setDeleteConfirmation(e.target.value)}
                 placeholder="DELETE"
-                className="w-full px-4 py-2.5 bg-white/[0.03] text-white border border-red-500/30 rounded-xl outline-none focus:border-red-500 text-center font-bold tracking-widest text-sm"
+                className="w-full px-4 py-2.5 bg-white/3 text-white border border-red-500/30 rounded-xl outline-none focus:border-red-500 text-center font-bold tracking-widest text-sm"
               />
             </div>
 
