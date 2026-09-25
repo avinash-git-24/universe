@@ -6,6 +6,7 @@ import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { Metadata } from "next";
 import { UserRatingBadge } from "@/components/resale/UserRatingBadge";
+import { AchievementsSection } from "@/components/profile/AchievementsSection";
 
 export const metadata: Metadata = {
   title: "Edit Profile · UniVerse",
@@ -72,6 +73,9 @@ export default async function ProfilePage() {
           email={user.email || ""}
           initialData={profile || {}}
         />
+
+        {/* Achievements Section — renders below the profile form */}
+        <AchievementsSection />
 
       </div>
     </div>
