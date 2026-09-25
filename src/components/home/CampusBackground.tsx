@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { CampusWalker3D } from "./CampusWalker3D";
 
 /**
  * UniVerse — Animated Campus Background
@@ -524,6 +525,9 @@ export function CampusBackground() {
         <rect x="0" y="720" width="1440" height="80" fill="#1A3A22" opacity="0.35" />
 
       </svg>
+
+      {/* ── 3D Campus Student Walking on Road ── */}
+      <CampusWalker3D isNight={isNight} />
     </div>
   );
 }
