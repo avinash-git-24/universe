@@ -157,7 +157,7 @@ export function RequestRunnerModal({ listing, onClose, onSuccess }: RequestRunne
               <div className="p-4 rounded-xl bg-white/5 border border-white/10 space-y-3">
                 <p className="text-sm font-semibold text-white/60 uppercase tracking-wider mb-2">Order Summary</p>
                 <div className="flex justify-between items-center text-white">
-                  <span className="font-medium truncate max-w-[200px]">{listing.title}</span>
+                  <span className="font-medium truncate max-w-50">{listing.title}</span>
                   <span>₹{listing.price}</span>
                 </div>
                 <div className="flex justify-between items-center text-white/60 text-sm">
@@ -211,7 +211,7 @@ export function RequestRunnerModal({ listing, onClose, onSuccess }: RequestRunne
                   value={instructions}
                   onChange={(e) => setInstructions(e.target.value)}
                   placeholder="e.g. Call me when you reach the gate."
-                  className="w-full bg-[#1A1A1A] border border-white/10 rounded-xl p-3.5 text-white placeholder:text-white/20 focus:outline-none focus:ring-2 focus:ring-[#00E676]/50 focus:border-[#00E676] min-h-[100px] resize-none"
+                  className="w-full bg-[#1A1A1A] border border-white/10 rounded-xl p-3.5 text-white placeholder:text-white/20 focus:outline-none focus:ring-2 focus:ring-[#00E676]/50 focus:border-[#00E676] min-h-25 resize-none"
                 />
               </div>
             </div>
