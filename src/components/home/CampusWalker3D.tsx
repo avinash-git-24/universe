@@ -5,15 +5,15 @@ import { Canvas, useFrame } from "@react-three/fiber";
 import { useGLTF, useAnimations } from "@react-three/drei";
 import * as THREE from "three";
 
-interface WalkerModelProps {
-  isNight?: boolean;
+interface WalkerCharacterProps {
+  isNight: boolean;
 }
 
-function WalkerCharacter({ isNight }: WalkerModelProps) {
+function WalkerCharacter({ isNight }: WalkerCharacterProps) {
   const groupRef = useRef<THREE.Group>(null);
   const shadowRef = useRef<THREE.Mesh>(null);
 
-  // Load the 3D model and its skeletal animations
+  // Load the 3D rigged model with its animations
   const { scene, animations } = useGLTF("/models/character.glb");
   const { actions } = useAnimations(animations, groupRef);
 
@@ -21,10 +21,10 @@ function WalkerCharacter({ isNight }: WalkerModelProps) {
     // Play the natural walk cycle animation embedded in character.glb
     const walkAction = actions["walk"];
     if (walkAction) {
-      walkAction.reset().fadeIn(0.3).play();
+      walkAction.reset().fadeIn(0.2).play();
     }
     return () => {
-      walkAction?.fadeOut(0.3);
+      walkAction?.fadeOut(0.2);
     };
   }, [actions]);
 
@@ -35,12 +35,12 @@ function WalkerCharacter({ isNight }: WalkerModelProps) {
         const mesh = child as THREE.Mesh;
         if (mesh.material) {
           const mat = mesh.material as THREE.MeshStandardMaterial;
-          mat.roughness = 0.65;
-          mat.metalness = 0.1;
+          mat.roughness = 0.55;
+          mat.metalness = 0.05;
           if (isNight) {
-            mat.color = new THREE.Color("#B0C4DE"); // Cool moonlight tint
+            mat.color = new THREE.Color("#CBD5E1"); // Crisp cool moonlight tint
           } else {
-            mat.color = new THREE.Color("#FFFFFF"); // Natural sunlight
+            mat.color = new THREE.Color("#FFFFFF"); // Bright natural sunlight
           }
           mat.needsUpdate = true;
         }
@@ -49,17 +49,18 @@ function WalkerCharacter({ isNight }: WalkerModelProps) {
   }, [scene, isNight]);
 
   // Movement along the campus road (Left ➔ Right)
-  const speed = 1.35; // walking speed
-  const leftBound = -10;
-  const rightBound = 10;
+  // Starts directly on-screen so the user immediately sees him walking!
+  const speed = 1.1;
+  const leftBound = -7.5;
+  const rightBound = 7.5;
 
   useFrame((_, delta) => {
     if (!groupRef.current) return;
 
-    // Advance position
+    // Advance position smoothly across the road
     groupRef.current.position.x += speed * delta;
 
-    // Loop seamlessly across the road
+    // Loop seamlessly when leaving the viewport
     if (groupRef.current.position.x > rightBound) {
       groupRef.current.position.x = leftBound;
     }
@@ -72,12 +73,12 @@ function WalkerCharacter({ isNight }: WalkerModelProps) {
 
   return (
     <>
-      {/* 3D Character Mesh */}
+      {/* 3D Character Mesh — Facing right along the campus road */}
       <group
         ref={groupRef}
-        position={[leftBound, 0, 0]}
+        position={[-1.2, -0.65, 0]} // Start on-screen right on the road
         rotation={[0, Math.PI / 2, 0]} // Face along the road towards positive X
-        scale={0.88}
+        scale={1.15}
       >
         <primitive object={scene} />
       </group>
@@ -86,13 +87,13 @@ function WalkerCharacter({ isNight }: WalkerModelProps) {
       <mesh
         ref={shadowRef}
         rotation={[-Math.PI / 2, 0, 0]}
-        position={[leftBound, 0.02, 0]}
+        position={[-1.2, -0.63, 0]}
       >
-        <planeGeometry args={[1.2, 0.6]} />
+        <planeGeometry args={[1.1, 0.55]} />
         <meshBasicMaterial
           color="#000000"
           transparent
-          opacity={isNight ? 0.35 : 0.22}
+          opacity={isNight ? 0.45 : 0.3}
           depthWrite={false}
         />
       </mesh>
@@ -100,40 +101,43 @@ function WalkerCharacter({ isNight }: WalkerModelProps) {
   );
 }
 
-export function CampusWalker3D({ isNight = false }: { isNight?: boolean }) {
+export function CampusWalker3D() {
   const [mounted, setMounted] = useState(false);
+  const [isNight, setIsNight] = useState(false);
 
   useEffect(() => {
     setMounted(true);
+    const hour = new Date().getHours();
+    setIsNight(hour >= 19 || hour < 6);
   }, []);
 
   if (!mounted) return null;
 
   return (
     <div
-      className="absolute left-0 right-0 pointer-events-none z-10"
+      className="absolute left-0 right-0 pointer-events-none z-15"
       style={{
-        bottom: "0%",
-        height: "26%",
+        bottom: "6%",
+        height: "220px",
         overflow: "hidden",
       }}
       aria-hidden="true"
     >
       <Canvas
-        camera={{ position: [0, 1.0, 6.2], fov: 32 }}
+        camera={{ position: [0, 0.35, 4.2], fov: 36 }}
         gl={{ alpha: true, antialias: true, powerPreference: "high-performance" }}
-        style={{ pointerEvents: "none", background: "transparent" }}
+        style={{ pointerEvents: "none", background: "transparent", width: "100%", height: "100%" }}
       >
-        {/* Ambient & Directional Lighting matched to Day/Night mode */}
-        <ambientLight intensity={isNight ? 0.75 : 1.35} />
+        {/* Crisp lighting so character stands out cleanly against the campus */}
+        <ambientLight intensity={isNight ? 1.2 : 1.8} />
         <directionalLight
-          position={[4, 6, 4]}
-          intensity={isNight ? 0.9 : 1.6}
-          color={isNight ? "#BAE6FD" : "#FFF7ED"}
+          position={[5, 7, 5]}
+          intensity={isNight ? 1.4 : 2.2}
+          color={isNight ? "#E0F2FE" : "#FFFBEB"}
         />
         <directionalLight
-          position={[-4, 3, -2]}
-          intensity={isNight ? 0.3 : 0.6}
+          position={[-5, 4, -2]}
+          intensity={isNight ? 0.6 : 1.0}
           color={isNight ? "#818CF8" : "#93C5FD"}
         />
 

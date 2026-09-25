@@ -17,6 +17,7 @@ import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { ArrowRight, ChevronDown, Users, Bike, Package } from "lucide-react";
 import { CampusBackground } from "./CampusBackground";
+import { CampusWalker3D } from "./CampusWalker3D";
 import { FloatingObjects } from "./FloatingObjects";
 import { ROUTES } from "@/constants/routes";
 import { cn } from "@/lib/utils";
@@ -286,6 +287,9 @@ export function HeroSection() {
 
       {/* ── Floating Product Objects (Desktop & Tablet only) ── */}
       <FloatingObjects />
+
+      {/* ── 3D Campus Student Walking along Road ── */}
+      <CampusWalker3D />
 
       {/* ── Hero Center Content ── */}
       <div className="relative z-20 w-full max-w-4xl mx-auto px-4 text-center my-auto flex flex-col items-center">
