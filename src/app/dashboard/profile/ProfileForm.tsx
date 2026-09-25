@@ -174,7 +174,7 @@ export function ProfileForm({
 
   return (
     <div className="flex flex-col items-center w-full">
-      <div className="bg-[#0A0F0C]/60 border border-[#66FFB2]/10 rounded-2xl p-4 sm:p-7 backdrop-blur-xl shadow-2xl w-full max-w-[640px] mb-4">
+      <div className="bg-[#0A0F0C]/60 border border-[#66FFB2]/10 rounded-2xl p-4 sm:p-7 backdrop-blur-xl shadow-2xl w-full max-w-160 mb-4">
         {/* Photo Section */}
         <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 items-center sm:items-start mb-6">
           
@@ -266,7 +266,7 @@ export function ProfileForm({
           
           {/* Read-only email */}
           <div className="flex flex-col gap-1 w-full">
-            <label className="text-[0.85rem] font-semibold text-white font-[family-name:var(--font-inter)]">
+            <label className="text-[0.85rem] font-semibold text-white">
               University Email
             </label>
             <div className="relative">
@@ -274,17 +274,17 @@ export function ProfileForm({
               <input 
                 disabled
                 value={email}
-                className="w-full pl-10 pr-4 py-2 bg-[rgba(255,255,255,0.02)] text-white/50 border border-[rgba(255,255,255,0.05)] rounded-[var(--radius-md)] cursor-not-allowed text-sm font-[family-name:var(--font-inter)] outline-none"
+                className="w-full pl-10 pr-4 py-2 bg-[rgba(255,255,255,0.02)] text-white/50 border border-[rgba(255,255,255,0.05)] rounded-md cursor-not-allowed text-sm outline-none"
               />
             </div>
-            <p className="text-[0.75rem] text-[#A7B8B0]/60 font-[family-name:var(--font-inter)]">
+            <p className="text-[0.75rem] text-[#A7B8B0]/60">
               Your email cannot be changed as it is tied to your university identity.
             </p>
           </div>
 
           {/* Full Name */}
           <div className="flex flex-col gap-1 w-full">
-            <label className="text-[0.85rem] font-semibold text-white font-[family-name:var(--font-inter)]">
+            <label className="text-[0.85rem] font-semibold text-white">
               Full Name
             </label>
             <div className="relative">
@@ -293,10 +293,10 @@ export function ProfileForm({
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
                 placeholder="Enter your full name"
-                className="w-full pl-10 pr-4 py-2 bg-[rgba(255,255,255,0.02)] text-white border border-[rgba(255,255,255,0.1)] rounded-[var(--radius-md)] text-sm font-[family-name:var(--font-inter)] outline-none focus:border-[#00E676] transition-colors"
+                className="w-full pl-10 pr-4 py-2 bg-[rgba(255,255,255,0.02)] text-white border border-[rgba(255,255,255,0.1)] rounded-md text-sm outline-none focus:border-[#00E676] transition-colors"
               />
             </div>
-            <p className="text-[0.75rem] text-[#A7B8B0]/60 font-[family-name:var(--font-inter)]">
+            <p className="text-[0.75rem] text-[#A7B8B0]/60">
               Enter your full name as it appears on your university records.
             </p>
           </div>
@@ -305,7 +305,7 @@ export function ProfileForm({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
             {/* Department / Branch */}
             <div className="flex flex-col gap-1 w-full">
-              <label className="text-[0.85rem] font-semibold text-white font-[family-name:var(--font-inter)]">
+              <label className="text-[0.85rem] font-semibold text-white">
                 Department / Branch
               </label>
               <div className="relative">
@@ -313,7 +313,7 @@ export function ProfileForm({
                 <select 
                   value={department}
                   onChange={(e) => setDepartment(e.target.value)}
-                  className="w-full pl-10 pr-10 py-2 bg-[rgba(255,255,255,0.02)] text-white border border-[rgba(255,255,255,0.1)] rounded-[var(--radius-md)] text-sm font-[family-name:var(--font-inter)] outline-none focus:border-[#00E676] transition-colors appearance-none"
+                  className="w-full pl-10 pr-10 py-2 bg-[rgba(255,255,255,0.02)] text-white border border-[rgba(255,255,255,0.1)] rounded-md text-sm outline-none focus:border-[#00E676] transition-colors appearance-none"
                 >
                   <option value="" disabled className="bg-[#050A07] text-white">Select your branch</option>
                   {PREDEFINED_DEPARTMENTS.map(dept => (
@@ -332,7 +332,7 @@ export function ProfileForm({
                     value={customDepartment}
                     onChange={(e) => setCustomDepartment(e.target.value)}
                     placeholder="Enter your department"
-                    className="w-full pl-10 pr-4 py-2 bg-[rgba(255,255,255,0.02)] text-white border border-[rgba(255,255,255,0.1)] rounded-[var(--radius-md)] text-sm font-[family-name:var(--font-inter)] outline-none focus:border-[#00E676] transition-colors"
+                    className="w-full pl-10 pr-4 py-2 bg-[rgba(255,255,255,0.02)] text-white border border-[rgba(255,255,255,0.1)] rounded-md text-sm outline-none focus:border-[#00E676] transition-colors"
                   />
                 </div>
               )}
@@ -340,7 +340,7 @@ export function ProfileForm({
 
             {/* Semester */}
             <div className="flex flex-col gap-1 w-full">
-              <label className="text-[0.85rem] font-semibold text-white font-[family-name:var(--font-inter)]">
+              <label className="text-[0.85rem] font-semibold text-white">
                 Semester
               </label>
               <div className="relative">
@@ -348,7 +348,7 @@ export function ProfileForm({
                 <select 
                   value={semester}
                   onChange={(e) => setSemester(e.target.value)}
-                  className="w-full pl-10 pr-10 py-2 bg-[rgba(255,255,255,0.02)] text-white border border-[rgba(255,255,255,0.1)] rounded-[var(--radius-md)] text-sm font-[family-name:var(--font-inter)] outline-none focus:border-[#00E676] transition-colors appearance-none"
+                  className="w-full pl-10 pr-10 py-2 bg-[rgba(255,255,255,0.02)] text-white border border-[rgba(255,255,255,0.1)] rounded-md text-sm outline-none focus:border-[#00E676] transition-colors appearance-none"
                 >
                   <option value="" disabled className="bg-[#050A07] text-white">Select your semester</option>
                   <option value="Semester 1" className="bg-[#050A07] text-white">Semester 1</option>
@@ -368,7 +368,7 @@ export function ProfileForm({
           </div>
 
           {error && (
-            <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-xl text-red-500 text-sm font-[family-name:var(--font-inter)] flex items-center justify-between mt-2">
+            <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-xl text-red-500 text-sm flex items-center justify-between mt-2">
               <span>{error}</span>
               <button type="button" onClick={() => setError(null)} className="text-red-500 hover:text-red-400">
                 <X size={14} />
