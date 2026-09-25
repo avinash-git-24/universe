@@ -105,12 +105,12 @@ export function ResaleListingDetail({
   };
 
   return (
-    <div className="max-w-[1200px] mx-auto text-white">
+    <div className="max-w-300 mx-auto text-white">
       {/* Back Link */}
       <div className="mb-6 md:mb-8">
         <Link 
           href="/dashboard/marketplace"
-          className="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-[#A7B8B0] hover:text-white transition-all px-3 py-1.5 rounded-xl bg-white/[0.03] hover:bg-white/[0.08] border border-white/10 group"
+          className="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-[#A7B8B0] hover:text-white transition-all px-3 py-1.5 rounded-xl bg-white/3 hover:bg-white/8 border border-white/10 group"
         >
           <ArrowLeft size={16} className="transition-transform group-hover:-translate-x-1 text-emerald-400" />
           <span>Back to Marketplace</span>
@@ -228,28 +228,28 @@ export function ResaleListingDetail({
 
           {/* Quick Details Grid */}
           <div className="grid grid-cols-2 gap-3 p-4 rounded-2xl bg-[#0c1410]/70 border border-white/10 backdrop-blur-md mb-6 shadow-sm">
-            <div className="p-2.5 rounded-xl bg-white/[0.02]">
+            <div className="p-2.5 rounded-xl bg-white/2">
               <p className="text-white/40 text-[11px] font-semibold uppercase tracking-wider mb-1 flex items-center gap-1.5">
                 <Box size={13} className="text-emerald-400" /> Condition
               </p>
               <p className="text-white font-medium text-sm m-0">{CONDITION_LABELS[listing.condition] || listing.condition}</p>
             </div>
             
-            <div className="p-2.5 rounded-xl bg-white/[0.02]">
+            <div className="p-2.5 rounded-xl bg-white/2">
               <p className="text-white/40 text-[11px] font-semibold uppercase tracking-wider mb-1 flex items-center gap-1.5">
                 <Tag size={13} className="text-emerald-400" /> Category
               </p>
               <p className="text-white font-medium text-sm m-0">{CATEGORY_LABELS[listing.category] || listing.category}</p>
             </div>
             
-            <div className="p-2.5 rounded-xl bg-white/[0.02]">
+            <div className="p-2.5 rounded-xl bg-white/2">
               <p className="text-white/40 text-[11px] font-semibold uppercase tracking-wider mb-1 flex items-center gap-1.5">
                 <Info size={13} className="text-emerald-400" /> Negotiable
               </p>
               <p className="text-white font-medium text-sm m-0">{listing.negotiable ? "Yes" : "Firm Price"}</p>
             </div>
             
-            <div className="p-2.5 rounded-xl bg-white/[0.02]">
+            <div className="p-2.5 rounded-xl bg-white/2">
               <p className="text-white/40 text-[11px] font-semibold uppercase tracking-wider mb-1 flex items-center gap-1.5">
                 <MapPin size={13} className="text-emerald-400" /> Location
               </p>
@@ -336,7 +336,7 @@ export function ResaleListingDetail({
                   isAcceptedBuyer && listing.status === "reserved" && (
                     <button
                       onClick={() => setShowRunnerModal(true)}
-                      className="w-full flex flex-col items-center justify-center gap-1 py-4 px-6 rounded-xl bg-gradient-to-r from-[#00E676]/20 to-[#00BFA5]/20 hover:from-[#00E676]/30 hover:to-[#00BFA5]/30 text-white border border-[#00E676]/30 transition-all group"
+                      className="w-full flex flex-col items-center justify-center gap-1 py-4 px-6 rounded-xl bg-linear-to-r from-[#00E676]/20 to-[#00BFA5]/20 hover:from-[#00E676]/30 hover:to-[#00BFA5]/30 text-white border border-[#00E676]/30 transition-all group"
                     >
                       <div className="flex items-center gap-2 font-bold text-lg text-[#00E676] group-hover:scale-105 transition-transform">
                         <Package size={20} />
@@ -394,7 +394,7 @@ export function ResaleListingDetail({
           )}
         </div>
         <div className="flex items-center gap-4 bg-[#0c1410]/80 p-6 rounded-2xl border border-white/10 backdrop-blur-md w-full md:w-fit min-w-[320px] shadow-sm">
-          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#00E676] to-[#00BFA5] flex items-center justify-center text-black font-extrabold text-xl shrink-0 shadow-[0_0_15px_rgba(0,230,118,0.3)]">
+          <div className="w-14 h-14 rounded-2xl bg-linear-to-br from-[#00E676] to-[#00BFA5] flex items-center justify-center text-black font-extrabold text-xl shrink-0 shadow-[0_0_15px_rgba(0,230,118,0.3)]">
             {sellerProfile.full_name?.charAt(0).toUpperCase() || "?"}
           </div>
           <div>

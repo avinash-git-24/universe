@@ -17,7 +17,7 @@ const inputVariants = cva(
   [
     "w-full bg-[var(--color-surface)] text-[var(--color-text)]",
     "border rounded-[var(--radius-md)]",
-    "font-[family-name:var(--font-inter)] text-sm",
+    "font-(family-name:--font-inter) text-sm",
     "placeholder:text-[var(--color-text-placeholder)]",
     "transition-all duration-150 ease-out",
     "outline-none",
@@ -115,14 +115,14 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           <label
             htmlFor={inputId}
             className={cn(
-              "text-sm font-semibold text-white font-[family-name:var(--font-inter)] tracking-wide mb-1",
+              "text-sm font-semibold text-white font-(family-name:--font-inter) tracking-wide mb-1",
               disabled && "opacity-50"
             )}
           >
             {label}
             {required && (
               <span
-                className="text-[var(--color-error)] ml-0.5"
+                className="text-(--color-error) ml-0.5"
                 aria-label="required"
               >
                 *
@@ -136,7 +136,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           {/* Left icon */}
           {hasLeftIcon && (
             <span
-              className="absolute left-3 text-[var(--color-text-muted)] pointer-events-none shrink-0"
+              className="absolute left-3 text-(--color-text-muted) pointer-events-none shrink-0"
               aria-hidden="true"
             >
               {leftIcon}
@@ -163,18 +163,18 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 
           {/* Right icon / status icon */}
           <span
-            className="absolute right-3 text-[var(--color-text-muted)] pointer-events-none shrink-0"
+            className="absolute right-3 text-(--color-text-muted) pointer-events-none shrink-0"
             aria-hidden="true"
           >
             {error ? (
               <AlertCircle
                 size={16}
-                className="text-[var(--color-error)]"
+                className="text-(--color-error)"
               />
             ) : success ? (
               <CheckCircle2
                 size={16}
-                className="text-[var(--color-success)]"
+                className="text-(--color-success)"
               />
             ) : (
               rightIcon
@@ -187,12 +187,12 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           <p
             id={hintId}
             className={cn(
-              "text-xs font-[family-name:var(--font-inter)]",
+              "text-xs font-(family-name:--font-inter)",
               error
-                ? "text-[var(--color-error)]"
+                ? "text-(--color-error)"
                 : success
-                  ? "text-[var(--color-success)]"
-                  : "text-[var(--color-text-muted)]"
+                  ? "text-(--color-success)"
+                  : "text-(--color-text-muted)"
             )}
             role={error ? "alert" : undefined}
           >

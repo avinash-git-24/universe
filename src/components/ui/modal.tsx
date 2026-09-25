@@ -29,7 +29,7 @@ const ModalOverlay = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DialogPrimitive.Overlay
     ref={ref}
-    className={cn("fixed inset-0 z-[var(--z-overlay)]", className)}
+    className={cn("fixed inset-0 z-(--z-overlay)", className)}
     asChild
     {...props}
   >
@@ -77,13 +77,13 @@ const ModalContent = React.forwardRef<
         exit="exit"
         className={cn(
           "fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2",
-          "z-[var(--z-modal)]",
+          "z-(--z-modal)",
           "w-full",
           sizeClasses[size],
-          "bg-[var(--color-surface)]",
-          "rounded-[var(--radius-xl)]",
-          "border border-[var(--color-border)]",
-          "shadow-[var(--shadow-2xl)]",
+          "bg-(--color-surface)",
+          "rounded-xl",
+          "border border-(--color-border)",
+          "shadow-(--shadow-2xl)",
           "outline-none",
           "overflow-hidden",
           className
@@ -95,11 +95,11 @@ const ModalContent = React.forwardRef<
             className={cn(
               "absolute top-4 right-4 z-10",
               "flex items-center justify-center",
-              "w-8 h-8 rounded-[var(--radius-md)]",
-              "text-[var(--color-text-muted)]",
-              "hover:bg-[var(--color-bg-subtle)] hover:text-[var(--color-text)]",
+              "w-8 h-8 rounded-md",
+              "text-(--color-text-muted)",
+              "hover:bg-(--color-bg-subtle) hover:text-(--color-text)",
               "transition-colors duration-150",
-              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]",
+              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--color-primary)",
             )}
             aria-label="Close dialog"
           >
@@ -124,7 +124,7 @@ const ModalHeader = ({
   <div
     className={cn(
       "flex flex-col gap-1.5 px-6 pt-6 pb-4",
-      "border-b border-[var(--color-border)]",
+      "border-b border-(--color-border)",
       className
     )}
     {...props}
@@ -142,8 +142,8 @@ const ModalTitle = React.forwardRef<
   <DialogPrimitive.Title
     ref={ref}
     className={cn(
-      "text-lg font-semibold text-[var(--color-text)]",
-      "font-[family-name:var(--font-plus-jakarta-sans)]",
+      "text-lg font-semibold text-(--color-text)",
+      "font-(family-name:--font-plus-jakarta-sans)",
       "leading-tight",
       className
     )}
@@ -162,8 +162,8 @@ const ModalDescription = React.forwardRef<
   <DialogPrimitive.Description
     ref={ref}
     className={cn(
-      "text-sm text-[var(--color-text-muted)]",
-      "font-[family-name:var(--font-inter)]",
+      "text-sm text-(--color-text-muted)",
+      "font-(family-name:--font-inter)",
       className
     )}
     {...props}
@@ -193,8 +193,8 @@ const ModalFooter = ({
     className={cn(
       "flex items-center justify-end gap-3",
       "px-6 py-4",
-      "border-t border-[var(--color-border)]",
-      "bg-[var(--color-bg-subtle)]",
+      "border-t border-(--color-border)",
+      "bg-(--color-bg-subtle)",
       className
     )}
     {...props}

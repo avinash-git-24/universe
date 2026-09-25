@@ -1,7 +1,7 @@
 export function ResaleDetailSkeleton() {
   return (
     <div className="min-h-[calc(100vh-4rem)] bg-background">
-      <div className="max-w-[1200px] mx-auto p-4 md:p-8 pt-6 md:pt-12">
+      <div className="max-w-300 mx-auto p-4 md:p-8 pt-6 md:pt-12">
         {/* Back Link Skeleton */}
         <div className="mb-8 flex items-center gap-2">
           <div className="w-4 h-4 bg-white/5 rounded animate-pulse" />
