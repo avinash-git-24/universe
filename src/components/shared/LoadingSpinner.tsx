@@ -30,11 +30,11 @@ const SIZE_CLASSES = {
 
 const COLOR_CLASSES = {
   primary:
-    "border-[var(--color-primary-muted)] border-t-[var(--color-primary)]",
+    "border-(--color-primary-muted) border-t-(--color-primary)",
   accent:
-    "border-[var(--color-accent-muted)] border-t-[var(--color-accent)]",
+    "border-(--color-accent-muted) border-t-(--color-accent)",
   muted:
-    "border-[var(--color-border)] border-t-[var(--color-text-muted)]",
+    "border-(--color-border) border-t-(--color-text-muted)",
   white:
     "border-white/30 border-t-white",
 } as const;
@@ -70,14 +70,14 @@ export interface PageLoaderProps {
 
 const PageLoader: React.FC<PageLoaderProps> = ({ label = "Loading…" }) => (
   <div
-    className="fixed inset-0 z-[var(--z-overlay)] flex flex-col items-center justify-center gap-4 bg-[var(--color-bg)]"
+    className="fixed inset-0 z-(--z-overlay) flex flex-col items-center justify-center gap-4 bg-(--color-bg)"
     role="status"
     aria-label={label}
   >
     {/* Logo mark placeholder */}
     <div className="relative">
-      <div className="w-14 h-14 rounded-[var(--radius-xl)] bg-[var(--color-primary)] flex items-center justify-center shadow-[var(--shadow-glow-primary)]">
-        <span className="text-white font-bold text-xl font-[family-name:var(--font-plus-jakarta-sans)]">
+      <div className="w-14 h-14 rounded-xl bg-(--color-primary) flex items-center justify-center shadow-(--shadow-glow-primary)">
+        <span className="text-white font-bold text-xl font-(family-name:--font-plus-jakarta-sans)">
           U
         </span>
       </div>
@@ -87,7 +87,7 @@ const PageLoader: React.FC<PageLoaderProps> = ({ label = "Loading…" }) => (
         className="absolute -inset-2"
       />
     </div>
-    <p className="text-sm text-[var(--color-text-muted)] font-[family-name:var(--font-inter)]">
+    <p className="text-sm text-(--color-text-muted) font-(family-name:--font-inter)">
       {label}
     </p>
   </div>
