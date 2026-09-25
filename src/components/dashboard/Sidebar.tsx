@@ -236,7 +236,7 @@ export function Sidebar() {
     <>
       {/* ── Toast Notification ── */}
       {toast && (
-        <div className="fixed top-4 right-4 z-[100] bg-[#0d1310] border border-[#10b981]/30 p-4 rounded-xl shadow-2xl flex items-start gap-4 min-w-[280px] max-w-[400px] animate-in slide-in-from-top-10 fade-in duration-300">
+        <div className="fixed top-4 right-4 z-100 bg-[#0d1310] border border-[#10b981]/30 p-4 rounded-xl shadow-2xl flex items-start gap-4 min-w-70 max-w-100 animate-in slide-in-from-top-10 fade-in duration-300">
           <div
             className="flex-1 cursor-pointer"
             onClick={() => {
@@ -306,7 +306,7 @@ export function Sidebar() {
       )}
 
       <aside
-        className={`fixed top-0 bottom-0 left-0 z-50 w-[280px] max-w-[85vw] bg-[#050A07] border-r border-[#66FFB2]/15 p-6 flex flex-col justify-between shadow-2xl transition-transform duration-300 ease-out lg:hidden ${isMobileOpen ? "translate-x-0" : "-translate-x-full"
+        className={`fixed top-0 bottom-0 left-0 z-50 w-70 max-w-[85vw] bg-[#050A07] border-r border-[#66FFB2]/15 p-6 flex flex-col justify-between shadow-2xl transition-transform duration-300 ease-out lg:hidden ${isMobileOpen ? "translate-x-0" : "-translate-x-full"
           }`}
         aria-label="Mobile Dashboard Navigation"
       >
@@ -347,7 +347,7 @@ export function Sidebar() {
 
       {/* ── Desktop Fixed Sidebar (>=1024px) ── */}
       <aside
-        className="hidden lg:flex fixed top-0 left-0 w-[240px] h-screen bg-[#050A07] border-r border-[#66FFB2]/5 flex-col p-6 z-40"
+        className="hidden lg:flex fixed top-0 left-0 w-60 h-screen bg-[#050A07] border-r border-[#66FFB2]/5 flex-col p-6 z-40"
         aria-label="Desktop Dashboard Navigation"
       >
         {/* Logo */}

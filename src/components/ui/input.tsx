@@ -15,13 +15,13 @@ import { cn } from "@/lib/utils";
 
 const inputVariants = cva(
   [
-    "w-full bg-[var(--color-surface)] text-[var(--color-text)]",
-    "border rounded-[var(--radius-md)]",
+    "w-full bg-(--color-surface) text-(--color-text)",
+    "border rounded-md",
     "font-(family-name:--font-inter) text-sm",
-    "placeholder:text-[var(--color-text-placeholder)]",
+    "placeholder:text-(--color-text-placeholder)",
     "transition-all duration-150 ease-out",
     "outline-none",
-    "disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-[var(--color-bg-subtle)]",
+    "disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-(--color-bg-subtle)",
   ],
   {
     variants: {
@@ -33,14 +33,14 @@ const inputVariants = cva(
           "focus:shadow-[0_0_15px_rgba(102,255,178,0.3)]",
         ],
         error: [
-          "border-[var(--color-error)]",
-          "focus:border-[var(--color-error)] focus:ring-2 focus:ring-[var(--color-error)]/15",
-          "focus:shadow-[var(--shadow-glow-error)]",
-          "bg-[var(--color-error-subtle)]",
+          "border-(--color-error)",
+          "focus:border-(--color-error) focus:ring-2 focus:ring-(--color-error)/15",
+          "focus:shadow-(--shadow-glow-error)",
+          "bg-(--color-error-subtle)",
         ],
         success: [
-          "border-[var(--color-success)]",
-          "focus:border-[var(--color-success)] focus:ring-2 focus:ring-[var(--color-success)]/15",
+          "border-(--color-success)",
+          "focus:border-(--color-success) focus:ring-2 focus:ring-(--color-success)/15",
         ],
       },
       size: {
