@@ -151,6 +151,20 @@ export function CampusBackground() {
             <stop offset="100%" stopColor="#AEB6C2" />
           </linearGradient>
 
+          {/* 3D Isometric depth surfaces */}
+          <linearGradient id="uvSideWall" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stopColor="#D2CEC6" />
+            <stop offset="100%" stopColor="#C5C0B8" />
+          </linearGradient>
+          <linearGradient id="uvHostelSide" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stopColor="#E2DFDA" />
+            <stop offset="100%" stopColor="#D6D3CE" />
+          </linearGradient>
+          <linearGradient id="uvRoofTop" x1="0" y1="1" x2="1" y2="0">
+            <stop offset="0%" stopColor="#E8E5DD" />
+            <stop offset="100%" stopColor="#DEDAD2" />
+          </linearGradient>
+
           {/* Soft drop shadow */}
           <filter id="uvShadow" x="-8%" y="-4%" width="120%" height="130%">
             <feDropShadow dx="3" dy="8" stdDeviation="10" floodColor="#0a1a0a" floodOpacity="0.18" />
@@ -263,6 +277,42 @@ export function CampusBackground() {
             LAYER 2B — CAMPUS GROUND
         ═══════════════════════════════════════════════ */}
         <rect x="0" y="535" width="1440" height="57" fill="url(#uvGrassGrad)" />
+
+        {/* ═══════════════════════════════════════════════
+            LAYER 2C — 3D ISOMETRIC DEPTH (side walls + roof tops)
+            Light source: top-right (consistent with sun)
+        ═══════════════════════════════════════════════ */}
+
+        {/* ── Hostel A 3D depth (amber accent) ── */}
+        <polygon points="218,282 233,272 233,540 218,550" fill="url(#uvHostelSide)" />
+        <polygon points="22,282 37,272 233,272 218,282" fill="url(#uvRoofTop)" />
+        <polygon points="22,282 37,272 233,272 218,282" fill="#E4920A" opacity="0.5" />
+        <polygon points="218,282 233,272 233,284 218,294" fill="#D98B09" opacity="0.75" />
+
+        {/* ── Hostel B 3D depth (emerald accent) ── */}
+        <polygon points="444,298 459,288 459,540 444,550" fill="url(#uvHostelSide)" />
+        <polygon points="262,298 277,288 459,288 444,298" fill="url(#uvRoofTop)" />
+        <polygon points="262,298 277,288 459,288 444,298" fill="#0D9B6E" opacity="0.5" />
+        <polygon points="444,298 459,288 459,300 444,310" fill="#08875C" opacity="0.75" />
+
+        {/* ── Main Academic Block 3D depth ── */}
+        <polygon points="920,240 935,230 935,590 920,600" fill="url(#uvSideWall)" />
+        <polygon points="520,240 535,230 935,230 920,240" fill="url(#uvRoofTop)" />
+        <polygon points="520,240 535,230 935,230 920,240" fill="#0D9B6E" opacity="0.55" />
+        <polygon points="920,240 935,230 935,244 920,254" fill="#0EA572" opacity="0.8" />
+        <polygon points="920,254 935,244 935,248 920,258" fill="#07845A" opacity="0.4" />
+
+        {/* ── Hostel C 3D depth (emerald accent) ── */}
+        <polygon points="1182,298 1197,288 1197,540 1182,550" fill="url(#uvHostelSide)" />
+        <polygon points="1000,298 1015,288 1197,288 1182,298" fill="url(#uvRoofTop)" />
+        <polygon points="1000,298 1015,288 1197,288 1182,298" fill="#0D9B6E" opacity="0.5" />
+        <polygon points="1182,298 1197,288 1197,300 1182,310" fill="#08875C" opacity="0.75" />
+
+        {/* ── Hostel D 3D depth (amber accent) ── */}
+        <polygon points="1422,282 1437,272 1437,540 1422,550" fill="url(#uvHostelSide)" />
+        <polygon points="1226,282 1241,272 1437,272 1422,282" fill="url(#uvRoofTop)" />
+        <polygon points="1226,282 1241,272 1437,272 1422,282" fill="#E4920A" opacity="0.5" />
+        <polygon points="1422,282 1437,272 1437,284 1422,294" fill="#D98B09" opacity="0.75" />
 
         {/* ═══════════════════════════════════════════════
             LAYER 3 — MAIN ACADEMIC BLOCK
@@ -432,6 +482,10 @@ export function CampusBackground() {
         {/* Main horizontal road */}
         <rect x="0" y="592" width="1440" height="44" fill="url(#uvRoadGrad)" />
         <rect x="0" y="592" width="1440" height="2" fill="#CDD2DC" opacity="0.6" />
+        {/* 3D road — top inner shadow for depth */}
+        <rect x="0" y="594" width="1440" height="6" fill="#99A1AD" opacity="0.2" />
+        {/* 3D road — bottom curb accent */}
+        <rect x="0" y="633" width="1440" height="3" fill="#8A919C" opacity="0.4" />
 
         {/* Road lane dashes */}
         {Array.from({ length: 14 }).map((_, i) => (
@@ -450,6 +504,10 @@ export function CampusBackground() {
           { x: 1216, accent: "#F59E0B" },  // near Hostel D
         ].map(({ x, accent }, i) => (
           <g key={i} filter="url(#uvVendGlow)">
+            {/* 3D side panel */}
+            <polygon points={`${x+36},507 ${x+41},503 ${x+41},559 ${x+36},563`} fill="#D5D5D5" stroke="#C5C5C5" strokeWidth="0.5" />
+            {/* 3D top face */}
+            <polygon points={`${x},507 ${x+5},503 ${x+41},503 ${x+36},507`} fill="#F5F5F5" stroke="#E5E5E5" strokeWidth="0.5" />
             {/* Body */}
             <rect x={x} y="507" width="36" height="56" fill="#EBEBEB" rx="4" stroke="#CECECE" strokeWidth="1" />
             {/* Top display strip */}
@@ -486,6 +544,10 @@ export function CampusBackground() {
           { x: 988, base: 562, tH: 20, cR: 18, c1: "#388E5A", c2: "#4CAF72" },
         ].map((t, i) => (
           <g key={i} filter="url(#uvTreeShadow)">
+            {/* 3D ground shadow */}
+            <ellipse cx={t.x} cy={t.base + 3} rx={t.cR * 0.7} ry={5} fill="#1a2a1a" opacity="0.18" />
+            {/* 3D trunk depth (side face) */}
+            <rect x={t.x - 1} y={t.base - t.tH - 2} width="6" height={t.tH} fill="#5E4228" rx="1" opacity="0.7" />
             {/* Trunk */}
             <rect x={t.x - 4} y={t.base - t.tH} width="8" height={t.tH} fill="#7B5A3A" rx="2" />
             {/* Crown layers */}
