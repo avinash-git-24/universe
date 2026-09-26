@@ -127,6 +127,25 @@ export function CampusBackground() {
             <stop offset="100%" stopColor="#2D6B3A" />
           </linearGradient>
 
+          {/* Campus Lawn / Turf (behind buildings down to road) */}
+          <linearGradient id="uvCampusTurf" x1="0" y1="0" x2="0" y2="1">
+            <stop
+              offset="0%"
+              stopColor={isNight ? "#122A1C" : "#3D8E56"}
+              style={{ transition: "stop-color 1.2s ease-in-out" }}
+            />
+            <stop
+              offset="50%"
+              stopColor={isNight ? "#183826" : "#347D4C"}
+              style={{ transition: "stop-color 1.2s ease-in-out" }}
+            />
+            <stop
+              offset="100%"
+              stopColor={isNight ? "#0E2317" : "#28683D"}
+              style={{ transition: "stop-color 1.2s ease-in-out" }}
+            />
+          </linearGradient>
+
           {/* Building base */}
           <linearGradient id="uvBuildGrad" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stopColor="#F6F4F0" />
@@ -266,6 +285,20 @@ export function CampusBackground() {
         <ellipse cx="1280" cy="405" rx="260" ry="85" fill="#6BAF7C" opacity="0.20" />
 
         {/* ═══════════════════════════════════════════════
+            LAYER 2B — CAMPUS LAWN & FOUNDATION GROUND
+        ═══════════════════════════════════════════════ */}
+        {/* Continuous campus green turf behind buildings meeting the road at y=592 */}
+        <rect x="0" y="470" width="1440" height="122" fill="url(#uvCampusTurf)" />
+
+        {/* Gentle garden contours for realistic depth */}
+        <ellipse cx="280" cy="485" rx="320" ry="24" fill={isNight ? "#1A3E2A" : "#4DA665"} opacity="0.35" />
+        <ellipse cx="1120" cy="488" rx="360" ry="22" fill={isNight ? "#1A3E2A" : "#4DA665"} opacity="0.3" />
+
+        {/* Roadside curb border */}
+        <rect x="0" y="588" width="1440" height="4" fill={isNight ? "#374151" : "#BFC5CF"} opacity="0.8" />
+        <rect x="0" y="590" width="1440" height="2" fill={isNight ? "#1F2937" : "#9CA3AF"} opacity="0.9" />
+
+        {/* ═══════════════════════════════════════════════
             LAYER 3 — MAIN ACADEMIC BLOCK
         ═══════════════════════════════════════════════ */}
 
@@ -328,6 +361,10 @@ export function CampusBackground() {
           <rect x="22" y="282" width="196" height="12" fill="#F59E0B" />
           <rect x="22" y="294" width="196" height="3" fill="#D97706" opacity="0.5" />
 
+          {/* Foundation plinth */}
+          <rect x="18" y="548" width="204" height="6" fill={isNight ? "#374151" : "#D1D5DB"} rx="1" />
+          <rect x="18" y="552" width="204" height="2" fill={isNight ? "#1F2937" : "#9CA3AF"} />
+
           {/* Floor dividers */}
           {[0, 1, 2, 3].map(f => <rect key={f} x="22" y={297 + f * 62} width="196" height="1" fill="#E5E7EB" />)}
 
@@ -345,7 +382,8 @@ export function CampusBackground() {
           <rect x="70" y="524" width="100" height="26" fill="#F59E0B" rx="13" />
           <text x="120" y="541" textAnchor="middle" fill="white" fontSize="12" fontFamily="sans-serif" fontWeight="700" letterSpacing="0.5">HOSTEL A</text>
 
-          {/* Door */}
+          {/* Door & Entrance Step */}
+          <rect x="94" y="548" width="52" height="4" fill={isNight ? "#4B5563" : "#E5E7EB"} rx="1" />
           <rect x="98" y="508" width="44" height="42" fill="#C09050" rx="2" />
           <rect x="98" y="508" width="44" height="6" fill="#A07030" />
           <rect x="118" y="518" width="5" height="22" fill="#8B6040" rx="1" />
@@ -356,6 +394,10 @@ export function CampusBackground() {
           <rect x="262" y="298" width="182" height="252" fill="url(#uvHostelGrad)" rx="2" />
           <rect x="262" y="298" width="182" height="12" fill="#10B981" />
           <rect x="262" y="310" width="182" height="3" fill="#059669" opacity="0.5" />
+
+          {/* Foundation plinth */}
+          <rect x="258" y="548" width="190" height="6" fill={isNight ? "#374151" : "#D1D5DB"} rx="1" />
+          <rect x="258" y="552" width="190" height="2" fill={isNight ? "#1F2937" : "#9CA3AF"} />
 
           {[0, 1, 2, 3].map(f => <rect key={f} x="262" y={313 + f * 59} width="182" height="1" fill="#E5E7EB" />)}
 
@@ -371,6 +413,8 @@ export function CampusBackground() {
           <rect x="306" y="525" width="100" height="26" fill="#10B981" rx="13" />
           <text x="356" y="542" textAnchor="middle" fill="white" fontSize="12" fontFamily="sans-serif" fontWeight="700" letterSpacing="0.5">HOSTEL B</text>
 
+          {/* Door & Entrance Step */}
+          <rect x="326" y="548" width="52" height="4" fill={isNight ? "#4B5563" : "#E5E7EB"} rx="1" />
           <rect x="330" y="508" width="44" height="42" fill="#C09050" rx="2" />
           <rect x="330" y="508" width="44" height="6" fill="#A07030" />
           <rect x="350" y="518" width="5" height="22" fill="#8B6040" rx="1" />
@@ -381,6 +425,10 @@ export function CampusBackground() {
           <rect x="1000" y="298" width="182" height="252" fill="url(#uvHostelGrad)" rx="2" />
           <rect x="1000" y="298" width="182" height="12" fill="#10B981" />
           <rect x="1000" y="310" width="182" height="3" fill="#059669" opacity="0.5" />
+
+          {/* Foundation plinth */}
+          <rect x="996" y="548" width="190" height="6" fill={isNight ? "#374151" : "#D1D5DB"} rx="1" />
+          <rect x="996" y="552" width="190" height="2" fill={isNight ? "#1F2937" : "#9CA3AF"} />
 
           {[0, 1, 2, 3].map(f => <rect key={f} x="1000" y={313 + f * 59} width="182" height="1" fill="#E5E7EB" />)}
 
@@ -396,6 +444,8 @@ export function CampusBackground() {
           <rect x="1042" y="525" width="100" height="26" fill="#10B981" rx="13" />
           <text x="1092" y="542" textAnchor="middle" fill="white" fontSize="12" fontFamily="sans-serif" fontWeight="700" letterSpacing="0.5">HOSTEL C</text>
 
+          {/* Door & Entrance Step */}
+          <rect x="1062" y="548" width="52" height="4" fill={isNight ? "#4B5563" : "#E5E7EB"} rx="1" />
           <rect x="1066" y="508" width="44" height="42" fill="#C09050" rx="2" />
           <rect x="1066" y="508" width="44" height="6" fill="#A07030" />
           <rect x="1086" y="518" width="5" height="22" fill="#8B6040" rx="1" />
@@ -406,6 +456,10 @@ export function CampusBackground() {
           <rect x="1226" y="282" width="196" height="268" fill="url(#uvHostelGrad)" rx="2" />
           <rect x="1226" y="282" width="196" height="12" fill="#F59E0B" />
           <rect x="1226" y="294" width="196" height="3" fill="#D97706" opacity="0.5" />
+
+          {/* Foundation plinth */}
+          <rect x="1222" y="548" width="204" height="6" fill={isNight ? "#374151" : "#D1D5DB"} rx="1" />
+          <rect x="1222" y="552" width="204" height="2" fill={isNight ? "#1F2937" : "#9CA3AF"} />
 
           {[0, 1, 2, 3].map(f => <rect key={f} x="1226" y={297 + f * 62} width="196" height="1" fill="#E5E7EB" />)}
 
@@ -421,6 +475,8 @@ export function CampusBackground() {
           <rect x="1274" y="524" width="100" height="26" fill="#F59E0B" rx="13" />
           <text x="1324" y="541" textAnchor="middle" fill="white" fontSize="12" fontFamily="sans-serif" fontWeight="700" letterSpacing="0.5">HOSTEL D</text>
 
+          {/* Door & Entrance Step */}
+          <rect x="1298" y="548" width="52" height="4" fill={isNight ? "#4B5563" : "#E5E7EB"} rx="1" />
           <rect x="1302" y="508" width="44" height="42" fill="#C09050" rx="2" />
           <rect x="1302" y="508" width="44" height="6" fill="#A07030" />
           <rect x="1322" y="518" width="5" height="22" fill="#8B6040" rx="1" />
@@ -440,10 +496,13 @@ export function CampusBackground() {
         ))}
 
         {/* Vertical paths from each hostel to main road */}
-        <rect x="107" y="553" width="28" height="44" fill="#C4CAD6" opacity="0.7" />
-        <rect x="341" y="553" width="28" height="44" fill="#C4CAD6" opacity="0.7" />
-        <rect x="1075" y="553" width="28" height="44" fill="#C4CAD6" opacity="0.7" />
-        <rect x="1309" y="553" width="28" height="44" fill="#C4CAD6" opacity="0.7" />
+        {[107, 341, 1075, 1309].map((pathX, i) => (
+          <g key={`path-${i}`}>
+            <rect x={pathX} y="552" width="28" height="40" fill={isNight ? "#4B5563" : "#C4CAD6"} opacity="0.8" />
+            <rect x={pathX} y="552" width="2" height="40" fill={isNight ? "#374151" : "#B0B7C3"} opacity="0.6" />
+            <rect x={pathX + 26} y="552" width="2" height="40" fill={isNight ? "#374151" : "#B0B7C3"} opacity="0.6" />
+          </g>
+        ))}
 
         {/* Curved campus path (left side) */}
         <path d="M 520 590 Q 420 575 360 592" stroke="#C4CAD6" strokeWidth="18" fill="none" opacity="0.65" strokeLinecap="round" />
@@ -462,6 +521,9 @@ export function CampusBackground() {
           { x: 1216, accent: "#F59E0B" },  // near Hostel D
         ].map(({ x, accent }, i) => (
           <g key={i} filter="url(#uvVendGlow)">
+            {/* Concrete pad foundation */}
+            <rect x={x - 3} y="561" width="42" height="5" fill={isNight ? "#374151" : "#9CA3AF"} rx="1.5" />
+            <rect x={x - 1} y="564" width="38" height="2" fill={isNight ? "#1F2937" : "#6B7280"} />
             {/* Body */}
             <rect x={x} y="507" width="36" height="56" fill="#EBEBEB" rx="4" stroke="#CECECE" strokeWidth="1" />
             {/* Top display strip */}
@@ -484,22 +546,24 @@ export function CampusBackground() {
             LAYER 7 — TREES
         ═══════════════════════════════════════════════ */}
         {[
-          { x: 490, base: 548, tH: 48, cR: 44, c1: "#2E7D52", c2: "#388E5A" },
-          { x: 510, base: 548, tH: 48, cR: 30, c1: "#3D8B5A", c2: "#4CAF72" },
-          { x: 930, base: 548, tH: 44, cR: 40, c1: "#2E7D52", c2: "#3D8B5A" },
-          { x: 950, base: 548, tH: 44, cR: 28, c1: "#4CAF72", c2: "#388E5A" },
-          { x: 218, base: 556, tH: 36, cR: 32, c1: "#2E7D52", c2: "#388E5A" },
-          { x: 1228, base: 556, tH: 36, cR: 32, c1: "#388E5A", c2: "#2E7D52" },
-          { x: 660, base: 558, tH: 28, cR: 24, c1: "#3D8B5A", c2: "#4CAF72" },
-          { x: 782, base: 558, tH: 28, cR: 24, c1: "#2E7D52", c2: "#3D8B5A" },
-          { x: 145, base: 560, tH: 22, cR: 20, c1: "#388E5A", c2: "#4CAF72" },
-          { x: 1296, base: 560, tH: 22, cR: 20, c1: "#2E7D52", c2: "#388E5A" },
-          { x: 455, base: 562, tH: 20, cR: 18, c1: "#4CAF72", c2: "#3D8B5A" },
-          { x: 988, base: 562, tH: 20, cR: 18, c1: "#388E5A", c2: "#4CAF72" },
+          { x: 490, base: 566, tH: 48, cR: 44, c1: "#2E7D52", c2: "#388E5A" },
+          { x: 510, base: 566, tH: 48, cR: 30, c1: "#3D8B5A", c2: "#4CAF72" },
+          { x: 930, base: 566, tH: 44, cR: 40, c1: "#2E7D52", c2: "#3D8B5A" },
+          { x: 950, base: 566, tH: 44, cR: 28, c1: "#4CAF72", c2: "#388E5A" },
+          { x: 218, base: 568, tH: 36, cR: 32, c1: "#2E7D52", c2: "#388E5A" },
+          { x: 1228, base: 568, tH: 36, cR: 32, c1: "#388E5A", c2: "#2E7D52" },
+          { x: 660, base: 570, tH: 28, cR: 24, c1: "#3D8B5A", c2: "#4CAF72" },
+          { x: 782, base: 570, tH: 28, cR: 24, c1: "#2E7D52", c2: "#3D8B5A" },
+          { x: 145, base: 572, tH: 22, cR: 20, c1: "#388E5A", c2: "#4CAF72" },
+          { x: 1296, base: 572, tH: 22, cR: 20, c1: "#2E7D52", c2: "#388E5A" },
+          { x: 455, base: 572, tH: 20, cR: 18, c1: "#4CAF72", c2: "#3D8B5A" },
+          { x: 988, base: 572, tH: 20, cR: 18, c1: "#388E5A", c2: "#4CAF72" },
         ].map((t, i) => (
           <g key={i} filter="url(#uvTreeShadow)">
             {/* Trunk */}
             <rect x={t.x - 4} y={t.base - t.tH} width="8" height={t.tH} fill="#7B5A3A" rx="2" />
+            {/* Root soil mound */}
+            <ellipse cx={t.x} cy={t.base} rx="10" ry="3" fill={isNight ? "#0D2115" : "#1F4D2B"} opacity="0.6" />
             {/* Crown layers */}
             <circle cx={t.x - 12} cy={t.base - t.tH - t.cR * 0.5} r={t.cR * 0.65} fill={t.c2} />
             <circle cx={t.x + 12} cy={t.base - t.tH - t.cR * 0.5} r={t.cR * 0.65} fill={t.c2} />
