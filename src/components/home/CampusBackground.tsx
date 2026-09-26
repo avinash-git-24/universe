@@ -258,17 +258,6 @@ export function CampusBackground() {
           <ellipse cx="828" cy="120" rx="55" ry="22" fill={isNight ? "#E0F2FE" : "white"} />
         </g>
 
-        {/* ═══════════════════════════════════════════════
-            LAYER 2 — DISTANT TREE LINE / HILLS
-        ═══════════════════════════════════════════════ */}
-        <ellipse cx="200" cy="400" rx="280" ry="90" fill="#6BAF7C" opacity="0.22" />
-        <ellipse cx="750" cy="418" rx="360" ry="80" fill="#5A9E6A" opacity="0.18" />
-        <ellipse cx="1280" cy="405" rx="260" ry="85" fill="#6BAF7C" opacity="0.20" />
-
-        {/* ═══════════════════════════════════════════════
-            LAYER 2B — CAMPUS GROUND
-        ═══════════════════════════════════════════════ */}
-        <rect x="0" y="535" width="1440" height="57" fill="url(#uvGrassGrad)" />
 
         {/* ═══════════════════════════════════════════════
             LAYER 3 — MAIN ACADEMIC BLOCK
