@@ -438,12 +438,6 @@ export function CampusBackground() {
           <rect key={i} x={40 + i * 106} y="611" width="56" height="5" fill="white" opacity="0.45" rx="2" />
         ))}
 
-        {/* Vertical paths from each hostel to main road */}
-        <rect x="107" y="553" width="28" height="44" fill="#C4CAD6" opacity="0.7" />
-        <rect x="341" y="553" width="28" height="44" fill="#C4CAD6" opacity="0.7" />
-        <rect x="1075" y="553" width="28" height="44" fill="#C4CAD6" opacity="0.7" />
-        <rect x="1309" y="553" width="28" height="44" fill="#C4CAD6" opacity="0.7" />
-
         {/* ═══════════════════════════════════════════════
             LAYER 6 — VENDING MACHINES
         ═══════════════════════════════════════════════ */}
