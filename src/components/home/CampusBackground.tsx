@@ -444,11 +444,6 @@ export function CampusBackground() {
         <rect x="1075" y="553" width="28" height="44" fill="#C4CAD6" opacity="0.7" />
         <rect x="1309" y="553" width="28" height="44" fill="#C4CAD6" opacity="0.7" />
 
-        {/* Curved campus path (left side) */}
-        <path d="M 520 590 Q 420 575 360 592" stroke="#C4CAD6" strokeWidth="18" fill="none" opacity="0.65" strokeLinecap="round" />
-        {/* Curved campus path (right side) */}
-        <path d="M 920 590 Q 1020 575 1082 592" stroke="#C4CAD6" strokeWidth="18" fill="none" opacity="0.65" strokeLinecap="round" />
-
         {/* ═══════════════════════════════════════════════
             LAYER 6 — VENDING MACHINES
         ═══════════════════════════════════════════════ */}
