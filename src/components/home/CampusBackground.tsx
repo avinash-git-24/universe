@@ -178,12 +178,12 @@ export function CampusBackground() {
 
           {/* Lush Campus Turf (Ground) */}
           <linearGradient id="uvGrassUpper" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor={isNight ? "#0D2517" : "#3B8C53"} />
-            <stop offset="100%" stopColor={isNight ? "#091D12" : "#2B6F3E"} />
+            <stop offset="0%" stopColor={isNight ? "#0A140F" : "#3B8C53"} />
+            <stop offset="100%" stopColor={isNight ? "#060D09" : "#2B6F3E"} />
           </linearGradient>
           <linearGradient id="uvGrassLower" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor={isNight ? "#091D12" : "#2E7543"} />
-            <stop offset="100%" stopColor={isNight ? "#05130A" : "#1F542F"} />
+            <stop offset="0%" stopColor={isNight ? "#070E0A" : "#2E7543"} />
+            <stop offset="100%" stopColor={isNight ? "#0A0F0D" : "#1F542F"} />
           </linearGradient>
 
           {/* Building Facade Gradients */}
@@ -833,9 +833,9 @@ export function CampusBackground() {
 
         {/* Subtle Turf Shading */}
         {[80, 220, 380, 540, 700, 860, 1020, 1180, 1340].map((gx, gi) => (
-          <g key={`g${gi}`} opacity={isNight ? "0.15" : "0.22"}>
-            <ellipse cx={gx} cy={665 + (gi % 3) * 18} rx={16 + (gi % 4) * 4} ry={2.5} fill={isNight ? "#1E4730" : "#3D8B5A"} />
-            <ellipse cx={gx + 35} cy={675 + (gi % 2) * 22} rx={12 + (gi % 3) * 3} ry={2} fill={isNight ? "#265C3E" : "#4CAF72"} />
+          <g key={`g${gi}`} opacity={isNight ? "0.10" : "0.22"}>
+            <ellipse cx={gx} cy={665 + (gi % 3) * 18} rx={16 + (gi % 4) * 4} ry={2.5} fill={isNight ? "#0D1C14" : "#3D8B5A"} />
+            <ellipse cx={gx + 35} cy={675 + (gi % 2) * 22} rx={12 + (gi % 3) * 3} ry={2} fill={isNight ? "#112319" : "#4CAF72"} />
           </g>
         ))}
 
