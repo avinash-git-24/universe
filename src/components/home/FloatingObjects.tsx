@@ -233,7 +233,7 @@ const ITEMS: FloatItem[] = [
   {
     id: "noodles",
     component: <NoodleCup />,
-    style: { top: "75%", left: "6%" },
+    style: { top: "67%", left: "5%" },
     floatY: [0, -16, 0],
     floatDuration: 7.0,
     floatDelay: 2.0,

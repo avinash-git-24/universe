@@ -408,7 +408,7 @@ export function CampusBackground() {
         <polygon points="218,282 233,272 233,540 218,550" fill="url(#uvHostelSideShade)" />
         {/* Hostel A Side Windows */}
         {[0, 1, 2, 3].map(row => {
-          const isLitAtNight = (row % 2 === 0);
+          const isLitAtNight = (row === 1);
           return (
             <polygon
               key={`sa${row}`}
@@ -427,7 +427,7 @@ export function CampusBackground() {
         {/* ── Hostel B (3D Isometric Side & Roof) ── */}
         <polygon points="444,298 459,288 459,540 444,550" fill="url(#uvHostelSideShade)" />
         {[0, 1, 2, 3].map(row => {
-          const isLitAtNight = (row === 1 || row === 3);
+          const isLitAtNight = (row === 2);
           return (
             <polygon
               key={`sb${row}`}
@@ -464,7 +464,7 @@ export function CampusBackground() {
         {/* ── Hostel C (3D Isometric Side & Roof) ── */}
         <polygon points="1182,298 1197,288 1197,540 1182,550" fill="url(#uvHostelSideShade)" />
         {[0, 1, 2, 3].map(row => {
-          const isLitAtNight = (row === 0 || row === 2);
+          const isLitAtNight = (row === 1);
           return (
             <polygon
               key={`sc${row}`}
@@ -482,7 +482,7 @@ export function CampusBackground() {
         {/* ── Hostel D (3D Isometric Side & Roof) ── */}
         <polygon points="1422,282 1437,272 1437,540 1422,550" fill="url(#uvHostelSideShade)" />
         {[0, 1, 2, 3].map(row => {
-          const isLitAtNight = (row === 1 || row === 2);
+          const isLitAtNight = (row === 2);
           return (
             <polygon
               key={`sd${row}`}
@@ -543,8 +543,26 @@ export function CampusBackground() {
         )}
 
         {/* Marwadi University Emblem Badge */}
-        <rect x="610" y="462" width="220" height="32" fill="#10B981" rx="6" />
-        <text x="720" y="482" textAnchor="middle" fill="white" fontSize="13" fontFamily="sans-serif" fontWeight="700" letterSpacing="0.5">
+        <rect
+          x="610"
+          y="462"
+          width="220"
+          height="32"
+          fill={isNight ? "#064E3B" : "#10B981"}
+          opacity={isNight ? 0.45 : 1}
+          rx="6"
+        />
+        <text
+          x="720"
+          y="482"
+          textAnchor="middle"
+          fill="white"
+          fontSize="13"
+          fontFamily="sans-serif"
+          fontWeight="700"
+          letterSpacing="0.5"
+          opacity={isNight ? 0.65 : 1}
+        >
           MARWADI UNIVERSITY
         </text>
 
@@ -553,7 +571,7 @@ export function CampusBackground() {
         <rect x="690" y="556" width="80" height="6" fill={isNight ? "#785E3E" : "#B8935A"} />
         <rect x="718" y="566" width="11" height="28" fill={isNight ? "#5E462E" : "#A0804C"} rx="1.5" />
         <rect x="751" y="566" width="11" height="28" fill={isNight ? "#5E462E" : "#A0804C"} rx="1.5" />
-        <rect x="672" y="544" width="116" height="14" fill="#059669" rx="2" opacity="0.95" />
+        <rect x="672" y="544" width="116" height="14" fill={isNight ? "#064E3B" : "#059669"} rx="2" opacity={isNight ? 0.6 : 0.95} />
 
         {/* University Flagpole & Pennant */}
         <rect x="719" y="210" width="2.5" height="30" fill="#94A3B8" rx="1" />
@@ -574,7 +592,7 @@ export function CampusBackground() {
           {/* Living Hostel Windows */}
           {[0, 1, 2, 3].map(row =>
             [0, 1, 2].map(col => {
-              const isNightLit = (row + col) % 2 === 0;
+              const isNightLit = (row === 1 && col === 2) || (row === 3 && col === 0);
               return (
                 <rect
                   key={`aw${row}-${col}`}
@@ -608,7 +626,7 @@ export function CampusBackground() {
 
           {[0, 1, 2, 3].map(row =>
             [0, 1, 2].map(col => {
-              const isNightLit = (row * 2 + col) % 3 === 0;
+              const isNightLit = (row === 0 && col === 1) || (row === 2 && col === 2);
               return (
                 <rect
                   key={`bw${row}-${col}`}
@@ -642,7 +660,7 @@ export function CampusBackground() {
 
           {[0, 1, 2, 3].map(row =>
             [0, 1, 2].map(col => {
-              const isNightLit = (row + col * 3) % 2 === 1;
+              const isNightLit = (row === 1 && col === 0) || (row === 3 && col === 1);
               return (
                 <rect
                   key={`cw${row}-${col}`}
@@ -676,7 +694,7 @@ export function CampusBackground() {
 
           {[0, 1, 2, 3].map(row =>
             [0, 1, 2].map(col => {
-              const isNightLit = (row * col + 1) % 2 === 0;
+              const isNightLit = (row === 0 && col === 2) || (row === 2 && col === 0);
               return (
                 <rect
                   key={`dw${row}-${col}`}
