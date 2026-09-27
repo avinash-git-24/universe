@@ -445,13 +445,13 @@ export function CampusBackground() {
         {/* ── Main Academic Block (3D Isometric Side & Roof) ── */}
         <polygon points="920,240 935,230 935,590 920,600" fill="url(#uvSideShade)" />
         {[0, 1, 2, 3, 4].map(row => {
-          const isLitAtNight = (row === 0 || row === 2 || row === 4);
+          const isLitAtNight = (row === 2);
           return (
             <polygon
               key={`sm${row}`}
               points={`923,${272 + row * 56} 932,${264 + row * 56} 932,${298 + row * 56} 923,${306 + row * 56}`}
               fill={isNight ? (isLitAtNight ? "#FDE047" : "#1E293B") : "#93C5FD"}
-              opacity={isNight ? (isLitAtNight ? 0.9 : 0.5) : 0.55}
+              opacity={isNight ? (isLitAtNight ? 0.85 : 0.45) : 0.55}
               className={isNight && isLitAtNight ? "night-window-glow" : undefined}
             />
           );
@@ -515,11 +515,16 @@ export function CampusBackground() {
           <rect key={i} x={x} y="258" width="16" height="342" fill={isNight ? "#64748B" : "#E8E4DC"} opacity="0.45" rx="1" />
         ))}
 
-        {/* Main Windows — Living Dynamic Room Lights */}
+        {/* Main Windows — Living Dynamic Room Lights (Sparse late-night lights) */}
         {[0, 1, 2, 3, 4].map(row =>
           [0, 1, 2, 3, 4, 5, 6].map(col => {
-            // Night lighting pattern: classrooms and labs have active study lighting
-            const isNightLit = (row + col * 2) % 3 !== 1;
+            // Night lighting: sparse study rooms (only 5 windows lit out of 35)
+            const isNightLit =
+              (row === 0 && col === 5) ||
+              (row === 1 && col === 2) ||
+              (row === 2 && col === 4) ||
+              (row === 3 && col === 1) ||
+              (row === 4 && col === 3);
             return (
               <rect
                 key={`mw${row}-${col}`}
@@ -528,7 +533,7 @@ export function CampusBackground() {
                 width="34"
                 height="38"
                 fill={isNight ? (isNightLit ? "#FDE047" : "#1E293B") : "#93C5FD"}
-                opacity={isNight ? (isNightLit ? 0.92 : 0.45) : 0.65}
+                opacity={isNight ? (isNightLit ? 0.82 : 0.45) : 0.65}
                 className={isNight && isNightLit ? "night-window-glow" : undefined}
                 filter={isNight && isNightLit ? "url(#uvNightLightGlow)" : undefined}
                 rx="2"
