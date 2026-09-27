@@ -59,18 +59,18 @@ export function CampusBackground() {
           50%       { opacity: 1.00; filter: drop-shadow(0 0 24px rgba(224, 242, 254, 0.8)); }
         }
 
-        /* ── Twinkling Stars ── */
+        /* ── Twinkling Stars (Pure Opacity — 100% Stationary & Stable) ── */
         @keyframes star-pulse-1 {
-          0%, 100% { opacity: 0.25; transform: scale(0.85); }
-          50%       { opacity: 1.00; transform: scale(1.2); }
+          0%, 100% { opacity: 0.25; }
+          50%       { opacity: 1.00; }
         }
         @keyframes star-pulse-2 {
-          0%, 100% { opacity: 0.20; transform: scale(0.9); }
-          50%       { opacity: 0.95; transform: scale(1.15); }
+          0%, 100% { opacity: 0.20; }
+          50%       { opacity: 0.95; }
         }
         @keyframes star-pulse-3 {
-          0%, 100% { opacity: 0.30; transform: scale(0.8); }
-          50%       { opacity: 1.00; transform: scale(1.25); }
+          0%, 100% { opacity: 0.30; }
+          50%       { opacity: 1.00; }
         }
 
         /* ── Window Glow Pulse (Night Mode Cozy Study Lights) ── */
@@ -86,9 +86,9 @@ export function CampusBackground() {
         .sun-core { transform-origin: 1330px 88px; animation: sun-shimmer 5s ease-in-out infinite; }
         .sun-beams { transform-origin: 1330px 88px; animation: rays-rotate 120s linear infinite; }
         .moon-glow { animation: moon-breathe 4.5s ease-in-out infinite; }
-        .star-1 { transform-origin: center; animation: star-pulse-1 3.2s ease-in-out infinite; }
-        .star-2 { transform-origin: center; animation: star-pulse-2 4.1s ease-in-out infinite 0.9s; }
-        .star-3 { transform-origin: center; animation: star-pulse-3 2.8s ease-in-out infinite 1.6s; }
+        .star-1 { animation: star-pulse-1 3.2s ease-in-out infinite; }
+        .star-2 { animation: star-pulse-2 4.1s ease-in-out infinite 0.9s; }
+        .star-3 { animation: star-pulse-3 2.8s ease-in-out infinite 1.6s; }
         .night-window-glow { animation: room-light-flicker 6s ease-in-out infinite; }
       `}</style>
 
