@@ -305,11 +305,11 @@ export function Navbar() {
       <div
         className="mx-2.5 sm:mx-4 mt-2 sm:mt-3 rounded-[var(--radius-xl)] pointer-events-auto"
         style={{
-          borderColor: "rgba(255, 255, 255, 0.1)",
-          backgroundColor: "rgba(10, 10, 10, 0.12)",
-          backdropFilter: "blur(8px) saturate(160%)",
-          WebkitBackdropFilter: "blur(8px) saturate(160%)",
-          border: "1px solid rgba(255, 255, 255, 0.1)",
+          borderColor: "transparent",
+          backgroundColor: "transparent",
+          backdropFilter: "none",
+          WebkitBackdropFilter: "none",
+          border: "none",
           boxShadow: "none",
           transition: "all 0.3s ease",
         }}
