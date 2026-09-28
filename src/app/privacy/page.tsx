@@ -4,14 +4,14 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Privacy Policy — UniVerse Campus Platform",
   description:
-    "UniVerse Campus Platform ki Privacy Policy. Aapka data kaise collect, use, aur protect kiya jata hai.",
+    "Privacy Policy for UniVerse Campus Platform. Learn how your data is collected, used, and protected.",
 };
 
 const summaryCards = [
-  { icon: "🔐", title: "Encrypted Storage", desc: "Supabase PostgreSQL with RLS — sirf aap apna data dekh sakte hain" },
-  { icon: "🚫", title: "No Data Selling", desc: "Hum kabhi bhi aapka data advertisers ya third-parties ko nahi bechte" },
-  { icon: "🗑️", title: "Right to Delete", desc: "Account delete karo — aapka data 30 din mein permanently erase" },
-  { icon: "📧", title: "MU Email Only", desc: "@marwadiuniversity.ac.in — sirf campus email, koi bahar ki information nahi" },
+  { icon: "🔐", title: "Encrypted Storage", desc: "Supabase PostgreSQL with RLS — only you can access your personal data" },
+  { icon: "🚫", title: "No Data Selling", desc: "We never sell or monetize your data with advertisers or third parties" },
+  { icon: "🗑️", title: "Right to Delete", desc: "Delete your account anytime — personal data permanently erased within 30 days" },
+  { icon: "📧", title: "MU Email Only", desc: "@marwadiuniversity.ac.in — verified campus emails only, no external third-party profiles" },
 ];
 
 export default function PrivacyPage() {
@@ -55,8 +55,8 @@ export default function PrivacyPage() {
             Privacy Policy
           </h1>
           <p className="text-xs sm:text-sm text-white/50 leading-relaxed max-w-lg mx-auto mb-5 sm:mb-6 px-1">
-            Aapka data aapka hai. UniVerse aapki privacy ko seriously leta hai.
-            Yahan transparently padhein ki hum kya collect karte hain aur kyun.
+            Your data belongs to you. UniVerse takes your privacy seriously.
+            Here is a transparent breakdown of what we collect, why we collect it, and how it is protected.
           </p>
 
           <div className="inline-flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg bg-emerald-500/10 border border-emerald-500/25 mb-6 sm:mb-8">
@@ -107,24 +107,39 @@ export default function PrivacyPage() {
         </div>
 
         {/* ── Section 1 ── */}
-        <PSection id="data-collected" title="1. Data Jo Hum Collect Karte Hain">
-          <p>Jab aap UniVerse use karte hain, hum yeh information collect karte hain:</p>
+        <PSection id="data-collected" title="1. Information We Collect">
+          <p>When you use UniVerse, we collect the following categories of information:</p>
 
           <div className="mt-3.5 space-y-2.5 sm:space-y-3">
             {[
               {
                 category: "Account Data",
-                items: ["Full name", "Marwadi University email address", "Encrypted password (hum plain text kabhi nahi dekhte)", "Profile photo (optional)"],
+                items: [
+                  "Full name",
+                  "Marwadi University email address (@marwadiuniversity.ac.in)",
+                  "Encrypted passwords (never stored or viewable in plain text)",
+                  "Profile photo (optional)",
+                ],
                 color: "#00d2ff",
               },
               {
                 category: "Activity Data",
-                items: ["Delivery requests (pickup, destination, tip)", "Marketplace listings (photos, prices, descriptions)", "Chat messages (buyer-seller communication)", "Order status updates"],
+                items: [
+                  "Delivery requests (pickup, destination, tip incentives)",
+                  "Marketplace listings (photos, prices, descriptions, conditions)",
+                  "Chat messages (buyer-seller and runner-student communication)",
+                  "Order lifecycle and delivery status updates",
+                ],
                 color: "#a78bfa",
               },
               {
                 category: "Technical Data",
-                items: ["Browser type aur device information", "IP address (security ke liye)", "Session timestamps", "Error logs (bugs fix karne ke liye)"],
+                items: [
+                  "Browser type and device specifications",
+                  "IP address (for security logging and fraud prevention)",
+                  "Session timestamps and access tokens",
+                  "Error telemetry and diagnostic logs (to identify and fix platform bugs)",
+                ],
                 color: "#fbbf24",
               },
             ].map((group, i) => (
@@ -149,33 +164,33 @@ export default function PrivacyPage() {
         </PSection>
 
         {/* ── Section 2 ── */}
-        <PSection id="data-usage" title="2. Hum Data Ka Use Kaise Karte Hain">
+        <PSection id="data-usage" title="2. How We Use Your Information">
           <ul className="pl-4 sm:pl-5 m-0 space-y-1.5 sm:space-y-2 list-disc text-xs sm:text-[13px] text-white/70 leading-relaxed">
-            <li><strong>Account management:</strong> Login, verification, aur security</li>
-            <li><strong>Platform functionality:</strong> Delivery matching, marketplace listings, chat</li>
-            <li><strong>Safety:</strong> Fraud detection, prohibited items monitoring, account bans</li>
-            <li><strong>Communication:</strong> OTP emails, order status notifications</li>
-            <li><strong>Improvements:</strong> Bug fixes aur performance optimization</li>
+            <li><strong>Account Management:</strong> Authentication, campus identity verification, and account security</li>
+            <li><strong>Platform Functionality:</strong> Real-time delivery matching, campus marketplace listings, and in-app chat</li>
+            <li><strong>Campus Safety:</strong> Fraud prevention, policy enforcement, prohibited items monitoring, and moderation</li>
+            <li><strong>Transactional Communication:</strong> Security OTP emails, handover confirmations, and live order status notifications</li>
+            <li><strong>Platform Optimization:</strong> Performance enhancements, caching, and bug fixes</li>
           </ul>
           <div className="mt-3.5 p-3 sm:p-3.5 rounded-lg bg-cyan-500/[0.07] border border-cyan-400/20">
             <p className="m-0 text-xs text-cyan-200 leading-relaxed">
-              ✅ Hum aapka data <strong>kabhi bhi marketing ke liye use nahi karte</strong>, aur kisi bhi third-party advertiser ko nahi dete.
+              ✅ We <strong>never use your personal data for commercial marketing</strong>, and we never share it with third-party advertisers.
             </p>
           </div>
         </PSection>
 
         {/* ── Section 3 ── */}
-        <PSection id="data-sharing" title="3. Data Sharing — Kab Aur Kiske Saath">
-          <p>Hum aapka data <strong>sirf</strong> inke saath share kar sakte hain:</p>
+        <PSection id="data-sharing" title="3. Data Sharing — When &amp; With Whom">
+          <p>We only share personal data with trusted infrastructure providers and under strict campus safety requirements:</p>
           <ul className="pl-4 sm:pl-5 mt-3 space-y-1.5 sm:space-y-2 list-disc text-xs sm:text-[13px] text-white/70 leading-relaxed">
-            <li><strong>Supabase (Database Provider):</strong> Aapka data securely store karta hai — EU data protection standards follow karta hai</li>
-            <li><strong>Vercel (Hosting):</strong> Platform deploy karta hai — GDPR compliant</li>
-            <li><strong>University Administration:</strong> Sirf prohibited items violations ya serious misconduct reports ke case mein, aur sirf enrollment ID share hogi</li>
-            <li><strong>Law Enforcement:</strong> Sirf valid legal order/court directive ke case mein</li>
+            <li><strong>Supabase (Cloud Database Provider):</strong> Encrypted PostgreSQL storage adhering to SOC2 Type II and strict data protection standards</li>
+            <li><strong>Vercel (Edge Hosting Infrastructure):</strong> High-availability edge network deployment, GDPR compliant</li>
+            <li><strong>University Administration:</strong> Strictly in cases of serious safety misconduct or prohibited items violations, limited to enrollment verification</li>
+            <li><strong>Legal Authorities:</strong> Solely when compelled by a valid legal order, warrant, or statutory requirement</li>
           </ul>
           <div className="mt-3.5 p-3 sm:p-3.5 rounded-lg bg-red-500/[0.07] border border-red-500/25">
             <p className="m-0 text-xs text-red-300 leading-relaxed">
-              🚫 Hum kabhi bhi aapka data social media companies, advertisers, ya data brokers ko nahi bechte ya share karte.
+              🚫 We never sell, rent, or trade your personal information with social media platforms, advertisers, or data brokers.
             </p>
           </div>
         </PSection>
@@ -183,72 +198,70 @@ export default function PrivacyPage() {
         {/* ── Section 4 ── */}
         <PSection id="security" title="4. Data Security">
           <ul className="pl-4 sm:pl-5 m-0 space-y-1.5 sm:space-y-2 list-disc text-xs sm:text-[13px] text-white/70 leading-relaxed">
-            <li><strong>Row Level Security (RLS):</strong> Supabase database mein — aap sirf apna data dekh sakte hain</li>
-            <li><strong>HTTPS Encryption:</strong> Sab communication end-to-end encrypted</li>
-            <li><strong>Password Hashing:</strong> Aapka password hum kabhi plain text mein store nahi karte</li>
-            <li><strong>OTP Verification:</strong> Sensitive transactions (escrow handover) ke liye 6-digit OTP</li>
-            <li><strong>Session Management:</strong> Secure JWT tokens with automatic expiry</li>
+            <li><strong>Row-Level Security (RLS):</strong> Database-enforced isolation ensuring students can only access authorized data</li>
+            <li><strong>Transport Layer Security:</strong> All client-server communication is strictly encrypted over TLS/HTTPS</li>
+            <li><strong>Cryptographic Password Hashing:</strong> Passwords are never stored in plain text; authenticated via secure salted hashes</li>
+            <li><strong>Cryptographic OTP Handover:</strong> High-trust transactions (escrow handover and delivery) require 6-digit one-time codes</li>
+            <li><strong>Secure Session Management:</strong> Cryptographically signed JWT tokens with automatic expiration and revocation</li>
           </ul>
         </PSection>
 
         {/* ── Section 5 ── */}
-        <PSection id="your-rights" title="5. Aapke Rights (Aapka Data, Aapka Control)">
+        <PSection id="your-rights" title="5. Your Rights (Your Data, Your Control)">
           <ul className="pl-4 sm:pl-5 m-0 space-y-1.5 sm:space-y-2 list-disc text-xs sm:text-[13px] text-white/70 leading-relaxed">
             <li>
-              <strong>Access:</strong> Apna data download karne ka right — settings se request karein
+              <strong>Right to Access:</strong> You can inspect and review all personal profile details directly within your dashboard settings.
             </li>
             <li>
-              <strong>Correction:</strong> Galat information correct karne ka right
+              <strong>Right to Rectification:</strong> You may update or correct inaccurate profile details at any time.
             </li>
             <li>
-              <strong>Deletion:</strong> Account aur sab data delete karne ka right — 30 din mein complete erasure
+              <strong>Right to Erasure (Right to be Forgotten):</strong> Request permanent account deletion; all personal data will be purged within 30 days.
             </li>
             <li>
-              <strong>Portability:</strong> Apna data JSON format mein export karne ka right
+              <strong>Data Portability:</strong> Request an export of your personal platform activity in a machine-readable JSON format.
             </li>
             <li>
-              <strong>Object:</strong> Kisi bhi specific data processing ke against objection karne ka right
+              <strong>Right to Object:</strong> Object to non-essential automated data processing or administrative communications.
             </li>
           </ul>
           <div className="mt-3.5 p-3 sm:p-3.5 rounded-lg bg-cyan-500/[0.07] border border-cyan-400/20">
             <p className="m-0 text-xs text-cyan-200 leading-relaxed">
-              Inme se koi bhi right exercise karne ke liye:{" "}
+              To exercise any of these privacy rights, reach out to our team at{" "}
               <a href="mailto:support@universe.mu.ac.in" className="text-cyan-400 underline hover:text-cyan-300">
                 support@universe.mu.ac.in
-              </a>{" "}
-              par email karein.
+              </a>.
             </p>
           </div>
         </PSection>
 
         {/* ── Section 6 ── */}
         <PSection id="cookies" title="6. Cookies &amp; Local Storage">
-          <p>UniVerse sirf zaroorat ki cookies use karta hai:</p>
+          <p>UniVerse only utilizes essential, functional cookies and local storage tokens:</p>
           <ul className="pl-4 sm:pl-5 mt-3 space-y-1.5 sm:space-y-2 list-disc text-xs sm:text-[13px] text-white/70 leading-relaxed">
-            <li><strong>Session Cookie:</strong> Aapko logged in rakhne ke liye (authentication)</li>
-            <li><strong>Preference Storage:</strong> Theme, language settings (local storage only)</li>
+            <li><strong>Authentication Session:</strong> Secure HTTP cookies to keep you signed in securely across sessions</li>
+            <li><strong>Local Storage Preferences:</strong> UI theme choices and localized client state stored strictly on your device</li>
           </ul>
           <p className="mt-3 text-white/50 text-xs leading-relaxed">
-            Hum koi tracking cookies, analytics cookies (Google Analytics), ya advertising cookies use nahi karte.
+            We do not deploy third-party advertising cookies, behavioral ad pixels, or commercial tracking beacons.
           </p>
         </PSection>
 
         {/* ── Section 7 ── */}
         <PSection id="retention" title="7. Data Retention">
           <ul className="pl-4 sm:pl-5 m-0 space-y-1.5 sm:space-y-2 list-disc text-xs sm:text-[13px] text-white/70 leading-relaxed">
-            <li><strong>Active account:</strong> Jab tak aap use karte hain</li>
-            <li><strong>Inactive account:</strong> 1 saal inactivity ke baad email notification, phir 30 din mein delete</li>
-            <li><strong>Deleted account:</strong> 30 din mein complete erasure (backups se bhi)</li>
-            <li><strong>Chat messages:</strong> 90 din ke baad automatically delete</li>
-            <li><strong>Completed orders:</strong> 6 mahine ke liye retain (dispute resolution ke liye)</li>
+            <li><strong>Active Accounts:</strong> Maintained for as long as your university enrollment and platform account remain active</li>
+            <li><strong>Inactive Accounts:</strong> Accounts dormant for over 12 months receive a notification, followed by deletion after 30 days</li>
+            <li><strong>Account Erasure:</strong> Fully purged across active systems and automated backup snapshots within 30 days</li>
+            <li><strong>Transient Chat Messages:</strong> Delivery runner and buyer-seller chat history auto-expires after 90 days</li>
+            <li><strong>Completed Transaction Records:</strong> Retained for 6 months solely for dispute resolution and financial audit trails</li>
           </ul>
         </PSection>
 
         {/* ── Section 8 ── */}
         <PSection id="updates" title="8. Changes to Privacy Policy">
           <p>
-            Hum is policy ko update kar sakte hain. Significant changes ke liye aapko email se notify kiya jayega
-            kam se kam 14 din pehle.
+            We may periodically update this policy to reflect new campus features or statutory requirements. Significant revisions will be notified via university email at least 14 days prior to taking effect.
           </p>
           <p className="mt-3 text-white/45 text-[11px] sm:text-xs font-mono">
             Last updated: September 2026 &middot; Governed by: Indian laws (IT Act 2000, DPDPA 2023)
@@ -265,7 +278,7 @@ export default function PrivacyPage() {
               ⚖️ Grievance Redressal Officer (DPDPA 2023)
             </h2>
             <p className="m-0 text-xs sm:text-sm text-white/50 leading-relaxed">
-              Digital Personal Data Protection Act, 2023 ke anusaar designated campus grievance contact:
+              Pursuant to the Digital Personal Data Protection Act (DPDPA), 2023, the designated campus data grievance contact is:
             </p>
           </div>
 
