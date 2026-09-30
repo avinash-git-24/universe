@@ -87,69 +87,122 @@ const WaterBottle = () => (
 );
 
 const CoffeeCup = () => (
-  <svg width="60" height="74" viewBox="0 0 54 66" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ filter: "drop-shadow(0 15px 22px rgba(0,0,0,0.45))" }}>
-    {/* Delicate Steam Wisps */}
-    <path d="M 21 14 Q 18 9 22 5 Q 24 2 22 0" fill="none" stroke="#FDE68A" strokeWidth="1.8" strokeLinecap="round" opacity="0.75" />
-    <path d="M 27 13 Q 30 8 27 4 Q 25 1 27 -2" fill="none" stroke="#FEF3C7" strokeWidth="2" strokeLinecap="round" opacity="0.9" />
-    <path d="M 33 15 Q 37 10 34 6 Q 32 3 34 1" fill="none" stroke="#FDE68A" strokeWidth="1.6" strokeLinecap="round" opacity="0.7" />
-
-    {/* Cup Body (Shaded Cylindrical Paper Cup) */}
-    <path d="M 11 20 L 15.5 58 Q 27 61 38.5 58 L 43 20 Z" fill="url(#cupBodyGrad)" />
-    
-    {/* Base Depth Oval */}
-    <ellipse cx="27" cy="58" rx="11.5" ry="2.5" fill="#CBD5E1" opacity="0.7" />
-
-    {/* Left Highlight Sheen on Cup Body */}
-    <rect x="13.5" y="22" width="3.5" height="34" rx="1.75" fill="white" opacity="0.5" />
-
-    {/* Emerald UniVerse Insulating Sleeve */}
-    <path d="M 12.4 31 L 14.5 49 Q 27 52 39.5 49 L 41.6 31 Q 27 34 12.4 31 Z" fill="url(#sleeveGrad)" />
-    <path d="M 12.4 31 Q 27 34 41.6 31" fill="none" stroke="#34D399" strokeWidth="0.8" opacity="0.7" />
-    <path d="M 14.5 49 Q 27 52 39.5 49" fill="none" stroke="#047857" strokeWidth="0.8" opacity="0.8" />
-    <path d="M 13.5 40 Q 27 43 40.5 40" fill="none" stroke="#065F46" strokeWidth="0.6" opacity="0.35" />
-
-    {/* Sleeve Emblem Badge */}
-    <circle cx="27" cy="40.5" r="7.2" fill="#064E3B" stroke="#6EE7B7" strokeWidth="0.8" />
-    <circle cx="27" cy="40.5" r="5.8" fill="none" stroke="#34D399" strokeWidth="0.5" strokeDasharray="1.2 0.8" opacity="0.8" />
-    <text x="27" y="43" textAnchor="middle" fill="#FFFFFF" fontSize="6.5" fontFamily="system-ui, -apple-system, sans-serif" fontWeight="900" letterSpacing="0.5">UV</text>
-
-    {/* Takeaway Snap Lid */}
-    {/* Bottom Rim (Snaps tightly over the cup lip) */}
-    <ellipse cx="27" cy="20" rx="17.5" ry="5" fill="url(#lidBaseGrad)" />
-    <path d="M 10 20 Q 27 23 44 20" fill="none" stroke="#64748B" strokeWidth="0.8" opacity="0.5" />
-
-    {/* Raised Mid Tier */}
-    <ellipse cx="27" cy="18" rx="14.5" ry="3.8" fill="#1E293B" />
-    <ellipse cx="27" cy="17" rx="13.5" ry="3.2" fill="#334155" />
-
-    {/* Raised Drinking Sip Hole */}
-    <rect x="23" y="14" width="8" height="3.2" rx="1.6" fill="#0F172A" />
-    <ellipse cx="27" cy="15.2" rx="2.5" ry="1" fill="#020617" />
-
+  <svg width="68" height="82" viewBox="0 0 60 72" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ filter: "drop-shadow(0 20px 25px rgba(0,0,0,0.55)) drop-shadow(0 8px 10px rgba(0,0,0,0.3))" }}>
     <defs>
-      {/* Cup Body Gradient */}
-      <linearGradient id="cupBodyGrad" x1="0" y1="0" x2="1" y2="0">
-        <stop offset="0%" stopColor="#E2E8F0" />
-        <stop offset="25%" stopColor="#F8FAFC" />
-        <stop offset="65%" stopColor="#FFFFFF" />
-        <stop offset="100%" stopColor="#E2E8F0" />
+      {/* 3D Cylindrical Lighting: Rim Light, Core Highlight, Diffuse, Ambient Shadow */}
+      <linearGradient id="cup3D" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stopColor="#CBD5E1" />
+        <stop offset="12%" stopColor="#F1F5F9" />
+        <stop offset="35%" stopColor="#FFFFFF" />
+        <stop offset="70%" stopColor="#E2E8F0" />
+        <stop offset="90%" stopColor="#94A3B8" />
+        <stop offset="100%" stopColor="#64748B" />
       </linearGradient>
 
-      {/* Emerald Sleeve Gradient */}
-      <linearGradient id="sleeveGrad" x1="0" y1="0" x2="1" y2="0">
-        <stop offset="0%" stopColor="#047857" />
-        <stop offset="20%" stopColor="#059669" />
-        <stop offset="55%" stopColor="#10B981" />
-        <stop offset="85%" stopColor="#059669" />
-        <stop offset="100%" stopColor="#047857" />
+      {/* 3D Emerald Sleeve with cylindrical curve shading */}
+      <linearGradient id="sleeve3D" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stopColor="#022C22" />
+        <stop offset="12%" stopColor="#065F46" />
+        <stop offset="35%" stopColor="#10B981" />
+        <stop offset="65%" stopColor="#059669" />
+        <stop offset="88%" stopColor="#047857" />
+        <stop offset="100%" stopColor="#022C22" />
       </linearGradient>
 
-      {/* Matte Dark Lid Gradient */}
-      <linearGradient id="lidBaseGrad" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stopColor="#334155" />
+      {/* 3D Lid Rim & Bevel Gradient */}
+      <linearGradient id="lidRim3D" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stopColor="#475569" />
+        <stop offset="40%" stopColor="#334155" />
         <stop offset="100%" stopColor="#0F172A" />
       </linearGradient>
+
+      <linearGradient id="lidTop3D" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stopColor="#1E293B" />
+        <stop offset="30%" stopColor="#334155" />
+        <stop offset="70%" stopColor="#1E293B" />
+        <stop offset="100%" stopColor="#0F172A" />
+      </linearGradient>
+
+      {/* Steam Gradient */}
+      <linearGradient id="steamFade" x1="0" y1="1" x2="0" y2="0">
+        <stop offset="0%" stopColor="#FDE68A" stopOpacity="0.9" />
+        <stop offset="60%" stopColor="#FEF3C7" stopOpacity="0.6" />
+        <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0" />
+      </linearGradient>
+
+      {/* Badge Depth Gradient */}
+      <radialGradient id="badgeGrad" cx="40%" cy="35%" r="65%">
+        <stop offset="0%" stopColor="#065F46" />
+        <stop offset="70%" stopColor="#022C22" />
+        <stop offset="100%" stopColor="#011612" />
+      </radialGradient>
     </defs>
+
+    {/* 3D Rising Steam Wisps */}
+    <path d="M 23 15 C 20 10, 25 5, 22 0" fill="none" stroke="url(#steamFade)" strokeWidth="2.2" strokeLinecap="round" />
+    <path d="M 30 14 C 34 8, 28 4, 31 -2" fill="none" stroke="url(#steamFade)" strokeWidth="2.6" strokeLinecap="round" />
+    <path d="M 37 16 C 41 11, 36 6, 38 1" fill="none" stroke="url(#steamFade)" strokeWidth="1.8" strokeLinecap="round" />
+
+    {/* 3D Cup Base Shadow Cast */}
+    <ellipse cx="30" cy="65.5" rx="13" ry="2.8" fill="#000000" opacity="0.35" />
+
+    {/* 3D Cup Main Body (Cylindrical Paper Cup) */}
+    <path d="M 12 21 L 17 63.5 Q 30 67 43 63.5 L 48 21 Q 30 24.5 12 21 Z" fill="url(#cup3D)" />
+    
+    {/* Base Rounding Curve */}
+    <ellipse cx="30" cy="63.5" rx="13" ry="2.5" fill="#94A3B8" opacity="0.5" />
+
+    {/* Left Specular Light Sheen (Vertical Cylindrical Reflection) */}
+    <path d="M 15 22.5 L 19 62.5 Q 22 63 24 62.5 L 20 22.5 Q 17.5 22.3 15 22.5 Z" fill="#FFFFFF" opacity="0.65" />
+    <path d="M 17 23 L 19.5 61.5 Q 20.8 62 22 61.5 L 19.5 23 Z" fill="#FFFFFF" opacity="0.85" />
+
+    {/* Shadow cast by the sleeve onto the lower cup (True 3D Physical Separation) */}
+    <path d="M 15.5 53.5 Q 30 57.5 44.5 53.5 L 44.7 55.5 Q 30 59.5 15.3 55.5 Z" fill="#0F172A" opacity="0.35" />
+
+    {/* 3D Emerald Coffee Sleeve */}
+    <path d="M 13.5 32 L 15.8 53 Q 30 57 44.2 53 L 46.5 32 Q 30 35.5 13.5 32 Z" fill="url(#sleeve3D)" />
+    
+    {/* Sleeve 3D Beveled Edges */}
+    <path d="M 13.5 32 Q 30 35.5 46.5 32" fill="none" stroke="#6EE7B7" strokeWidth="0.9" opacity="0.85" />
+    <path d="M 15.8 53 Q 30 57 44.2 53" fill="none" stroke="#022C22" strokeWidth="1.2" opacity="0.9" />
+    
+    {/* Sleeve Corrugated Texture Ribs */}
+    <path d="M 14.3 39 Q 30 42.5 45.7 39" fill="none" stroke="#047857" strokeWidth="0.6" opacity="0.45" />
+    <path d="M 15.1 46 Q 30 49.5 44.9 46" fill="none" stroke="#047857" strokeWidth="0.6" opacity="0.45" />
+
+    {/* 3D Center Emblem Badge */}
+    <circle cx="30" cy="43.5" r="9" fill="url(#badgeGrad)" stroke="#34D399" strokeWidth="1.2" style={{ filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.5))" }} />
+    <circle cx="30" cy="43.5" r="7.4" fill="none" stroke="#A7F3D0" strokeWidth="0.6" strokeDasharray="1.5 1" opacity="0.85" />
+    
+    {/* Mini Coffee Bean Icon on top of emblem */}
+    <g transform="translate(27.5, 36.8) scale(0.24)">
+      <path d="M 10 2 C 5 2, 1 6, 1 12 C 1 18, 6 22, 12 22 C 18 22, 22 17, 22 11 C 22 5, 17 2, 10 2 Z" fill="#FBBF24" />
+      <path d="M 4 12 Q 11 11 11 4 Q 11 11 19 12 Q 11 13 11 20 Q 11 13 4 12 Z" fill="#78350F" />
+    </g>
+
+    {/* BOLD "COFFEE" Text (High Contrast & 3D Depth) */}
+    <text x="30" y="47.2" textAnchor="middle" fill="#011612" fontSize="5.2" fontFamily="'Impact', 'Arial Black', -apple-system, sans-serif" fontWeight="900" letterSpacing="0.8">COFFEE</text>
+    <text x="30" y="46.5" textAnchor="middle" fill="#FFFFFF" fontSize="5.2" fontFamily="'Impact', 'Arial Black', -apple-system, sans-serif" fontWeight="900" letterSpacing="0.8">COFFEE</text>
+
+    {/* 3D Takeaway Snap Lid */}
+    {/* 1. Undercut Lip */}
+    <ellipse cx="30" cy="21.5" rx="19.5" ry="5.2" fill="#090D16" />
+
+    {/* 2. Main Overhanging Lid Rim */}
+    <ellipse cx="30" cy="20.5" rx="19.5" ry="5.2" fill="url(#lidRim3D)" />
+    
+    {/* 3. Rim Specular Highlight (Crisp 3D plastic shine) */}
+    <path d="M 11.5 20.2 Q 30 23.8 48.5 20.2" fill="none" stroke="#94A3B8" strokeWidth="1.1" opacity="0.75" />
+    
+    {/* 4. Recessed Inner Ring / Basin */}
+    <ellipse cx="30" cy="18" rx="16.5" ry="4.2" fill="#0F172A" />
+    <ellipse cx="30" cy="17" rx="15.5" ry="3.8" fill="url(#lidTop3D)" />
+
+    {/* 5. Elevated 3D Drinking Spout (Mouthpiece) */}
+    <path d="M 23 15 C 23 13, 37 13, 37 15 L 36 17 C 36 18.5, 24 18.5, 24 17 Z" fill="#334155" stroke="#475569" strokeWidth="0.5" />
+    <ellipse cx="30" cy="14.8" rx="3.5" ry="1.2" fill="#020617" />
+    <ellipse cx="30" cy="14.5" rx="3" ry="0.8" fill="#000000" />
+    <path d="M 25 15.5 Q 30 16.5 35 15.5" fill="none" stroke="#94A3B8" strokeWidth="0.7" opacity="0.8" />
   </svg>
 );
 
