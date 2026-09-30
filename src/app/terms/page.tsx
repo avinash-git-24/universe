@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Terms of Service — UniVerse Campus Platform",
   description:
-    "UniVerse Campus Platform ke Terms of Service, Campus Rules, aur Prohibited Items List. Marwadi University students ke liye peer-to-peer platform guidelines.",
+    "Terms of Service, Campus Rules, and Prohibited Items guidelines for UniVerse Campus Platform. Exclusively for Marwadi University students.",
 };
 
 const prohibitedItems = [
@@ -67,8 +67,8 @@ export default function TermsPage() {
             Terms of Service &amp;<br />Campus Rules
           </h1>
           <p className="text-xs sm:text-sm text-white/50 leading-relaxed max-w-lg mx-auto mb-5 sm:mb-6 px-1">
-            UniVerse ek peer-to-peer campus platform hai exclusively Marwadi University students ke liye.
-            Account banane se pehle in rules ko padhna zaroori hai.
+            UniVerse is a peer-to-peer campus intermediary platform designed exclusively for verified Marwadi University students.
+            Please read and understand these terms before registering an account.
           </p>
 
           {/* Badges */}
@@ -143,45 +143,44 @@ export default function TermsPage() {
         {/* ── Section 1 ── */}
         <Section id="safe-harbor" title="1. Platform Nature — Safe Harbor (IT Act Section 79)">
           <p>
-            UniVerse ek <strong>peer-to-peer intermediary platform</strong> hai jo Marwadi University students ko aapas mein connect karta hai.
-            Hum ek marketplace facilitator hain — na koi party seller, buyer, ya delivery agent.
+            UniVerse is a <strong>peer-to-peer intermediary platform</strong> facilitating connections among verified Marwadi University students.
+            We function solely as a campus marketplace facilitator — not as a direct seller, buyer, or delivery employer.
           </p>
           <p className="mt-3">
-            India ke <strong>Information Technology Act, 2000 — Section 79</strong> ke under, UniVerse ek Intermediary hai.
-            Kisi bhi do students ke beech ki transaction, jhagda, ya nuksan ke liye UniVerse, uske founders, ya employees
-            zimmedar nahi honge, jab tak humne kisi illegal kaam mein actively participate na kiya ho.
+            Under <strong>Section 79 of the Information Technology Act, 2000 (Safe Harbor)</strong>, UniVerse operates as an intermediary.
+            UniVerse, its founders, and platform administrators bear no liability for private disputes, transactions, delivery outcomes, or damages arising between students, except where required by law.
           </p>
           <p className="mt-3">
-            <strong>Aap (student)</strong> poori zimmedari lete hain apni listing, delivery request, ya kisi bhi deal ke liye.
+            <strong>You (the student)</strong> assume complete personal responsibility and liability for your listings, delivery requests, and marketplace transactions.
           </p>
         </Section>
 
         {/* ── Section 2 ── */}
-        <Section id="eligibility" title="2. Eligibility — Kaun Use Kar Sakta Hai">
+        <Section id="eligibility" title="2. Eligibility &amp; Account Requirements">
           <RuleList items={[
-            <span key="1">Valid <strong>@marwadiuniversity.ac.in</strong> email hona chahiye</span>,
-            "Active enrolled student hona chahiye",
-            "18 saal ya usse zyada ki age honi chahiye",
-            <span key="4">Ek student sirf <strong>ek account</strong> rakh sakta hai</span>,
+            <span key="1">Must possess a valid, verifiable <strong>@marwadiuniversity.ac.in</strong> email address</span>,
+            "Must be an actively enrolled student at Marwadi University",
+            "Must be at least 18 years of age or possess university hostel residency",
+            <span key="4">Strict limit of <strong>one account per student</strong> (tied to student enrollment)</span>,
           ]} />
           <Callout color="orange" tag="NOTICE">
-            Galat information par account permanently ban aur university ko report kiya jayega.
+            Providing fraudulent registration information will result in immediate permanent suspension and referral to university administration.
           </Callout>
         </Section>
 
         {/* ── Section 3 ── */}
         <Section id="conduct" title="3. Acceptable Use &amp; User Conduct">
-          <p>Platform use karte waqt aap agree karte hain ki aap:</p>
+          <p>When using UniVerse, you strictly agree to:</p>
           <RuleList items={[
-            "Sirf legal aur genuine items/services list karenge",
-            "Doosre students ke saath respect se behave karenge",
-            "Koi fraud, scam, ya misleading listing nahi karenge",
-            "Prohibited items bilkul nahi post karenge (Section 4 dekhein)",
-            "Platform ko spam, phishing, ya harassment ke liye use nahi karenge",
-            "Kisi bhi student ka personal data share ya leak nahi karenge",
+            "List only lawful, genuine, and truthfully represented items or services",
+            "Maintain civil, respectful, and collegiate conduct with fellow students",
+            "Refrain from fraudulent transactions, price gouging, or misleading descriptions",
+            "Strictly avoid publishing or requesting prohibited items (see Section 4)",
+            "Never exploit the platform for spam, harassment, phishing, or abusive messaging",
+            "Protect fellow students' privacy and never distribute personal or contact data without authorization",
           ]} />
           <Callout color="orange" tag="STRICT PENALTY">
-            Violations: <strong>1st offense</strong> — 7 din suspension. <strong>2nd offense</strong> — Permanent ban + university report.
+            Disciplinary ladder: <strong>1st violation</strong> — 7-day temporary suspension. <strong>2nd violation</strong> — Permanent account termination and referral to campus authorities.
           </Callout>
         </Section>
 
@@ -194,8 +193,7 @@ export default function TermsPage() {
             4. Prohibited Items — Zero Tolerance Policy
           </h2>
           <p className="text-xs sm:text-sm text-white/55 leading-relaxed mb-4 sm:mb-5">
-            Neeche diye gaye items platform par bilkul BANNED hain. Inhe post karna turant account ban
-            aur college ID university administration ko report karne ka kaaran banega:
+            The following items and activities are strictly PROHIBITED on UniVerse. Attempting to list, request, or deliver any of these items triggers immediate account termination and reporting to Marwadi University administration:
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-2.5">
             {prohibitedItems.map((item, i) => (
@@ -215,65 +213,65 @@ export default function TermsPage() {
           </div>
           <div className="mt-3.5 sm:mt-4 p-3 sm:p-3.5 rounded-lg bg-amber-500/10 border border-amber-500/25">
             <p className="m-0 text-xs text-amber-300 leading-relaxed">
-              <strong>Zero Tolerance:</strong> Koi bhi prohibited item list karne par account turant permanently ban hoga aur student ka college enrollment ID university administration ko report kar di jayegi.
+              <strong>Zero Tolerance:</strong> Posting or facilitating prohibited items will result in an immediate permanent ban, forfeiture of account privileges, and formal disciplinary reporting to campus administration.
             </p>
           </div>
         </div>
 
         {/* ── Section 5 ── */}
-        <Section id="delivery" title="5. Delivery &amp; Campus Runner Rules">
+        <Section id="delivery" title="5. Delivery &amp; Campus Runner Guidelines">
           <RuleList items={[
-            "Runners apni marzi se orders accept ya reject kar sakte hain",
-            "Runner aur requester ke beech deal unki personal zimmedari hai",
-            "UniVerse delivery ka guarantee nahi deta — hum sirf connect karte hain",
-            "Food orders: sirf canteen/mess ka food; bahar se prohibited items bilkul nahi",
-            "Tip voluntary hai — koi forced nahi kar sakta",
-            "Delivery dispute mein UniVerse koi financial compensation nahi dega",
+            "Campus runners act as independent peers and may accept or decline delivery requests at their sole discretion",
+            "Delivery coordination and peer agreements are the sole mutual responsibility of the requester and runner",
+            "UniVerse facilitates matching only and does not warrant or guarantee delivery timing, quality, or fulfillment",
+            "Food deliveries are strictly restricted to campus canteen/mess items; delivery of prohibited substances is strictly forbidden",
+            "Tips and incentives are entirely voluntary and cannot be coerced or demanded under any circumstances",
+            "UniVerse provides no financial underwriting or liability compensation for lost, delayed, or disputed deliveries",
           ]} />
         </Section>
 
         {/* ── Section 6 ── */}
-        <Section id="resale" title="6. Resale Marketplace &amp; Escrow OTP">
+        <Section id="resale" title="6. Resale Marketplace &amp; Escrow Handover Protocol">
           <RuleList items={[
-            "Seller authentic photos aur accurate condition details dega",
-            <span key="2">Buyer <strong>OTP verification</strong> ke baad hi handover complete hoga</span>,
-            "OTP confirm hone ke baad deal final — koi refund ya cancellation nahi",
-            "UniVerse kisi bhi product ki quality, authenticity, ya condition guarantee nahi deta",
-            "Scam reports par dono parties ka account investigate kiya jayega",
+            "Sellers must provide genuine, unfiltered photographs and transparent condition disclosures",
+            <span key="2">Handovers are strictly finalized only upon <strong>buyer 6-digit OTP verification</strong> in the app</span>,
+            "Once the buyer OTP is confirmed, transactions are deemed irrevocably fulfilled — no platform chargebacks or returns",
+            "UniVerse offers no implied warranties regarding product condition, merchantability, or authenticity",
+            "Fraud or dispute claims will trigger simultaneous investigation and possible account restriction of both parties",
           ]} />
         </Section>
 
         {/* ── Section 7 ── */}
         <Section id="termination" title="7. Account Suspension &amp; Termination">
-          <p>UniVerse kisi bhi account ko suspend ya terminate kar sakta hai agar:</p>
+          <p>UniVerse reserves the right to suspend or terminate any student account immediately if:</p>
           <RuleList items={[
-            "Terms ka violation ho (especially prohibited items)",
-            "Fraudulent activity prove ho",
-            "Multiple legitimate complaints aaye",
-            "University administration ne request ki ho",
+            "A violation of these Terms of Service or campus guidelines occurs (notably prohibited item listings)",
+            "Fraudulent, malicious, or deceptive platform conduct is identified",
+            "Repeated substantiated peer complaints or ratings abuse are submitted",
+            "Formal compliance requests are issued by Marwadi University administrative authorities",
           ]} />
           <Callout color="red" tag="STRICT PENALTY">
-            <strong>Permanent ban:</strong> College ID (enrollment number) university administration ko report ki jayegi aur disciplinary action ho sakta hai.
+            <strong>Permanent Termination:</strong> Severe violations result in permanent forfeiture of account access and referral of student enrollment details to university disciplinary committees.
           </Callout>
         </Section>
 
         {/* ── Section 8 ── */}
-        <Section id="liability" title="8. Disclaimer of Liability">
-          <p>UniVerse &quot;AS IS&quot; provide kiya jata hai. Hum explicitly disclaim karte hain:</p>
+        <Section id="liability" title="8. Disclaimer of Warranties &amp; Limitation of Liability">
+          <p>UniVerse is provided on an &quot;AS IS&quot; and &quot;AS AVAILABLE&quot; basis. We explicitly disclaim:</p>
           <RuleList items={[
-            "Kisi bhi peer-to-peer transaction ki guarantee",
-            "Platform downtime se hone wale kisi bhi nuksan ki zimmedari",
-            "Third-party links ya services ki accuracy",
-            "Kisi bhi student ki identity verification (sirf email verify hota hai)",
+            "Any warranty regarding the outcome, quality, or safety of peer-to-peer transactions",
+            "Liability for service interruptions, data sync delays, or platform downtime",
+            "Accuracy or integrity of third-party external links or payment gateways",
+            "Physical identity verification beyond institutional email domain validation",
           ]} />
           <p className="mt-3 text-white/50 text-xs">
-            Maximum liability: <strong className="text-white">₹0</strong> — kyunki UniVerse ek free, non-commercial student project hai.
+            Maximum aggregate platform liability is limited strictly to <strong className="text-white">₹0</strong>, as UniVerse operates as a complimentary, non-commercial student service.
           </p>
         </Section>
 
         {/* ── Section 9 ── */}
-        <Section id="governing-law" title="9. Governing Law">
-          <p>Ye Terms India ke laws ke anusaar govern ki jayengi:</p>
+        <Section id="governing-law" title="9. Governing Law &amp; Jurisdiction">
+          <p>These Terms shall be interpreted and governed in accordance with the laws of the Republic of India:</p>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2 sm:gap-2.5 mt-3.5">
             {[
               { label: "IT Act, 2000", sub: "Section 79 — Safe Harbor", color: "#00d2ff" },
@@ -292,18 +290,17 @@ export default function TermsPage() {
             ))}
           </div>
           <p className="mt-3.5 text-xs sm:text-sm">
-            Jurisdiction: <strong className="text-white">Rajkot, Gujarat, India.</strong>
+            Exclusive Territorial Jurisdiction: <strong className="text-white">Courts of Rajkot, Gujarat, India.</strong>
           </p>
         </Section>
 
         {/* ── Section 10 ── */}
-        <Section id="changes" title="10. Changes to Terms">
+        <Section id="changes" title="10. Amendments &amp; Updates">
           <p>
-            UniVerse in terms ko kisi bhi waqt update kar sakta hai. Material changes par aapko email notification milega.
-            Continued use of platform = acceptance of new terms.
+            UniVerse reserves the right to modify these terms periodically to reflect operational improvements or regulatory obligations. Students will be notified of material amendments via email at least 14 days prior to implementation. Continued use of the platform constitutes explicit acceptance of revised terms.
           </p>
           <p className="mt-3 text-white/45 text-[11px] sm:text-xs font-mono">
-            Last updated: September 2026 &middot; Effective: From account creation date
+            Last revised: September 2026 &middot; Effective: From account registration date
           </p>
         </Section>
 
@@ -313,12 +310,11 @@ export default function TermsPage() {
           className="bg-cyan-500/[0.04] border border-cyan-500/20 rounded-xl p-4 sm:p-6 md:p-7 mb-4 sm:mb-6 scroll-mt-24"
         >
           <h2 className="text-sm sm:text-base font-semibold text-white mb-2">
-            11. Grievance Redressal — DPDPA 2023
+            11. Grievance Redressal (DPDPA 2023 Compliance)
           </h2>
           <p className="text-xs sm:text-sm text-white/55 leading-relaxed mb-4">
-            Digital Personal Data Protection Act (DPDPA), 2023 ke compliance mein, UniVerse ek{" "}
-            <strong className="text-white/80">Grievance Officer</strong> niyukt karta hai
-            jo student complaints 30 din ke andar resolve karega.
+            In accordance with the Digital Personal Data Protection Act (DPDPA), 2023, UniVerse has designated a formal{" "}
+            <strong className="text-white/80">Grievance Redressal Officer</strong> to address and resolve student data privacy concerns within statutory timelines.
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-2.5 mb-4">
             {[
@@ -356,9 +352,9 @@ export default function TermsPage() {
           id="contact"
           className="bg-purple-500/[0.04] border border-purple-500/20 rounded-xl p-4 sm:p-6 md:p-7 text-center mb-6 scroll-mt-24"
         >
-          <h2 className="text-sm sm:text-base font-semibold text-white mb-2">Koi Sawaal Hai?</h2>
+          <h2 className="text-sm sm:text-base font-semibold text-white mb-2">Questions or Inquiries?</h2>
           <p className="text-xs sm:text-sm text-white/50 leading-relaxed mb-4 max-w-md mx-auto">
-            Terms ke baare mein koi confusion ho to contact karein. Hum 48 ghante ke andar jawab denge.
+            If you have any questions or require clarification regarding these terms, contact our support team. We acknowledge all inquiries within 48 hours.
           </p>
           <a
             href="mailto:support@universe.mu.ac.in"
