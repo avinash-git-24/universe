@@ -272,13 +272,13 @@ export function HeroSection() {
       {/* ── Campus Background ── */}
       <CampusBackground />
 
-      {/* ── Dark overlay — subtle radial contrast (preserves campus vibrancy) ── */}
+      {/* ── Dark overlay — radial from center ── */}
       <div
-        className="absolute inset-0 z-10 pointer-events-none"
+        className="absolute inset-0 z-10"
         style={{
           background: `
-            radial-gradient(ellipse 85% 55% at 50% 28%, rgba(2,6,23,0.22) 0%, rgba(2,6,23,0.62) 100%),
-            linear-gradient(to bottom, rgba(2,6,23,0.45) 0%, rgba(2,6,23,0.12) 45%, rgba(2,6,23,0.50) 100%)
+            radial-gradient(ellipse 80% 60% at 50% 40%, rgba(5,15,10,0.38) 0%, rgba(5,15,10,0.72) 100%),
+            linear-gradient(to bottom, rgba(5,15,10,0.58) 0%, rgba(5,15,10,0.32) 40%, rgba(5,15,10,0.76) 100%)
           `,
         }}
         aria-hidden="true"
