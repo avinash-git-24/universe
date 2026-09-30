@@ -18,6 +18,25 @@ import { useState, useEffect } from "react";
  * - Performance: 100% pure SVG + hardware-accelerated CSS animations — zero JS overhead.
  */
 
+/**
+ * Precomputed sun beam endpoint coordinates rounded to 2 decimal places.
+ * Eliminates float precision discrepancy between Node.js SSR and browser V8 runtime (e.g. -50.56406460551014 vs ...17).
+ */
+const SUN_BEAMS = [
+  { x2: 1490, y2: 88, strokeWidth: 2, opacity: 0.35 },
+  { x2: 1468.56, y2: 168, strokeWidth: 1, opacity: 0.18 },
+  { x2: 1410, y2: 226.56, strokeWidth: 2, opacity: 0.35 },
+  { x2: 1330, y2: 248, strokeWidth: 1, opacity: 0.18 },
+  { x2: 1250, y2: 226.56, strokeWidth: 2, opacity: 0.35 },
+  { x2: 1191.44, y2: 168, strokeWidth: 1, opacity: 0.18 },
+  { x2: 1170, y2: 88, strokeWidth: 2, opacity: 0.35 },
+  { x2: 1191.44, y2: 8, strokeWidth: 1, opacity: 0.18 },
+  { x2: 1250, y2: -50.56, strokeWidth: 2, opacity: 0.35 },
+  { x2: 1330, y2: -72, strokeWidth: 1, opacity: 0.18 },
+  { x2: 1410, y2: -50.56, strokeWidth: 2, opacity: 0.35 },
+  { x2: 1468.56, y2: 8, strokeWidth: 1, opacity: 0.18 },
+] as const;
+
 export function CampusBackground() {
   const [isNight, setIsNight] = useState(false);
 
@@ -255,25 +274,20 @@ export function CampusBackground() {
             <circle cx="1330" cy="88" r="220" fill="url(#uvSunGlow)" />
             <circle cx="1330" cy="88" r="140" fill="#FEF3C7" opacity="0.12" />
 
-            {/* Subtle Rotating Sun Beams */}
+            {/* Subtle Rotating Sun Beams (Fixed precision prevents SSR/Client hydration mismatch) */}
             <g className="sun-beams" opacity="0.3">
-              {[0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330].map((angle, ri) => {
-                const rad = (angle * Math.PI) / 180;
-                const x2 = 1330 + Math.cos(rad) * 160;
-                const y2 = 88 + Math.sin(rad) * 160;
-                return (
-                  <line
-                    key={ri}
-                    x1="1330"
-                    y1="88"
-                    x2={x2}
-                    y2={y2}
-                    stroke="#FDE047"
-                    strokeWidth={ri % 2 === 0 ? 2 : 1}
-                    opacity={ri % 2 === 0 ? 0.35 : 0.18}
-                  />
-                );
-              })}
+              {SUN_BEAMS.map((beam, ri) => (
+                <line
+                  key={ri}
+                  x1="1330"
+                  y1="88"
+                  x2={beam.x2}
+                  y2={beam.y2}
+                  stroke="#FDE047"
+                  strokeWidth={beam.strokeWidth}
+                  opacity={beam.opacity}
+                />
+              ))}
             </g>
 
             {/* Golden Core */}
