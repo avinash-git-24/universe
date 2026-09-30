@@ -40,18 +40,18 @@ const SUN_BEAMS = [
 ] as const;
 
 const MOBILE_SUN_BEAMS = [
-  { x2: 1080, y2: -220, strokeWidth: 2, opacity: 0.35 },
-  { x2: 1061.24, y2: -150, strokeWidth: 1, opacity: 0.18 },
-  { x2: 1010, y2: -98.76, strokeWidth: 2, opacity: 0.35 },
-  { x2: 940, y2: -80, strokeWidth: 1, opacity: 0.18 },
-  { x2: 870, y2: -98.76, strokeWidth: 2, opacity: 0.35 },
-  { x2: 818.76, y2: -150, strokeWidth: 1, opacity: 0.18 },
-  { x2: 800, y2: -220, strokeWidth: 2, opacity: 0.35 },
-  { x2: 818.76, y2: -290, strokeWidth: 1, opacity: 0.18 },
-  { x2: 870, y2: -341.24, strokeWidth: 2, opacity: 0.35 },
-  { x2: 940, y2: -360, strokeWidth: 1, opacity: 0.18 },
-  { x2: 1010, y2: -341.24, strokeWidth: 2, opacity: 0.35 },
-  { x2: 1061.24, y2: -290, strokeWidth: 1, opacity: 0.18 },
+  { x2: 1320, y2: -900, strokeWidth: 2, opacity: 0.35 },
+  { x2: 1301.24, y2: -830, strokeWidth: 1, opacity: 0.18 },
+  { x2: 1250, y2: -778.76, strokeWidth: 2, opacity: 0.35 },
+  { x2: 1180, y2: -760, strokeWidth: 1, opacity: 0.18 },
+  { x2: 1110, y2: -778.76, strokeWidth: 2, opacity: 0.35 },
+  { x2: 1058.76, y2: -830, strokeWidth: 1, opacity: 0.18 },
+  { x2: 1040, y2: -900, strokeWidth: 2, opacity: 0.35 },
+  { x2: 1058.76, y2: -970, strokeWidth: 1, opacity: 0.18 },
+  { x2: 1110, y2: -1021.24, strokeWidth: 2, opacity: 0.35 },
+  { x2: 1180, y2: -1040, strokeWidth: 1, opacity: 0.18 },
+  { x2: 1250, y2: -1021.24, strokeWidth: 2, opacity: 0.35 },
+  { x2: 1301.24, y2: -970, strokeWidth: 1, opacity: 0.18 },
 ] as const;
 
 function CampusScene({ isNight, isMobile }: { isNight: boolean; isMobile: boolean }) {
@@ -108,11 +108,11 @@ function CampusScene({ isNight, isMobile }: { isNight: boolean; isMobile: boolea
         {/* Lunar Sky Wash */}
         <radialGradient
           id={`uvMoonWash_${isMobile ? "m" : "d"}`}
-          cx={isMobile ? "87%" : "87%"}
-          cy={isMobile ? "8%" : "12%"}
-          r="55%"
+          cx={isMobile ? "82%" : "87%"}
+          cy={isMobile ? "12%" : "12%"}
+          r="60%"
         >
-          <stop offset="0%" stopColor="#BAE6FD" stopOpacity="0.15" />
+          <stop offset="0%" stopColor="#BAE6FD" stopOpacity="0.16" />
           <stop offset="100%" stopColor="#020617" stopOpacity="0" />
         </radialGradient>
 
@@ -127,8 +127,8 @@ function CampusScene({ isNight, isMobile }: { isNight: boolean; isMobile: boolea
         <mask id={`uvCrescentMask_${isMobile ? "m" : "d"}`}>
           {isMobile ? (
             <>
-              <circle cx="940" cy="-220" r="28" fill="white" />
-              <circle cx="952" cy="-230" r="24" fill="black" />
+              <circle cx="1180" cy="-900" r="32" fill="white" />
+              <circle cx="1194" cy="-912" r="28" fill="black" />
             </>
           ) : (
             <>
@@ -140,52 +140,53 @@ function CampusScene({ isNight, isMobile }: { isNight: boolean; isMobile: boolea
 
         {/* Distant Hills Gradients */}
         <linearGradient id={`uvHillFarGrad_${isMobile ? "m" : "d"}`} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor={isNight ? "#0A1D16" : "#7CB992"} />
-          <stop offset="100%" stopColor={isNight ? "#06130E" : "#62A478"} />
+          <stop offset="0%" stopColor={isNight ? "#0D251C" : "#7CB992"} />
+          <stop offset="100%" stopColor={isNight ? "#081812" : "#62A478"} />
         </linearGradient>
         <linearGradient id={`uvHillNearGrad_${isMobile ? "m" : "d"}`} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor={isNight ? "#0F2B20" : "#549E6C"} />
-          <stop offset="100%" stopColor={isNight ? "#091C14" : "#3F8756"} />
+          <stop offset="0%" stopColor={isNight ? "#123628" : "#549E6C"} />
+          <stop offset="100%" stopColor={isNight ? "#0A2218" : "#3F8756"} />
         </linearGradient>
 
-        {/* Lush Campus Turf (Ground) */}
+        {/* Lush Campus Turf (Ground) — Vibrant Emerald Dark Mode */}
         <linearGradient id={`uvGrassUpper_${isMobile ? "m" : "d"}`} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor={isNight ? "#0A140F" : "#3B8C53"} />
-          <stop offset="100%" stopColor={isNight ? "#060D09" : "#2B6F3E"} />
+          <stop offset="0%" stopColor={isNight ? "#112F20" : "#3B8C53"} />
+          <stop offset="100%" stopColor={isNight ? "#0B2216" : "#2B6F3E"} />
         </linearGradient>
         <linearGradient id={`uvGrassLower_${isMobile ? "m" : "d"}`} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor={isNight ? "#070E0A" : "#2E7543"} />
-          <stop offset="100%" stopColor={isNight ? "#0A0F0D" : "#1F542F"} />
+          <stop offset="0%" stopColor={isNight ? "#0E2A1C" : "#2E7543"} />
+          <stop offset="50%" stopColor={isNight ? "#0A1F14" : "#256337"} />
+          <stop offset="100%" stopColor={isNight ? "#081810" : "#1F542F"} />
         </linearGradient>
 
-        {/* Building Facade Gradients */}
+        {/* Building Facade Gradients — Crisp Illuminated Architecture */}
         <linearGradient id={`uvMainFacade_${isMobile ? "m" : "d"}`} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor={isNight ? "#CBD5E1" : "#FAF8F5"} />
-          <stop offset="100%" stopColor={isNight ? "#94A3B8" : "#EDE8DF"} />
+          <stop offset="0%" stopColor={isNight ? "#E2E8F0" : "#FAF8F5"} />
+          <stop offset="100%" stopColor={isNight ? "#CBD5E1" : "#EDE8DF"} />
         </linearGradient>
         <linearGradient id={`uvHostelFacade_${isMobile ? "m" : "d"}`} x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stopColor={isNight ? "#E2E8F0" : "#FFFFFF"} />
-          <stop offset="100%" stopColor={isNight ? "#CBD5E1" : "#F8F6F2"} />
+          <stop offset="0%" stopColor={isNight ? "#F1F5F9" : "#FFFFFF"} />
+          <stop offset="100%" stopColor={isNight ? "#E2E8F0" : "#F8F6F2"} />
         </linearGradient>
 
         {/* 3D Isometric Depth Surfaces */}
         <linearGradient id={`uvSideShade_${isMobile ? "m" : "d"}`} x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stopColor={isNight ? "#64748B" : "#D4CEC5"} />
-          <stop offset="100%" stopColor={isNight ? "#475569" : "#C4BDAE"} />
+          <stop offset="0%" stopColor={isNight ? "#94A3B8" : "#D4CEC5"} />
+          <stop offset="100%" stopColor={isNight ? "#64748B" : "#C4BDAE"} />
         </linearGradient>
         <linearGradient id={`uvHostelSideShade_${isMobile ? "m" : "d"}`} x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stopColor={isNight ? "#94A3B8" : "#E4DFD7"} />
-          <stop offset="100%" stopColor={isNight ? "#64748B" : "#D5CEBF"} />
+          <stop offset="0%" stopColor={isNight ? "#CBD5E1" : "#E4DFD7"} />
+          <stop offset="100%" stopColor={isNight ? "#94A3B8" : "#D5CEBF"} />
         </linearGradient>
         <linearGradient id={`uvRoofSlab_${isMobile ? "m" : "d"}`} x1="0" y1="1" x2="1" y2="0">
-          <stop offset="0%" stopColor={isNight ? "#94A3B8" : "#EFECE5"} />
-          <stop offset="100%" stopColor={isNight ? "#64748B" : "#E0DCD3"} />
+          <stop offset="0%" stopColor={isNight ? "#CBD5E1" : "#EFECE5"} />
+          <stop offset="100%" stopColor={isNight ? "#94A3B8" : "#E0DCD3"} />
         </linearGradient>
 
         {/* Road Gradient */}
         <linearGradient id={`uvRoadGrad_${isMobile ? "m" : "d"}`} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor={isNight ? "#1E293B" : "#B4BCC8"} />
-          <stop offset="100%" stopColor={isNight ? "#0F172A" : "#9DA6B3"} />
+          <stop offset="0%" stopColor={isNight ? "#334155" : "#B4BCC8"} />
+          <stop offset="100%" stopColor={isNight ? "#1E293B" : "#9DA6B3"} />
         </linearGradient>
 
         {/* Soft Ground Shadows Filter */}
@@ -198,7 +199,7 @@ function CampusScene({ isNight, isMobile }: { isNight: boolean; isMobile: boolea
         </filter>
 
         <filter id={`uvNightLightGlow_${isMobile ? "m" : "d"}`}>
-          <feGaussianBlur stdDeviation="2.5" result="blur" />
+          <feGaussianBlur stdDeviation="3" result="blur" />
           <feMerge>
             <feMergeNode in="blur" />
             <feMergeNode in="SourceGraphic" />
@@ -219,8 +220,8 @@ function CampusScene({ isNight, isMobile }: { isNight: boolean; isMobile: boolea
       ═══════════════════════════════════════════════ */}
       {isMobile ? (
         <>
-          <rect x="-400" y="-1000" width="2240" height="2400" fill="url(#uvSkyGrad_m)" />
-          <rect x="-400" y="320" width="2240" height="480" fill="url(#uvHorizonHaze_m)" />
+          <rect x="-400" y="-1800" width="2240" height="3000" fill="url(#uvSkyGrad_m)" />
+          <rect x="-400" y="240" width="2240" height="480" fill="url(#uvHorizonHaze_m)" />
         </>
       ) : (
         <>
@@ -235,15 +236,15 @@ function CampusScene({ isNight, isMobile }: { isNight: boolean; isMobile: boolea
           {isMobile ? (
             <>
               {/* Mobile Sun Corona */}
-              <circle cx="940" cy="-220" r="180" fill="url(#uvSunGlow_m)" />
-              <circle cx="940" cy="-220" r="110" fill="#FEF3C7" opacity="0.12" />
+              <circle cx="1180" cy="-900" r="180" fill="url(#uvSunGlow_m)" />
+              <circle cx="1180" cy="-900" r="110" fill="#FEF3C7" opacity="0.12" />
               {/* Mobile Rotating Sun Beams */}
               <g className="m-sun-beams" opacity="0.3">
                 {MOBILE_SUN_BEAMS.map((beam, ri) => (
                   <line
                     key={ri}
-                    x1="940"
-                    y1="-220"
+                    x1="1180"
+                    y1="-900"
                     x2={beam.x2}
                     y2={beam.y2}
                     stroke="#FDE047"
@@ -252,9 +253,9 @@ function CampusScene({ isNight, isMobile }: { isNight: boolean; isMobile: boolea
                   />
                 ))}
               </g>
-              <circle className="m-sun-core" cx="940" cy="-220" r="44" fill="#FEF08A" opacity="0.4" />
-              <circle cx="940" cy="-220" r="28" fill="#FDE047" opacity="0.75" />
-              <circle cx="940" cy="-220" r="18" fill="#FBBF24" />
+              <circle className="m-sun-core" cx="1180" cy="-900" r="44" fill="#FEF08A" opacity="0.4" />
+              <circle cx="1180" cy="-900" r="28" fill="#FDE047" opacity="0.75" />
+              <circle cx="1180" cy="-900" r="18" fill="#FBBF24" />
             </>
           ) : (
             <>
@@ -289,31 +290,33 @@ function CampusScene({ isNight, isMobile }: { isNight: boolean; isMobile: boolea
         <g>
           {isMobile ? (
             <>
-              <rect x="-400" y="-1000" width="2240" height="2400" fill="url(#uvMoonWash_m)" />
+              <rect x="-400" y="-1800" width="2240" height="3000" fill="url(#uvMoonWash_m)" />
               {/* Mobile Crescent Moon */}
-              <circle cx="940" cy="-220" r="140" fill="url(#uvMoonAura_m)" opacity="0.38" />
-              <circle cx="940" cy="-220" r="70" fill="url(#uvMoonAura_m)" className="moon-glow" />
-              <circle cx="940" cy="-220" r="42" fill="url(#uvMoonAura_m)" />
+              <circle cx="1180" cy="-900" r="160" fill="url(#uvMoonAura_m)" opacity="0.45" />
+              <circle cx="1180" cy="-900" r="80" fill="url(#uvMoonAura_m)" className="moon-glow" />
+              <circle cx="1180" cy="-900" r="48" fill="url(#uvMoonAura_m)" />
               <circle
-                cx="940"
-                cy="-220"
-                r="28"
+                cx="1180"
+                cy="-900"
+                r="32"
                 fill="url(#uvMoonGrad_m)"
                 mask="url(#uvCrescentMask_m)"
                 className="moon-glow"
               />
 
               {/* Mobile Upper Sky Starry Canopy */}
-              <path d="M 360 -450 Q 360 -444 354 -444 Q 360 -444 360 -438 Q 360 -444 366 -444 Q 360 -444 360 -450 Z" fill="#F0F9FF" className="star-pulse-1" />
-              <path d="M 640 -520 Q 640 -514 634 -514 Q 640 -514 640 -508 Q 640 -514 646 -514 Q 640 -514 640 -520 Z" fill="#E0F2FE" className="star-pulse-2" />
-              <path d="M 820 -380 Q 820 -374 814 -374 Q 820 -374 820 -368 Q 820 -374 826 -374 Q 820 -374 820 -380 Z" fill="#F0F9FF" className="star-pulse-3" />
-              <circle cx="280" cy="-380" r="2.0" fill="#FFFFFF" className="star-pulse-2" />
-              <circle cx="480" cy="-560" r="1.8" fill="#BAE6FD" className="star-pulse-1" />
-              <circle cx="520" cy="-340" r="2.2" fill="#FFFFFF" className="star-pulse-3" />
-              <circle cx="740" cy="-480" r="1.9" fill="#E0F2FE" className="star-pulse-2" />
-              <circle cx="860" cy="-540" r="2.1" fill="#FFFFFF" className="star-pulse-1" />
-              <circle cx="1060" cy="-420" r="1.8" fill="#BAE6FD" className="star-pulse-3" />
-              <circle cx="1140" cy="-320" r="2.0" fill="#FFFFFF" className="star-pulse-2" />
+              <path d="M 220 -1150 Q 220 -1144 214 -1144 Q 220 -1144 220 -1138 Q 220 -1144 226 -1144 Q 220 -1144 220 -1150 Z" fill="#F0F9FF" className="star-pulse-1" />
+              <path d="M 520 -1220 Q 520 -1214 514 -1214 Q 520 -1214 520 -1208 Q 520 -1214 526 -1214 Q 520 -1214 520 -1220 Z" fill="#E0F2FE" className="star-pulse-2" />
+              <path d="M 820 -1050 Q 820 -1044 814 -1044 Q 820 -1044 820 -1038 Q 820 -1044 826 -1044 Q 820 -1044 820 -1050 Z" fill="#F0F9FF" className="star-pulse-3" />
+              <circle cx="180" cy="-980" r="2.4" fill="#FFFFFF" className="star-pulse-2" />
+              <circle cx="340" cy="-1100" r="2.0" fill="#BAE6FD" className="star-pulse-1" />
+              <circle cx="440" cy="-840" r="2.5" fill="#FFFFFF" className="star-pulse-3" />
+              <circle cx="680" cy="-1140" r="2.2" fill="#E0F2FE" className="star-pulse-2" />
+              <circle cx="780" cy="-880" r="2.6" fill="#FFFFFF" className="star-pulse-1" />
+              <circle cx="960" cy="-1120" r="2.0" fill="#BAE6FD" className="star-pulse-3" />
+              <circle cx="1040" cy="-780" r="2.4" fill="#FFFFFF" className="star-pulse-2" />
+              <circle cx="1320" cy="-1080" r="2.2" fill="#E0F2FE" className="star-pulse-1" />
+              <circle cx="1380" cy="-820" r="2.5" fill="#BAE6FD" className="star-pulse-3" />
             </>
           ) : (
             <>
@@ -408,6 +411,10 @@ function CampusScene({ isNight, isMobile }: { isNight: boolean; isMobile: boolea
         opacity="0.55"
       />
 
+    {/* ═══════════════════════════════════════════════
+        CAMPUS ARCHITECTURAL SKYLINE (SCALED FOR MOBILE HORIZON)
+    ═══════════════════════════════════════════════ */}
+    <g transform={isMobile ? "translate(0, 600) scale(1, 1.25) translate(0, -600)" : undefined}>
       {/* ═══════════════════════════════════════════════
           LAYER 4 — MODERN CAMPUS LIBRARY (RIGHT WING)
       ═══════════════════════════════════════════════ */}
@@ -430,7 +437,7 @@ function CampusScene({ isNight, isMobile }: { isNight: boolean; isMobile: boolea
 
       {/* Modern Library Tinted Glass Grid */}
       {[0, 1, 2, 3].map(row => {
-        const isLitAtNight = (row === 1) || (row === 2);
+        const isLitAtNight = row === 1 || row === 2 || row === 3;
         return (
           <rect
             key={`lib${row}`}
@@ -439,7 +446,7 @@ function CampusScene({ isNight, isMobile }: { isNight: boolean; isMobile: boolea
             width="170"
             height="42"
             fill={isNight ? (isLitAtNight ? "#FDE047" : "#0F172A") : "#93C5FD"}
-            opacity={isNight ? (isLitAtNight ? 0.85 : 0.5) : 0.65}
+            opacity={isNight ? (isLitAtNight ? 0.92 : 0.45) : 0.65}
             className={isNight && isLitAtNight ? "night-window-glow" : undefined}
             filter={isNight && isLitAtNight ? `url(#uvNightLightGlow_${isMobile ? "m" : "d"})` : undefined}
             rx="2"
@@ -475,18 +482,18 @@ function CampusScene({ isNight, isMobile }: { isNight: boolean; isMobile: boolea
 
       {/* Structural Pillars */}
       {[538, 580, 622, 664, 760, 802, 844, 886].map((x, i) => (
-        <rect key={i} x={x} y="258" width="16" height="342" fill={isNight ? "#64748B" : "#E8E4DC"} opacity="0.45" rx="1" />
+        <rect key={i} x={x} y="258" width="16" height="342" fill={isNight ? "#94A3B8" : "#E8E4DC"} opacity={isNight ? 0.6 : 0.45} rx="1" />
       ))}
 
-      {/* Main Windows — Living Dynamic Room Lights */}
+      {/* Main Windows — Dynamic Living Campus Lights (Study rooms & labs) */}
       {[0, 1, 2, 3, 4].map(row =>
         [0, 1, 2, 3, 4, 5, 6].map(col => {
           const isNightLit =
-            (row === 0 && col === 5) ||
-            (row === 1 && col === 2) ||
-            (row === 2 && col === 4) ||
-            (row === 3 && col === 1) ||
-            (row === 4 && col === 3);
+            (row === 0 && (col === 1 || col === 3 || col === 5)) ||
+            (row === 1 && (col === 0 || col === 2 || col === 4 || col === 6)) ||
+            (row === 2 && (col === 1 || col === 3 || col === 5)) ||
+            (row === 3 && (col === 0 || col === 2 || col === 4 || col === 6)) ||
+            (row === 4 && (col === 1 || col === 3 || col === 5));
           return (
             <rect
               key={`mw${row}-${col}`}
@@ -495,7 +502,7 @@ function CampusScene({ isNight, isMobile }: { isNight: boolean; isMobile: boolea
               width="34"
               height="38"
               fill={isNight ? (isNightLit ? "#FDE047" : "#1E293B") : "#93C5FD"}
-              opacity={isNight ? (isNightLit ? 0.82 : 0.45) : 0.65}
+              opacity={isNight ? (isNightLit ? 0.92 : 0.40) : 0.65}
               className={isNight && isNightLit ? "night-window-glow" : undefined}
               filter={isNight && isNightLit ? `url(#uvNightLightGlow_${isMobile ? "m" : "d"})` : undefined}
               rx="2"
@@ -504,26 +511,27 @@ function CampusScene({ isNight, isMobile }: { isNight: boolean; isMobile: boolea
         })
       )}
 
-      {/* Marwadi University Emblem Badge */}
+      {/* Marwadi University Emblem Badge — Illuminated LED Backlit Sign */}
       <rect
         x="610"
         y="462"
         width="220"
         height="32"
-        fill={isNight ? "#064E3B" : "#10B981"}
-        opacity={isNight ? 0.45 : 1}
+        fill={isNight ? "#059669" : "#10B981"}
+        opacity={1}
         rx="6"
+        filter={isNight ? `url(#uvNightLightGlow_${isMobile ? "m" : "d"})` : undefined}
       />
       <text
         x="720"
-        y="482"
+        y="483"
         textAnchor="middle"
         fill="white"
         fontSize="13"
         fontFamily="sans-serif"
-        fontWeight="700"
-        letterSpacing="0.5"
-        opacity={isNight ? 0.65 : 1}
+        fontWeight="800"
+        letterSpacing="0.8"
+        opacity={1}
       >
         MARWADI UNIVERSITY
       </text>
@@ -533,10 +541,10 @@ function CampusScene({ isNight, isMobile }: { isNight: boolean; isMobile: boolea
       <rect x="690" y="556" width="80" height="6" fill={isNight ? "#785E3E" : "#B8935A"} />
       <rect x="718" y="566" width="11" height="28" fill={isNight ? "#5E462E" : "#A0804C"} rx="1.5" />
       <rect x="751" y="566" width="11" height="28" fill={isNight ? "#5E462E" : "#A0804C"} rx="1.5" />
-      <rect x="672" y="544" width="116" height="14" fill={isNight ? "#064E3B" : "#059669"} rx="2" opacity={isNight ? 0.6 : 0.95} />
+      <rect x="672" y="544" width="116" height="14" fill={isNight ? "#059669" : "#059669"} rx="2" opacity={0.95} />
 
       {/* University Flagpole & Pennant */}
-      <rect x="719" y="210" width="2.5" height="30" fill="#94A3B8" rx="1" />
+      <rect x="719" y="210" width="2.5" height="30" fill="#E2E8F0" rx="1" />
       <circle cx="720.25" cy="209" r="2.5" fill="#F59E0B" />
       <path d="M 721.5 210 L 748 217 L 721.5 224 Z" fill="#10B981" />
 
@@ -553,7 +561,11 @@ function CampusScene({ isNight, isMobile }: { isNight: boolean; isMobile: boolea
 
         {[0, 1, 2, 3].map(row =>
           [0, 1, 2].map(col => {
-            const isNightLit = (row === 1 && col === 2) || (row === 3 && col === 0);
+            const isNightLit =
+              (row === 0 && col === 1) ||
+              (row === 1 && (col === 0 || col === 2)) ||
+              (row === 2 && col === 1) ||
+              (row === 3 && (col === 0 || col === 2));
             return (
               <rect
                 key={`aw${row}-${col}`}
@@ -562,7 +574,7 @@ function CampusScene({ isNight, isMobile }: { isNight: boolean; isMobile: boolea
                 width="38"
                 height="42"
                 fill={isNight ? (isNightLit ? "#FDE047" : "#1E293B") : "#93C5FD"}
-                opacity={isNight ? (isNightLit ? 0.9 : 0.45) : 0.65}
+                opacity={isNight ? (isNightLit ? 0.95 : 0.40) : 0.65}
                 className={isNight && isNightLit ? "night-window-glow" : undefined}
                 filter={isNight && isNightLit ? `url(#uvNightLightGlow_${isMobile ? "m" : "d"})` : undefined}
                 rx="2"
@@ -587,7 +599,11 @@ function CampusScene({ isNight, isMobile }: { isNight: boolean; isMobile: boolea
 
         {[0, 1, 2, 3].map(row =>
           [0, 1, 2].map(col => {
-            const isNightLit = (row === 0 && col === 1) || (row === 2 && col === 2);
+            const isNightLit =
+              (row === 0 && (col === 0 || col === 1)) ||
+              (row === 1 && col === 2) ||
+              (row === 2 && (col === 0 || col === 2)) ||
+              (row === 3 && col === 1);
             return (
               <rect
                 key={`bw${row}-${col}`}
@@ -596,7 +612,7 @@ function CampusScene({ isNight, isMobile }: { isNight: boolean; isMobile: boolea
                 width="36"
                 height="40"
                 fill={isNight ? (isNightLit ? "#FDE047" : "#1E293B") : "#93C5FD"}
-                opacity={isNight ? (isNightLit ? 0.9 : 0.45) : 0.65}
+                opacity={isNight ? (isNightLit ? 0.95 : 0.40) : 0.65}
                 className={isNight && isNightLit ? "night-window-glow" : undefined}
                 filter={isNight && isNightLit ? `url(#uvNightLightGlow_${isMobile ? "m" : "d"})` : undefined}
                 rx="2"
@@ -621,7 +637,11 @@ function CampusScene({ isNight, isMobile }: { isNight: boolean; isMobile: boolea
 
         {[0, 1, 2, 3].map(row =>
           [0, 1, 2].map(col => {
-            const isNightLit = (row === 1 && col === 0) || (row === 3 && col === 2);
+            const isNightLit =
+              (row === 0 && col === 2) ||
+              (row === 1 && (col === 0 || col === 1)) ||
+              (row === 2 && col === 1) ||
+              (row === 3 && (col === 0 || col === 2));
             return (
               <rect
                 key={`cw${row}-${col}`}
@@ -630,7 +650,7 @@ function CampusScene({ isNight, isMobile }: { isNight: boolean; isMobile: boolea
                 width="36"
                 height="40"
                 fill={isNight ? (isNightLit ? "#FDE047" : "#1E293B") : "#93C5FD"}
-                opacity={isNight ? (isNightLit ? 0.9 : 0.45) : 0.65}
+                opacity={isNight ? (isNightLit ? 0.95 : 0.40) : 0.65}
                 className={isNight && isNightLit ? "night-window-glow" : undefined}
                 filter={isNight && isNightLit ? `url(#uvNightLightGlow_${isMobile ? "m" : "d"})` : undefined}
                 rx="2"
@@ -645,6 +665,7 @@ function CampusScene({ isNight, isMobile }: { isNight: boolean; isMobile: boolea
         <rect x="1063" y="498" width="44" height="6" fill={isNight ? "#153937" : "#2C5E5A"} />
         <rect x="1083" y="508" width="5" height="22" fill={isNight ? "#0E2827" : "#1E4340"} rx="1" />
       </g>
+    </g>
 
       {/* ═══════════════════════════════════════════════
           LAYER 7 — CAMPUS ROAD & INFRASTRUCTURE
@@ -752,9 +773,9 @@ function CampusScene({ isNight, isMobile }: { isNight: boolean; isMobile: boolea
       ═══════════════════════════════════════════════ */}
       {isMobile ? (
         <>
-          <rect x="-400" y="636" width="2240" height="1500" fill="url(#uvGrassLower_m)" />
-          <rect x="-400" y="635" width="2240" height="2" fill={isNight ? "#334155" : "#5DB86E"} opacity="0.5" />
-          <rect x="-400" y="636" width="2240" height="6" fill={isNight ? "#1E293B" : "#CBD2DD"} opacity="0.3" />
+          <rect x="-400" y="636" width="2240" height="2400" fill="url(#uvGrassLower_m)" />
+          <rect x="-400" y="635" width="2240" height="2" fill={isNight ? "#334155" : "#5DB86E"} opacity="0.6" />
+          <rect x="-400" y="636" width="2240" height="6" fill={isNight ? "#1E293B" : "#CBD2DD"} opacity="0.4" />
         </>
       ) : (
         <>
@@ -764,11 +785,24 @@ function CampusScene({ isNight, isMobile }: { isNight: boolean; isMobile: boolea
         </>
       )}
 
+      {/* Campus Walkway Garden Lanterns & Illuminated Stepping Lights (Night Mode) */}
+      {isNight && (
+        <g opacity={0.85}>
+          {[120, 240, 360, 480, 600, 720, 840, 960, 1080, 1200, 1320].map((lx, li) => (
+            <g key={`lnt${li}`}>
+              <ellipse cx={lx} cy={646} rx={24} ry={7} fill="#FEF08A" opacity={0.22} filter={`url(#uvNightLightGlow_${isMobile ? "m" : "d"})`} />
+              <circle cx={lx} cy={642} r={3.2} fill="#FEF08A" filter={`url(#uvNightLightGlow_${isMobile ? "m" : "d"})`} />
+              <rect x={lx - 1} y={642} width={2} height={8} fill="#64748B" rx={1} />
+            </g>
+          ))}
+        </g>
+      )}
+
       {/* Subtle Turf Shading */}
       {[80, 220, 380, 540, 700, 860, 1020, 1180, 1340].map((gx, gi) => (
-        <g key={`g${gi}`} opacity={isNight ? "0.10" : "0.22"}>
-          <ellipse cx={gx} cy={665 + (gi % 3) * 18} rx={16 + (gi % 4) * 4} ry={2.5} fill={isNight ? "#0D1C14" : "#3D8B5A"} />
-          <ellipse cx={gx + 35} cy={675 + (gi % 2) * 22} rx={12 + (gi % 3) * 3} ry={2} fill={isNight ? "#112319" : "#4CAF72"} />
+        <g key={`g${gi}`} opacity={isNight ? "0.15" : "0.22"}>
+          <ellipse cx={gx} cy={665 + (gi % 3) * 18} rx={16 + (gi % 4) * 4} ry={2.5} fill={isNight ? "#0D2517" : "#3D8B5A"} />
+          <ellipse cx={gx + 35} cy={675 + (gi % 2) * 22} rx={12 + (gi % 3) * 3} ry={2} fill={isNight ? "#123320" : "#4CAF72"} />
         </g>
       ))}
 
@@ -849,8 +883,8 @@ export function CampusBackground() {
         .cloud-c { animation: cloud-drift-c 94s linear infinite 28s; }
         .sun-core { transform-origin: 1330px 88px; animation: sun-shimmer 5s ease-in-out infinite; }
         .sun-beams { transform-origin: 1330px 88px; animation: rays-rotate 120s linear infinite; }
-        .m-sun-core { transform-origin: 940px -220px; animation: sun-shimmer 5s ease-in-out infinite; }
-        .m-sun-beams { transform-origin: 940px -220px; animation: rays-rotate 120s linear infinite; }
+        .m-sun-core { transform-origin: 1180px -900px; animation: sun-shimmer 5s ease-in-out infinite; }
+        .m-sun-beams { transform-origin: 1180px -900px; animation: rays-rotate 120s linear infinite; }
         .moon-glow { animation: moon-breathe 4.5s ease-in-out infinite; }
         .star-pulse-1 { animation: star-fade-1 3.5s ease-in-out infinite; }
         .star-pulse-2 { animation: star-fade-2 4.2s ease-in-out infinite 1.1s; }
@@ -872,7 +906,7 @@ export function CampusBackground() {
 
       {/* ── Mobile Campus (Full-Screen Immersive Portrait Atmosphere) ── */}
       <svg
-        viewBox="180 -650 1080 2150"
+        viewBox="0 -1350 1440 3120"
         xmlns="http://www.w3.org/2000/svg"
         preserveAspectRatio="xMidYMid slice"
         className="block md:hidden w-full h-full"
