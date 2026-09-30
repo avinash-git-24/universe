@@ -146,17 +146,100 @@ const SodaCan = () => (
 );
 
 const WaterBottle = () => (
-  <svg width="40" height="84" viewBox="0 0 34 72" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ filter: "drop-shadow(0 15px 20px rgba(0,0,0,0.3))" }}>
-    <rect x="11" y="6" width="12" height="14" fill="#E0F2FE" rx="3" stroke="#BAE6FD" strokeWidth="1"/>
-    <rect x="10" y="2" width="14" height="8" fill="#38BDF8" rx="3"/>
-    <path d="M 8 20 Q 4 24 4 30 L 4 60 Q 4 66 17 66 Q 30 66 30 60 L 30 30 Q 30 24 26 20 Z"
-          fill="#E0F2FE" stroke="#7DD3FC" strokeWidth="1.5" opacity="0.7"/>
-    <path d="M 5 45 Q 8 43 17 44 Q 26 43 29 45 L 30 60 Q 30 66 17 66 Q 4 66 4 60 Z"
-          fill="#38BDF8" opacity="0.6"/>
-    <path d="M 6 44 Q 17 40 28 44" fill="none" stroke="white" strokeWidth="1.5" opacity="0.8"/>
-    <rect x="7" y="22" width="5" height="40" fill="white" opacity="0.5" rx="2.5"/>
-    <rect x="8" y="30" width="18" height="16" fill="white" opacity="0.9" rx="2"/>
-    <text x="17" y="40.5" textAnchor="middle" fill="#0284C7" fontSize="8" fontFamily="sans-serif" fontWeight="800">H₂O</text>
+  <svg width="48" height="88" viewBox="0 0 38 72" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ filter: "drop-shadow(0 18px 24px rgba(0,0,0,0.5)) drop-shadow(0 6px 10px rgba(0,0,0,0.25))" }}>
+    <defs>
+      {/* PET Plastic Bottle Cylinder Gradient */}
+      <linearGradient id="petBottleGrad" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stopColor="#BAE6FD" stopOpacity="0.6" />
+        <stop offset="15%" stopColor="#E0F2FE" stopOpacity="0.8" />
+        <stop offset="35%" stopColor="#FFFFFF" stopOpacity="0.95" />
+        <stop offset="65%" stopColor="#BAE6FD" stopOpacity="0.75" />
+        <stop offset="90%" stopColor="#7DD3FC" stopOpacity="0.8" />
+        <stop offset="100%" stopColor="#38BDF8" stopOpacity="0.6" />
+      </linearGradient>
+
+      {/* Fresh Pure Water Gradient */}
+      <linearGradient id="waterLiquidGrad" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stopColor="#38BDF8" stopOpacity="0.55" />
+        <stop offset="30%" stopColor="#7DD3FC" stopOpacity="0.7" />
+        <stop offset="70%" stopColor="#38BDF8" stopOpacity="0.6" />
+        <stop offset="100%" stopColor="#0284C7" stopOpacity="0.55" />
+      </linearGradient>
+
+      {/* Plastic Screw Cap 3D Gradient */}
+      <linearGradient id="capGrad" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stopColor="#0369A1" />
+        <stop offset="25%" stopColor="#0EA5E9" />
+        <stop offset="50%" stopColor="#38BDF8" />
+        <stop offset="80%" stopColor="#0284C7" />
+        <stop offset="100%" stopColor="#075985" />
+      </linearGradient>
+
+      {/* Label Gradient */}
+      <linearGradient id="labelGrad" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stopColor="#E0F2FE" />
+        <stop offset="25%" stopColor="#FFFFFF" />
+        <stop offset="65%" stopColor="#F0F9FF" />
+        <stop offset="100%" stopColor="#BAE6FD" />
+      </linearGradient>
+    </defs>
+
+    {/* Ambient Base Shadow */}
+    <ellipse cx="19" cy="69" rx="12" ry="2.5" fill="#000000" opacity="0.35" />
+
+    {/* 3D Bottle Base (Molded PET Ribbed Bottom) */}
+    <path d="M 9 64 L 11 67 Q 19 69.5 27 67 L 29 64 Q 19 66 9 64 Z" fill="#7DD3FC" stroke="#38BDF8" strokeWidth="0.5" opacity="0.85" />
+    <ellipse cx="19" cy="67" rx="9" ry="1.8" fill="#0284C7" opacity="0.5" />
+
+    {/* 3D Bottle Body Outer Shell (Ergonomic contoured PET plastic) */}
+    <path d="M 13 18 L 8 26 C 6 29, 6 33, 7 38 C 8 43, 6 47, 7 53 L 8 64 Q 19 67 30 64 L 31 53 C 32 47, 30 43, 31 38 C 32 33, 32 29, 30 26 L 25 18 Q 19 19.5 13 18 Z" fill="url(#petBottleGrad)" stroke="#7DD3FC" strokeWidth="0.8" />
+
+    {/* Water Liquid Inside (Filled up to shoulder meniscus) */}
+    <path d="M 8.5 28 C 7 31, 7 34, 7.8 38 C 8.6 42, 7 46, 7.8 52 L 8.5 63 Q 19 65.5 29.5 63 L 30.2 52 C 31 46, 29.4 42, 30.2 38 C 31 34, 31 31, 29.5 28 Q 19 30 8.5 28 Z" fill="url(#waterLiquidGrad)" />
+    
+    {/* Liquid Surface Meniscus */}
+    <ellipse cx="19" cy="28" rx="10.5" ry="2.2" fill="#BAE6FD" opacity="0.6" />
+
+    {/* 3D Plastic Ribbing Contours */}
+    <path d="M 7.2 36 Q 19 38.5 30.8 36" fill="none" stroke="#FFFFFF" strokeWidth="0.7" opacity="0.75" />
+    <path d="M 7.5 54 Q 19 56.5 30.5 54" fill="none" stroke="#FFFFFF" strokeWidth="0.7" opacity="0.65" />
+    <path d="M 8 60 Q 19 62.5 30 60" fill="none" stroke="#FFFFFF" strokeWidth="0.6" opacity="0.5" />
+
+    {/* Left Specular Reflection Sheen (Glossy clear plastic highlight) */}
+    <path d="M 10 24 L 11 63 Q 12.5 63.5 13.5 63 L 12.5 24 Z" fill="#FFFFFF" opacity="0.75" />
+    <path d="M 11.5 25 L 12.2 62 Q 13 62.3 13.5 62 L 12.8 25 Z" fill="#FFFFFF" opacity="0.95" />
+    
+    {/* Right Ambient Reflection */}
+    <path d="M 28 25 L 27.5 63 Q 28.5 63.2 29 63 L 29.5 25 Z" fill="#FFFFFF" opacity="0.3" />
+
+    {/* 3D Wraparound Mineral Water Label */}
+    <path d="M 7.2 50.5 Q 19 53 30.8 50.5 L 30.8 51.5 Q 19 54 7.2 51.5 Z" fill="#0369A1" opacity="0.35" />
+    <path d="M 7 38 L 7.2 50 Q 19 52.8 30.8 50 L 31 38 Q 19 40.8 7 38 Z" fill="url(#labelGrad)" stroke="#38BDF8" strokeWidth="0.5" />
+    <path d="M 7 39 Q 19 41.8 31 39" fill="none" stroke="#0284C7" strokeWidth="0.8" />
+    <path d="M 7.2 49 Q 19 51.8 30.8 49" fill="none" stroke="#0284C7" strokeWidth="0.8" />
+
+    {/* Mini Water Droplet Icon on Label */}
+    <g transform="translate(16.5, 40.5) scale(0.2)">
+      <path d="M 12 2 C 12 2, 3 13, 3 17 C 3 22, 7 26, 12 26 C 17 26, 21 22, 21 17 C 21 13, 12 2, 12 2 Z" fill="#0284C7" />
+      <path d="M 12 6 C 12 6, 7 14, 7 17 C 7 20, 9 22, 12 22 Z" fill="#38BDF8" opacity="0.8" />
+    </g>
+
+    {/* BOLD & CLEAN "WATER" Typography */}
+    <text x="19" y="47.6" textAnchor="middle" fill="#0369A1" fontSize="5" fontFamily="'Impact', 'Arial Black', sans-serif" fontWeight="900" letterSpacing="1">WATER</text>
+    <text x="19" y="47.1" textAnchor="middle" fill="#0C4A6E" fontSize="5" fontFamily="'Impact', 'Arial Black', sans-serif" fontWeight="900" letterSpacing="1">WATER</text>
+
+    {/* Bottle Neck & Security Ring */}
+    <rect x="14.5" y="11" width="9" height="7" fill="url(#petBottleGrad)" stroke="#7DD3FC" strokeWidth="0.6" />
+    <rect x="14" y="15" width="10" height="2" rx="0.5" fill="#0284C7" stroke="#0369A1" strokeWidth="0.4" />
+
+    {/* 3D Ribbed Blue Screw Cap */}
+    <rect x="13.5" y="5" width="11" height="8" rx="2" fill="url(#capGrad)" stroke="#0369A1" strokeWidth="0.6" />
+    <line x1="16" y1="5.5" x2="16" y2="12.5" stroke="#FFFFFF" strokeWidth="0.5" opacity="0.6" />
+    <line x1="18" y1="5.5" x2="18" y2="12.5" stroke="#FFFFFF" strokeWidth="0.7" opacity="0.8" />
+    <line x1="20" y1="5.5" x2="20" y2="12.5" stroke="#FFFFFF" strokeWidth="0.7" opacity="0.7" />
+    <line x1="22" y1="5.5" x2="22" y2="12.5" stroke="#075985" strokeWidth="0.5" opacity="0.6" />
+    <ellipse cx="19" cy="5.5" rx="5.5" ry="1.6" fill="#38BDF8" />
+    <ellipse cx="19" cy="5.2" rx="4.5" ry="1.2" fill="#7DD3FC" opacity="0.8" />
   </svg>
 );
 
