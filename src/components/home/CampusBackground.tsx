@@ -46,7 +46,10 @@ export function CampusBackground() {
   }, []);
 
   return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none select-none">
+    <div
+      className="absolute inset-0 overflow-hidden pointer-events-none select-none"
+      style={{ backgroundColor: isNight ? "#020617" : "#5B9EC9" }}
+    >
       <style>{`
         /* ── Cloud Drift Animations ── */
         @keyframes cloud-drift-a {
@@ -109,16 +112,73 @@ export function CampusBackground() {
         .star-pulse-2 { animation: star-fade-2 4.2s ease-in-out infinite 1.1s; }
         .star-pulse-3 { animation: star-fade-3 2.9s ease-in-out infinite 1.8s; }
         .night-window-glow { animation: room-light-flicker 6s ease-in-out infinite; }
+
+        /* ── Mobile Campus Responsive Panorama & Cinematic Camera Glide ── */
+        @media (max-width: 768px) {
+          .campus-pan-wrapper {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: campus-pan-mobile 30s ease-in-out infinite;
+            transform-origin: center 50%;
+            will-change: transform;
+          }
+
+          @keyframes campus-pan-mobile {
+            0%, 100% {
+              /* Central Campus: Marwadi University Academic Block & Flag */
+              transform: translate3d(0, 0, 0) scale(0.68);
+            }
+            18% {
+              /* Pause at Center for prominent academic block view */
+              transform: translate3d(0, 0, 0) scale(0.68);
+            }
+            45% {
+              /* Smooth glide to West Campus: Hostel A (Amber) & Hostel B (Emerald) */
+              transform: translate3d(24%, 0, 0) scale(0.68);
+            }
+            55% {
+              /* Pause to showcase student hostels */
+              transform: translate3d(24%, 0, 0) scale(0.68);
+            }
+            75% {
+              /* Smooth glide to East Campus: Library, Hostel C/D, Sports Track, Moon/Sun */
+              transform: translate3d(-24%, 0, 0) scale(0.68);
+            }
+            85% {
+              /* Pause to showcase library & sports facilities */
+              transform: translate3d(-24%, 0, 0) scale(0.68);
+            }
+          }
+
+          @media (prefers-reduced-motion: reduce) {
+            .campus-pan-wrapper {
+              animation: none !important;
+              transform: translate3d(0, 0, 0) scale(0.68) !important;
+            }
+          }
+        }
+
+        @media (min-width: 769px) {
+          .campus-pan-wrapper {
+            width: 100%;
+            height: 100%;
+            transform: none;
+          }
+        }
       `}</style>
 
-      <svg
-        viewBox="0 0 1440 800"
-        xmlns="http://www.w3.org/2000/svg"
-        preserveAspectRatio="xMidYMid slice"
-        className="w-full h-full"
-        aria-hidden="true"
-        role="presentation"
-      >
+      <div className="campus-pan-wrapper">
+        <svg
+          viewBox="0 0 1440 800"
+          xmlns="http://www.w3.org/2000/svg"
+          preserveAspectRatio="xMidYMid slice"
+          className="w-full h-full"
+          aria-hidden="true"
+          role="presentation"
+        >
         <defs>
           {/* ── Sky Gradient ── */}
           <linearGradient id="uvSkyGrad" x1="0" y1="0" x2="0" y2="1">
@@ -264,8 +324,8 @@ export function CampusBackground() {
         {/* ═══════════════════════════════════════════════
             LAYER 1 — SKY & ATMOSPHERE
         ═══════════════════════════════════════════════ */}
-        <rect x="0" y="0" width="1440" height="800" fill="url(#uvSkyGrad)" />
-        <rect x="0" y="320" width="1440" height="480" fill="url(#uvHorizonHaze)" />
+        <rect x="-600" y="-500" width="2640" height="1300" fill="url(#uvSkyGrad)" />
+        <rect x="-600" y="320" width="2640" height="480" fill="url(#uvHorizonHaze)" />
 
         {/* ── Day Mode: Sun, God-Rays & Shimmer ── */}
         {!isNight && (
@@ -300,7 +360,7 @@ export function CampusBackground() {
         {/* ── Night Mode: Moon, Moonlight Wash & Stars ── */}
         {isNight && (
           <g>
-            <rect x="0" y="0" width="1440" height="800" fill="url(#uvMoonWash)" />
+            <rect x="-600" y="-500" width="2640" height="1300" fill="url(#uvMoonWash)" />
             {/* Luminous Lunar Auras */}
             <circle cx="1250" cy="92" r="160" fill="url(#uvMoonAura)" opacity="0.4" />
             <circle cx="1250" cy="92" r="80" fill="url(#uvMoonAura)" className="moon-glow" />
@@ -858,10 +918,10 @@ export function CampusBackground() {
         {/* ═══════════════════════════════════════════════
             LAYER 10 — LOWER CAMPUS LAWN & ATMOSPHERE
         ═══════════════════════════════════════════════ */}
-        <rect x="0" y="636" width="1440" height="164" fill="url(#uvGrassLower)" />
+        <rect x="-600" y="636" width="2640" height="600" fill="url(#uvGrassLower)" />
         {/* Sidewalk curb strip */}
-        <rect x="0" y="635" width="1440" height="2" fill={isNight ? "#334155" : "#5DB86E"} opacity="0.5" />
-        <rect x="0" y="636" width="1440" height="6" fill={isNight ? "#1E293B" : "#CBD2DD"} opacity="0.3" />
+        <rect x="-600" y="635" width="2640" height="2" fill={isNight ? "#334155" : "#5DB86E"} opacity="0.5" />
+        <rect x="-600" y="636" width="2640" height="6" fill={isNight ? "#1E293B" : "#CBD2DD"} opacity="0.3" />
 
         {/* Subtle Turf Shading */}
         {[80, 220, 380, 540, 700, 860, 1020, 1180, 1340].map((gx, gi) => (
@@ -875,6 +935,7 @@ export function CampusBackground() {
         <rect x="0" y="0" width="80" height="800" fill={isNight ? "#020617" : "#5B9EC9"} opacity="0.08" />
         <rect x="1360" y="0" width="80" height="800" fill={isNight ? "#020617" : "#5B9EC9"} opacity="0.08" />
       </svg>
+      </div>
     </div>
   );
 }
