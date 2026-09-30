@@ -87,22 +87,67 @@ const WaterBottle = () => (
 );
 
 const CoffeeCup = () => (
-  <svg width="60" height="70" viewBox="0 0 52 60" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ filter: "drop-shadow(0 15px 20px rgba(0,0,0,0.4))" }}>
-    <path d="M 18 10 Q 20 5 18 0" fill="none" stroke="#FDE68A" strokeWidth="2.5" strokeLinecap="round" opacity="0.8"/>
-    <path d="M 26 12 Q 28 7 26 2"  fill="none" stroke="#FDE68A" strokeWidth="2.5" strokeLinecap="round" opacity="0.8"/>
-    <path d="M 34 10 Q 36 5 34 0"  fill="none" stroke="#FDE68A" strokeWidth="2.5" strokeLinecap="round" opacity="0.8"/>
-    <path d="M 8 22 L 12 58 Q 12 60 26 60 Q 40 60 40 58 L 44 22 Z" fill="url(#coffeeSleeve)"/>
-    <path d="M 10 18 L 14 58 Q 14 60 26 60 Q 38 60 38 58 L 42 18 Z" fill="#FFF"/>
-    <ellipse cx="26" cy="18" rx="17" ry="6" fill="#1E293B"/>
-    <ellipse cx="26" cy="16" rx="13" ry="4" fill="#334155"/>
-    <rect x="21" y="13" width="10" height="4" fill="#0F172A" rx="2"/>
-    <path d="M 42 28 Q 52 28 52 36 Q 52 44 42 44" fill="none" stroke="#FFF" strokeWidth="5" strokeLinecap="round"/>
-    <text x="26" y="40" textAnchor="middle" fill="white" fontSize="9" fontFamily="sans-serif" fontWeight="900" opacity="0.95">UV</text>
-    <rect x="12" y="22" width="5" height="34" fill="white" opacity="0.4" rx="2.5"/>
+  <svg width="60" height="74" viewBox="0 0 54 66" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ filter: "drop-shadow(0 15px 22px rgba(0,0,0,0.45))" }}>
+    {/* Delicate Steam Wisps */}
+    <path d="M 21 14 Q 18 9 22 5 Q 24 2 22 0" fill="none" stroke="#FDE68A" strokeWidth="1.8" strokeLinecap="round" opacity="0.75" />
+    <path d="M 27 13 Q 30 8 27 4 Q 25 1 27 -2" fill="none" stroke="#FEF3C7" strokeWidth="2" strokeLinecap="round" opacity="0.9" />
+    <path d="M 33 15 Q 37 10 34 6 Q 32 3 34 1" fill="none" stroke="#FDE68A" strokeWidth="1.6" strokeLinecap="round" opacity="0.7" />
+
+    {/* Cup Body (Shaded Cylindrical Paper Cup) */}
+    <path d="M 11 20 L 15.5 58 Q 27 61 38.5 58 L 43 20 Z" fill="url(#cupBodyGrad)" />
+    
+    {/* Base Depth Oval */}
+    <ellipse cx="27" cy="58" rx="11.5" ry="2.5" fill="#CBD5E1" opacity="0.7" />
+
+    {/* Left Highlight Sheen on Cup Body */}
+    <rect x="13.5" y="22" width="3.5" height="34" rx="1.75" fill="white" opacity="0.5" />
+
+    {/* Emerald UniVerse Insulating Sleeve */}
+    <path d="M 12.4 31 L 14.5 49 Q 27 52 39.5 49 L 41.6 31 Q 27 34 12.4 31 Z" fill="url(#sleeveGrad)" />
+    <path d="M 12.4 31 Q 27 34 41.6 31" fill="none" stroke="#34D399" strokeWidth="0.8" opacity="0.7" />
+    <path d="M 14.5 49 Q 27 52 39.5 49" fill="none" stroke="#047857" strokeWidth="0.8" opacity="0.8" />
+    <path d="M 13.5 40 Q 27 43 40.5 40" fill="none" stroke="#065F46" strokeWidth="0.6" opacity="0.35" />
+
+    {/* Sleeve Emblem Badge */}
+    <circle cx="27" cy="40.5" r="7.2" fill="#064E3B" stroke="#6EE7B7" strokeWidth="0.8" />
+    <circle cx="27" cy="40.5" r="5.8" fill="none" stroke="#34D399" strokeWidth="0.5" strokeDasharray="1.2 0.8" opacity="0.8" />
+    <text x="27" y="43" textAnchor="middle" fill="#FFFFFF" fontSize="6.5" fontFamily="system-ui, -apple-system, sans-serif" fontWeight="900" letterSpacing="0.5">UV</text>
+
+    {/* Takeaway Snap Lid */}
+    {/* Bottom Rim (Snaps tightly over the cup lip) */}
+    <ellipse cx="27" cy="20" rx="17.5" ry="5" fill="url(#lidBaseGrad)" />
+    <path d="M 10 20 Q 27 23 44 20" fill="none" stroke="#64748B" strokeWidth="0.8" opacity="0.5" />
+
+    {/* Raised Mid Tier */}
+    <ellipse cx="27" cy="18" rx="14.5" ry="3.8" fill="#1E293B" />
+    <ellipse cx="27" cy="17" rx="13.5" ry="3.2" fill="#334155" />
+
+    {/* Raised Drinking Sip Hole */}
+    <rect x="23" y="14" width="8" height="3.2" rx="1.6" fill="#0F172A" />
+    <ellipse cx="27" cy="15.2" rx="2.5" ry="1" fill="#020617" />
+
     <defs>
-      <linearGradient id="coffeeSleeve" x1="0" y1="0" x2="1" y2="0">
-        <stop offset="0%" stopColor="#10B981"/>
-        <stop offset="100%" stopColor="#047857"/>
+      {/* Cup Body Gradient */}
+      <linearGradient id="cupBodyGrad" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stopColor="#E2E8F0" />
+        <stop offset="25%" stopColor="#F8FAFC" />
+        <stop offset="65%" stopColor="#FFFFFF" />
+        <stop offset="100%" stopColor="#E2E8F0" />
+      </linearGradient>
+
+      {/* Emerald Sleeve Gradient */}
+      <linearGradient id="sleeveGrad" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stopColor="#047857" />
+        <stop offset="20%" stopColor="#059669" />
+        <stop offset="55%" stopColor="#10B981" />
+        <stop offset="85%" stopColor="#059669" />
+        <stop offset="100%" stopColor="#047857" />
+      </linearGradient>
+
+      {/* Matte Dark Lid Gradient */}
+      <linearGradient id="lidBaseGrad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stopColor="#334155" />
+        <stop offset="100%" stopColor="#0F172A" />
       </linearGradient>
     </defs>
   </svg>
