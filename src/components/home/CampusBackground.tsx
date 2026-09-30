@@ -415,49 +415,7 @@ function CampusScene({ isNight, isMobile }: { isNight: boolean; isMobile: boolea
         CAMPUS ARCHITECTURAL SKYLINE (SCALED FOR MOBILE HORIZON)
     ═══════════════════════════════════════════════ */}
     <g transform={isMobile ? "translate(0, 600) scale(1, 1.25) translate(0, -600)" : undefined}>
-      {/* ═══════════════════════════════════════════════
-          LAYER 4 — MODERN CAMPUS LIBRARY (RIGHT WING)
-      ═══════════════════════════════════════════════ */}
-      <polygon points="1220,280 1240,270 1440,270 1420,280" fill={isNight ? "#020704" : "#0A2012"} opacity="0.3" />
-      <rect
-        x="1220"
-        y="280"
-        width="200"
-        height="285"
-        fill={`url(#uvHostelFacade_${isMobile ? "m" : "d"})`}
-        filter={`url(#uvSoftShadow_${isMobile ? "m" : "d"})`}
-        rx="2"
-      />
-      <polygon
-        points="1420,280 1435,270 1435,555 1420,565"
-        fill={`url(#uvHostelSideShade_${isMobile ? "m" : "d"})`}
-      />
-      <rect x="1220" y="280" width="200" height="12" fill="#3B82F6" />
-      <polygon points="1420,280 1435,270 1435,282 1420,292" fill="#1D4ED8" />
 
-      {/* Modern Library Tinted Glass Grid */}
-      {[0, 1, 2, 3].map(row => {
-        const isLitAtNight = row === 1 || row === 2 || row === 3;
-        return (
-          <rect
-            key={`lib${row}`}
-            x="1235"
-            y={303 + row * 62}
-            width="170"
-            height="42"
-            fill={isNight ? (isLitAtNight ? "#FDE047" : "#0F172A") : "#93C5FD"}
-            opacity={isNight ? (isLitAtNight ? 0.92 : 0.45) : 0.65}
-            className={isNight && isLitAtNight ? "night-window-glow" : undefined}
-            filter={isNight && isLitAtNight ? `url(#uvNightLightGlow_${isMobile ? "m" : "d"})` : undefined}
-            rx="2"
-          />
-        );
-      })}
-
-      <rect x="1265" y="525" width="110" height="26" fill="#1D4ED8" rx="13" />
-      <text x="1320" y="542" textAnchor="middle" fill="white" fontSize="11" fontFamily="sans-serif" fontWeight="700" letterSpacing="0.8">
-        LIBRARY
-      </text>
 
       {/* ═══════════════════════════════════════════════
           LAYER 5 — MAIN ACADEMIC BLOCK (FACADE)
@@ -664,6 +622,44 @@ function CampusScene({ isNight, isMobile }: { isNight: boolean; isMobile: boolea
         <rect x="1063" y="498" width="44" height="42" fill={isNight ? "#1F4E4B" : "#3B7C77"} rx="2" />
         <rect x="1063" y="498" width="44" height="6" fill={isNight ? "#153937" : "#2C5E5A"} />
         <rect x="1083" y="508" width="5" height="22" fill={isNight ? "#0E2827" : "#1E4340"} rx="1" />
+      </g>
+
+      {/* ── Hostel D (Amber Accent, Far Right) ── */}
+      <g filter={`url(#uvSoftShadow_${isMobile ? "m" : "d"})`}>
+        <rect x="1226" y="282" width="196" height="268" fill={`url(#uvHostelFacade_${isMobile ? "m" : "d"})`} rx="2" />
+        <rect x="1226" y="282" width="196" height="12" fill="#F59E0B" />
+        <rect x="1226" y="294" width="196" height="3" fill="#D97706" opacity="0.5" />
+        {[0, 1, 2, 3].map(f => <rect key={f} x="1226" y={297 + f * 62} width="196" height="1" fill={isNight ? "#475569" : "#E5E7EB"} />)}
+
+        {[0, 1, 2, 3].map(row =>
+          [0, 1, 2].map(col => {
+            const isNightLit =
+              (row === 0 && col === 1) ||
+              (row === 1 && (col === 0 || col === 2)) ||
+              (row === 2 && col === 1) ||
+              (row === 3 && (col === 0 || col === 2));
+            return (
+              <rect
+                key={`dw${row}-${col}`}
+                x={1242 + col * 58}
+                y={303 + row * 62}
+                width="38"
+                height="42"
+                fill={isNight ? (isNightLit ? "#FDE047" : "#1E293B") : "#93C5FD"}
+                opacity={isNight ? (isNightLit ? 0.95 : 0.40) : 0.65}
+                className={isNight && isNightLit ? "night-window-glow" : undefined}
+                filter={isNight && isNightLit ? `url(#uvNightLightGlow_${isMobile ? "m" : "d"})` : undefined}
+                rx="2"
+              />
+            );
+          })
+        )}
+
+        <rect x="1274" y="524" width="100" height="26" fill="#F59E0B" rx="13" />
+        <text x="1324" y="541" textAnchor="middle" fill="white" fontSize="12" fontFamily="sans-serif" fontWeight="700" letterSpacing="0.5">HOSTEL D</text>
+        <rect x="1302" y="508" width="44" height="42" fill={isNight ? "#8A6635" : "#C09050"} rx="2" />
+        <rect x="1302" y="508" width="44" height="6" fill={isNight ? "#6D4E26" : "#A07030"} />
+        <rect x="1322" y="518" width="5" height="22" fill={isNight ? "#4F3618" : "#8B6040"} rx="1" />
       </g>
     </g>
 
