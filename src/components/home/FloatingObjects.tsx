@@ -50,24 +50,98 @@ const ChocolateBar = () => (
 );
 
 const SodaCan = () => (
-  <svg width="46" height="74" viewBox="0 0 38 62" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ filter: "drop-shadow(0 15px 20px rgba(0,0,0,0.4))" }}>
-    <rect x="4" y="10" width="30" height="46" fill="url(#canGrad)" rx="4"/>
-    <ellipse cx="19" cy="10" rx="15" ry="5" fill="#C0C0C0"/>
-    <ellipse cx="19" cy="10" rx="8" ry="3" fill="#A0A0A0" stroke="#808080" strokeWidth="0.5"/>
-    <rect x="17" y="5" width="5" height="7" fill="#E0E0E0" rx="1"/>
-    <ellipse cx="19" cy="56" rx="15" ry="5" fill="#C0C0C0"/>
-    <rect x="4" y="22" width="30" height="22" fill="#064E3B" opacity="0.9"/>
-    <text x="19" y="31" textAnchor="middle" fill="#6EE7B7" fontSize="10" fontFamily="sans-serif" fontWeight="900" letterSpacing="1">UV</text>
-    <text x="19" y="41" textAnchor="middle" fill="white" fontSize="6" fontFamily="sans-serif" fontWeight="700" opacity="0.9">REFRESH</text>
-    <rect x="6" y="12" width="4" height="42" fill="white" opacity="0.4" rx="2"/>
-    <rect x="28" y="12" width="2" height="42" fill="white" opacity="0.2" rx="1"/>
+  <svg width="50" height="78" viewBox="0 0 42 66" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ filter: "drop-shadow(0 18px 24px rgba(0,0,0,0.55)) drop-shadow(0 6px 8px rgba(0,0,0,0.3))" }}>
     <defs>
-      <linearGradient id="canGrad" x1="0" y1="0" x2="1" y2="0">
-        <stop offset="0%" stopColor="#059669"/>
-        <stop offset="50%" stopColor="#34D399"/>
-        <stop offset="100%" stopColor="#047857"/>
+      {/* 3D Metallic Red Coke Can Body */}
+      <linearGradient id="cokeRedGrad" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stopColor="#7F1D1D" />
+        <stop offset="12%" stopColor="#991B1B" />
+        <stop offset="32%" stopColor="#EF4444" />
+        <stop offset="55%" stopColor="#DC2626" />
+        <stop offset="85%" stopColor="#991B1B" />
+        <stop offset="100%" stopColor="#5B1111" />
+      </linearGradient>
+
+      {/* Metallic Aluminum Rim & Lid */}
+      <linearGradient id="aluminumGrad" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stopColor="#94A3B8" />
+        <stop offset="25%" stopColor="#F1F5F9" />
+        <stop offset="50%" stopColor="#CBD5E1" />
+        <stop offset="80%" stopColor="#E2E8F0" />
+        <stop offset="100%" stopColor="#64748B" />
+      </linearGradient>
+
+      {/* Metallic Neck Inset Gradient */}
+      <linearGradient id="neckGrad" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stopColor="#64748B" />
+        <stop offset="30%" stopColor="#E2E8F0" />
+        <stop offset="70%" stopColor="#94A3B8" />
+        <stop offset="100%" stopColor="#475569" />
+      </linearGradient>
+
+      {/* Pull Tab Gradient */}
+      <linearGradient id="tabGrad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stopColor="#F8FAFC" />
+        <stop offset="100%" stopColor="#94A3B8" />
       </linearGradient>
     </defs>
+
+    {/* Base Ambient Shadow */}
+    <ellipse cx="21" cy="62" rx="14" ry="3" fill="#000000" opacity="0.4" />
+
+    {/* Tapered Bottom Aluminum Rim */}
+    <path d="M 7 57 L 9 60 Q 21 63 33 60 L 35 57 Z" fill="url(#aluminumGrad)" />
+    <ellipse cx="21" cy="60" rx="12" ry="2.2" fill="#64748B" />
+
+    {/* Main Can Body */}
+    <path d="M 6 15 L 7 57 Q 21 60.5 35 57 L 36 15 Q 21 17.5 6 15 Z" fill="url(#cokeRedGrad)" />
+
+    {/* Left Aluminum Specular Highlight Sheen (Glossy Reflection) */}
+    <path d="M 9.5 16 L 10.5 56.5 Q 12 57 13.5 56.8 L 12.5 16.2 Z" fill="#FFFFFF" opacity="0.65" />
+    <path d="M 11 16.2 L 12 56.5 Q 12.8 56.7 13.5 56.6 L 12.5 16.3 Z" fill="#FFFFFF" opacity="0.85" />
+
+    {/* Right Soft Ambient Rim Reflection */}
+    <path d="M 33 16.5 L 32.5 56 Q 34 56.5 34.8 56 L 35.2 16.3 Z" fill="#FFFFFF" opacity="0.25" />
+
+    {/* Dynamic Iconic Coke Wave / Ribbon */}
+    <path d="M 6 38 Q 14 34 21 38 Q 28 42 36 36 L 36 39.5 Q 28 45.5 21 41.5 Q 14 37.5 6 41 Z" fill="#FFFFFF" opacity="0.95" />
+    <path d="M 6 42 Q 14 38.5 21 42 Q 28 45.5 36 40.5 L 36 41.5 Q 28 46.5 21 43 Q 14 39.5 6 43 Z" fill="#FFFFFF" opacity="0.4" />
+
+    {/* BOLD "COKE" Typography */}
+    <text x="21" y="32.5" textAnchor="middle" fill="#5B1111" fontSize="8.5" fontFamily="'Impact', 'Arial Black', sans-serif" fontWeight="900" letterSpacing="1">COKE</text>
+    <text x="21" y="31.8" textAnchor="middle" fill="#FFFFFF" fontSize="8.5" fontFamily="'Impact', 'Arial Black', sans-serif" fontWeight="900" letterSpacing="1">COKE</text>
+
+    {/* Secondary "ORIGINAL" Badge / Text */}
+    <text x="21" y="24" textAnchor="middle" fill="#FECACA" fontSize="2.8" fontFamily="-apple-system, sans-serif" fontWeight="800" letterSpacing="1.2" opacity="0.9">ORIGINAL</text>
+
+    {/* Cold Ice Droplets */}
+    <circle cx="16" cy="22" r="0.8" fill="#FFFFFF" opacity="0.8" />
+    <circle cx="15.8" cy="22.2" r="0.4" fill="#7F1D1D" opacity="0.5" />
+    <circle cx="28" cy="46" r="0.7" fill="#FFFFFF" opacity="0.8" />
+    <circle cx="28" cy="46.2" r="0.3" fill="#7F1D1D" opacity="0.5" />
+    <circle cx="10" cy="45" r="0.6" fill="#FFFFFF" opacity="0.7" />
+
+    {/* Tapered Upper Neck (Chime) */}
+    <path d="M 6 15 L 8 11 Q 21 13 34 11 L 36 15 Q 21 17.5 6 15 Z" fill="url(#neckGrad)" />
+    <ellipse cx="21" cy="11.5" rx="13" ry="3.5" fill="#475569" />
+
+    {/* Metallic Aluminum Top Rim */}
+    <ellipse cx="21" cy="10.5" rx="13" ry="3.8" fill="url(#aluminumGrad)" />
+    <ellipse cx="21" cy="10.2" rx="12" ry="3.3" fill="#E2E8F0" />
+    <ellipse cx="21" cy="10" rx="11" ry="2.9" fill="#94A3B8" />
+    <ellipse cx="21" cy="9.8" rx="10.5" ry="2.6" fill="#CBD5E1" />
+
+    {/* Recessed Drinking Spout Hole */}
+    <path d="M 18 10 C 18 9, 24 9, 24 10 C 24 11, 18 11, 18 10 Z" fill="#475569" stroke="#334155" strokeWidth="0.3" />
+    <ellipse cx="21" cy="9.9" rx="2" ry="0.6" fill="#0F172A" />
+
+    {/* 3D Metal Pull-Tab */}
+    <g transform="translate(19.5, 6.2)">
+      <path d="M 0 3.5 L 1.2 0.8 Q 1.5 0.3 2.5 0.3 L 3.5 0.3 Q 4.5 0.3 4.8 0.8 L 6 3.5 Q 6.5 4.5 5 4.8 L 1 4.8 Q -0.5 4.5 0 3.5 Z" fill="url(#tabGrad)" stroke="#64748B" strokeWidth="0.3" />
+      <ellipse cx="3" cy="2.2" rx="1.1" ry="0.6" fill="#64748B" />
+      <circle cx="3" cy="4" r="0.6" fill="#334155" />
+      <circle cx="3" cy="3.9" r="0.3" fill="#FFFFFF" opacity="0.8" />
+    </g>
   </svg>
 );
 
