@@ -701,3 +701,64 @@ export async function uploadChatImage(
     return null;
   }
 }
+
+/**
+ * Deletes a message for everyone (WhatsApp-style) with triple-layer redundancy:
+ * 1. Safe SECURITY DEFINER RPC (delete_message_for_everyone)
+ * 2. Server API route (/api/chat/delete-message) if in browser
+ * 3. Direct RLS table delete (.from("messages").delete())
+ */
+export async function deleteMessage(
+  supabase: SupabaseClient<Database>,
+  messageId: string,
+  userId: string
+): Promise<boolean> {
+  // Layer 1: Call RPC
+  try {
+    const { data: rpcData, error: rpcError } = await (supabase.rpc as any)(
+      "delete_message_for_everyone",
+      { p_message_id: messageId }
+    );
+    if (!rpcError && rpcData) {
+      return true;
+    }
+  } catch {
+    // Fall through to next layer
+  }
+
+  // Layer 2: Browser API route fallback
+  if (typeof window !== "undefined") {
+    try {
+      const res = await fetch("/api/chat/delete-message", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ messageId }),
+      });
+      if (res.ok) {
+        const json = await res.json();
+        if (json.success) {
+          return true;
+        }
+      }
+    } catch (apiErr) {
+      console.warn("[chat] delete-message API fallback error:", apiErr);
+    }
+  }
+
+  // Layer 3: Direct table delete
+  try {
+    const { error: directError } = await supabase
+      .from("messages")
+      .delete()
+      .eq("id", messageId)
+      .eq("sender_id", userId);
+
+    if (!directError) {
+      return true;
+    }
+  } catch (directErr) {
+    console.warn("[chat] direct delete error:", directErr);
+  }
+
+  return false;
+}

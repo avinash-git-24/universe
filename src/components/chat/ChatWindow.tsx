@@ -24,6 +24,7 @@ import {
   ConversationWithDetails,
   getMessages,
   sendMessage,
+  deleteMessage,
   markConversationAsRead,
   uploadChatImage,
 } from "@/lib/database/chat";
@@ -178,6 +179,21 @@ export function ChatWindow({ userId, conversation, isOnline }: ChatWindowProps) 
           );
         }
       )
+      .on(
+        "postgres_changes",
+        {
+          event: "DELETE",
+          schema: "public",
+          table: "messages",
+          filter: `conversation_id=eq.${conversation.id}`,
+        },
+        (payload) => {
+          const deletedId = (payload.old as { id?: string })?.id;
+          if (deletedId) {
+            setMessages((prev) => prev.filter((m) => m.id !== deletedId));
+          }
+        }
+      )
       .on("broadcast", { event: "new_message" }, async (payload) => {
         const incoming = payload.payload as Message;
         if (incoming && incoming.sender_id !== userId) {
@@ -205,6 +221,12 @@ export function ChatWindow({ userId, conversation, isOnline }: ChatWindowProps) 
               return m;
             })
           );
+        }
+      })
+      .on("broadcast", { event: "message_deleted" }, (payload) => {
+        const { messageId } = (payload.payload as { messageId?: string }) || {};
+        if (messageId) {
+          setMessages((prev) => prev.filter((m) => m.id !== messageId));
         }
       })
       .on("broadcast", { event: "message_confirmed" }, (payload) => {
@@ -411,6 +433,28 @@ export function ChatWindow({ userId, conversation, isOnline }: ChatWindowProps) 
         .from("messages")
         .update({ metadata: updatedMeta })
         .eq("id", messageId);
+    }
+  };
+
+  // Handle Delete Message For Everyone (WhatsApp-style)
+  const handleDeleteMessage = async (messageId: string) => {
+    // 1. Optimistic removal locally
+    setMessages((prev) => prev.filter((m) => m.id !== messageId));
+
+    // 2. Broadcast immediately over websocket channel so receiver gets 0ms instant deletion
+    supabase.channel(`chat:messages:${conversation.id}`).send({
+      type: "broadcast",
+      event: "message_deleted",
+      payload: { messageId, conversationId: conversation.id },
+    });
+
+    // 3. Persist deletion in database
+    if (!messageId.startsWith("temp-")) {
+      try {
+        await deleteMessage(supabase, messageId, userId);
+      } catch (err) {
+        console.error("[chat] Error deleting message:", err);
+      }
     }
   };
 
@@ -737,6 +781,7 @@ export function ChatWindow({ userId, conversation, isOnline }: ChatWindowProps) 
                         isFirstInGroup={isFirstInGroup}
                         isLastInGroup={isLastInGroup}
                         onReact={handleReact}
+                        onDelete={handleDeleteMessage}
                         currentUserId={userId}
                       />
                     )}

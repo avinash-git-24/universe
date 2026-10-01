@@ -1,7 +1,7 @@
 "use client";
 
 import { memo, useState } from "react";
-import { Check, CheckCheck, X, Download, SmilePlus } from "lucide-react";
+import { Check, CheckCheck, X, Download, SmilePlus, Trash2 } from "lucide-react";
 import { Message } from "@/lib/database/chat";
 import { format } from "date-fns";
 import Image from "next/image";
@@ -14,6 +14,7 @@ interface MessageBubbleProps {
   isFirstInGroup?: boolean;
   isLastInGroup?: boolean;
   onReact?: (messageId: string, emoji: string) => void;
+  onDelete?: (messageId: string) => Promise<void> | void;
   currentUserId?: string;
 }
 
@@ -23,10 +24,13 @@ export const MessageBubble = memo(function MessageBubble({
   isFirstInGroup = true,
   isLastInGroup = true,
   onReact,
+  onDelete,
   currentUserId,
 }: MessageBubbleProps) {
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const [showReactionPicker, setShowReactionPicker] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   // Parse reactions from metadata safely
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -93,6 +97,20 @@ export const MessageBubble = memo(function MessageBubble({
           >
             <SmilePlus className="w-3.5 h-3.5" />
           </button>
+
+          {isMe && onDelete && (
+            <>
+              <div className="w-[1px] h-3.5 bg-white/20 mx-0.5" />
+              <button
+                type="button"
+                onClick={() => setShowDeleteConfirm(true)}
+                className="w-6 h-6 flex items-center justify-center text-red-400/80 hover:text-red-300 hover:bg-red-500/20 rounded-full transition-colors"
+                title="Delete for everyone"
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+              </button>
+            </>
+          )}
         </div>
 
         {/* Message Bubble Card */}
@@ -166,6 +184,19 @@ export const MessageBubble = memo(function MessageBubble({
                     <CheckCheck className="w-3.5 h-3.5 text-cyan-300 font-bold drop-shadow-[0_0_8px_rgba(34,211,238,0.95)]" />
                   )}
                 </span>
+              )}
+              {isMe && onDelete && (
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShowDeleteConfirm(true);
+                  }}
+                  className="opacity-0 group-hover:opacity-100 max-sm:opacity-60 hover:opacity-100 text-white/70 hover:text-red-300 ml-1 p-0.5 rounded transition-all active:scale-95 cursor-pointer"
+                  title="Delete message"
+                >
+                  <Trash2 className="w-3 h-3" />
+                </button>
               )}
             </div>
           </div>
@@ -243,6 +274,64 @@ export const MessageBubble = memo(function MessageBubble({
           </div>
         </div>
       )}
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteConfirm && (
+        <div
+          className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in duration-200"
+          onClick={() => !isDeleting && setShowDeleteConfirm(false)}
+        >
+          <div
+            className="relative w-full max-w-sm rounded-2xl bg-[#0c1410] border border-white/15 p-5 shadow-[0_16px_40px_rgba(0,0,0,0.8)] text-left animate-in zoom-in-95 duration-150"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-start gap-3.5 mb-3.5">
+              <div className="w-10 h-10 rounded-xl bg-red-500/15 border border-red-500/30 flex items-center justify-center text-red-400 shrink-0">
+                <Trash2 className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="text-base font-bold text-white">Delete message?</h3>
+                <p className="text-xs text-white/60 mt-1 leading-relaxed">
+                  This message will be deleted for everyone in this chat.
+                </p>
+              </div>
+            </div>
+
+            {/* Message snippet preview */}
+            <div className="mb-5 px-3.5 py-2.5 rounded-xl bg-black/40 border border-white/10 text-xs text-white/75 italic truncate">
+              &ldquo;{message.content || (message.image_url ? "📷 Image attachment" : "Message")}&rdquo;
+            </div>
+
+            <div className="flex items-center justify-end gap-2.5">
+              <button
+                type="button"
+                disabled={isDeleting}
+                onClick={() => setShowDeleteConfirm(false)}
+                className="px-4 py-2 rounded-xl text-xs font-semibold text-white/70 hover:text-white bg-white/5 hover:bg-white/10 transition-colors disabled:opacity-50 cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                disabled={isDeleting}
+                onClick={async () => {
+                  setIsDeleting(true);
+                  try {
+                    await onDelete?.(message.id);
+                  } finally {
+                    setIsDeleting(false);
+                    setShowDeleteConfirm(false);
+                  }
+                }}
+                className="px-4 py-2 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 transition-all shadow-[0_4px_16px_rgba(220,38,38,0.35)] flex items-center gap-1.5 disabled:opacity-50 active:scale-95 cursor-pointer"
+              >
+                {isDeleting ? "Deleting..." : "Delete for everyone"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 });
+
