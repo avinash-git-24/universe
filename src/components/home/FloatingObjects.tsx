@@ -363,7 +363,7 @@ const CoffeeCup = () => (
   </svg>
 );
 
-const JuiceBox = () => (
+const _JuiceBox = () => (
   <svg width="56" height="68" viewBox="0 0 48 58" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ filter: "drop-shadow(0 15px 20px rgba(0,0,0,0.4))" }}>
     <rect x="4" y="10" width="40" height="44" fill="url(#juiceGrad)" rx="4" stroke="#D97706" strokeWidth="1.5"/>
     <rect x="4" y="10" width="40" height="8" fill="#F59E0B" rx="4"/>
@@ -421,82 +421,75 @@ interface FloatItem {
 }
 
 const ITEMS: FloatItem[] = [
+  // ── Left Side (3 items: Top, Middle, Bottom) ──
   {
     id: "snack",
     component: <SnackPacket />,
-    style: { top: "12%", left: "5%" },
-    floatY: [0, -20, 0],
+    style: { top: "14%", left: "4.5%" },
+    floatY: [0, -18, 0],
     floatDuration: 5.2,
     floatDelay: 0,
-    rotate: -15,
-    rotateRange: 8,
+    rotate: -12,
+    rotateRange: 6,
   },
   {
     id: "choco",
     component: <ChocolateBar />,
-    style: { top: "32%", left: "2%" },
-    floatY: [0, -15, 0],
-    floatDuration: 6.1,
+    style: { top: "45%", left: "2.5%" },
+    floatY: [0, -16, 0],
+    floatDuration: 6.0,
     floatDelay: 0.8,
-    rotate: -25,
-    rotateRange: 6,
-    mobileHidden: true,
-  },
-  {
-    id: "can",
-    component: <SodaCan />,
-    style: { top: "15%", right: "6%" },
-    floatY: [0, -25, 0],
-    floatDuration: 4.8,
-    floatDelay: 0.4,
-    rotate: 15,
-    rotateRange: 10,
-  },
-  {
-    id: "coffee",
-    component: <CoffeeCup />,
-    style: { top: "35%", right: "3%" },
-    floatY: [0, -18, 0],
-    floatDuration: 5.6,
-    floatDelay: 1.2,
-    rotate: 10,
+    rotate: -18,
     rotateRange: 5,
     mobileHidden: true,
   },
   {
     id: "water",
     component: <WaterBottle />,
-    style: { top: "58%", left: "3.5%" },
-    floatY: [0, -22, 0],
+    style: { top: "75%", left: "4%" },
+    floatY: [0, -18, 0],
     floatDuration: 6.5,
     floatDelay: 0.6,
-    rotate: -12,
-    rotateRange: 6,
+    rotate: -10,
+    rotateRange: 5,
     mobileHidden: true,
   },
+
+  // ── Right Side (3 items: Top, Middle, Bottom) ──
   {
-    id: "juice",
-    component: <JuiceBox />,
-    style: { top: "60%", right: "4%" },
+    id: "can",
+    component: <SodaCan />,
+    style: { top: "14%", right: "5%" },
     floatY: [0, -20, 0],
-    floatDuration: 5.8,
-    floatDelay: 1.5,
-    rotate: 18,
-    rotateRange: 8,
+    floatDuration: 4.8,
+    floatDelay: 0.4,
+    rotate: 14,
+    rotateRange: 7,
+  },
+  {
+    id: "coffee",
+    component: <CoffeeCup />,
+    style: { top: "45%", right: "3%" },
+    floatY: [0, -16, 0],
+    floatDuration: 5.6,
+    floatDelay: 1.2,
+    rotate: 8,
+    rotateRange: 5,
     mobileHidden: true,
   },
   {
     id: "noodles",
     component: <NoodleCup />,
-    style: { top: "67%", left: "5%" },
+    style: { top: "75%", right: "4.5%" },
     floatY: [0, -16, 0],
-    floatDuration: 7.0,
-    floatDelay: 2.0,
-    rotate: -8,
+    floatDuration: 6.8,
+    floatDelay: 1.8,
+    rotate: -6,
     rotateRange: 4,
     mobileHidden: true,
   },
 ];
+
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
