@@ -115,11 +115,32 @@ export function CampusBackground() {
         viewBox="0 0 1440 800"
         xmlns="http://www.w3.org/2000/svg"
         preserveAspectRatio="xMidYMid slice"
-        className="w-full h-full"
+        className="hidden md:block w-full h-full"
         aria-hidden="true"
         role="presentation"
       >
-        <defs>
+        <CampusScene isNight={isNight} isMobile={false} />
+      </svg>
+
+      {/* ── Mobile Campus (Full Campus Panorama — 100% Complete Width) ── */}
+      <svg
+        viewBox="0 -600 1440 3000"
+        xmlns="http://www.w3.org/2000/svg"
+        preserveAspectRatio="xMidYMid slice"
+        className="block md:hidden w-full h-full"
+        aria-hidden="true"
+        role="presentation"
+      >
+        <CampusScene isNight={isNight} isMobile={true} />
+      </svg>
+    </div>
+  );
+}
+
+function CampusScene({ isNight, isMobile = false }: { isNight: boolean; isMobile?: boolean }) {
+  return (
+    <>
+      <defs>
           {/* ── Sky Gradient ── */}
           <linearGradient id="uvSkyGrad" x1="0" y1="0" x2="0" y2="1">
             <stop
@@ -264,8 +285,20 @@ export function CampusBackground() {
         {/* ═══════════════════════════════════════════════
             LAYER 1 — SKY & ATMOSPHERE
         ═══════════════════════════════════════════════ */}
-        <rect x="0" y="0" width="1440" height="800" fill="url(#uvSkyGrad)" />
-        <rect x="0" y="320" width="1440" height="480" fill="url(#uvHorizonHaze)" />
+        <rect
+          x={isMobile ? "-200" : "0"}
+          y={isMobile ? "-700" : "0"}
+          width={isMobile ? "1840" : "1440"}
+          height={isMobile ? "1500" : "800"}
+          fill="url(#uvSkyGrad)"
+        />
+        <rect
+          x={isMobile ? "-200" : "0"}
+          y="320"
+          width={isMobile ? "1840" : "1440"}
+          height="480"
+          fill="url(#uvHorizonHaze)"
+        />
 
         {/* ── Day Mode: Sun, God-Rays & Shimmer ── */}
         {!isNight && (
@@ -300,7 +333,13 @@ export function CampusBackground() {
         {/* ── Night Mode: Moon, Moonlight Wash & Stars ── */}
         {isNight && (
           <g>
-            <rect x="0" y="0" width="1440" height="800" fill="url(#uvMoonWash)" />
+            <rect
+              x={isMobile ? "-200" : "0"}
+              y={isMobile ? "-700" : "0"}
+              width={isMobile ? "1840" : "1440"}
+              height={isMobile ? "1500" : "800"}
+              fill="url(#uvMoonWash)"
+            />
             {/* Luminous Lunar Auras */}
             <circle cx="1250" cy="92" r="160" fill="url(#uvMoonAura)" opacity="0.4" />
             <circle cx="1250" cy="92" r="80" fill="url(#uvMoonAura)" className="moon-glow" />
@@ -858,10 +897,30 @@ export function CampusBackground() {
         {/* ═══════════════════════════════════════════════
             LAYER 10 — LOWER CAMPUS LAWN & ATMOSPHERE
         ═══════════════════════════════════════════════ */}
-        <rect x="0" y="636" width="1440" height="164" fill="url(#uvGrassLower)" />
+        <rect
+          x={isMobile ? "-200" : "0"}
+          y="636"
+          width={isMobile ? "1840" : "1440"}
+          height={isMobile ? "2400" : "164"}
+          fill="url(#uvGrassLower)"
+        />
         {/* Sidewalk curb strip */}
-        <rect x="0" y="635" width="1440" height="2" fill={isNight ? "#334155" : "#5DB86E"} opacity="0.5" />
-        <rect x="0" y="636" width="1440" height="6" fill={isNight ? "#1E293B" : "#CBD2DD"} opacity="0.3" />
+        <rect
+          x={isMobile ? "-200" : "0"}
+          y="635"
+          width={isMobile ? "1840" : "1440"}
+          height="2"
+          fill={isNight ? "#334155" : "#5DB86E"}
+          opacity="0.5"
+        />
+        <rect
+          x={isMobile ? "-200" : "0"}
+          y="636"
+          width={isMobile ? "1840" : "1440"}
+          height="6"
+          fill={isNight ? "#1E293B" : "#CBD2DD"}
+          opacity="0.3"
+        />
 
         {/* Subtle Turf Shading */}
         {[80, 220, 380, 540, 700, 860, 1020, 1180, 1340].map((gx, gi) => (
@@ -872,10 +931,23 @@ export function CampusBackground() {
         ))}
 
         {/* Cinematic Edge Soft Vignettes (Preserves center text readability) */}
-        <rect x="0" y="0" width="80" height="800" fill={isNight ? "#020617" : "#5B9EC9"} opacity="0.08" />
-        <rect x="1360" y="0" width="80" height="800" fill={isNight ? "#020617" : "#5B9EC9"} opacity="0.08" />
-      </svg>
-    </div>
+        <rect
+          x="0"
+          y={isMobile ? "-700" : "0"}
+          width="80"
+          height={isMobile ? "3700" : "800"}
+          fill={isNight ? "#020617" : "#5B9EC9"}
+          opacity="0.08"
+        />
+        <rect
+          x="1360"
+          y={isMobile ? "-700" : "0"}
+          width="80"
+          height={isMobile ? "3700" : "800"}
+          fill={isNight ? "#020617" : "#5B9EC9"}
+          opacity="0.08"
+        />
+    </>
   );
 }
 
