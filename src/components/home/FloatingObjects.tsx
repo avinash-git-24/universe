@@ -146,100 +146,167 @@ const SodaCan = () => (
 );
 
 const WaterBottle = () => (
-  <svg width="48" height="88" viewBox="0 0 38 72" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ filter: "drop-shadow(0 18px 24px rgba(0,0,0,0.5)) drop-shadow(0 6px 10px rgba(0,0,0,0.25))" }}>
+  <svg
+    width="50"
+    height="96"
+    viewBox="0 0 38 74"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    style={{
+      filter: "drop-shadow(0 20px 25px rgba(0,0,0,0.65)) drop-shadow(0 8px 16px rgba(2,132,199,0.35))",
+    }}
+  >
     <defs>
-      {/* PET Plastic Bottle Cylinder Gradient */}
-      <linearGradient id="petBottleGrad" x1="0" y1="0" x2="1" y2="0">
-        <stop offset="0%" stopColor="#BAE6FD" stopOpacity="0.6" />
-        <stop offset="15%" stopColor="#E0F2FE" stopOpacity="0.8" />
-        <stop offset="35%" stopColor="#FFFFFF" stopOpacity="0.95" />
-        <stop offset="65%" stopColor="#BAE6FD" stopOpacity="0.75" />
-        <stop offset="90%" stopColor="#7DD3FC" stopOpacity="0.8" />
-        <stop offset="100%" stopColor="#38BDF8" stopOpacity="0.6" />
-      </linearGradient>
-
-      {/* Fresh Pure Water Gradient */}
-      <linearGradient id="waterLiquidGrad" x1="0" y1="0" x2="1" y2="0">
+      {/* 3D Clear PET Plastic Bottle Shell */}
+      <linearGradient id="petShellGrad" x1="0" y1="0" x2="1" y2="0">
         <stop offset="0%" stopColor="#38BDF8" stopOpacity="0.55" />
-        <stop offset="30%" stopColor="#7DD3FC" stopOpacity="0.7" />
-        <stop offset="70%" stopColor="#38BDF8" stopOpacity="0.6" />
-        <stop offset="100%" stopColor="#0284C7" stopOpacity="0.55" />
+        <stop offset="12%" stopColor="#BAE6FD" stopOpacity="0.4" />
+        <stop offset="25%" stopColor="#FFFFFF" stopOpacity="0.95" />
+        <stop offset="40%" stopColor="#E0F2FE" stopOpacity="0.25" />
+        <stop offset="68%" stopColor="#38BDF8" stopOpacity="0.2" />
+        <stop offset="86%" stopColor="#7DD3FC" stopOpacity="0.5" />
+        <stop offset="100%" stopColor="#0284C7" stopOpacity="0.75" />
       </linearGradient>
 
-      {/* Plastic Screw Cap 3D Gradient */}
-      <linearGradient id="capGrad" x1="0" y1="0" x2="1" y2="0">
+      {/* Pure Sparkling Water Fill */}
+      <linearGradient id="liquidGrad" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stopColor="#0284C7" stopOpacity="0.65" />
+        <stop offset="18%" stopColor="#38BDF8" stopOpacity="0.5" />
+        <stop offset="50%" stopColor="#7DD3FC" stopOpacity="0.35" />
+        <stop offset="80%" stopColor="#38BDF8" stopOpacity="0.55" />
+        <stop offset="100%" stopColor="#0369A1" stopOpacity="0.75" />
+      </linearGradient>
+
+      {/* Vibrant High-Visibility Mineral Water Label */}
+      <linearGradient id="vibrantLabelGrad" x1="0" y1="0" x2="1" y2="0">
         <stop offset="0%" stopColor="#0369A1" />
-        <stop offset="25%" stopColor="#0EA5E9" />
+        <stop offset="18%" stopColor="#0284C7" />
+        <stop offset="40%" stopColor="#0EA5E9" />
         <stop offset="50%" stopColor="#38BDF8" />
-        <stop offset="80%" stopColor="#0284C7" />
+        <stop offset="60%" stopColor="#0EA5E9" />
+        <stop offset="82%" stopColor="#0284C7" />
         <stop offset="100%" stopColor="#075985" />
       </linearGradient>
 
-      {/* Label Gradient */}
-      <linearGradient id="labelGrad" x1="0" y1="0" x2="1" y2="0">
-        <stop offset="0%" stopColor="#E0F2FE" />
-        <stop offset="25%" stopColor="#FFFFFF" />
-        <stop offset="65%" stopColor="#F0F9FF" />
-        <stop offset="100%" stopColor="#BAE6FD" />
+      {/* Foil Accent Borders */}
+      <linearGradient id="silverFoilGrad" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stopColor="#64748B" />
+        <stop offset="20%" stopColor="#FFFFFF" />
+        <stop offset="50%" stopColor="#CBD5E1" />
+        <stop offset="80%" stopColor="#FFFFFF" />
+        <stop offset="100%" stopColor="#475569" />
+      </linearGradient>
+
+      {/* 3D Cyan Screw Cap */}
+      <linearGradient id="screwCapGrad" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stopColor="#0369A1" />
+        <stop offset="22%" stopColor="#0284C7" />
+        <stop offset="48%" stopColor="#38BDF8" />
+        <stop offset="76%" stopColor="#0284C7" />
+        <stop offset="100%" stopColor="#075985" />
       </linearGradient>
     </defs>
 
-    {/* Ambient Base Shadow */}
-    <ellipse cx="19" cy="69" rx="12" ry="2.5" fill="#000000" opacity="0.35" />
+    {/* Ambient Drop Shadow */}
+    <ellipse cx="19" cy="71" rx="12" ry="2.2" fill="#000000" opacity="0.55" />
 
-    {/* 3D Bottle Base (Molded PET Ribbed Bottom) */}
-    <path d="M 9 64 L 11 67 Q 19 69.5 27 67 L 29 64 Q 19 66 9 64 Z" fill="#7DD3FC" stroke="#38BDF8" strokeWidth="0.5" opacity="0.85" />
-    <ellipse cx="19" cy="67" rx="9" ry="1.8" fill="#0284C7" opacity="0.5" />
+    {/* Molded Base (Reinforced Petaloid Feet) */}
+    <path d="M 8.8 64 L 10 68.2 Q 19 71 28 68.2 L 29.2 64 Z" fill="#0284C7" opacity="0.6" stroke="#38BDF8" strokeWidth="0.5" />
+    <ellipse cx="19" cy="67.8" rx="8.5" ry="1.8" fill="#075985" opacity="0.7" />
+    <ellipse cx="19" cy="67.4" rx="5" ry="1.0" fill="#E0F2FE" opacity="0.8" />
 
-    {/* 3D Bottle Body Outer Shell (Ergonomic contoured PET plastic) */}
-    <path d="M 13 18 L 8 26 C 6 29, 6 33, 7 38 C 8 43, 6 47, 7 53 L 8 64 Q 19 67 30 64 L 31 53 C 32 47, 30 43, 31 38 C 32 33, 32 29, 30 26 L 25 18 Q 19 19.5 13 18 Z" fill="url(#petBottleGrad)" stroke="#7DD3FC" strokeWidth="0.8" />
+    {/* Liquid Water Body (Filled to shoulder, 85%) */}
+    <path d="M 7.8 25.5 Q 19 28 30.2 25.5 L 29.2 64 Q 19 67 8.8 64 Z" fill="url(#liquidGrad)" />
 
-    {/* Water Liquid Inside (Filled up to shoulder meniscus) */}
-    <path d="M 8.5 28 C 7 31, 7 34, 7.8 38 C 8.6 42, 7 46, 7.8 52 L 8.5 63 Q 19 65.5 29.5 63 L 30.2 52 C 31 46, 29.4 42, 30.2 38 C 31 34, 31 31, 29.5 28 Q 19 30 8.5 28 Z" fill="url(#waterLiquidGrad)" />
-    
-    {/* Liquid Surface Meniscus */}
-    <ellipse cx="19" cy="28" rx="10.5" ry="2.2" fill="#BAE6FD" opacity="0.6" />
+    {/* Curved Meniscus Line (Water Surface) */}
+    <ellipse cx="19" cy="25.5" rx="11.2" ry="2.2" fill="#7DD3FC" opacity="0.5" />
+    <ellipse cx="19" cy="25.3" rx="9.5" ry="1.5" fill="#E0F2FE" opacity="0.85" />
+    <path d="M 7.8 25.5 Q 19 28 30.2 25.5" fill="none" stroke="#FFFFFF" strokeWidth="0.8" opacity="0.95" />
 
-    {/* 3D Plastic Ribbing Contours */}
-    <path d="M 7.2 36 Q 19 38.5 30.8 36" fill="none" stroke="#FFFFFF" strokeWidth="0.7" opacity="0.75" />
-    <path d="M 7.5 54 Q 19 56.5 30.5 54" fill="none" stroke="#FFFFFF" strokeWidth="0.7" opacity="0.65" />
-    <path d="M 8 60 Q 19 62.5 30 60" fill="none" stroke="#FFFFFF" strokeWidth="0.6" opacity="0.5" />
+    {/* Crystal Clear PET Outer Bottle Silhouette (Slender & Ergonomic) */}
+    <path d="M 14.5 16.5 L 8.5 25.5 C 7.2 27.5, 7.2 29.5, 7.8 34 C 8.2 38, 7.6 42, 7.6 47 L 8.5 64 Q 19 67.5 29.5 64 L 30.4 47 C 30.4 42, 29.8 38, 30.2 34 C 30.8 29.5, 30.8 27.5, 29.5 25.5 L 23.5 16.5 Q 19 17.8 14.5 16.5 Z" fill="url(#petShellGrad)" stroke="#7DD3FC" strokeWidth="0.65" />
 
-    {/* Left Specular Reflection Sheen (Glossy clear plastic highlight) */}
-    <path d="M 10 24 L 11 63 Q 12.5 63.5 13.5 63 L 12.5 24 Z" fill="#FFFFFF" opacity="0.75" />
-    <path d="M 11.5 25 L 12.2 62 Q 13 62.3 13.5 62 L 12.8 25 Z" fill="#FFFFFF" opacity="0.95" />
-    
-    {/* Right Ambient Reflection */}
-    <path d="M 28 25 L 27.5 63 Q 28.5 63.2 29 63 L 29.5 25 Z" fill="#FFFFFF" opacity="0.3" />
+    {/* Molded Grip Reinforcement Ribs */}
+    <path d="M 7.8 30 Q 19 32.5 30.2 30" fill="none" stroke="#FFFFFF" strokeWidth="0.6" opacity="0.75" />
+    <path d="M 7.8 33.8 Q 19 36.3 30.2 33.8" fill="none" stroke="#FFFFFF" strokeWidth="0.55" opacity="0.6" />
+    <path d="M 7.8 53.5 Q 19 56 30.2 53.5" fill="none" stroke="#FFFFFF" strokeWidth="0.6" opacity="0.65" />
+    <path d="M 8.2 57.5 Q 19 60 29.8 57.5" fill="none" stroke="#FFFFFF" strokeWidth="0.55" opacity="0.55" />
 
-    {/* 3D Wraparound Mineral Water Label */}
-    <path d="M 7.2 50.5 Q 19 53 30.8 50.5 L 30.8 51.5 Q 19 54 7.2 51.5 Z" fill="#0369A1" opacity="0.35" />
-    <path d="M 7 38 L 7.2 50 Q 19 52.8 30.8 50 L 31 38 Q 19 40.8 7 38 Z" fill="url(#labelGrad)" stroke="#38BDF8" strokeWidth="0.5" />
-    <path d="M 7 39 Q 19 41.8 31 39" fill="none" stroke="#0284C7" strokeWidth="0.8" />
-    <path d="M 7.2 49 Q 19 51.8 30.8 49" fill="none" stroke="#0284C7" strokeWidth="0.8" />
+    {/* ── VIBRANT WRAPAROUND MINERAL WATER LABEL ── */}
+    {/* Label Cast Shadow */}
+    <path d="M 7.2 51.2 Q 19 53.8 30.8 51.2 L 30.8 52.4 Q 19 55 7.2 52.4 Z" fill="#000000" opacity="0.45" />
 
-    {/* Mini Water Droplet Icon on Label */}
-    <g transform="translate(16.5, 40.5) scale(0.2)">
-      <path d="M 12 2 C 12 2, 3 13, 3 17 C 3 22, 7 26, 12 26 C 17 26, 21 22, 21 17 C 21 13, 12 2, 12 2 Z" fill="#0284C7" />
-      <path d="M 12 6 C 12 6, 7 14, 7 17 C 7 20, 9 22, 12 22 Z" fill="#38BDF8" opacity="0.8" />
+    {/* Label Main Background (Deep Aquatic Glacier Blue) */}
+    <path d="M 7.2 36 L 7.5 50.8 Q 19 53.5 30.5 50.8 L 30.8 36 Q 19 38.8 7.2 36 Z" fill="url(#vibrantLabelGrad)" stroke="#38BDF8" strokeWidth="0.5" />
+
+    {/* Silver Metallic Border Pinstripes */}
+    <path d="M 7.2 36.8 Q 19 39.6 30.8 36.8" fill="none" stroke="url(#silverFoilGrad)" strokeWidth="0.75" />
+    <path d="M 7.5 50 Q 19 52.7 30.5 50" fill="none" stroke="url(#silverFoilGrad)" strokeWidth="0.75" />
+
+    {/* Minimalist Alpine Mountain Emblem */}
+    <g transform="translate(19, 39.8)">
+      <polygon points="-4.8,2.8 -2.2,-1.2 -0.4,2.8" fill="#38BDF8" opacity="0.85" />
+      <polygon points="-2.6,2.8 0,-2.8 2.6,2.8" fill="#FFFFFF" />
+      <polygon points="-1,0.5 0,-2.8 1,0.5" fill="#BAE6FD" />
+      <polygon points="0.4,2.8 2.2,-0.8 4.8,2.8" fill="#7DD3FC" opacity="0.85" />
     </g>
 
-    {/* BOLD & CLEAN "WATER" Typography */}
-    <text x="19" y="47.6" textAnchor="middle" fill="#0369A1" fontSize="5" fontFamily="'Impact', 'Arial Black', sans-serif" fontWeight="900" letterSpacing="1">WATER</text>
-    <text x="19" y="47.1" textAnchor="middle" fill="#0C4A6E" fontSize="5" fontFamily="'Impact', 'Arial Black', sans-serif" fontWeight="900" letterSpacing="1">WATER</text>
+    {/* Crisp "AQUA" Wordmark with 3D Shadow */}
+    <text x="19" y="46.0" textAnchor="middle" fill="#082F49" fontSize="5.2" fontFamily="'Impact', 'Arial Black', -apple-system, sans-serif" fontWeight="900" letterSpacing="1.4">AQUA</text>
+    <text x="19" y="45.4" textAnchor="middle" fill="#FFFFFF" fontSize="5.2" fontFamily="'Impact', 'Arial Black', -apple-system, sans-serif" fontWeight="900" letterSpacing="1.4">AQUA</text>
 
-    {/* Bottle Neck & Security Ring */}
-    <rect x="14.5" y="11" width="9" height="7" fill="url(#petBottleGrad)" stroke="#7DD3FC" strokeWidth="0.6" />
-    <rect x="14" y="15" width="10" height="2" rx="0.5" fill="#0284C7" stroke="#0369A1" strokeWidth="0.4" />
+    {/* Subtext: "MINERAL WATER" */}
+    <text x="19" y="48.8" textAnchor="middle" fill="#BAE6FD" fontSize="1.5" fontFamily="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, sans-serif" fontWeight="800" letterSpacing="0.8">MINERAL WATER</text>
 
-    {/* 3D Ribbed Blue Screw Cap */}
-    <rect x="13.5" y="5" width="11" height="8" rx="2" fill="url(#capGrad)" stroke="#0369A1" strokeWidth="0.6" />
-    <line x1="16" y1="5.5" x2="16" y2="12.5" stroke="#FFFFFF" strokeWidth="0.5" opacity="0.6" />
-    <line x1="18" y1="5.5" x2="18" y2="12.5" stroke="#FFFFFF" strokeWidth="0.7" opacity="0.8" />
-    <line x1="20" y1="5.5" x2="20" y2="12.5" stroke="#FFFFFF" strokeWidth="0.7" opacity="0.7" />
-    <line x1="22" y1="5.5" x2="22" y2="12.5" stroke="#075985" strokeWidth="0.5" opacity="0.6" />
-    <ellipse cx="19" cy="5.5" rx="5.5" ry="1.6" fill="#38BDF8" />
-    <ellipse cx="19" cy="5.2" rx="4.5" ry="1.2" fill="#7DD3FC" opacity="0.8" />
+    {/* Specular Gloss Reflection Sheens (Glossy Plastic Highlights) */}
+    {/* Left High-Gloss Vertical Stripe */}
+    <path d="M 9.5 25.5 L 10.3 64 Q 11.5 64.4 12 64 L 11.2 25.5 Z" fill="#FFFFFF" opacity="0.8" />
+    <path d="M 10.3 26 L 10.9 63.5 Q 11.3 63.7 11.7 63.5 L 11 26 Z" fill="#FFFFFF" opacity="0.95" />
+
+    {/* Shoulder Curved Flare Highlight */}
+    <path d="M 14.5 18 Q 19 19.5 23.5 18 L 22.8 18.8 Q 19 20.2 15.2 18.8 Z" fill="#FFFFFF" opacity="0.75" />
+
+    {/* Right Soft Rim Highlight */}
+    <path d="M 28.5 25.5 L 28 64 Q 28.6 64.2 29 64 L 29.5 25.5 Z" fill="#FFFFFF" opacity="0.35" />
+
+    {/* Sparkling Micro Air Bubbles in Water */}
+    <circle cx="14" cy="57" r="0.65" fill="#FFFFFF" opacity="0.9" />
+    <circle cx="24" cy="40" r="0.55" fill="#FFFFFF" opacity="0.85" />
+    <circle cx="15.5" cy="32" r="0.45" fill="#FFFFFF" opacity="0.8" />
+    <circle cx="22" cy="60" r="0.55" fill="#FFFFFF" opacity="0.85" />
+
+    {/* Cold Condensation Droplets on Bottle Surface */}
+    <ellipse cx="9" cy="27" rx="0.5" ry="0.9" fill="#FFFFFF" opacity="0.95" />
+    <circle cx="9" cy="35" r="0.5" fill="#FFFFFF" opacity="0.9" />
+    <circle cx="28.5" cy="55" r="0.6" fill="#FFFFFF" opacity="0.9" />
+
+    {/* Transparent Threaded Neck */}
+    <rect x="15" y="11" width="8" height="5.5" fill="url(#petShellGrad)" stroke="#7DD3FC" strokeWidth="0.5" />
+    <line x1="15.5" y1="12.4" x2="22.5" y2="13.1" stroke="#FFFFFF" strokeWidth="0.45" opacity="0.9" />
+    <line x1="15.5" y1="14.2" x2="22.5" y2="14.9" stroke="#FFFFFF" strokeWidth="0.45" opacity="0.9" />
+
+    {/* Bottle Collar Ring (Support Ledge) */}
+    <rect x="14" y="15.5" width="10" height="1.5" rx="0.4" fill="#BAE6FD" stroke="#38BDF8" strokeWidth="0.45" />
+    <ellipse cx="19" cy="15.9" rx="4.5" ry="0.4" fill="#FFFFFF" opacity="0.9" />
+
+    {/* Tamper-Evident Security Break-Ring */}
+    <rect x="14.5" y="10.2" width="9" height="1.4" rx="0.4" fill="url(#screwCapGrad)" stroke="#0369A1" strokeWidth="0.4" />
+    <line x1="15" y1="10.8" x2="23" y2="10.8" stroke="#082F49" strokeWidth="0.3" strokeDasharray="1 1" />
+
+    {/* 3D Cyan Screw Cap Body */}
+    <rect x="14" y="4.2" width="10" height="6.2" rx="1.5" fill="url(#screwCapGrad)" stroke="#0369A1" strokeWidth="0.5" />
+
+    {/* Crisp Vertical Grip Knurls on Cap */}
+    <line x1="15.5" y1="4.8" x2="15.5" y2="10.0" stroke="#FFFFFF" strokeWidth="0.45" opacity="0.55" />
+    <line x1="17" y1="4.8" x2="17" y2="10.0" stroke="#FFFFFF" strokeWidth="0.65" opacity="0.8" />
+    <line x1="18.5" y1="4.8" x2="18.5" y2="10.0" stroke="#FFFFFF" strokeWidth="0.75" opacity="0.95" />
+    <line x1="20" y1="4.8" x2="20" y2="10.0" stroke="#FFFFFF" strokeWidth="0.65" opacity="0.75" />
+    <line x1="21.5" y1="4.8" x2="21.5" y2="10.0" stroke="#082F49" strokeWidth="0.45" opacity="0.65" />
+    <line x1="22.5" y1="4.8" x2="22.5" y2="10.0" stroke="#082F49" strokeWidth="0.45" opacity="0.75" />
+
+    {/* Cap Top Crown & Beveled Rim */}
+    <ellipse cx="19" cy="4.6" rx="5" ry="1.2" fill="#38BDF8" stroke="#0284C7" strokeWidth="0.3" />
+    <ellipse cx="19" cy="4.4" rx="4" ry="0.9" fill="#BAE6FD" opacity="0.95" />
   </svg>
 );
 
