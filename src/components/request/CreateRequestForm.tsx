@@ -517,7 +517,7 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
         }
       }
 
-      // Notify requester that request was created & broadcasting on campus radar
+      // Notify requester and broadcast notification to all campus runners
       try {
         const itemSummary = items.map((i) => i.name).join(", ");
         await fetch("/api/notifications/create", {
@@ -529,6 +529,9 @@ export function CreateRequestForm({ requesterId }: { requesterId?: string }) {
             message: `Your request for ${itemSummary || "items"} is live on campus radar! Looking for nearby runners.`,
             type: "status_broadcasted",
             referenceId: request.id,
+            broadcast: true,
+            broadcastTitle: "📦 New Delivery Request Nearby!",
+            broadcastMessage: `A student requested ${itemSummary || "items"} (${request.pickup_location} ➔ ${request.dropoff_location}). Tap to accept & earn!`,
           }),
         });
       } catch (notifErr) {

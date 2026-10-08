@@ -221,6 +221,20 @@ export function RealtimeProvider({ children, userId }: { children: ReactNode; us
               actionLabel: "Track Radar",
               actionUrl: refId ? `/dashboard/requests/${refId}` : "/dashboard/requests",
             });
+          } else if (
+            notifType === "new_request_available" ||
+            notifType.includes("request_available") ||
+            newNotif.title?.toLowerCase().includes("new delivery request")
+          ) {
+            sounds.playOrderAccepted();
+            showToast({
+              type: "system",
+              title: newNotif.title || "📦 New Delivery Request Nearby!",
+              message:
+                newNotif.message || "A student just requested an order on campus. Tap to accept & earn!",
+              actionLabel: "View & Accept",
+              actionUrl: "/dashboard/runner",
+            });
           } else {
             sounds.playReceive();
             showToast({

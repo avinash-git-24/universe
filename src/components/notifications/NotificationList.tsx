@@ -18,6 +18,7 @@ import {
   Clock,
   Radio,
   Check,
+  Package,
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -82,7 +83,12 @@ export function NotificationList({ onClose }: NotificationListProps) {
     ) {
       return "delivery";
     }
-    if (t.includes("runner") || title.includes("runner")) {
+    if (
+      t.includes("runner") ||
+      title.includes("runner") ||
+      t.includes("request_available") ||
+      title.includes("new delivery request")
+    ) {
       return "runner";
     }
     return "request";
@@ -127,7 +133,16 @@ export function NotificationList({ onClose }: NotificationListProps) {
     }
     onClose();
 
-    if (notif.reference_id) {
+    const t = notif.type.toLowerCase();
+    const title = notif.title.toLowerCase();
+
+    if (
+      t === "new_request_available" ||
+      t.includes("request_available") ||
+      title.includes("new delivery request")
+    ) {
+      router.push("/dashboard/runner");
+    } else if (notif.reference_id) {
       router.push(`/dashboard/requests/${notif.reference_id}`);
     } else {
       router.push("/dashboard/requests");
@@ -146,6 +161,7 @@ export function NotificationList({ onClose }: NotificationListProps) {
 
   const getNotificationIcon = (notif: Notification) => {
     const t = notif.type.toLowerCase();
+    const title = notif.title.toLowerCase();
 
     if (t === "status_delivered" || t.includes("delivered")) {
       return {
@@ -180,6 +196,16 @@ export function NotificationList({ onClose }: NotificationListProps) {
     if (t === "status_broadcasted" || t.includes("broadcast")) {
       return {
         icon: <Radio size={16} className="text-[#00E676] animate-pulse" />,
+        glow: "bg-emerald-500/20 border-emerald-500/40 shadow-[0_0_12px_rgba(0,230,118,0.3)]",
+      };
+    }
+    if (
+      t === "new_request_available" ||
+      t.includes("request_available") ||
+      title.includes("new delivery request")
+    ) {
+      return {
+        icon: <Package size={16} className="text-[#00E676] animate-pulse" />,
         glow: "bg-emerald-500/20 border-emerald-500/40 shadow-[0_0_12px_rgba(0,230,118,0.3)]",
       };
     }
