@@ -316,123 +316,330 @@ const WaterBottle = () => (
   </svg>
 );
 
-const CoffeeCup = () => (
-  <svg width="68" height="82" viewBox="0 0 60 72" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ filter: "drop-shadow(0 20px 25px rgba(0,0,0,0.55)) drop-shadow(0 8px 10px rgba(0,0,0,0.3))" }}>
+const AmulDarkChocolate = () => (
+  <svg
+    width="58"
+    height="90"
+    viewBox="0 0 54 84"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    style={{ filter: "drop-shadow(0 20px 25px rgba(0,0,0,0.65)) drop-shadow(0 6px 10px rgba(0,0,0,0.35))" }}
+  >
     <defs>
-      {/* 3D Cylindrical Lighting: Rim Light, Core Highlight, Diffuse, Ambient Shadow */}
-      <linearGradient id="cup3D" x1="0" y1="0" x2="1" y2="0">
-        <stop offset="0%" stopColor="#CBD5E1" />
-        <stop offset="12%" stopColor="#F1F5F9" />
-        <stop offset="35%" stopColor="#FFFFFF" />
-        <stop offset="70%" stopColor="#E2E8F0" />
-        <stop offset="90%" stopColor="#94A3B8" />
-        <stop offset="100%" stopColor="#64748B" />
+      {/* Front Face Chocolate Gradient: Deep rich cocoa with ambient warm glow */}
+      <linearGradient id="amulFrontGrad" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stopColor="#3A1E13" />
+        <stop offset="20%" stopColor="#2A140B" />
+        <stop offset="65%" stopColor="#1B0C06" />
+        <stop offset="100%" stopColor="#120603" />
       </linearGradient>
 
-      {/* 3D Emerald Sleeve with cylindrical curve shading */}
-      <linearGradient id="sleeve3D" x1="0" y1="0" x2="1" y2="0">
-        <stop offset="0%" stopColor="#022C22" />
-        <stop offset="12%" stopColor="#065F46" />
-        <stop offset="35%" stopColor="#10B981" />
-        <stop offset="65%" stopColor="#059669" />
-        <stop offset="88%" stopColor="#047857" />
-        <stop offset="100%" stopColor="#022C22" />
+      {/* Side Face (Left Perspective) Ambient Shadow Gradient */}
+      <linearGradient id="amulSideGrad" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stopColor="#120602" />
+        <stop offset="50%" stopColor="#1B0C06" />
+        <stop offset="100%" stopColor="#0F0502" />
       </linearGradient>
 
-      {/* 3D Lid Rim & Bevel Gradient */}
-      <linearGradient id="lidRim3D" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stopColor="#475569" />
-        <stop offset="40%" stopColor="#334155" />
-        <stop offset="100%" stopColor="#0F172A" />
+      {/* Top Folded Face Gradient */}
+      <linearGradient id="amulTopGrad" x1="0" y1="1" x2="0" y2="0">
+        <stop offset="0%" stopColor="#221008" />
+        <stop offset="100%" stopColor="#3C2014" />
       </linearGradient>
 
-      <linearGradient id="lidTop3D" x1="0" y1="0" x2="1" y2="0">
-        <stop offset="0%" stopColor="#1E293B" />
-        <stop offset="30%" stopColor="#334155" />
-        <stop offset="70%" stopColor="#1E293B" />
-        <stop offset="100%" stopColor="#0F172A" />
+      {/* Iconic Amul Orange Gradient */}
+      <linearGradient id="amulOrangeGrad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stopColor="#FF9100" />
+        <stop offset="100%" stopColor="#EA580C" />
       </linearGradient>
 
-      {/* Steam Gradient */}
-      <linearGradient id="steamFade" x1="0" y1="1" x2="0" y2="0">
-        <stop offset="0%" stopColor="#FDE68A" stopOpacity="0.9" />
-        <stop offset="60%" stopColor="#FEF3C7" stopOpacity="0.6" />
-        <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0" />
+      {/* Molten Chocolate Splash Gradient */}
+      <linearGradient id="chocoSplashGrad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stopColor="#6C3418" />
+        <stop offset="45%" stopColor="#4A200C" />
+        <stop offset="100%" stopColor="#1F0B03" />
       </linearGradient>
 
-      {/* Badge Depth Gradient */}
-      <radialGradient id="badgeGrad" cx="40%" cy="35%" r="65%">
-        <stop offset="0%" stopColor="#065F46" />
-        <stop offset="70%" stopColor="#022C22" />
-        <stop offset="100%" stopColor="#011612" />
-      </radialGradient>
+      {/* 3D Chocolate Cube Gradients */}
+      <linearGradient id="chocoTopGrad" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stopColor="#6D371A" />
+        <stop offset="100%" stopColor="#4B220D" />
+      </linearGradient>
+      <linearGradient id="chocoSideGrad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stopColor="#3A1807" />
+        <stop offset="100%" stopColor="#1B0802" />
+      </linearGradient>
     </defs>
 
-    {/* 3D Rising Steam Wisps */}
-    <path d="M 23 15 C 20 10, 25 5, 22 0" fill="none" stroke="url(#steamFade)" strokeWidth="2.2" strokeLinecap="round" />
-    <path d="M 30 14 C 34 8, 28 4, 31 -2" fill="none" stroke="url(#steamFade)" strokeWidth="2.6" strokeLinecap="round" />
-    <path d="M 37 16 C 41 11, 36 6, 38 1" fill="none" stroke="url(#steamFade)" strokeWidth="1.8" strokeLinecap="round" />
+    {/* Ground Ambient Drop Shadow */}
+    <ellipse cx="26" cy="78" rx="19" ry="3.6" fill="#000000" opacity="0.45" />
 
-    {/* 3D Cup Base Shadow Cast */}
-    <ellipse cx="30" cy="65.5" rx="13" ry="2.8" fill="#000000" opacity="0.35" />
+    {/* ── 1. Top Folded Face (Tetra Pak Crease & Sealed Fold) ── */}
+    <polygon points="10,7 37,5.5 43,11 17,12.8" fill="url(#amulTopGrad)" />
+    {/* Central Top Crease Fold Line */}
+    <line x1="13.5" y1="9" x2="40" y2="8" stroke="#160803" strokeWidth="0.8" />
+    {/* Subtle Top Rim Highlight */}
+    <line x1="10" y1="7" x2="37" y2="5.5" stroke="#502816" strokeWidth="0.6" opacity="0.6" />
 
-    {/* 3D Cup Main Body (Cylindrical Paper Cup) */}
-    <path d="M 12 21 L 17 63.5 Q 30 67 43 63.5 L 48 21 Q 30 24.5 12 21 Z" fill="url(#cup3D)" />
-    
-    {/* Base Rounding Curve */}
-    <ellipse cx="30" cy="63.5" rx="13" ry="2.5" fill="#94A3B8" opacity="0.5" />
+    {/* ── 2. Left Side Face (Perspective Receding Panel) ── */}
+    <polygon points="6.5,9.5 17,12.8 17,73.5 6.5,67.5" fill="url(#amulSideGrad)" />
 
-    {/* Left Specular Light Sheen (Vertical Cylindrical Reflection) */}
-    <path d="M 15 22.5 L 19 62.5 Q 22 63 24 62.5 L 20 22.5 Q 17.5 22.3 15 22.5 Z" fill="#FFFFFF" opacity="0.65" />
-    <path d="M 17 23 L 19.5 61.5 Q 20.8 62 22 61.5 L 19.5 23 Z" fill="#FFFFFF" opacity="0.85" />
+    {/* Folded Ear / Corner Flap at Top Left */}
+    <polygon points="6.5,9.5 10,7 13.5,9 9.5,12" fill="#200E06" stroke="#100502" strokeWidth="0.4" />
+    <line x1="6.5" y1="9.5" x2="9.5" y2="12" stroke="#0B0301" strokeWidth="0.7" />
 
-    {/* Shadow cast by the sleeve onto the lower cup (True 3D Physical Separation) */}
-    <path d="M 15.5 53.5 Q 30 57.5 44.5 53.5 L 44.7 55.5 Q 30 59.5 15.3 55.5 Z" fill="#0F172A" opacity="0.35" />
-
-    {/* 3D Emerald Coffee Sleeve */}
-    <path d="M 13.5 32 L 15.8 53 Q 30 57 44.2 53 L 46.5 32 Q 30 35.5 13.5 32 Z" fill="url(#sleeve3D)" />
-    
-    {/* Sleeve 3D Beveled Edges */}
-    <path d="M 13.5 32 Q 30 35.5 46.5 32" fill="none" stroke="#6EE7B7" strokeWidth="0.9" opacity="0.85" />
-    <path d="M 15.8 53 Q 30 57 44.2 53" fill="none" stroke="#022C22" strokeWidth="1.2" opacity="0.9" />
-    
-    {/* Sleeve Corrugated Texture Ribs */}
-    <path d="M 14.3 39 Q 30 42.5 45.7 39" fill="none" stroke="#047857" strokeWidth="0.6" opacity="0.45" />
-    <path d="M 15.1 46 Q 30 49.5 44.9 46" fill="none" stroke="#047857" strokeWidth="0.6" opacity="0.45" />
-
-    {/* 3D Center Emblem Badge */}
-    <circle cx="30" cy="43.5" r="9" fill="url(#badgeGrad)" stroke="#34D399" strokeWidth="1.2" style={{ filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.5))" }} />
-    <circle cx="30" cy="43.5" r="7.4" fill="none" stroke="#A7F3D0" strokeWidth="0.6" strokeDasharray="1.5 1" opacity="0.85" />
-    
-    {/* Mini Coffee Bean Icon on top of emblem */}
-    <g transform="translate(27.5, 36.8) scale(0.24)">
-      <path d="M 10 2 C 5 2, 1 6, 1 12 C 1 18, 6 22, 12 22 C 18 22, 22 17, 22 11 C 22 5, 17 2, 10 2 Z" fill="#FBBF24" />
-      <path d="M 4 12 Q 11 11 11 4 Q 11 11 19 12 Q 11 13 11 20 Q 11 13 4 12 Z" fill="#78350F" />
+    {/* Recycling Logo Icon on Side Panel */}
+    <g transform="translate(9.2, 16) scale(0.24)">
+      <circle cx="9" cy="9" r="7" fill="none" stroke="#E2E8F0" strokeWidth="1.2" opacity="0.7" />
+      <path d="M9 4 L11 7 L7 7 Z" fill="#E2E8F0" opacity="0.8" />
+      <path d="M14 11 L13 14 L11 12 Z" fill="#E2E8F0" opacity="0.8" />
+      <path d="M4 11 L6 13 L5 15 Z" fill="#E2E8F0" opacity="0.8" />
     </g>
 
-    {/* BOLD "COFFEE" Text (High Contrast & 3D Depth) */}
-    <text x="30" y="47.2" textAnchor="middle" fill="#011612" fontSize="5.2" fontFamily="'Impact', 'Arial Black', -apple-system, sans-serif" fontWeight="900" letterSpacing="0.8">COFFEE</text>
-    <text x="30" y="46.5" textAnchor="middle" fill="#FFFFFF" fontSize="5.2" fontFamily="'Impact', 'Arial Black', -apple-system, sans-serif" fontWeight="900" letterSpacing="0.8">COFFEE</text>
+    {/* Nutrition Information & Barcode Lines (Orange & Cool White) */}
+    <line x1="8.5" y1="26" x2="15" y2="27.5" stroke="#F97316" strokeWidth="0.8" opacity="0.75" />
+    <line x1="8.5" y1="29" x2="15" y2="30.5" stroke="#CBD5E1" strokeWidth="0.5" opacity="0.45" />
+    <line x1="8.5" y1="32" x2="14" y2="33.3" stroke="#CBD5E1" strokeWidth="0.5" opacity="0.4" />
+    <line x1="8.5" y1="35" x2="15" y2="36.5" stroke="#CBD5E1" strokeWidth="0.5" opacity="0.4" />
+    <line x1="8.5" y1="38" x2="15" y2="39.5" stroke="#F97316" strokeWidth="0.7" opacity="0.65" />
+    <line x1="8.5" y1="42" x2="14" y2="43.2" stroke="#CBD5E1" strokeWidth="0.5" opacity="0.4" />
+    <line x1="8.5" y1="45" x2="15" y2="46.5" stroke="#CBD5E1" strokeWidth="0.5" opacity="0.4" />
+    <line x1="8.5" y1="50" x2="15" y2="51.5" stroke="#F97316" strokeWidth="0.7" opacity="0.7" />
+    <line x1="8.5" y1="53" x2="14" y2="54.2" stroke="#CBD5E1" strokeWidth="0.5" opacity="0.4" />
+    <line x1="8.5" y1="56" x2="15" y2="57.5" stroke="#CBD5E1" strokeWidth="0.5" opacity="0.4" />
 
-    {/* 3D Takeaway Snap Lid */}
-    {/* 1. Undercut Lip */}
-    <ellipse cx="30" cy="21.5" rx="19.5" ry="5.2" fill="#090D16" />
+    {/* ── 3. Front Face (Main Packaging Face) ── */}
+    <polygon points="17,12.8 43,11 43,71.5 17,73.5" fill="url(#amulFrontGrad)" />
 
-    {/* 2. Main Overhanging Lid Rim */}
-    <ellipse cx="30" cy="20.5" rx="19.5" ry="5.2" fill="url(#lidRim3D)" />
-    
-    {/* 3. Rim Specular Highlight (Crisp 3D plastic shine) */}
-    <path d="M 11.5 20.2 Q 30 23.8 48.5 20.2" fill="none" stroke="#94A3B8" strokeWidth="1.1" opacity="0.75" />
-    
-    {/* 4. Recessed Inner Ring / Basin */}
-    <ellipse cx="30" cy="18" rx="16.5" ry="4.2" fill="#0F172A" />
-    <ellipse cx="30" cy="17" rx="15.5" ry="3.8" fill="url(#lidTop3D)" />
+    {/* Edge Highlights for True 3D Depth */}
+    <line x1="17" y1="12.8" x2="17" y2="73.5" stroke="#5A311D" strokeWidth="0.9" opacity="0.85" />
+    <line x1="17.4" y1="13" x2="17.4" y2="73.3" stroke="#FFFFFF" strokeWidth="0.3" opacity="0.25" />
+    <line x1="17" y1="12.8" x2="43" y2="11" stroke="#633722" strokeWidth="0.8" opacity="0.7" />
+    <line x1="43" y1="11" x2="43" y2="71.5" stroke="#150804" strokeWidth="0.8" opacity="0.7" />
 
-    {/* 5. Elevated 3D Drinking Spout (Mouthpiece) */}
-    <path d="M 23 15 C 23 13, 37 13, 37 15 L 36 17 C 36 18.5, 24 18.5, 24 17 Z" fill="#334155" stroke="#475569" strokeWidth="0.5" />
-    <ellipse cx="30" cy="14.8" rx="3.5" ry="1.2" fill="#020617" />
-    <ellipse cx="30" cy="14.5" rx="3" ry="0.8" fill="#000000" />
-    <path d="M 25 15.5 Q 30 16.5 35 15.5" fill="none" stroke="#94A3B8" strokeWidth="0.7" opacity="0.8" />
+    {/* Green Vegetarian Mark (FSSAI Icon) */}
+    <rect x="19.5" y="15.5" width="4.2" height="4.2" fill="#FFFFFF" rx="0.5" />
+    <rect x="19.8" y="15.8" width="3.6" height="3.6" fill="none" stroke="#16A34A" strokeWidth="0.5" />
+    <circle cx="21.6" cy="17.6" r="1.1" fill="#16A34A" />
+
+    {/* Iconic "Amul" Wordmark (Warm Vibrant Orange Script) */}
+    <text
+      x="33"
+      y="19.5"
+      textAnchor="middle"
+      fill="url(#amulOrangeGrad)"
+      fontSize="6"
+      fontFamily="'Georgia', 'Times New Roman', serif"
+      fontStyle="italic"
+      fontWeight="900"
+      letterSpacing="0.2"
+    >
+      Amul
+    </text>
+
+    {/* ── Bold Vertical Typography ── */}
+    {/* Column 1: "CHOCOLATE" (Vertical Letters) */}
+    <text
+      x="24"
+      y="25.5"
+      textAnchor="middle"
+      fill="#FF8A00"
+      fontSize="3.8"
+      fontFamily="'Impact', 'Arial Black', sans-serif"
+      fontWeight="900"
+    >
+      C
+    </text>
+    <text
+      x="24"
+      y="29"
+      textAnchor="middle"
+      fill="#FF8A00"
+      fontSize="3.8"
+      fontFamily="'Impact', 'Arial Black', sans-serif"
+      fontWeight="900"
+    >
+      H
+    </text>
+    <text
+      x="24"
+      y="32.5"
+      textAnchor="middle"
+      fill="#FF8A00"
+      fontSize="3.8"
+      fontFamily="'Impact', 'Arial Black', sans-serif"
+      fontWeight="900"
+    >
+      O
+    </text>
+    <text
+      x="24"
+      y="36"
+      textAnchor="middle"
+      fill="#FF8A00"
+      fontSize="3.8"
+      fontFamily="'Impact', 'Arial Black', sans-serif"
+      fontWeight="900"
+    >
+      C
+    </text>
+    <text
+      x="24"
+      y="39.5"
+      textAnchor="middle"
+      fill="#FF8A00"
+      fontSize="3.8"
+      fontFamily="'Impact', 'Arial Black', sans-serif"
+      fontWeight="900"
+    >
+      O
+    </text>
+    <text
+      x="24"
+      y="43"
+      textAnchor="middle"
+      fill="#FF8A00"
+      fontSize="3.8"
+      fontFamily="'Impact', 'Arial Black', sans-serif"
+      fontWeight="900"
+    >
+      L
+    </text>
+    <text
+      x="24"
+      y="46.5"
+      textAnchor="middle"
+      fill="#FF8A00"
+      fontSize="3.8"
+      fontFamily="'Impact', 'Arial Black', sans-serif"
+      fontWeight="900"
+    >
+      A
+    </text>
+    <text
+      x="24"
+      y="50"
+      textAnchor="middle"
+      fill="#FF8A00"
+      fontSize="3.8"
+      fontFamily="'Impact', 'Arial Black', sans-serif"
+      fontWeight="900"
+    >
+      T
+    </text>
+    <text
+      x="24"
+      y="53.5"
+      textAnchor="middle"
+      fill="#FF8A00"
+      fontSize="3.8"
+      fontFamily="'Impact', 'Arial Black', sans-serif"
+      fontWeight="900"
+    >
+      E
+    </text>
+
+    {/* Column 2: "DARK" (Vertical Letters) */}
+    <text
+      x="31"
+      y="26"
+      textAnchor="middle"
+      fill="#FF8A00"
+      fontSize="4.4"
+      fontFamily="'Impact', 'Arial Black', sans-serif"
+      fontWeight="900"
+    >
+      D
+    </text>
+    <text
+      x="31"
+      y="30.2"
+      textAnchor="middle"
+      fill="#FF8A00"
+      fontSize="4.4"
+      fontFamily="'Impact', 'Arial Black', sans-serif"
+      fontWeight="900"
+    >
+      A
+    </text>
+    <text
+      x="31"
+      y="34.4"
+      textAnchor="middle"
+      fill="#FF8A00"
+      fontSize="4.4"
+      fontFamily="'Impact', 'Arial Black', sans-serif"
+      fontWeight="900"
+    >
+      R
+    </text>
+    <text
+      x="31"
+      y="38.6"
+      textAnchor="middle"
+      fill="#FF8A00"
+      fontSize="4.4"
+      fontFamily="'Impact', 'Arial Black', sans-serif"
+      fontWeight="900"
+    >
+      K
+    </text>
+
+    {/* Horizontal Orange Accent Rule */}
+    <line x1="28.5" y1="41" x2="41" y2="40.3" stroke="#EA580C" strokeWidth="0.8" />
+
+    {/* Subtitle: "RICH DARK CHOCOLATE DRINK" */}
+    <text
+      x="34.8"
+      y="43.5"
+      textAnchor="middle"
+      fill="#FDBA74"
+      fontSize="1.9"
+      fontFamily="sans-serif"
+      fontWeight="800"
+      letterSpacing="0.2"
+    >
+      RICH DARK
+    </text>
+    <text
+      x="34.8"
+      y="45.8"
+      textAnchor="middle"
+      fill="#FDBA74"
+      fontSize="1.7"
+      fontFamily="sans-serif"
+      fontWeight="800"
+      letterSpacing="0.1"
+    >
+      CHOCOLATE DRINK
+    </text>
+
+    {/* ── 4. Bottom Liquid Chocolate Splash & Tumbling Chocolate Block ── */}
+    {/* Swirling Liquid Chocolate Wave Base */}
+    <path
+      d="M 17 71 Q 20 63 24 66 Q 27 60 30 65 Q 34 58 38 63 Q 41 65 43 70 L 43 71.5 L 17 73.5 Z"
+      fill="url(#chocoSplashGrad)"
+    />
+
+    {/* Tilted 3D Chocolate Block (Rich Glossy Cube) */}
+    <polygon points="26,55 31,53 35,56 30,58" fill="url(#chocoTopGrad)" stroke="#6A361B" strokeWidth="0.4" />
+    <polygon points="26,55 30,58 30,63 26,60" fill="url(#chocoSideGrad)" />
+    <polygon points="30,58 35,56 35,61 30,63" fill="#1C0A04" />
+    <line x1="26" y1="55" x2="30" y2="58" stroke="#9A4E29" strokeWidth="0.5" opacity="0.9" />
+
+    {/* Dynamic Liquid Curls / Splash Wings */}
+    <path d="M 22 66 C 22 60, 25 58, 25 64" fill="none" stroke="#7A391A" strokeWidth="1.3" strokeLinecap="round" />
+    <path d="M 33 65 C 35 57, 39 59, 37 64" fill="none" stroke="#7A391A" strokeWidth="1.2" strokeLinecap="round" />
+    <path d="M 28 66 C 29 60, 31 60, 30 65" fill="none" stroke="#8C4420" strokeWidth="1" strokeLinecap="round" />
+
+    {/* Molten Chocolate Flying Droplets */}
+    <circle cx="24.5" cy="57" r="1.1" fill="#8C4420" />
+    <circle cx="38" cy="56" r="0.9" fill="#8C4420" />
+    <circle cx="20" cy="62" r="0.8" fill="#6E3417" />
+    <circle cx="31.5" cy="54" r="0.7" fill="#994D25" />
+
+    {/* Glossy Liquid Sheen on Splash Crest */}
+    <path d="M 19 69 Q 29 64 41 65.5" fill="none" stroke="#B4592B" strokeWidth="0.7" opacity="0.8" />
   </svg>
 );
 
@@ -540,8 +747,8 @@ const ITEMS: FloatItem[] = [
     rotateRange: 7,
   },
   {
-    id: "coffee",
-    component: <CoffeeCup />,
+    id: "amul-chocolate",
+    component: <AmulDarkChocolate />,
     style: { top: "45%", right: "3%" },
     floatY: [0, -16, 0],
     floatDuration: 5.6,
