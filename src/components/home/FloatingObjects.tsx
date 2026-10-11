@@ -282,26 +282,23 @@ const _JuiceBox = () => (
 );
 
 const NoodleCup = () => (
-  <svg width="62" height="70" viewBox="0 0 54 60" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ filter: "drop-shadow(0 15px 20px rgba(0,0,0,0.4))" }}>
-    <path d="M 6 18 L 10 56 Q 10 58 27 58 Q 44 58 44 56 L 48 18 Z" fill="url(#noodleGrad)"/>
-    <path d="M 7 20 L 11 55 Q 11 57 27 57 Q 43 57 43 55 L 47 20 Z" fill="#FFF" stroke="#E2E8F0" strokeWidth="1"/>
-    <ellipse cx="27" cy="18" rx="22" ry="7" fill="#EF4444"/>
-    <ellipse cx="27" cy="16" rx="18" ry="5" fill="#DC2626"/>
-    <path d="M 23 13 Q 25 8 23 3"  fill="none" stroke="#FDE68A" strokeWidth="2" strokeLinecap="round" opacity="0.8"/>
-    <path d="M 31 14 Q 33 9 31 4"  fill="none" stroke="#FDE68A" strokeWidth="2" strokeLinecap="round" opacity="0.8"/>
-    <rect x="11" y="26" width="32" height="20" fill="#EF4444" rx="3"/>
-    <text x="27" y="35" textAnchor="middle" fill="white" fontSize="9" fontFamily="sans-serif" fontWeight="900" letterSpacing="1">RAMEN</text>
-    <text x="27" y="44" textAnchor="middle" fill="#FEF2F2" fontSize="6" fontFamily="sans-serif" fontWeight="700">HOT & SPICY</text>
-    <path d="M 16 16 Q 22 12 28 16 Q 34 12 40 16" fill="none" stroke="#F59E0B" strokeWidth="2" opacity="0.9"/>
-    <path d="M 18 14 Q 24 10 30 14" fill="none" stroke="#F59E0B" strokeWidth="1.5" opacity="0.7"/>
-    <rect x="9" y="22" width="5" height="34" fill="white" opacity="0.5" rx="2.5"/>
-    <defs>
-      <linearGradient id="noodleGrad" x1="0" y1="0" x2="1" y2="0">
-        <stop offset="0%" stopColor="#FECACA"/>
-        <stop offset="100%" stopColor="#F87171"/>
-      </linearGradient>
-    </defs>
-  </svg>
+  <div
+    className="relative select-none pointer-events-none"
+    style={{
+      width: "68px",
+      height: "82px",
+      filter: "drop-shadow(0 20px 26px rgba(0,0,0,0.75)) drop-shadow(0 8px 12px rgba(234,179,8,0.25))",
+    }}
+  >
+    <Image
+      src="/images/products/maggi-cuppa-noodles.png"
+      alt="Maggi Cuppa Noodles"
+      width={68}
+      height={82}
+      priority
+      className="w-full h-full object-contain filter contrast-[1.04] brightness-[1.02]"
+    />
+  </div>
 );
 
 // ─── Floating Item definitions ────────────────────────────────────────────────
