@@ -25,30 +25,25 @@ const SnackPacket = () => (
 );
 
 const ChocolateBar = () => (
-  <svg width="64" height="50" viewBox="0 0 56 44" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ filter: "drop-shadow(0 15px 20px rgba(0,0,0,0.4))" }}>
-    <rect x="2" y="4" width="52" height="36" fill="url(#chocoWrap)" rx="5" stroke="#904020" strokeWidth="1.5"/>
-    <rect x="2" y="4" width="52" height="8" fill="#B05030" rx="5"/>
-    <rect x="2" y="12" width="52" height="2" fill="#904020"/>
-    {[0,1,2,3].map(col =>
-      [0,1].map(row => (
-        <rect
-          key={`${col}-${row}`}
-          x={8 + col * 11} y={18 + row * 10}
-          width="9" height="8"
-          fill="#4A2511" rx="1.5"
-        />
-      ))
-    )}
-    <rect x="4" y="6" width="5" height="32" fill="white" opacity="0.4" rx="2.5"/>
-    <text x="28" y="11.5" textAnchor="middle" fill="white" fontSize="6" fontFamily="sans-serif" fontWeight="800" letterSpacing="1">CHOCO</text>
-    <defs>
-      <linearGradient id="chocoWrap" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0%" stopColor="#D97706"/>
-        <stop offset="100%" stopColor="#92400E"/>
-      </linearGradient>
-    </defs>
-  </svg>
+  <div
+    className="relative select-none pointer-events-none"
+    style={{
+      width: "84px",
+      height: "42px",
+      filter: "drop-shadow(0 20px 26px rgba(0,0,0,0.75)) drop-shadow(0 8px 12px rgba(107,33,168,0.35))",
+    }}
+  >
+    <Image
+      src="/images/products/cadbury-dairy-milk.png"
+      alt="Cadbury Dairy Milk"
+      width={84}
+      height={42}
+      priority
+      className="w-full h-full object-contain filter contrast-[1.04] brightness-[1.02]"
+    />
+  </div>
 );
+
 
 const SodaCan = () => (
   <div
