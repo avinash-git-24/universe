@@ -1,3 +1,5 @@
 {
-  "tailwindCSS.lint.suggestCanonicalClasses": "ignore"
+  "tailwindCSS.lint.suggestCanonicalClasses": "ignore",
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true
 }
