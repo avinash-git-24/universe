@@ -9,21 +9,22 @@ const SnackPacket = () => (
   <div
     className="relative select-none pointer-events-none"
     style={{
-      width: "64px",
-      height: "88px",
-      filter: "drop-shadow(0 20px 26px rgba(0,0,0,0.75)) drop-shadow(0 8px 14px rgba(34,197,94,0.3))",
+      width: "68px",
+      height: "82px",
+      filter: "drop-shadow(0 20px 26px rgba(0,0,0,0.75)) drop-shadow(0 8px 14px rgba(14,165,233,0.35))",
     }}
   >
     <Image
-      src="/images/products/lays-cream-onion.png"
-      alt="Lay's American Style Cream & Onion"
-      width={64}
-      height={88}
+      src="/images/products/balaji-crunchex.png"
+      alt="Balaji Wafers Crunchex Chilli Tadka"
+      width={68}
+      height={82}
       priority
       className="w-full h-full object-contain filter contrast-[1.04] brightness-[1.02]"
     />
   </div>
 );
+
 
 
 const ChocolateBar = () => (
