@@ -6,23 +6,25 @@ import Image from "next/image";
 // ─── Individual product SVGs ──────────────────────────────────────────────────
 
 const SnackPacket = () => (
-  <svg width="60" height="74" viewBox="0 0 52 64" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ filter: "drop-shadow(0 15px 20px rgba(0,0,0,0.4))" }}>
-    <rect x="6" y="14" width="40" height="44" fill="url(#snackGrad)" rx="6" stroke="#C09040" strokeWidth="1.5"/>
-    <path d="M 6 14 Q 26 8 46 14" fill="#E8B040" stroke="#B07030" strokeWidth="1"/>
-    <path d="M 8 16 Q 26 10 44 16" fill="#F0C060" stroke="none"/>
-    <rect x="6" y="28" width="40" height="16" fill="#10B981" opacity="0.9"/>
-    <rect x="12" y="32" width="28" height="8" fill="#059669" rx="4" />
-    <text x="26" y="39.5" textAnchor="middle" fill="white" fontSize="7" fontFamily="sans-serif" fontWeight="800" letterSpacing="1">SNACK</text>
-    <rect x="8" y="16" width="6" height="38" fill="white" opacity="0.4" rx="3"/>
-    <path d="M 8 56 Q 26 62 44 56" fill="#C09040" stroke="none"/>
-    <defs>
-      <linearGradient id="snackGrad" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0%" stopColor="#FDE68A"/>
-        <stop offset="100%" stopColor="#F59E0B"/>
-      </linearGradient>
-    </defs>
-  </svg>
+  <div
+    className="relative select-none pointer-events-none"
+    style={{
+      width: "64px",
+      height: "88px",
+      filter: "drop-shadow(0 20px 26px rgba(0,0,0,0.75)) drop-shadow(0 8px 14px rgba(34,197,94,0.3))",
+    }}
+  >
+    <Image
+      src="/images/products/lays-cream-onion.png"
+      alt="Lay's American Style Cream & Onion"
+      width={64}
+      height={88}
+      priority
+      className="w-full h-full object-contain filter contrast-[1.04] brightness-[1.02]"
+    />
+  </div>
 );
+
 
 const ChocolateBar = () => (
   <div
