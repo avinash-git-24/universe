@@ -143,14 +143,14 @@ describe("validateCreateListingInput", () => {
 
   it("throws on invalid category", () => {
     expect(() =>
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+       
       validateCreateListingInput({ ...validInput, category: "food" as any })
     ).toThrow(ResaleServiceError);
   });
 
   it("throws on invalid condition", () => {
     expect(() =>
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+       
       validateCreateListingInput({ ...validInput, condition: "broken" as any })
     ).toThrow(ResaleServiceError);
   });
@@ -194,7 +194,7 @@ describe("validateUpdateListingInput", () => {
 
   it("throws on invalid status", () => {
     expect(() =>
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+       
       validateUpdateListingInput({ status: "pending" as any })
     ).toThrow(ResaleServiceError);
   });
@@ -213,7 +213,7 @@ describe("validateUpdateListingInput", () => {
 
   it("throws on non-boolean negotiable", () => {
     expect(() =>
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+       
       validateUpdateListingInput({ negotiable: "yes" as any })
     ).toThrow(ResaleServiceError);
   });
@@ -237,7 +237,7 @@ describe("validateFilters", () => {
   });
 
   it("silently drops invalid category", () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     const result = validateFilters({ category: "food" as any });
     expect(result.category).toBeUndefined();
   });

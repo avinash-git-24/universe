@@ -438,7 +438,7 @@ export function ResaleListingDetail({
             </p>
 
             <div className="p-3 bg-white rounded-2xl inline-block shadow-lg mx-auto">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
+              { }
               <img
                 src={`https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(typeof window !== "undefined" ? window.location.href : "")}`}
                 alt="Campus Listing QR Code"

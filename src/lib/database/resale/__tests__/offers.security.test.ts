@@ -1,7 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { createOffer, acceptOffer, withdrawOffer } from "../offers";
 import type { ResaleOffer } from "../offers";
-import { SupabaseClient } from "@supabase/supabase-js";
 import * as chatService from "../../chat";
 
 // Mock the chat service
@@ -10,10 +9,8 @@ vi.mock("../../chat", () => ({
   getOrCreateMarketplaceConversation: vi.fn().mockResolvedValue("conv-123"),
 }));
 
-import { Database } from "@/types/database";
-
 describe("Phase 2G: Offers Security & Integrity", () => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   let mockSupabase: any;
 
   beforeEach(() => {

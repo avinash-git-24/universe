@@ -53,7 +53,7 @@ export function SavedListingsView() {
         if (cancelled) return;
         setListings(saved);
         setImageUrls(urls);
-      } catch (err) {
+      } catch {
         if (cancelled) return;
         setError("Failed to load saved listings.");
       } finally {

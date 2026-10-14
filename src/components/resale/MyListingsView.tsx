@@ -140,7 +140,7 @@ export function MyListingsView() {
           page: loadMorePage!,
           isLoadingMore: false,
         }));
-      } catch (err: unknown) {
+      } catch {
         if (!active) return;
         setData((prev) => ({ ...prev, isLoadingMore: false }));
         // Could show toast here

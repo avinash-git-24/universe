@@ -22,7 +22,7 @@ export function FavoriteButton({
   const [isPending, setIsPending] = useState(false);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
+     
     setIsFavorited(initialIsFavorited);
   }, [initialIsFavorited]);
 

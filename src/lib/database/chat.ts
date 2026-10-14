@@ -536,7 +536,7 @@ export async function sendMessage(
   content: string,
   imageUrl?: string | null,
   messageType: string = "text",
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   metadata?: any | null
 ): Promise<Message | null> {
   // Layer 1: Use the safe RPC (handles participant self-heal internally)

@@ -214,7 +214,7 @@ export function ChatWindow({ userId, conversation, isOnline }: ChatWindowProps) 
           setMessages((prev) =>
             prev.map((m) => {
               if (m.id === messageId) {
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                 
                 const meta = (m.metadata as any) || {};
                 return { ...m, metadata: { ...meta, reactions } };
               }
@@ -393,7 +393,7 @@ export function ChatWindow({ userId, conversation, isOnline }: ChatWindowProps) 
     const targetMsg = messages.find((m) => m.id === messageId);
     if (!targetMsg) return;
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     const currentMeta = (targetMsg.metadata as any) || {};
     const oldReactions: Record<string, string[]> = currentMeta.reactions || {};
     const newReactions: Record<string, string[]> = {};

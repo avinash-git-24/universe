@@ -116,7 +116,7 @@ export const ResaleListingCard = memo(function ResaleListingCard({
           }}
         >
           {displayImageUrl && !imgError ? (
-            // eslint-disable-next-line @next/next/no-img-element
+             
             <img
               src={displayImageUrl}
               alt={listing.title}

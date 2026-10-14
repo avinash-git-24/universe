@@ -71,7 +71,7 @@ describe("Phase 2E: Edit Listing", () => {
       vi.mocked(QueriesMod.getUser).mockResolvedValueOnce({
         data: { user: null },
         error: null,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+         
       } as any);
 
       await expect(EditListingPage({ params: { id: "listing-123" } })).rejects.toThrow("REDIRECT");
@@ -82,7 +82,7 @@ describe("Phase 2E: Edit Listing", () => {
       vi.mocked(QueriesMod.getUser).mockResolvedValueOnce({
         data: { user: { id: "owner-123" } },
         error: null,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+         
       } as any);
       vi.mocked(ResaleDbMod.getResaleListingById).mockResolvedValueOnce(null);
 
@@ -94,7 +94,7 @@ describe("Phase 2E: Edit Listing", () => {
       vi.mocked(QueriesMod.getUser).mockResolvedValueOnce({
         data: { user: { id: "imposter-456" } },
         error: null,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+         
       } as any);
       vi.mocked(ResaleDbMod.getResaleListingById).mockResolvedValueOnce(createMockListing("active", "owner-123"));
 

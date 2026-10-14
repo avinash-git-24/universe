@@ -119,7 +119,7 @@ export function AnalyticsClientWrapper({ role, initialData }: AnalyticsClientWra
 
       // Fallback for runner: if wallet earnings are 0, sum up completed delivery fees
       if (totalEarned === 0 && dataObj.assignmentsData.length > 0) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+         
         totalEarned = dataObj.assignmentsData.reduce((sum, a: any) => sum + (Number(a.delivery_requests?.delivery_fee) || 0), 0);
       }
     }
@@ -235,7 +235,7 @@ export function AnalyticsClientWrapper({ role, initialData }: AnalyticsClientWra
       });
     } else {
       filteredData.assignmentsData.forEach(a => {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+         
         const req = (a as any).delivery_requests;
         const route = req?.pickup_location && req?.dropoff_location
           ? `${req.pickup_location} → ${req.dropoff_location}`

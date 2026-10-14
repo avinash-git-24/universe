@@ -601,7 +601,7 @@ export function SellForm() {
                     }}
                     title={img.error ?? (index === 0 ? "Cover photo" : `Photo ${index + 1}`)}
                   >
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    { }
                     <img
                       src={img.previewUrl}
                       alt={`Listing photo ${index + 1}`}
@@ -1247,7 +1247,7 @@ function ListingPreview({
           overflow: "hidden", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center",
         }}>
           {coverImageUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
+             
             <img src={coverImageUrl} alt="Preview" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
           ) : (
             <Camera size={24} color="rgba(167,184,176,0.3)" />

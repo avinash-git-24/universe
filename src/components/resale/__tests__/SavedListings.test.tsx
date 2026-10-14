@@ -2,7 +2,6 @@ import { render, screen, waitFor } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { SavedListingsView } from "../SavedListingsView";
 import * as resaleDb from "@/lib/database/resale";
-import * as nextNav from "next/navigation";
 
 // Mock next/navigation
 vi.mock("next/navigation", () => ({
@@ -60,7 +59,7 @@ describe("SavedListingsView", () => {
         seller_id: "u1",
         images: [],
         negotiable: false,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+         
       } as any
     ]);
     

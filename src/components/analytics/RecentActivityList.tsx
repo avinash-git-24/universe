@@ -32,17 +32,6 @@ export function RecentActivityList({ activities, title = "Recent Activity" }: Re
     }
   };
 
-  const getBgColor = (type: string) => {
-    switch (type) {
-      case "request_created": return "bg-blue-500/10 border-blue-500/20";
-      case "request_completed": return "bg-emerald-500/10 border-emerald-500/20";
-      case "request_cancelled": return "bg-red-500/10 border-red-500/20";
-      case "payment":
-      case "earning": return "bg-purple-500/10 border-purple-500/20";
-      default: return "bg-white/5 border-white/10";
-    }
-  };
-
   return (
     <div className="bg-[#0c1410]/80 backdrop-blur-md border border-white/10 hover:border-emerald-500/25 rounded-2xl overflow-hidden relative group flex flex-col h-full w-full transition-all shadow-sm">
       <div className="p-6 pb-4 border-b border-white/5 relative z-10 flex justify-between items-center">

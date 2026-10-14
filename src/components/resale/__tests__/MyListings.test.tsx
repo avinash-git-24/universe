@@ -75,7 +75,7 @@ describe("Phase 2E: My Listings", () => {
       vi.mocked(QueriesMod.getUser).mockResolvedValueOnce({
         data: { user: null },
         error: null,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+         
       } as any);
 
       await MyListingsPage();

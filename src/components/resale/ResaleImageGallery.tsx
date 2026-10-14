@@ -180,7 +180,7 @@ export function ResaleImageGallery({ title, images, signedUrls, isOwner, listing
           title="Click to view fullscreen"
         >
           {getImageUrl(currentImage.storage_path) ? (
-            // eslint-disable-next-line @next/next/no-img-element
+             
             <img
               src={getImageUrl(currentImage.storage_path)}
               alt={`${title} - Image ${currentIndex + 1}`}
@@ -240,7 +240,7 @@ export function ResaleImageGallery({ title, images, signedUrls, isOwner, listing
                   }`}
                 >
                   {getImageUrl(img.storage_path) ? (
-                    // eslint-disable-next-line @next/next/no-img-element
+                     
                     <img
                       src={getImageUrl(img.storage_path)}
                       alt={`Thumbnail ${idx + 1}`}
@@ -329,7 +329,7 @@ export function ResaleImageGallery({ title, images, signedUrls, isOwner, listing
             onClick={(e) => e.stopPropagation()}
           >
             {getImageUrl(currentImage.storage_path) && (
-              // eslint-disable-next-line @next/next/no-img-element
+               
               <img
                 src={getImageUrl(currentImage.storage_path)}
                 alt={`${title} - Fullscreen ${currentIndex + 1}`}

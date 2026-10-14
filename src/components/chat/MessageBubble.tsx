@@ -33,7 +33,7 @@ export const MessageBubble = memo(function MessageBubble({
   const [isDeleting, setIsDeleting] = useState(false);
 
   // Parse reactions from metadata safely
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   const reactions: Record<string, string[]> = (message.metadata as any)?.reactions || {};
   const reactionEntries = Object.entries(reactions).filter(([, userIds]) => userIds.length > 0);
 
