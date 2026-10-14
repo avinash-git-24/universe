@@ -65,6 +65,14 @@ This version has breaking changes — APIs, conventions, and file structure may 
    - **State Layer:** `src/providers/` (React context providers for global cross-cutting state).
 3. **Zero Unapproved Dependencies:**
    - Do NOT run `npm install <package>` without explicit user consent. Always favor native Web APIs, standard React 19 primitives, and existing utility libraries (`date-fns`, `lucide-react`, `clsx`).
+4. **The Minimalist Decision Ladder (Anti-Bloat Pre-Write Filter):**
+   Before writing any new abstraction, utility file, or helper function, the agent MUST climb this ladder:
+   - *Step 1 (YAGNI):* Does this speculative code need to exist right now? If no, skip it.
+   - *Step 2 (Reuse First):* Check if the codebase already has a similar utility or helper (`src/lib/*`, `src/utils/*`) before writing new code.
+   - *Step 3 (Native Platform First):* Favor native JavaScript & browser Web APIs over custom implementations.
+   - *Step 4 (Existing Dependencies):* Leverage already-installed libraries (`date-fns`, `clsx`, `lucide-react`) rather than custom multi-line helpers.
+   - *Step 5 (Inline Simplicity):* If logic can be expressed clearly in 1–3 lines, write it inline instead of creating separate single-use files or wrapper hooks.
+   - *Step 6 (Minimal Custom Surface):* As a last resort, write the absolute minimum custom code required with zero unnecessary boilerplate.
 
 ---
 
