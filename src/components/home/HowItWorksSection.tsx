@@ -186,7 +186,7 @@ function StepCard({
         className="absolute top-5 right-6 text-5xl font-extrabold leading-none select-none"
         style={{
           color: accentColor,
-          opacity: 0.08,
+          opacity: 0.13,
           fontFamily: "var(--font-plus-jakarta-sans)",
         }}
       >
@@ -249,11 +249,11 @@ export function HowItWorksSection() {
       <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
         <div
           className="absolute -top-40 -left-40 w-96 h-96 rounded-full"
-          style={{ background: "radial-gradient(circle, rgba(16,185,129,0.06) 0%, transparent 70%)" }}
+          style={{ background: "radial-gradient(circle, rgba(124,58,237,0.07) 0%, transparent 70%)" }}
         />
         <div
           className="absolute -bottom-40 -right-40 w-96 h-96 rounded-full"
-          style={{ background: "radial-gradient(circle, rgba(245,158,11,0.06) 0%, transparent 70%)" }}
+          style={{ background: "radial-gradient(circle, rgba(168,85,247,0.07) 0%, transparent 70%)" }}
         />
       </div>
 
@@ -271,9 +271,9 @@ export function HowItWorksSection() {
           <span
             className="inline-flex items-center gap-2 mb-4 px-3.5 py-1 rounded-full text-xs font-semibold uppercase tracking-widest"
             style={{
-              background: "rgba(16,185,129,0.1)",
-              border: "1px solid rgba(16,185,129,0.25)",
-              color: "#059669",
+              background: "rgba(124,58,237,0.1)",
+              border: "1px solid rgba(124,58,237,0.25)",
+              color: "#7C3AED",
               fontFamily: "var(--font-inter)",
             }}
           >
@@ -287,7 +287,7 @@ export function HowItWorksSection() {
             How UniVerse{" "}
             <span
               style={{
-                background: "linear-gradient(90deg, #10B981, #F59E0B)",
+                background: "linear-gradient(90deg, #7C3AED, #A855F7)",
                 WebkitBackgroundClip: "text",
                 WebkitTextFillColor: "transparent",
                 backgroundClip: "text",
@@ -325,11 +325,11 @@ export function HowItWorksSection() {
         {/* Connector arrows between cards — desktop only */}
         <div className="hidden lg:flex items-center justify-center gap-0 mt-2 pointer-events-none select-none" aria-hidden="true">
           {[0, 1, 2].map((i) => (
-            <div key={i} className="flex-1 flex justify-center opacity-20">
+            <div key={i} className="flex-1 flex justify-center opacity-30">
               <div className="w-full max-w-[120px] flex items-center justify-center">
                 <div
-                  className="h-px flex-1 opacity-50"
-                  style={{ background: "linear-gradient(90deg, #10B981, #F59E0B)" }}
+                  className="h-px flex-1"
+                  style={{ background: "linear-gradient(90deg, #7C3AED, #A855F7)" }}
                 />
               </div>
             </div>
