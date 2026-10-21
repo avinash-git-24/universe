@@ -70,25 +70,6 @@ const SodaCan = () => (
 
 // ─── Individual product images ────────────────────────────────────────────────
 
-const LaysChips = () => (
-  <div
-    className="relative select-none pointer-events-none"
-    style={{
-      width: "72px",
-      height: "88px",
-      filter: "drop-shadow(0 20px 26px rgba(0,0,0,0.75)) drop-shadow(0 8px 14px rgba(34,197,94,0.3))",
-    }}
-  >
-    <Image
-      src="/images/products/lays-cream-onion.png"
-      alt="Lay's India's Magic Masala / Cream & Onion"
-      width={72}
-      height={88}
-      priority
-      className="w-full h-full object-contain filter contrast-[1.04] brightness-[1.02]"
-    />
-  </div>
-);
 
 const AmulDarkChocolate = () => (
   <div
@@ -163,16 +144,6 @@ const ITEMS: FloatItem[] = [
     floatDuration: 6.0,
     floatDelay: 0.8,
     rotate: -18,
-    rotateRange: 5,
-  },
-  {
-    id: "lays",
-    component: <LaysChips />,
-    style: { top: "75%", left: "4%" },
-    floatY: [0, -18, 0],
-    floatDuration: 6.5,
-    floatDelay: 0.6,
-    rotate: -10,
     rotateRange: 5,
   },
 
