@@ -322,19 +322,7 @@ export function HowItWorksSection() {
           ))}
         </motion.div>
 
-        {/* Connector arrows between cards — desktop only */}
-        <div className="hidden lg:flex items-center justify-center gap-0 mt-2 pointer-events-none select-none" aria-hidden="true">
-          {[0, 1, 2].map((i) => (
-            <div key={i} className="flex-1 flex justify-center opacity-30">
-              <div className="w-full max-w-[120px] flex items-center justify-center">
-                <div
-                  className="h-px flex-1"
-                  style={{ background: "linear-gradient(90deg, #7C3AED, #A855F7)" }}
-                />
-              </div>
-            </div>
-          ))}
-        </div>
+
       </div>
     </section>
   );
