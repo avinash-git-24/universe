@@ -70,6 +70,26 @@ const SodaCan = () => (
 
 // ─── Individual product images ────────────────────────────────────────────────
 
+const OreoBiscuit = () => (
+  <div
+    className="relative select-none pointer-events-none"
+    style={{
+      width: "82px",
+      height: "44px",
+      filter: "drop-shadow(0 20px 26px rgba(0,0,0,0.75)) drop-shadow(0 8px 14px rgba(37,99,235,0.35))",
+    }}
+  >
+    <Image
+      src="/products/oreo-vanilla-biscuit.webp"
+      alt="Oreo Vanilla Sandwich Biscuit"
+      width={82}
+      height={44}
+      priority
+      className="w-full h-full object-contain filter contrast-[1.05] brightness-[1.02]"
+    />
+  </div>
+);
+
 
 const AmulDarkChocolate = () => (
   <div
@@ -144,6 +164,16 @@ const ITEMS: FloatItem[] = [
     floatDuration: 6.0,
     floatDelay: 0.8,
     rotate: -18,
+    rotateRange: 5,
+  },
+  {
+    id: "oreo",
+    component: <OreoBiscuit />,
+    style: { top: "75%", left: "4%" },
+    floatY: [0, -18, 0],
+    floatDuration: 6.5,
+    floatDelay: 0.6,
+    rotate: -10,
     rotateRange: 5,
   },
 
