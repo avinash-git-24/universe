@@ -181,8 +181,8 @@ const ITEMS: FloatItem[] = [
   {
     id: "can",
     component: <SodaCan />,
-    style: { top: "14%", right: "5%" },
-    floatY: [0, -20, 0],
+    style: { top: "24%", right: "5%" },
+    floatY: [0, -14, 0],
     floatDuration: 4.8,
     floatDelay: 0.4,
     rotate: 14,
@@ -191,8 +191,8 @@ const ITEMS: FloatItem[] = [
   {
     id: "amul-chocolate",
     component: <AmulDarkChocolate />,
-    style: { top: "45%", right: "3%" },
-    floatY: [0, -16, 0],
+    style: { top: "52%", right: "3%" },
+    floatY: [0, -15, 0],
     floatDuration: 5.6,
     floatDelay: 1.2,
     rotate: 8,
@@ -201,8 +201,8 @@ const ITEMS: FloatItem[] = [
   {
     id: "noodles",
     component: <NoodleCup />,
-    style: { top: "75%", right: "4.5%" },
-    floatY: [0, -16, 0],
+    style: { top: "80%", right: "4.5%" },
+    floatY: [0, -15, 0],
     floatDuration: 6.8,
     floatDelay: 1.8,
     rotate: -6,
