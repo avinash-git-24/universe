@@ -442,11 +442,15 @@ export function ChatWindow({ userId, conversation, isOnline }: ChatWindowProps) 
     setMessages((prev) => prev.filter((m) => m.id !== messageId));
 
     // 2. Broadcast immediately over websocket channel so receiver gets 0ms instant deletion
-    supabase.channel(`chat:messages:${conversation.id}`).send({
-      type: "broadcast",
-      event: "message_deleted",
-      payload: { messageId, conversationId: conversation.id },
-    });
+    try {
+      supabase.channel(`chat:messages:${conversation.id}`).send({
+        type: "broadcast",
+        event: "message_deleted",
+        payload: { messageId, conversationId: conversation.id },
+      });
+    } catch (wsErr) {
+      console.warn("[chat] Broadcast delete error:", wsErr);
+    }
 
     // 3. Persist deletion in database
     if (!messageId.startsWith("temp-")) {
