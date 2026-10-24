@@ -11,7 +11,7 @@ import {
 } from "@/lib/database/chat";
 import { ChatList } from "@/components/chat/ChatList";
 import { ChatWindow } from "@/components/chat/ChatWindow";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { sounds } from "@/lib/audio";
 
@@ -47,7 +47,6 @@ interface InAppToast {
 
 export function ChatClient({ userId, initialConversations, activeDeliveries = [] }: ChatClientProps) {
   const searchParams = useSearchParams();
-  const router = useRouter();
   
   const [conversations, setConversations] = useState<ConversationWithDetails[]>(initialConversations);
   const [activeConversationId, setActiveConversationId] = useState<string | null>(
@@ -84,12 +83,22 @@ export function ChatClient({ userId, initialConversations, activeDeliveries = []
   const handleSelect = useCallback(async (id: string) => {
     if (!id) {
       setActiveConversationId(null);
-      router.replace("/dashboard/chat", { scroll: false });
+      if (typeof window !== "undefined") {
+        const url = new URL(window.location.href);
+        url.searchParams.delete("id");
+        window.history.replaceState(null, "", url.pathname + (url.search ? url.search : ""));
+      }
       return;
     }
 
     setActiveConversationId(id);
-    router.replace(`?id=${id}`, { scroll: false });
+    if (typeof window !== "undefined") {
+      const url = new URL(window.location.href);
+      url.searchParams.set("id", id);
+      url.searchParams.delete("startWithUserId");
+      url.searchParams.delete("requestId");
+      window.history.replaceState(null, "", url.pathname + url.search);
+    }
     
     // Clear unread count locally and in db
     setConversations((prev) =>
@@ -97,7 +106,7 @@ export function ChatClient({ userId, initialConversations, activeDeliveries = []
     );
     setToasts((prev) => prev.filter((t) => t.conversationId !== id));
     await markConversationAsRead(supabase, id, userId);
-  }, [router, supabase, userId]);
+  }, [supabase, userId]);
 
   const handleStartChatWithUser = useCallback(async (otherUserId: string, reqId?: string) => {
     if (!otherUserId) return;
@@ -169,21 +178,34 @@ export function ChatClient({ userId, initialConversations, activeDeliveries = []
     setConversations(initialConversations);
   }, [initialConversations]);
 
-  // Sync activeConversationId with URL query params
+  // Handle external startWithUserId navigation if requested via URL
   useEffect(() => {
-    const urlId = searchParams.get("id");
     const startWithUserId = searchParams.get("startWithUserId");
     const reqId = searchParams.get("requestId");
 
-    if (urlId) {
-      setActiveConversationId(urlId);
-    } else if (startWithUserId && startedWithRef.current !== startWithUserId) {
+    if (startWithUserId && startedWithRef.current !== startWithUserId) {
       startedWithRef.current = startWithUserId;
       handleStartChatWithUser(startWithUserId, reqId || undefined);
-    } else if (conversations.length > 0 && !activeConversationId && !startingChatUserId) {
-      setActiveConversationId(conversations[0].id);
     }
-  }, [searchParams, conversations, activeConversationId, handleStartChatWithUser, startingChatUserId]);
+  }, [searchParams, handleStartChatWithUser]);
+
+  // Support native browser Back / Forward navigation (popstate)
+  useEffect(() => {
+    const handlePopState = () => {
+      const params = new URLSearchParams(window.location.search);
+      const urlId = params.get("id");
+      if (urlId) {
+        setActiveConversationId(urlId);
+      } else if (conversations.length > 0) {
+        setActiveConversationId(conversations[0].id);
+      } else {
+        setActiveConversationId(null);
+      }
+    };
+
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, [conversations]);
 
   // If activeConversationId is not yet in conversations list, fetch it
   useEffect(() => {
@@ -434,6 +456,7 @@ export function ChatClient({ userId, initialConversations, activeDeliveries = []
             </div>
             
             <ChatWindow 
+              key={activeConversation.id}
               userId={userId} 
               conversation={activeConversation} 
               isOnline={Boolean(activeConversation.other_participant?.id && onlineUsers.has(activeConversation.other_participant.id))}

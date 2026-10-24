@@ -70,9 +70,12 @@ function formatDateSeparator(dateStr: string): string {
   return format(d, "MMMM d, yyyy");
 }
 
+const messagesCache = new Map<string, Message[]>();
+
 export function ChatWindow({ userId, conversation, isOnline }: ChatWindowProps) {
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [loading, setLoading] = useState(true);
+  const hasCached = messagesCache.has(conversation.id);
+  const [messages, setMessages] = useState<Message[]>(messagesCache.get(conversation.id) || []);
+  const [loading, setLoading] = useState(!hasCached);
   const [newMessage, setNewMessage] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [otherTyping, setOtherTyping] = useState(false);
@@ -97,14 +100,24 @@ export function ChatWindow({ userId, conversation, isOnline }: ChatWindowProps) 
     sounds.enabled = soundEnabled;
   }, [soundEnabled]);
 
+  // Keep message cache updated with live local state
+  useEffect(() => {
+    if (messages.length > 0 || messagesCache.has(conversation.id)) {
+      messagesCache.set(conversation.id, messages);
+    }
+  }, [conversation.id, messages]);
+
   // Initial Load
   useEffect(() => {
     let isMounted = true;
 
     async function load() {
-      setLoading(true);
+      if (!messagesCache.has(conversation.id)) {
+        setLoading(true);
+      }
       const data = await getMessages(supabase, conversation.id);
       if (isMounted) {
+        messagesCache.set(conversation.id, data);
         setMessages(data);
         setLoading(false);
         await markConversationAsRead(supabase, conversation.id, userId);
