@@ -70,22 +70,22 @@ const SodaCan = () => (
 
 // ─── Individual product images ────────────────────────────────────────────────
 
-const OreoBiscuit = () => (
+const LaysChips = () => (
   <div
     className="relative select-none pointer-events-none"
     style={{
-      width: "82px",
-      height: "44px",
-      filter: "drop-shadow(0 20px 26px rgba(0,0,0,0.75)) drop-shadow(0 8px 14px rgba(37,99,235,0.35))",
+      width: "72px",
+      height: "88px",
+      filter: "drop-shadow(0 20px 26px rgba(0,0,0,0.75)) drop-shadow(0 8px 14px rgba(34,197,94,0.3))",
     }}
   >
     <Image
-      src="/products/oreo-vanilla-biscuit.webp"
-      alt="Oreo Vanilla Sandwich Biscuit"
-      width={82}
-      height={44}
+      src="/images/products/lays-cream-onion.png"
+      alt="Lay's American Style Cream & Onion"
+      width={72}
+      height={88}
       priority
-      className="w-full h-full object-contain filter contrast-[1.05] brightness-[1.02]"
+      className="w-full h-full object-contain filter contrast-[1.04] brightness-[1.02]"
     />
   </div>
 );
@@ -167,8 +167,8 @@ const ITEMS: FloatItem[] = [
     rotateRange: 5,
   },
   {
-    id: "oreo",
-    component: <OreoBiscuit />,
+    id: "lays",
+    component: <LaysChips />,
     style: { top: "80%", left: "4%" },
     floatY: [0, -15, 0],
     floatDuration: 6.5,
