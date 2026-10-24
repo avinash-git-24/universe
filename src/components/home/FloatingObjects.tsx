@@ -149,8 +149,8 @@ const ITEMS: FloatItem[] = [
   {
     id: "snack",
     component: <SnackPacket />,
-    style: { top: "14%", left: "4.5%" },
-    floatY: [0, -18, 0],
+    style: { top: "24%", left: "4.5%" },
+    floatY: [0, -14, 0],
     floatDuration: 5.2,
     floatDelay: 0,
     rotate: -12,
@@ -159,8 +159,8 @@ const ITEMS: FloatItem[] = [
   {
     id: "choco",
     component: <ChocolateBar />,
-    style: { top: "45%", left: "2.5%" },
-    floatY: [0, -16, 0],
+    style: { top: "52%", left: "2.5%" },
+    floatY: [0, -15, 0],
     floatDuration: 6.0,
     floatDelay: 0.8,
     rotate: -18,
@@ -169,8 +169,8 @@ const ITEMS: FloatItem[] = [
   {
     id: "oreo",
     component: <OreoBiscuit />,
-    style: { top: "75%", left: "4%" },
-    floatY: [0, -18, 0],
+    style: { top: "80%", left: "4%" },
+    floatY: [0, -15, 0],
     floatDuration: 6.5,
     floatDelay: 0.6,
     rotate: -10,
