@@ -190,7 +190,9 @@ export async function getConversationById(
     }
 
     const lastReadAt = myRecord?.last_read_at ? new Date(myRecord.last_read_at) : new Date(0);
-    const rawMessages = (conv.messages || []) as Message[];
+    const rawMessages = ((conv.messages || []) as Message[]).filter(
+      (m) => !(m.metadata as any)?.deleted
+    );
     const sortedMessages = [...rawMessages].sort(
       (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
     );
@@ -519,8 +521,8 @@ export async function getMessages(
     .eq("conversation_id", conversationId)
     .order("created_at", { ascending: true });
 
-  if (error) return [];
-  return data;
+  if (error || !data) return [];
+  return data.filter((m) => !(m.metadata as any)?.deleted);
 }
 
 /**
@@ -713,20 +715,7 @@ export async function deleteMessage(
   messageId: string,
   userId: string
 ): Promise<boolean> {
-  // Layer 1: Call RPC
-  try {
-    const { data: rpcData, error: rpcError } = await (supabase.rpc as any)(
-      "delete_message_for_everyone",
-      { p_message_id: messageId }
-    );
-    if (!rpcError && rpcData) {
-      return true;
-    }
-  } catch {
-    // Fall through to next layer
-  }
-
-  // Layer 2: Browser API route fallback
+  // Layer 1 (Browser): Server API route with admin privileges to bypass client RLS
   if (typeof window !== "undefined") {
     try {
       const res = await fetch("/api/chat/delete-message", {
@@ -741,8 +730,21 @@ export async function deleteMessage(
         }
       }
     } catch (apiErr) {
-      console.warn("[chat] delete-message API fallback error:", apiErr);
+      console.warn("[chat] delete-message API error:", apiErr);
     }
+  }
+
+  // Layer 2: Safe SECURITY DEFINER RPC
+  try {
+    const { data: rpcData, error: rpcError } = await (supabase.rpc as any)(
+      "delete_message_for_everyone",
+      { p_message_id: messageId }
+    );
+    if (!rpcError && rpcData) {
+      return true;
+    }
+  } catch {
+    // Fall through to next layer
   }
 
   // Layer 3: Direct table delete
