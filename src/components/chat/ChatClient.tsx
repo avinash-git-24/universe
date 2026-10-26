@@ -342,9 +342,6 @@ export function ChatClient({ userId, initialConversations, activeDeliveries = []
     };
   }, [userId, supabase, showToast]);
 
-
-
-
   useEffect(() => {
     const room = supabase.channel("global_presence");
     

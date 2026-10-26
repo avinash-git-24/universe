@@ -406,7 +406,6 @@ export function ChatWindow({ userId, conversation, isOnline }: ChatWindowProps) 
     const targetMsg = messages.find((m) => m.id === messageId);
     if (!targetMsg) return;
 
-     
     const currentMeta = (targetMsg.metadata as any) || {};
     const oldReactions: Record<string, string[]> = currentMeta.reactions || {};
     const newReactions: Record<string, string[]> = {};
