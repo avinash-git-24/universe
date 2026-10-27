@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 
 /**
- * UniVerse — Ultra-Premium 3D Isometric Campus Background
+ * UniVerse - Ultra-Premium 3D Isometric Campus Background
  *
  * A master-crafted isometric SVG illustration of a modern Indian university
  * campus inspired by Marwadi University.
@@ -15,7 +15,7 @@ import { useState, useEffect } from "react";
  *   glow with warm amber interior lights, bringing the campus to life.
  * - Balanced Atmosphere: Softened god-rays and cinematic depth haze that preserve
  *   crisp hero text and CTA button contrast.
- * - Performance: 100% pure SVG + hardware-accelerated CSS animations — zero JS overhead.
+ * - Performance: 100% pure SVG + hardware-accelerated CSS animations - zero JS overhead.
  */
 
 /**
@@ -74,22 +74,22 @@ export function CampusBackground() {
 
         /* ── Moon Breathing ── */
         @keyframes moon-breathe {
-          0%, 100% { opacity: 0.92; filter: drop-shadow(0 0 14px rgba(186, 230, 253, 0.45)); }
-          50%       { opacity: 1.00; filter: drop-shadow(0 0 24px rgba(224, 242, 254, 0.8)); }
+          0%, 100% { opacity: 0.88; }
+          50%       { opacity: 1.00; }
         }
 
-        /* ── Twinkling Stars (Pure Opacity Blinking — 100% Fixed & Stable) ── */
+        /* ── Twinkling Stars (Pure Opacity Blinking - 100% Fixed & Stable) ── */
         @keyframes star-fade-1 {
-          0%, 100% { opacity: 0.35; filter: drop-shadow(0 0 2px rgba(224, 242, 254, 0.5)); }
-          50%       { opacity: 1.00; filter: drop-shadow(0 0 6px rgba(224, 242, 254, 0.95)); }
+          0%, 100% { opacity: 0.35; }
+          50%       { opacity: 1.00; }
         }
         @keyframes star-fade-2 {
-          0%, 100% { opacity: 0.30; filter: drop-shadow(0 0 2px rgba(186, 230, 253, 0.45)); }
-          50%       { opacity: 0.95; filter: drop-shadow(0 0 5px rgba(186, 230, 253, 0.9)); }
+          0%, 100% { opacity: 0.30; }
+          50%       { opacity: 0.95; }
         }
         @keyframes star-fade-3 {
-          0%, 100% { opacity: 0.40; filter: drop-shadow(0 0 2px rgba(240, 249, 255, 0.6)); }
-          50%       { opacity: 1.00; filter: drop-shadow(0 0 7px rgba(255, 255, 255, 1)); }
+          0%, 100% { opacity: 0.40; }
+          50%       { opacity: 1.00; }
         }
 
         /* ── Window Glow Pulse (Night Mode Cozy Study Lights) ── */
@@ -104,10 +104,10 @@ export function CampusBackground() {
         .cloud-c { animation: cloud-drift-c 94s linear infinite 28s; }
         .sun-core { transform-origin: 1330px 88px; animation: sun-shimmer 5s ease-in-out infinite; }
         .sun-beams { transform-origin: 1330px 88px; animation: rays-rotate 120s linear infinite; }
-        .moon-glow { animation: moon-breathe 4.5s ease-in-out infinite; }
-        .star-pulse-1 { animation: star-fade-1 3.5s ease-in-out infinite; }
-        .star-pulse-2 { animation: star-fade-2 4.2s ease-in-out infinite 1.1s; }
-        .star-pulse-3 { animation: star-fade-3 2.9s ease-in-out infinite 1.8s; }
+        .moon-glow { animation: moon-breathe 4.5s ease-in-out infinite; filter: drop-shadow(0 0 16px rgba(186, 230, 253, 0.55)); }
+        .star-pulse-1 { animation: star-fade-1 3.5s ease-in-out infinite; filter: drop-shadow(0 0 3px rgba(224, 242, 254, 0.7)); }
+        .star-pulse-2 { animation: star-fade-2 4.2s ease-in-out infinite 1.1s; filter: drop-shadow(0 0 3px rgba(186, 230, 253, 0.65)); }
+        .star-pulse-3 { animation: star-fade-3 2.9s ease-in-out infinite 1.8s; filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.8)); }
         .night-window-glow { animation: room-light-flicker 6s ease-in-out infinite; }
       `}</style>
 
@@ -262,7 +262,7 @@ export function CampusBackground() {
         </defs>
 
         {/* ═══════════════════════════════════════════════
-            LAYER 1 — SKY & ATMOSPHERE
+            LAYER 1 - SKY & ATMOSPHERE
         ═══════════════════════════════════════════════ */}
         <rect x="0" y="0" width="1440" height="800" fill="url(#uvSkyGrad)" />
         <rect x="0" y="320" width="1440" height="480" fill="url(#uvHorizonHaze)" />
@@ -316,7 +316,7 @@ export function CampusBackground() {
               className="moon-glow"
             />
 
-            {/* ── Fixed Twinkling Stars (Original 11 Stars — 100% Stable Position & Pure Opacity Blink) ── */}
+            {/* ── Fixed Twinkling Stars (Original 11 Stars - 100% Stable Position & Pure Opacity Blink) ── */}
             {/* Delicate 4-Point Sparkle Diamonds */}
             <path d="M 130 46 Q 130 52 124 52 Q 130 52 130 58 Q 130 52 136 52 Q 130 52 130 46 Z" fill="#F0F9FF" className="star-pulse-1" />
             <path d="M 420 42 Q 420 48 414 48 Q 420 48 420 54 Q 420 48 426 48 Q 420 48 420 42 Z" fill="#E0F2FE" className="star-pulse-2" />
@@ -381,7 +381,7 @@ export function CampusBackground() {
         </g>
 
         {/* ═══════════════════════════════════════════════
-            LAYER 2 — DISTANT HILLS (Atmospheric Depth)
+            LAYER 2 - DISTANT HILLS (Atmospheric Depth)
         ═══════════════════════════════════════════════ */}
         <g filter="url(#uvHillBlur)" opacity={isNight ? 0.55 : 0.42}>
           <ellipse cx="200" cy="522" rx="300" ry="55" fill="url(#uvHillFarGrad)" />
@@ -396,12 +396,12 @@ export function CampusBackground() {
         </g>
 
         {/* ═══════════════════════════════════════════════
-            LAYER 3 — UPPER CAMPUS LAWN (Behind Road)
+            LAYER 3 - UPPER CAMPUS LAWN (Behind Road)
         ═══════════════════════════════════════════════ */}
         <rect x="0" y="535" width="1440" height="57" fill="url(#uvGrassUpper)" />
 
         {/* ═══════════════════════════════════════════════
-            LAYER 4 — 3D ISOMETRIC FACETS & GROUND SHADOWS
+            LAYER 4 - 3D ISOMETRIC FACETS & GROUND SHADOWS
         ═══════════════════════════════════════════════ */}
 
         {/* Ground Cast Shadows (Isometric oblique projection from top-right sun) */}
@@ -512,7 +512,7 @@ export function CampusBackground() {
         <polygon points="1422,282 1437,272 1437,284 1422,294" fill="#D97706" opacity="0.7" />
 
         {/* ═══════════════════════════════════════════════
-            LAYER 5 — MAIN ACADEMIC BLOCK (FACADE)
+            LAYER 5 - MAIN ACADEMIC BLOCK (FACADE)
         ═══════════════════════════════════════════════ */}
         {/* Soft Building Drop Shadow */}
         <rect x="526" y="260" width="410" height="365" fill="#061208" opacity={isNight ? "0.35" : "0.10"} rx="2" />
@@ -529,7 +529,7 @@ export function CampusBackground() {
           <rect key={i} x={x} y="258" width="16" height="342" fill={isNight ? "#64748B" : "#E8E4DC"} opacity="0.45" rx="1" />
         ))}
 
-        {/* Main Windows — Living Dynamic Room Lights (Sparse late-night lights) */}
+        {/* Main Windows - Living Dynamic Room Lights (Sparse late-night lights) */}
         {[0, 1, 2, 3, 4].map(row =>
           [0, 1, 2, 3, 4, 5, 6].map(col => {
             // Night lighting: sparse study rooms (only 5 windows lit out of 35)
@@ -593,7 +593,7 @@ export function CampusBackground() {
         <path d="M 721.5 210 L 748 217 L 721.5 224 Z" fill="#10B981" />
 
         {/* ═══════════════════════════════════════════════
-            LAYER 6 — STUDENT HOSTELS (FACADES)
+            LAYER 6 - STUDENT HOSTELS (FACADES)
         ═══════════════════════════════════════════════ */}
 
         {/* ── Hostel A (Amber Accent) ── */}
@@ -734,7 +734,7 @@ export function CampusBackground() {
         </g>
 
         {/* ═══════════════════════════════════════════════
-            LAYER 7 — CAMPUS ROAD & SIDEWALK
+            LAYER 7 - CAMPUS ROAD & SIDEWALK
         ═══════════════════════════════════════════════ */}
         {/* Main Road Surface */}
         <rect x="0" y="592" width="1440" height="44" fill="url(#uvRoadGrad)" />
@@ -758,7 +758,7 @@ export function CampusBackground() {
         ))}
 
         {/* ═══════════════════════════════════════════════
-            LAYER 8 — CAMPUS VENDING MACHINES (3D)
+            LAYER 8 - CAMPUS VENDING MACHINES (3D)
         ═══════════════════════════════════════════════ */}
         {[
           { x: 224, accent: "#10B981" },   // Hostel A
@@ -821,7 +821,7 @@ export function CampusBackground() {
         ))}
 
         {/* ═══════════════════════════════════════════════
-            LAYER 9 — ISOMETRIC TREES & FOLIAGE
+            LAYER 9 - ISOMETRIC TREES & FOLIAGE
         ═══════════════════════════════════════════════ */}
         {[
           { x: 490, base: 548, tH: 48, cR: 44, c1: "#2E7D52", c2: "#388E5A" },
@@ -856,7 +856,7 @@ export function CampusBackground() {
         ))}
 
         {/* ═══════════════════════════════════════════════
-            LAYER 10 — LOWER CAMPUS LAWN & ATMOSPHERE
+            LAYER 10 - LOWER CAMPUS LAWN & ATMOSPHERE
         ═══════════════════════════════════════════════ */}
         <rect x="0" y="636" width="1440" height="164" fill="url(#uvGrassLower)" />
         {/* Sidewalk curb strip */}

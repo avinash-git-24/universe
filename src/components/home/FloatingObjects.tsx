@@ -168,7 +168,8 @@ export function FloatingObjects() {
               alt={item.name}
               width={item.width}
               height={item.height}
-              priority
+              loading="lazy"
+              sizes="(max-width: 1024px) 0vw, 100px"
               className={`w-full h-full object-contain ${item.contrastClass || "filter contrast-[1.04] brightness-[1.02]"}`}
             />
           </div>
