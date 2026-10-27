@@ -13,6 +13,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { ArrowRight, ChevronDown, Users, Bike, Package } from "lucide-react";
 import { CampusBackground } from "./CampusBackground";
@@ -20,6 +21,7 @@ import { FloatingObjects } from "./FloatingObjects";
 import { ROUTES } from "@/constants/routes";
 import { cn } from "@/lib/utils";
 import { createClient } from "@/lib/supabase/client";
+import LiquidMetalButton from "@/components/ui/LiquidMetalButton";
 
 // ─── Animated Stat Item ───────────────────────────────────────────────────────
 
@@ -201,6 +203,8 @@ function ScrollIndicator() {
 // ─── Hero Buttons ─────────────────────────────────────────────────────────────
 
 function HeroButtons() {
+  const router = useRouter();
+
   return (
     <motion.div
       className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mt-5 sm:mt-8 w-full max-w-md sm:max-w-none mx-auto"
@@ -208,21 +212,19 @@ function HeroButtons() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, delay: 0.9, ease: [0.4, 0, 0.2, 1] }}
     >
-      {/* Primary CTA - High-performance GPU accelerated glowing button */}
-      <Link
-        href={ROUTES.REGISTER}
+      {/* Primary CTA - Liquid Metal WebGL 2 Shader */}
+      <LiquidMetalButton
         id="hero-cta-register"
-        className="w-full sm:w-[220px] h-[50px] inline-flex items-center justify-center gap-2.5 px-6 rounded-xl text-base font-extrabold text-black tracking-wide bg-gradient-to-r from-emerald-400 via-teal-300 to-emerald-400 shadow-[0_0_24px_rgba(16,185,129,0.45)] hover:shadow-[0_0_36px_rgba(16,185,129,0.7)] hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 group cursor-pointer relative overflow-hidden font-[family-name:var(--font-plus-jakarta-sans)]"
+        onClick={() => router.push(ROUTES.REGISTER)}
+        containerClassName="w-full sm:w-[220px]"
+        className="text-base font-semibold text-white tracking-wide flex items-center justify-center gap-2.5 group/btn"
       >
-        <span className="relative z-10">Get Started</span>
+        <span className="drop-shadow-[0_1px_4px_rgba(0,0,0,0.8)]">Get Started</span>
         <ArrowRight
           size={18}
-          className="relative z-10 transition-transform duration-200 group-hover:translate-x-1 stroke-[2.5]"
+          className="transition-transform duration-200 group-hover/btn:translate-x-1 stroke-[2.5] text-emerald-400 drop-shadow-[0_0_8px_rgba(52,211,153,0.8)]"
         />
-        <span
-          className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out pointer-events-none"
-        />
-      </Link>
+      </LiquidMetalButton>
 
       {/* Secondary CTA - Frosted Glass with matching geometry */}
       <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="w-full sm:w-auto">
