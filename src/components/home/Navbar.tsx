@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * UniVerse — Smart Cosmic Navbar
+ * UniVerse - Smart Cosmic Navbar
  *
  * - Auto-Hides when scrolling down for clean, distraction-free reading.
  * - Smoothly slides back in when scrolling up for quick access to Dashboard/Links.
@@ -27,7 +27,7 @@ const NAV_LINKS = [
 
 function Logo() {
   return (
-    <Link href="/" className="flex items-center gap-2.5 group" aria-label="UniVerse — Home">
+    <Link href="/" className="flex items-center gap-2.5 group" aria-label="UniVerse - Home">
       {/* Mark */}
       <motion.div
         className="w-9 h-9 rounded-[10px] flex items-center justify-center flex-shrink-0 transition-all duration-300 group-hover:scale-105 shadow-md shadow-emerald-500/20"
@@ -76,7 +76,7 @@ function NavCTAs({ hasUser }: { hasUser: boolean }) {
       <div className="flex items-center gap-1 sm:gap-2.5">
         <Link
           href={ROUTES.DASHBOARD}
-          className="inline-flex items-center gap-1 px-2.5 py-1.5 sm:px-4 sm:py-2 text-[11px] sm:text-xs font-bold rounded-lg sm:rounded-xl bg-gradient-to-r from-emerald-400 to-teal-400 text-black shadow-md shadow-emerald-500/20 hover:shadow-emerald-500/40 hover:scale-105 active:scale-95 transition-all duration-200"
+          className="inline-flex items-center gap-1.5 px-2.5 py-1.5 sm:px-4 sm:py-2 text-[11px] sm:text-xs font-semibold rounded-lg sm:rounded-xl bg-transparent border border-emerald-400/40 hover:border-emerald-400 hover:bg-emerald-500/10 text-emerald-400 hover:text-emerald-300 backdrop-blur-sm shadow-[0_0_12px_rgba(16,185,129,0.12)] hover:scale-105 active:scale-95 transition-all duration-200"
         >
           <span>Dashboard</span>
           <ArrowRight size={12} strokeWidth={2.5} />
@@ -93,7 +93,7 @@ function NavCTAs({ hasUser }: { hasUser: boolean }) {
 
   return (
     <div className="flex items-center gap-1.5 sm:gap-2.5">
-      {/* Login — ghost (desktop) */}
+      {/* Login - ghost (desktop) */}
       <Link
         href={ROUTES.LOGIN}
         className="hidden md:inline-flex px-4 py-2 text-xs font-semibold rounded-xl text-white/80 hover:text-white hover:bg-white/10 transition-all duration-200"
@@ -110,7 +110,7 @@ function NavCTAs({ hasUser }: { hasUser: boolean }) {
         <ArrowRight size={12} strokeWidth={2.5} />
       </Link>
 
-      {/* Desktop: Register — primary */}
+      {/* Desktop: Register - primary */}
       <motion.div className="hidden md:block" whileTap={{ scale: 0.97 }}>
         <Link
           href={ROUTES.REGISTER}
@@ -138,7 +138,7 @@ function MobileMenu({
     <AnimatePresence>
       {open && (
         <>
-          {/* Dimmed backdrop overlay — tap outside to close */}
+          {/* Dimmed backdrop overlay - tap outside to close */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -197,7 +197,7 @@ function MobileMenu({
                     <Link
                       href={ROUTES.DASHBOARD}
                       onClick={onClose}
-                      className="flex items-center justify-center gap-2 px-4 py-3 text-sm font-bold text-center bg-gradient-to-r from-emerald-400 to-teal-400 text-black rounded-xl shadow-md shadow-emerald-500/20 active:scale-98 transition-transform duration-150"
+                      className="flex items-center justify-center gap-2 px-4 py-3 text-sm font-semibold text-center bg-transparent border border-emerald-400/40 hover:border-emerald-400 hover:bg-emerald-500/10 text-emerald-400 rounded-xl active:scale-98 transition-all duration-150"
                     >
                       <span>Go to Dashboard</span>
                       <ArrowRight size={14} strokeWidth={2.5} />
@@ -223,7 +223,7 @@ function MobileMenu({
                       onClick={onClose}
                       className="block px-4 py-2.5 text-sm font-bold text-center bg-gradient-to-r from-emerald-400 to-teal-400 text-black rounded-xl shadow-md shadow-emerald-500/20 transition-colors duration-150"
                     >
-                      Sign Up — It&apos;s Free
+                      Sign Up - It&apos;s Free
                     </Link>
                   </>
                 )}
