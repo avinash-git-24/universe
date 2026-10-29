@@ -512,11 +512,14 @@ export function SettingsClient({
 
         <Link
           href="/dashboard/profile"
-          className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white text-xs font-bold transition-all hover:scale-102 self-start sm:self-auto shrink-0 shadow-sm relative z-10 cursor-pointer"
+          className="group relative inline-flex items-center justify-center gap-2.5 px-4 py-2 rounded-full bg-gradient-to-r from-emerald-500/[0.08] via-white/[0.04] to-emerald-500/[0.04] hover:from-emerald-500/20 hover:via-emerald-500/10 hover:to-emerald-500/15 border border-emerald-500/30 hover:border-emerald-400/60 text-white text-xs font-bold transition-all duration-300 hover:scale-[1.03] active:scale-[0.97] self-start sm:self-auto shrink-0 shadow-[0_2px_10px_rgba(0,0,0,0.5)] hover:shadow-[0_0_20px_rgba(16,185,129,0.25)] backdrop-blur-md relative z-10 cursor-pointer overflow-hidden"
         >
-          <User size={14} className="text-emerald-400" />
-          <span>Edit Profile</span>
-          <ExternalLink size={12} className="text-white/40" />
+          <span className="absolute inset-x-3 top-0 h-[1px] bg-gradient-to-r from-transparent via-emerald-400/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+          <span className="w-5 h-5 rounded-full bg-emerald-500/15 group-hover:bg-emerald-400 flex items-center justify-center text-emerald-400 group-hover:text-black transition-all duration-300 shrink-0">
+            <User size={11} className="stroke-[2.5]" />
+          </span>
+          <span className="tracking-tight text-white/90 group-hover:text-white transition-colors">Edit Profile</span>
+          <ExternalLink size={12} className="text-white/40 group-hover:text-emerald-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all duration-300 shrink-0" />
         </Link>
       </div>
 
