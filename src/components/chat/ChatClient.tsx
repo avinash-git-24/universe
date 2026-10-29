@@ -111,14 +111,22 @@ export function ChatClient({ userId, initialConversations, activeDeliveries = []
   const handleStartChatWithUser = useCallback(async (otherUserId: string, reqId?: string) => {
     if (!otherUserId) return;
     setStartingChatUserId(otherUserId);
+    const activeDel = activeDeliveries.find((d) => d.otherUserId === otherUserId);
+
+    // Safeguard: Never leave button stuck on "Opening..." for more than 4 seconds
+    const safetyTimer = setTimeout(() => {
+      setStartingChatUserId(null);
+    }, 4000);
+
     try {
       // 1. Check if conversation already exists in current loaded list
       const existing = conversations.find(
         (c) => c.other_participant?.id === otherUserId
       );
       if (existing) {
-        handleSelect(existing.id);
+        clearTimeout(safetyTimer);
         setStartingChatUserId(null);
+        handleSelect(existing.id);
         return;
       }
 
@@ -132,14 +140,36 @@ export function ChatClient({ userId, initialConversations, activeDeliveries = []
       if (res.ok) {
         const data = await res.json();
         if (data.conversationId) {
-          if (data.conversation) {
-            setConversations((prev) => [
-              data.conversation,
-              ...prev.filter((c) => c.id !== data.conversation.id),
-            ]);
-          }
-          handleSelect(data.conversationId);
+          const hydratedConv: ConversationWithDetails = data.conversation || {
+            id: data.conversationId,
+            request_id: reqId || null,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+            listing_id: null,
+            buyer_id: null,
+            other_participant: {
+              id: otherUserId,
+              full_name: activeDel?.otherUser.full_name || "University Student",
+              avatar_url: activeDel?.otherUser.avatar_url || null,
+              role: activeDel?.otherUser.role || "student",
+              account_status: "active",
+              enrollment_number: null,
+              department: null,
+              semester: null,
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString(),
+            } as any,
+            unread_count: 0,
+            other_last_read_at: null,
+          };
+
+          setConversations((prev) => [
+            hydratedConv,
+            ...prev.filter((c) => c.id !== hydratedConv.id),
+          ]);
+          clearTimeout(safetyTimer);
           setStartingChatUserId(null);
+          handleSelect(data.conversationId);
           return;
         }
       }
@@ -148,9 +178,35 @@ export function ChatClient({ userId, initialConversations, activeDeliveries = []
       const convId = await getOrCreateConversation(supabase, userId, otherUserId, reqId || null);
       if (convId) {
         const conv = await getConversationById(supabase, convId, userId);
-        if (conv) {
-          setConversations((prev) => [conv, ...prev.filter((c) => c.id !== conv.id)]);
-        }
+        const hydratedFallback: ConversationWithDetails = conv || {
+          id: convId,
+          request_id: reqId || null,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+          listing_id: null,
+          buyer_id: null,
+          other_participant: {
+            id: otherUserId,
+            full_name: activeDel?.otherUser.full_name || "University Student",
+            avatar_url: activeDel?.otherUser.avatar_url || null,
+            role: activeDel?.otherUser.role || "student",
+            account_status: "active",
+            enrollment_number: null,
+            department: null,
+            semester: null,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          } as any,
+          unread_count: 0,
+          other_last_read_at: null,
+        };
+
+        setConversations((prev) => [
+          hydratedFallback,
+          ...prev.filter((c) => c.id !== hydratedFallback.id),
+        ]);
+        clearTimeout(safetyTimer);
+        setStartingChatUserId(null);
         handleSelect(convId);
       } else {
         showToast({
@@ -169,9 +225,10 @@ export function ChatClient({ userId, initialConversations, activeDeliveries = []
         content: "Network issue while connecting to chat.",
       });
     } finally {
+      clearTimeout(safetyTimer);
       setStartingChatUserId(null);
     }
-  }, [conversations, handleSelect, showToast, supabase, userId]);
+  }, [conversations, handleSelect, showToast, supabase, userId, activeDeliveries]);
 
   // Sync state if server props change
   useEffect(() => {

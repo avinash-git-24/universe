@@ -74,8 +74,12 @@ const messagesCache = new Map<string, Message[]>();
 
 export function ChatWindow({ userId, conversation, isOnline }: ChatWindowProps) {
   const hasCached = messagesCache.has(conversation.id);
-  const [messages, setMessages] = useState<Message[]>(messagesCache.get(conversation.id) || []);
-  const [loading, setLoading] = useState(!hasCached);
+  const initialMsgs = useMemo(
+    () => messagesCache.get(conversation.id) || (conversation as any).messages || [],
+    [conversation]
+  );
+  const [messages, setMessages] = useState<Message[]>(initialMsgs);
+  const [loading, setLoading] = useState(!hasCached && initialMsgs.length === 0);
   const [newMessage, setNewMessage] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [otherTyping, setOtherTyping] = useState(false);
@@ -92,6 +96,7 @@ export function ChatWindow({ userId, conversation, isOnline }: ChatWindowProps) 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const msgChannelRef = useRef<any>(null);
 
   const supabase = createClient();
 
@@ -112,18 +117,28 @@ export function ChatWindow({ userId, conversation, isOnline }: ChatWindowProps) 
     let isMounted = true;
 
     async function load() {
-      if (!messagesCache.has(conversation.id)) {
+      if (!messagesCache.has(conversation.id) && !((conversation as any).messages?.length > 0)) {
         setLoading(true);
       }
-      const data = await getMessages(supabase, conversation.id);
-      if (isMounted) {
-        messagesCache.set(conversation.id, data);
-        setMessages(data);
-        setLoading(false);
-        await markConversationAsRead(supabase, conversation.id, userId);
-        setTimeout(() => {
-          bottomRef.current?.scrollIntoView({ behavior: "auto" });
-        }, 50);
+      try {
+        const data = await getMessages(supabase, conversation.id);
+        if (isMounted) {
+          if (data && data.length > 0) {
+            messagesCache.set(conversation.id, data);
+            setMessages(data);
+          } else if (!messagesCache.has(conversation.id) && (conversation as any).messages?.length > 0) {
+            setMessages((conversation as any).messages);
+          } else if (data) {
+            setMessages(data);
+          }
+          setLoading(false);
+          await markConversationAsRead(supabase, conversation.id, userId);
+          setTimeout(() => {
+            bottomRef.current?.scrollIntoView({ behavior: "auto" });
+          }, 50);
+        }
+      } catch {
+        if (isMounted) setLoading(false);
       }
     }
 
@@ -264,6 +279,8 @@ export function ChatWindow({ userId, conversation, isOnline }: ChatWindowProps) 
       })
       .subscribe();
 
+    msgChannelRef.current = msgChannel;
+
     const typingChannel = supabase
       .channel(`chat:typing:${conversation.id}`)
       .on("broadcast", { event: "typing" }, (payload) => {
@@ -294,6 +311,7 @@ export function ChatWindow({ userId, conversation, isOnline }: ChatWindowProps) 
     }, 3500);
 
     return () => {
+      msgChannelRef.current = null;
       supabase.removeChannel(msgChannel);
       supabase.removeChannel(typingChannel);
       clearInterval(pollInterval);
@@ -358,8 +376,8 @@ export function ChatWindow({ userId, conversation, isOnline }: ChatWindowProps) 
     scrollToBottom("smooth");
 
     // 2. Peer Broadcast (0ms latency to active chat & recipient)
-    const activeChannel = supabase.channel(`chat:messages:${conversation.id}`);
-    activeChannel.send({
+    const channelToUse = msgChannelRef.current || supabase.channel(`chat:messages:${conversation.id}`);
+    channelToUse.send({
       type: "broadcast",
       event: "new_message",
       payload: optimisticMsg,
@@ -390,7 +408,7 @@ export function ChatWindow({ userId, conversation, isOnline }: ChatWindowProps) 
       );
       if (dbMsg) {
         setMessages((prev) => prev.map((m) => (m.id === tempId ? dbMsg : m)));
-        activeChannel.send({
+        channelToUse.send({
           type: "broadcast",
           event: "message_confirmed",
           payload: dbMsg,

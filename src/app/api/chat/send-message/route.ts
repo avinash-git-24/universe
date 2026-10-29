@@ -26,23 +26,45 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Empty message" }, { status: 400 });
     }
 
-    let message = await sendMessage(
-      supabase,
-      conversationId,
-      user.id,
-      content || "",
-      imageUrl || null,
-      messageType || "text",
-      metadata || null
+    const hasRealServiceKey = Boolean(
+      process.env.SUPABASE_SERVICE_ROLE_KEY &&
+      process.env.SUPABASE_SERVICE_ROLE_KEY !== process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
     );
+
+    let message = null;
+
+    if (hasRealServiceKey) {
+      try {
+        const adminClient = createAdminClient();
+        message = await sendMessage(
+          adminClient,
+          conversationId,
+          user.id,
+          content || "",
+          imageUrl || null,
+          messageType || "text",
+          metadata || null
+        );
+      } catch (adminErr) {
+        console.warn("[api/chat/send-message] adminClient send warning:", adminErr);
+      }
+    }
+
+    if (!message) {
+      message = await sendMessage(
+        supabase,
+        conversationId,
+        user.id,
+        content || "",
+        imageUrl || null,
+        messageType || "text",
+        metadata || null
+      );
+    }
 
     // Auto-heal fallback: If standard insert/RPC was blocked by missing participant record or RLS
     if (!message) {
       try {
-        const hasRealServiceKey = Boolean(
-          process.env.SUPABASE_SERVICE_ROLE_KEY &&
-          process.env.SUPABASE_SERVICE_ROLE_KEY !== process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
-        );
         const fallbackClient = hasRealServiceKey ? createAdminClient() : supabase;
 
         // 1. Auto-heal: Ensure current user is in conversation_participants

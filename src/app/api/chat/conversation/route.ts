@@ -79,6 +79,33 @@ export async function POST(req: NextRequest) {
       conversation = await getConversationById(supabase, convId, user.id);
     }
 
+    // Fallback: If conversation record exists but relation joins returned null, synthesize details
+    if (!conversation && convId) {
+      const activeClient = (adminClient && hasRealServiceKey) ? adminClient : supabase;
+      const { data: prof } = await activeClient
+        .from("profiles")
+        .select("*")
+        .eq("id", targetUserId)
+        .single();
+
+      conversation = {
+        id: convId,
+        request_id: targetRequestId,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        listing_id: null,
+        other_participant: (prof as any) || {
+          id: targetUserId,
+          full_name: "University Student",
+          avatar_url: null,
+          role: "student",
+          account_status: "active",
+        },
+        unread_count: 0,
+        other_last_read_at: null,
+      } as any;
+    }
+
     return NextResponse.json({
       success: true,
       conversationId: convId,

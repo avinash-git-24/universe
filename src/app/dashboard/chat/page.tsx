@@ -163,7 +163,7 @@ export default async function ChatPage({
   activeDeliveries.push(...contactMap.values());
 
   return (
-    <div className="h-[calc(100dvh-60px)] lg:h-screen p-2 sm:p-4 lg:p-6 flex flex-col overflow-hidden">
+    <div className="h-[calc(100dvh-60px)] lg:h-[100dvh] max-h-[100dvh] box-border p-2 sm:p-3 lg:p-4 flex flex-col overflow-hidden">
       <div className="max-w-[1400px] w-full mx-auto h-full flex flex-col min-h-0">
         <ChatClient
           userId={user.id}
