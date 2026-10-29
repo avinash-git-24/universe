@@ -11,16 +11,16 @@ BEGIN;
 
 -- 1. Helper function: verify conversation membership (SECURITY DEFINER)
 CREATE OR REPLACE FUNCTION public.is_conversation_participant(
-  p_conversation_id UUID,
-  p_user_id UUID
+  conv_id UUID,
+  usr_id UUID
 )
 RETURNS BOOLEAN AS $$
 BEGIN
   RETURN EXISTS (
     SELECT 1 
     FROM public.conversation_participants
-    WHERE conversation_id = p_conversation_id 
-      AND profile_id = p_user_id
+    WHERE conversation_id = conv_id 
+      AND profile_id = usr_id
   );
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public, pg_temp;
