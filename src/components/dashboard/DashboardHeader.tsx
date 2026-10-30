@@ -57,7 +57,6 @@ export function DashboardHeader({ displayName }: DashboardHeaderProps) {
       </div>
 
       <h1 className="text-white font-extrabold text-2xl sm:text-3xl lg:text-[2.2rem] tracking-tight leading-tight m-0 flex items-center gap-2 flex-wrap">
-        <span>Welcome back,</span>
         <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-emerald-300 to-teal-300">
           {formatted.firstName}
         </span>
