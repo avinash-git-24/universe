@@ -178,24 +178,49 @@ function ScrollIndicator() {
     <motion.button
       type="button"
       onClick={handleScroll}
-      className="flex flex-col items-center gap-1 z-20 bg-transparent border-0 cursor-pointer group focus:outline-none p-2"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.6, delay: 1.8 }}
+      className="flex flex-col items-center gap-2 z-20 bg-transparent border-0 cursor-pointer group focus:outline-none p-2"
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.7, delay: 1.8, ease: [0.4, 0, 0.2, 1] }}
       aria-label="Scroll to next section"
     >
+      {/* Mouse outline container */}
+      <div className="relative flex items-center justify-center">
+        {/* Pulsing glow ring */}
+        <motion.div
+          className="absolute inset-0 rounded-full bg-emerald-400/10 group-hover:bg-emerald-400/20"
+          animate={{ scale: [1, 1.5, 1], opacity: [0.5, 0, 0.5] }}
+          transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
+          style={{ width: 44, height: 44, borderRadius: "50%", transform: "translate(-50%,-50%)", top: "50%", left: "50%" }}
+        />
+        {/* Mouse shape */}
+        <div
+          className="relative flex flex-col items-center pt-2 border border-white/20 group-hover:border-emerald-400/50 transition-colors duration-300"
+          style={{
+            width: 22,
+            height: 36,
+            borderRadius: 11,
+            background: "rgba(255,255,255,0.04)",
+            backdropFilter: "blur(6px)",
+          }}
+        >
+          {/* Scroll dot */}
+          <motion.div
+            className="rounded-full bg-white/60 group-hover:bg-emerald-400 transition-colors duration-300"
+            style={{ width: 3, height: 6, borderRadius: 3 }}
+            animate={{ y: [0, 8, 0], opacity: [1, 0.2, 1] }}
+            transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
+          />
+        </div>
+      </div>
+
+      {/* Label */}
       <span
-        className="text-[10px] uppercase tracking-[0.2em] text-white/40 font-medium group-hover:text-emerald-400 transition-colors"
+        className="text-[9px] uppercase tracking-[0.25em] text-white/30 group-hover:text-emerald-400/80 transition-colors duration-300 font-medium"
         style={{ fontFamily: "var(--font-inter)" }}
       >
         Scroll
       </span>
-      <motion.div
-        animate={{ y: [0, 6, 0] }}
-        transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
-      >
-        <ChevronDown size={16} className="text-white/40 group-hover:text-emerald-400 transition-colors" />
-      </motion.div>
     </motion.button>
   );
 }
