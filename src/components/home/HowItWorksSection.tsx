@@ -322,7 +322,6 @@ export function HowItWorksSection() {
           ))}
         </motion.div>
 
-
       </div>
     </section>
   );

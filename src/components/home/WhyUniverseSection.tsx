@@ -78,7 +78,6 @@ function AdvantageCard({
   title: string;
   description: string;
   accentColor: string;
-  size: "large" | "medium" | "small";
   highlight: boolean;
   index: number;
 }) {

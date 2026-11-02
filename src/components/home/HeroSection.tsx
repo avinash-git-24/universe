@@ -15,7 +15,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { ArrowRight, ChevronDown, Users, Bike, Package } from "lucide-react";
+import { ArrowRight, Users, Bike, Package } from "lucide-react";
 import { CampusBackground } from "./CampusBackground";
 import { FloatingObjects } from "./FloatingObjects";
 import { ROUTES } from "@/constants/routes";
